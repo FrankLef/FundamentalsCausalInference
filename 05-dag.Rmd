@@ -1,0 +1,817 @@
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(dagitty)
+library(ggplot2)
+library(ggdag)
+library(gt)
+library(simstudy)
+```
+
+
+# Causal Directed Acyclic Graphs {#dag}
+
+We use the `dagitty` and `ggdag` packages to analyse the DAG and plot them.
+We also sue the `simstudy` package from now on to perform the simulations.
+
+
+## Theory
+
+```{r echo=TRUE}
+# Source:
+# to be able to use mathematical expressions in the DAG we use the trick from
+# https://www.r-bloggers.com/2019/10/how-to-use-math-symbols-with-ggdag-2/
+# NOTE ON LABELS:
+#   Label are not used, but the code for them is included and commented out.
+#   The author does not use labels, but they could be useful.
+scm <- list()
+scm <- within(scm, {
+  the_nodes <- c("X1" = "X1 label", 
+                 "X2" = "X2 label", 
+                 "X3" = "X3 label", 
+                 "X4" = "X4 label")
+  dag <- dagify(
+    X2 ~ X1,
+    X3 ~ X2,
+    X4 ~ X1 + X2,
+    labels = the_nodes)
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = colr, 
+                    "outcome" = colr)
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status(color = status) +
+    geom_dag_point() +
+    geom_dag_edges() +
+    geom_dag_text(size = 7, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c(expression(X[1]), expression(X[2]),
+                            expression(X[3]), expression(X[4]))) +
+    # NOTE ON LABELS: Use this line if you wnat to add labels
+    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
+    #                          show.legend = FALSE) +
+    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "Example of a Directed Acyclic Graph")
+})
+```
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.1", warning=FALSE, out.width="60%"}
+scm$plot
+```
+
+
+
+and for the graphical structures
+
+
+
+```{r echo=TRUE}
+scm <- list()
+scm <- within(scm, {
+  colr <- "snow"  # color used by ggdag
+  
+  dagChain <- dagify(
+    Z ~ X1,
+    X2 ~ Z)
+
+  # plot the DAG
+  plotChain <- dagChain %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 5, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c(expression(X[1]), expression(X[2]), "Z")) +
+    # NOTE ON LABELS: Use this line if you wnat to add labels
+    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
+    #                          show.legend = FALSE) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(title = element_text(size = 10)) +
+    labs(title = "Chain: Z is an intermediate variable")
+
+
+  # FORK
+  dagFork <- dagify(
+    X1 ~ Z,
+    X2 ~ Z)
+
+  # plot the DAG
+  plotFork <- dagFork %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 5, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c(expression(X[1]), expression(X[2]), "Z")) +
+    # NOTE ON LABELS: Use this line if you wnat to add labels
+    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
+    #                          show.legend = FALSE) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(title = element_text(size = 10)) +
+    labs(title = "Fork: Z is a common cause")
+  
+  # COLLIDER
+  dagColl <- dagify(
+    Z ~ X1,
+    Z ~ X2)
+
+  # plot the DAG
+  plotColl <- dagColl %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 5, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c(expression(X[1]), expression(X[2]), "Z")) +
+    # NOTE ON LABELS: Use this line if you wnat to add labels
+    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
+    #                          show.legend = FALSE) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(title = element_text(size = 10)) +
+    labs(title = "Collider: Z is a common effect")
+  
+  # DESCENDANT
+  dagDesc <- dagify(
+    W ~ X1,
+    W ~ X2,
+    Z ~ W)
+
+  # plot the DAG
+  plotDesc <- dagDesc %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 5, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c("W", expression(X[1]), expression(X[2]), "Z")) +
+    # NOTE ON LABELS: Use this line if you wnat to add labels
+    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
+    #                          show.legend = FALSE) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(title = element_text(size = 10)) +
+    labs(title = "Descendant: Z is an effect of a common effect")
+})
+```
+
+
+
+
+```{r}
+gridExtra::grid.arrange(scm$plotChain, scm$plotFork, scm$plotColl, scm$plotDesc, 
+                        nrow = 2, ncol = 2,
+                        top = "Graphical structures", bottom = "Figure 5.2")
+```
+
+
+
+
+
+and for our first practice of d-separation we have
+
+
+
+
+```{r echo=TRUE}
+scm_5.3 <- list()
+scm_5.3 <- within(scm_5.3, {
+  dag <- dagify(
+    A ~ W1,
+    Y ~ W3,
+    W2 ~ W1 + W3,
+    W4 ~ W2)
+
+  # plot the DAG
+  colr <- "snow"
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 7, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c("A", expression(W[1]), expression(W[2]),
+                            expression(W[3]), expression(W[4], "Y"))) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "Causal DAG With Collider")
+})
+```
+
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.3", warning=FALSE, out.width="60%"}
+scm_5.3$plot
+```
+
+
+
+The conditional independences can be obtained using `impliedConditionalIndependencies`
+from the`dagitty` package. You must ensure that you use the parameter 
+`type = "all.pairs` explicitly. The default is `type = "missing.edge`.
+We will not list all of them, just their number, 93.
+
+```{r}
+# use type = "all.pairs" to get everything.
+# impliedConditionalIndependencies uses type "missing.edge" by default.
+length(impliedConditionalIndependencies(scm_5.3$dag, type = "all.pairs"))
+```
+
+## Examples
+
+
+```{r echo=TRUE}
+scm_5.4 <- list()
+scm_5.4 <- within(scm_5.4, {
+  dag <- dagify(
+    M ~ A + H,
+    Y ~ A + M + H)
+
+  # plot the DAG
+  colr <- "snow"
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    ggdag() +
+    geom_dag_point(color = colr) +
+    geom_dag_edges() +
+    geom_dag_text(size = 7, color = "midnightblue") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "Causal DAG With Intermediate Variable")
+})
+```
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.4", warning=FALSE, out.width="60%"}
+scm_5.4$plot
+```
+
+
+
+```{r echo=TRUE}
+scm_5.5 <- list()
+scm_5.5 <- within(scm_5.5, {
+
+  dag <- dagify(
+    A ~ U,
+    Z ~ U,
+    Y ~ A + Z,
+    latent = "U")
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    ggdag_status(color = status) +
+    geom_dag_point() +
+    geom_dag_edges() +
+    geom_dag_text(size = 7, color = "midnightblue") +
+    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "A Counfounder May Occur After the Exposure")
+})
+```
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.4", warning=FALSE, out.width="60%"}
+scm_5.5$plot
+```
+
+
+
+### Structural Causal Model 5.6
+
+We are given the causal DAG
+
+```{r echo=TRUE}
+scm_5.6 <- list()
+scm_5.6 <- within(scm_5.6, {
+  the_nodes <- c("A" = "", 
+                 "Y" = "", 
+                 "U" = "(Y(0), y(1))")
+  dag <- dagify(
+    A ~ U,
+    Y ~ A + U,
+    latent = "U",
+    labels = the_nodes)
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%
+    ggdag_status(color = status, text = FALSE) +
+    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 5, color = "midnightblue") +
+    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "One way to generate cofounding")
+})
+```
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.6", warning=FALSE, out.width="60%"}
+scm_5.6$plot
+```
+
+
+
+for the works that follows the tables will be formatted with this function
+
+```{r}
+tbl_probs <- function(df, title, subtitle) {
+    df %>%
+    gt() %>%
+    tab_header(
+      title = md(paste0("**", title, "**")),
+      subtitle = md(paste0("**", subtitle, "**"))) %>%
+    fmt_number(columns = "prob", decimals = 4) %>%
+    cols_align(align = "center", columns = everything()) %>% 
+    opt_row_striping() %>%
+    tab_options(
+      heading.background.color = "gainsboro",
+      column_labels.font.weight = "bold")
+}
+```
+
+
+
+and lets do the simulaiton of figure 5.6 on p. 88 with `simstudy`
+
+```{r}
+scm_5.6 <- within(scm_5.6, {
+  probY0 <- 0.42
+  probY1 <- 0.62
+  formulaA <- "(1-Y0) * (1- Y1) * 0.6307 + (1 - Y0) * Y1 * 0.4867 +
+  Y0 * (1 - Y1) * 0.4699 + Y0 * Y1 * 0.4263"
+  set.seed(111)
+  # generate the potential outcomes
+  defs <- defData(varname = "Y0", dist = "binomial", 
+                  formula = "..probY0", variance = 1)
+  defs <- defData(defs, varname = "Y1", dist = "binomial", 
+                  formula = "..probY1", variance = 1)
+  defs <- defData(defs, varname = "probA", dist = "nonrandom", 
+                  formula = formulaA)
+  defs <- defData(defs, varname = "A", dist = "binomial", 
+                  formula = "probA", variance = 1)
+  # Y must depend on A, Y1, Y0 in this way
+  defs <- defData(defs, varname = "Y", dist = "nonrandom", 
+                  formula = "A * Y1 + (1 - A) * Y0")
+  
+  # generate the data
+  data <- genData(1000, defs)
+  
+  # create the tabletbl <- sim_5.6$data %>%
+  tbl <- data %>%
+    group_by(A, Y0, Y1, Y) %>%
+    count(name = "prob") %>%
+    ungroup() %>%
+    mutate(prob = prob / sum(prob))
+  stopifnot(near(sum(tbl$prob), 1))
+
+  # format the tableau
+  summ <- tbl_probs(tbl, title = "Table 5.1",
+                   subtitle = "Simulation Probabilities for `sim1.r`")
+})
+scm_5.6$summ
+```
+
+we also do it in base `R` with the script on p.88
+
+
+```{r}
+sim1.r <- function(n = 1000) {
+  set.seed(111)
+  probY0 <- 0.42
+  probY1 <- 0.62
+  Y0 <- rbinom(n, size = 1, prob = probY0)
+  Y1 <- rbinom(n, size = 1, prob = probY1)
+  probA <- (1 - Y0) * (1 - Y1) * 0.6307 + 
+    (1 - Y0) * Y1 * 0.4867 +
+    Y0 * (1- Y1) * 0.4699 +
+    Y0 * Y1 * 0.4263
+  A <- rbinom(n, size = 1, prob = probA)
+  Y <- A * Y1 + (1 - A) * Y0
+  data.frame(cbind(A, Y0, Y1, Y))
+}
+```
+
+and we obtain the same results as with `simstudy`
+
+```{r}
+tbl <- sim1.r() %>%
+  group_by(A, Y0, Y1, Y) %>%
+  count(name = "prob") %>%
+  ungroup() %>%
+  mutate(prob = prob / sum(prob))
+stopifnot(near(sum(tbl$prob), 1))
+tbl
+```
+
+but when compare with the author's
+
+```{r}
+bb_5.6 <- data.frame(
+  A = c(0, 0, 0, 0, 1, 1, 1, 1),
+  Y0 = c(0, 0, 1, 1, 0, 0, 1, 1),
+  Y1 = c(0, 1, 0, 1, 0, 1, 0, 1),
+  Y = c(0, 0, 1, 1, 0, 1, 0, 1),
+  prob = c(0.0814, 0.1846, 0.0846, 0.1494, 0.139, 0.175, 0.075, 0.111)
+)
+bb_5.6
+```
+
+it is different. Table 5.1 is entitled *Simulation probabilities for `sim1.r`*
+because they are simulated probabilities.  If the simulation size is increased
+10000 the results are more in line with the author's.
+
+
+```{r}
+data.frame("author" = bb_5.6$prob, "sim" = scm_5.6$tbl$prob) %>%
+  mutate(diff = sim - author)
+```
+
+and we also confirm the theoretical probabilities of the first line in the table 
+as follows
+
+
+$$
+\begin{align*}
+\text{using (5.1), p.81, we can write the joint distribution as} \\
+P(Y = 0, A = 0, Y1 = 0, Y0 = 0) = \\
+P(Y = 0 \mid A = 0, Y1 = 0, Y0 = 0) P(A = 0 \mid Y1 = 0, Y0 = 0)P(Y1 = 0 \mid Y0 = 0)\ P(Y0 =0)
+\end{align*}
+$$
+
+and
+
+
+$$
+P(Y = 0 \mid A = 0, Y1 = 0, Y0 = 0)=1
+$$
+
+and from the simulation we have
+
+
+$$
+\begin{align*}
+P(A = 1 \mid Y0 = 0, Y1 = 0) &= 0.6307 \\
+P(A = 0 \mid Y0 = 0, Y1 = 0) &=  - 0.6307 =  0.3693\\
+P(A = 1 \mid Y0 = 1, Y1 = 0) &= 0.4699 \\
+P(A = 0 \mid Y0 = 1, Y1 = 0) &= 1 - 0.4699 = 0.5301 \\
+P(A = 1 \mid Y0 = 0, Y1 = 1) &= 0.4867 \\
+P(A = 0 \mid Y0 = 0, Y1 = 1) &= 1 - 0.4867 = 0.5133 \\
+P(A = 1 \mid Y0 = 1, Y1 = 1) &= 0.4263 \\
+P(A = 0 \mid Y0 = 1, Y1 = 1) &= 1 - 0.4263 = 0.5737
+\end{align*}
+$$
+
+and we note that $Y0$ and $Y1$ are independent, i.e. $P(Y1 \mid Y0) = P(Y1)$
+so that
+
+
+$$
+\begin{align*}
+P(Y0 = 1) &= 0.42\\
+P(Y0 = 0) &= 1 - 0.42 = 0.58\\
+P(Y1 = 1) &= 0.62\\
+P(Y1 = 0) &= 1 - 0.62 = 0.38
+\end{align*}
+$$
+
+
+and since $Y0$ and $Y1$ are independent, i.e. $P(Y1 \mid Y0) = P(Y1)$ then
+
+
+$$
+\begin{align*}
+P(Y = 0, A = 0, Y1 = 0, Y0 = 0) &= \\
+P(Y = 0 \mid A = 0, Y1 = 0, Y0 = 0) P(A = 0 \mid Y1 = 0, Y0 = 0) \cdot P(Y1 = 0 \mid Y0 = 0)P(Y0 = 0) &= \\
+1 \cdot P(A = 0 \mid Y1 = 0, Y0 = 0) \cdot P(Y1 = 0)P(Y0 = 0) &= \\
+1\times 0.3693 \times 0.58 \times 0.38 &= 0.0814 
+\end{align*}
+$$
+
+
+
+### Structural Causal Model 5.7
+
+
+The causal DAG is
+
+```{r echo=TRUE}
+scm_5.7 <- list()
+scm_5.7 <- within(scm_5.7, {
+  dag <- dagify(
+    A ~ H,
+    Y ~ A + H)
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%
+    ggdag_status(color = status, text = FALSE) +
+    # geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+    #                      box.padding = 1) +
+    geom_dag_text(size = 5, color = "midnightblue") +
+    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "One way to generate cofounding")
+})
+```
+
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.7", warning=FALSE, out.width="60%"}
+scm_5.7$plot
+```
+
+
+and we simulate the model with `simstudy` (and with the author's script after)
+
+
+```{r}
+scm_5.7 <- within(scm_5.7, {
+  set.seed(222)
+  # generate the confounder H first
+  defs <- defData(varname = "H", dist = "binomial", 
+                  formula = 0.4, variance = 1)
+  # let the treatment depend on the confounder
+  formulaA <- "H * 0.8 + (1 - H) * 0.3"
+  defs <- defData(defs, varname = "A", dist = "binomial", 
+                  formula = formulaA, variance = 1)
+  # let the outcome depend on the treatment and the confounder
+  formulaY <- "A * (H * 0.5 + (1 - H) * 0.7) +
+  (1 - A) * (H * 0.3 + (1 - H) * 0.5)"
+  defs <- defData(defs, varname = "Y", dist = "binomial", 
+                  formula = formulaY, variance = 1)
+  
+  # generate the data
+  data <- genData(1000, defs)
+  
+  # create the tabletbl <- sim_5.6$data %>%
+  tbl <- data %>%
+    group_by(A, H, Y) %>%
+    count(name = "prob") %>%
+    ungroup() %>%
+    mutate(prob = prob / sum(prob))
+  stopifnot(near(sum(tbl$prob), 1))
+
+  # format the tableau
+  summ <- tbl_probs(tbl, title = "Table 5.2",
+                   subtitle = "Simulation Probabilities for `sim2.r`")
+})
+scm_5.7$summ
+```
+and with the script `sim2.r` in base R
+
+```{r}
+sim2.r <- function(n = 1000) {
+  set.seed(222)
+  # generate the confounder first
+  H <- rbinom(n, size = 1, prob = 0.4)
+  probA <- H * 0.8 + (1 - H) * 0.3
+  A <- rbinom(n, size = 1, prob = probA)
+  probY <- A * (H * 0.5 + (1 - H) * 0.7) + (1 - A) * (H * 0.3 + (1 - H) * 0.5)
+  Y <- rbinom(n, size = 1, prob = probY)
+  data.frame(cbind(H, A, Y))
+}
+```
+
+with the same probabilities as `simstudy`
+
+```{r}
+tbl <- sim2.r() %>%
+  group_by(A, H, Y) %>%
+  count(name = "prob") %>%
+  ungroup() %>%
+  mutate(prob = prob / sum(prob))
+stopifnot(near(sum(tbl$prob), 1))
+tbl
+```
+
+and the author provides the theoretical probability table
+
+```{r}
+bb_5.7 <- data.frame(
+  A = c(0, 0, 0, 0, 1, 1, 1, 1),
+  H = c(0, 0, 1, 1, 0, 0, 1, 1),
+  Y = c(0, 1, 0, 1, 0, 1, 0, 1),
+  prob = c(0.21, 0.21, 0.056, 0.024, 0.024, 0.126, 0.16, 0.16)
+)
+bb_5.7
+```
+
+
+and computating the theoretical prob. as was donw above
+
+$$
+\begin{align*}
+P(Y, A, H) = P(Y \mid A, H)P(A \mid H)P(H) \\
+\end{align*}
+$$
+
+and from the simulation we have
+
+$$
+\begin{align*}
+P(H = 1) = 0.4 \\
+P(H = 0) = 0.6 \\
+P(A = 1 \mid H = 0) = 0.3 \\
+P(A = 0 \mid H = 0) = 1 - 0.3 = 0.7 \\
+P(A = 1 \mid H = 1) = 0.8 \\
+P(A = 0 \mid H = 1) = 1 - 0.8 = 0.2 \\
+P(Y = 1 \mid A = 1, H = 1) = 0.5\\
+P(Y = 0 \mid A = 1, H = 1) = 1 - 0.5 = 0.5\\
+P(Y = 1 \mid A = 1, H = 0) = 0.7\\
+P(Y = 0 \mid A = 1, H = 0) = 1 - 0.7 = 0.3\\
+P(Y = 1 \mid A = 0, H = 1) = 0.3\\
+P(Y = 0 \mid A = 0, H = 1) = 1 - 0.3 = 0.7\\
+P(Y = 1 \mid A = 0, H = 0) = 0.5\\
+P(Y = 0 \mid A = 0, H = 0) = 1 - 0.5 = 0.5\\
+\end{align*}
+$$
+
+Therefore for row 1 of table 5.2 we have
+
+$$
+\begin{align*}
+P(Y = 0, A = 0, H = 0) &= P(Y = 0 \mid A = 0, H = 0)P(A = 0 \mid H = 0)P(H = 0) \\
+&= 0.5 \times 0.7 \times 0.6 = 0.21
+\end{align*}
+$$
+
+
+and for row 4 of table 5.2
+
+
+$$
+\begin{align*}
+P(Y = 1, A = 0, H = 1) &= P(Y = 1 \mid A = 0, H = 1)P(A = 0 \mid H = 1)P(H = 1) \\
+&= 0.3 \times 0.2 \times 0.4 = 0.024
+\end{align*}
+$$
+
+
+Using either `sim1.r` or `sim2.r` we can get the joint probability of $A$ and 
+$Y$ using the law of total probabilities.
+
+
+```{r}
+bb_5.6 %>%
+  group_by(A, Y) %>%
+  summarize(prob = sum(prob))
+```
+
+```{r}
+bb_5.7 %>%
+  group_by(A, Y) %>%
+  summarize(prob = sum(prob))
+```
+
+
+Now
+
+> One might wonder if knowledge of $(A, H, Y)$ is equivalent to knowledge
+of $(A, Y0, Y1, Y)$ Given $(A, Y)$ we cannot recover both $Y0$ and $Y1$.
+
+For example we can recover $Y1 = 1$ since 
+
+$$
+\begin{align*}
+P(Y1 = 1 \mid A = 1, Y = 1) &= \frac{P(Y1 = 1, A = 1, Y = 1)}{P(A = 1, Y = 1)} \\
+&= \frac{0.175 + 0.111}{0.175 + 0.111} = 1
+\end{align*}
+$$
+
+but for $P(Y0 = 1 \mid A = 1, Y = 1)$ we have
+
+
+$$
+\begin{align*}
+P(Y0 = 1 \mid A = 1, Y = 1) &= \frac{P(Y0 = 1, A = 1, Y = 1)}{P(A = 1, Y = 1)} \\
+&= \frac{0.111}{0.175 + 0.111} = 0.39
+\end{align*}
+$$
+
+and so the likelihood that $Y0 = 1$ is only 39% and it is therefore more likely
+that $Y0 = 0$ . . . but not always.
+
+
+
+
+
+
+### Potential Outcomes Behind th Scenes
+
+
+
+```{r echo=TRUE}
+scm_5.8 <- list()
+scm_5.8 <- within(scm_5.8, {
+  the_nodes <- c("A" = "", 
+                 "Y" = "", 
+                 "U" = "(Y(0), y(1))")
+  dag <- dagify(
+    A ~ H,
+    Y ~ A + U,
+    U ~ H,
+    latent = "U",
+    labels = the_nodes)
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%
+    ggdag_status(color = status, text = FALSE) +
+    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 5, color = "midnightblue") +
+    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    labs(title = "Potential Outcomes Behind the Scenes")
+})
+```
+
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.8", warning=FALSE, out.width="60%"}
+scm_5.8$plot
+```
+
+
+
+```{r}
+scm_5.8 <- within(scm_5.8, {
+  set.seed(888)
+  # generate the observed confounder H
+  defs <- defData(varname = "H", dist = "binomial", 
+                  formula = 0.4, variance = 1)
+  # let the treatment depend on the observed confounder
+  formulaA <- "H * 0.8 + (1 - H) * 0.3"
+  defs <- defData(defs, varname = "A", dist = "binomial", 
+                  formula = formulaA, variance = 1)
+  # generate the poential outcomes dependent on the observed confounder
+  formulaY0 <- "H * 0.3 + (1 - H) * 0.5"
+  formulaY1 <- "H * 0.5 + (1 - H) * 0.7"
+  defs <- defData(defs, varname = "Y0", dist = "binomial", 
+                  formula = formulaY0, variance = 1)
+  defs <- defData(defs, varname = "Y1", dist = "binomial", 
+                  formula = formulaY1, variance = 1)
+  # let the outcome depend on the treatment and Y0, Y1
+  formulaY <- "A * Y1 + (1 - A) * Y0"
+  defs <- defData(defs, varname = "Y", dist = "binomial", 
+                  formula = formulaY, variance = 1)
+  
+  # generate the data
+  data <- genData(1000, defs)
+  
+  # create the tabletbl <- sim_5.6$data %>%
+  tbl <- data %>%
+    group_by(H, A, Y0, Y1, Y) %>%
+    count(name = "prob") %>%
+    ungroup() %>%
+    mutate(prob = prob / sum(prob))
+  stopifnot(near(sum(tbl$prob), 1))
+
+  # format the tableau
+  tbl <- tbl_probs(tbl, title = "Table for `simall.r`",
+                   subtitle = "Simulation Probabilities for `simall.r`")
+})
+scm_5.8$tbl
+```
+
+and with the script `simall.r` in base R
+
+
+```{r}
+simall.r <- function(n = 1000) {
+  set.seed(888)
+  # generate the observed confounder
+  H <- rbinom(n, size = 1, prob = 0.4)
+  # generate the treatment
+  probA <- H * 0.8 + (1 - H) * 0.3
+  A <- rbinom(n, size = 1, prob = probA)
+  # generate the poential outcomes dependent on the observed confounder
+  probY0 <- H * 0.3 + (1 - H) * 0.5
+  probY1 <- H * 0.5 + (1 - H) * 0.7
+  Y0 <- rbinom(n, size = 1, prob = probY0)
+  Y1 <- rbinom(n, size = 1, prob = probY1)
+  # let the outcome depend on the treatment and Y0, Y1
+  probY <- A * Y1 + (1 - A) * Y0
+  Y <- rbinom(n, size = 1, prob = probY)
+  data.frame(cbind(H, A, Y0, Y1, Y))
+}
+```
+
