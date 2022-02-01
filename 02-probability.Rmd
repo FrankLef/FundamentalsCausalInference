@@ -1,2 +1,361 @@
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr, quietly = TRUE)
+library(boot, quietly = TRUE)
+```
+
+
 # Conditional Probability and Expectation {#probability}
 
+
+```{r include=FALSE}
+a_dir <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 1")
+load(file.path(a_dir, "whatifdat.RData"))
+load(file.path(a_dir, "nces.RData"))
+```
+
+
+The mortality data is
+
+```{r}
+dataMortality <- data.frame(
+  "T" = c(TRUE, TRUE, FALSE, FALSE),
+  "H" = c(FALSE, TRUE, FALSE, TRUE),
+  "deaths" = c(756340, 2152660, 2923480, 7517520),
+  "population" = c(282305227, 48262955, 1297258493, 133015479),
+  "Y" = c(0.002679, 0.044603, 0.002254, 0.056516)
+)
+stopifnot(near(sum(dataMortality$Y), sum(dataMortality$deaths / dataMortality$population), 
+               tol = 1e-6))
+```
+
+
+
+## Conditional Probability
+
+
+### Law of total probability
+
+It is important to note that $\sum_i{H_i} = H$, that is $H$ can be partioned 
+in $i$ non-overlapping partitions.
+
+Then the law of total probabilities is
+
+$$
+\begin{align*}
+P(A) &= \sum_i{P(A \cap H_i)}= \sum_i{P(A \mid H_i) P(H_i)} \\
+&\text{and we condition the whole expression with B} \\
+P(A \mid B) &= \sum_i{P(A \cap H_i \mid B)}= \sum_i{P(A \mid B, H_i) P(B,H_i)} \\
+\end{align*}
+$$
+
+and the multiplication rule is
+
+
+$$
+\begin{align*}
+P(A, B \mid C) &= \frac{P(A, B, C)}{P(C)} \\
+&= \frac{P(A \mid B, C) P(B, C)}{P(C)} \\
+&= \frac{P(A \mid B, C) P(B \mid C) P(C)}{P(C)} \\
+&= P(A \mid B, C) P(B \mid C)
+\end{align*}
+$$
+
+
+
+## Conditional Expectation and he Law of Total expectation
+
+The function `expit()` used by the author is actually the same as
+`gtools::inv.logit()` or `stats::plogis()`. In this project we use
+`stats::plogis()` because it is in base R and we want to minimize
+dependencies.
+
+## Estimation
+
+Using the *What-if* example we have
+
+$$
+\begin{align*}
+X_i \beta &= X_{i,1} \beta_i +\ldots+X_{i, p}\beta_p \\
+&\therefore \\
+X_i \beta &= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i \\
+\end{align*}
+$$
+
+and 
+
+$$
+X_i^T(Y_i - X_i \beta) \\
+\therefore \\
+\begin{bmatrix}
+1 \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
+A_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
+T_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)\\
+H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
+\end{bmatrix}
+$$
+
+
+
+## Sampling Distributions and the Bootstrap
+
+This code reflects better coding practices than the textbook's I think.
+In particular with the use of `replicate()` and avoiding the `for` loop.
+
+```{r}
+sim.r <- function(nsim = 1e4, n = 1e4) {
+  # get the statistics from the 2 samplings
+  out <- replicate(n = nsim, expr = {
+    y <- rnorm(n)
+    x <- rnorm(n)
+    muhaty <- mean(y)  # mean of the y sample
+    sehaty <- sqrt(var(y) / n)  # standard error of the y sample
+    lci <- muhaty - 1.96 * sehaty  # lower bound of the y sample
+    uci <- muhaty + 1.96 * sehaty  # upper bound of the y sample
+    muhatx <- mean(x)  # mean of the x sample
+    # is mean(x) within the interval from y?
+    bad <- (muhatx >= lci) & (muhatx <= uci)
+    # is the true mean of 0 within the interval from y?
+    good <- (0 >= lci) & (0 <= uci)
+    # return the results
+    c("bad" = bad, "good" = good)
+    })
+  # convert to data.frame
+  out <- data.frame(t(out))
+  pbad <- sum(out$bad) / nrow(out)  # proportion in bad interval
+  pgood <- sum(out$good) / nrow(out)  # proportion in good interval
+  # return results in a list
+  list("bad" = pbad, "good" = pgood)
+}
+```
+
+Run and verify with author's results on p. 32
+
+
+```{r}
+d <- sim.r()
+d
+stopifnot(near(d$bad, 0.8374, tol = 0.01), 
+          near(d$good, 0.948, tol = 0.01))
+```
+
+
+The textbook's version of this function has 13 lines.  This one only has 7
+and use `boot::boot.ci()` and `stats::plogis()` to simplify.
+
+Also we change the way the function works to
+
+* harmonize it with other similar functions coming up in later chapters
+* use formulas in the parameters to better understand what the process is. 
+This point is important as this is, in my experience, the tricky part to 
+understand.
+
+
+```{r}
+#  - Estimate the unconditional sampling distribution when using all
+#    variables with cond = all.vars(formula[[3]]).
+# - It is the conditional sampling distribution when using only some predictors
+#    such as with Y ~ `T` + A + H as is done in exercise 5 below.
+lmodboot.r <- function(dat, formula = Y ~ `T` + A + H,
+                       cond = Y ~ `T` + A + H, 
+                       R = 1000, conf = 0.95) {
+  # the name of the intercept variable used by glm
+  x0 <- "(Intercept)"
+  # the name of the predictor variables in the condition formula
+  cond <- all.vars(cond[[3]])
+  
+  estimator <- function(data, ids) {
+    dat <- data[ids, ]
+    coefs <- coef(glm(formula = formula, family = binomial, data = dat))
+    # use cond to identify conditioned variables.
+    # i.e. the user can decide not to use all variables from the formula
+    # or, in other words, condition on some variables
+    coefs <- coefs[c(x0, cond)]
+    sum(coefs)
+  }
+  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
+  # the estimate on the logit scale
+  est.logit <- boot.out$t0
+  # the confidence interval on the logit scale using normal interval
+  ci.logit <- boot::boot.ci(boot.out, conf = conf, type = "norm")$normal
+  # the estimate and confidence interval on the natural scale
+  # NOTE: the plogis() function gives the inverse logit
+  out <- c("est" = plogis(est.logit), "conf" = ci.logit[1], 
+           "lci" = plogis(ci.logit[2]), "uci" =  plogis(ci.logit[3]))
+  out
+}
+```
+
+Run and verify against the author's results on p.34
+
+```{r}
+d <- lmodboot.r(whatifdat)
+d
+# check results with book
+stopifnot(near(d["est"], 0.60596, 0.01),
+          near(d["lci"], 0.41638, 0.01),
+          near(d["uci"], 0.76823, 0.015))
+```
+
+
+## Exercises
+
+Please note that the solutions to exercises of @brumback2022 below are my own 
+and have not been verified or approved in any way by the author.
+
+### Exercise 1
+
+```{r}
+df <- whatifdat
+probs <- list()
+# probability of having A = 1 and T = 1
+probs["B,C"] <- nrow(df[df$A == 1 & df$`T` == 1, ]) / nrow(df)
+# conditioning on C means conditioning on T = 1 which means
+# that we have to filter the data with the condition T = 1
+dfC <- df[df$`T` == 1, ]
+# the probability of C, i.e. T = 1
+probs["C"] <- nrow(dfC) / nrow(df)
+# the prob of B given C (i.e. nb of row with A = 1 using filtered data)
+probs["B|C"] <- nrow(dfC[dfC$A == 1, ]) / nrow(dfC)
+# check the result
+stopifnot(near(probs[["B,C"]], probs[["B|C"]] * probs[["C"]]))
+msg <- sprintf("prob(B,C) = %0.6f, prob(B|C) x prob(C) = %0.6f",
+               probs[["B,C"]], probs[["B|C"]] * probs[["C"]])
+message(msg)
+```
+
+
+
+
+### Exercise 2
+
+
+We create the datasets to reflect the conditioning, i.e. the filtering based
+on the conditions given.
+
+```{r}
+df <- nces
+dfAC <- df[df$highmathsat == 1 & df$selective == 1, ]
+dfBC <- df[df$female == 1 & df$selective == 1, ]
+dfC <- df[df$selective == 1, ]
+```
+
+then we calculate the conditional probabilities
+
+```{r}
+probs <- list()
+probs["A|B,C"] <- nrow(dfBC[dfBC$highmathsat == 1, ]) / nrow(dfBC)
+probs["B|A,C"] <- nrow(dfAC[dfAC$female == 1, ]) / nrow(dfAC)
+probs["A|C"] <- nrow(dfC[dfC$highmathsat == 1, ]) / nrow(dfC)
+probs["B|C"] <- nrow(dfC[dfC$female == 1, ]) / nrow(dfC)
+probs$x <- probs[["B|A,C"]] * probs[["A|C"]] / probs[["B|C"]]
+stopifnot(near(probs[["A|B,C"]], probs$x))
+msg <- sprintf("%0.6f = %0.6f", probs[["A|B,C"]], probs$x)
+message(msg)
+```
+
+### Exercise 3
+
+Mathematically
+
+$$
+\begin{align*}
+P(A \mid B) &= \frac{P(A,B)}{P(B)} \\
+&= \frac{P(B \mid A) P(A)}{P(B, A) + P(B, \neg{A})} \\
+&= \frac{P(B \mid A) P(A)}{P(B \mid A)P(A) + P(B \mid \neg{A})P(\neg A)}
+\end{align*}
+$$
+
+Empirically
+
+```{r}
+df <- whatifdat
+dfA <- df[df$`T` == 1, ]
+dfAnot <- df[df$`T` != 1, ]
+dfB <- df[df$H == 1, ]
+```
+
+
+```{r}
+probs <- list()
+probs["A|B"] <- nrow(dfB[dfB$`T` == 1, ]) / nrow(dfB)
+probs["B|A"] <- nrow(dfA[dfA$H == 1, ]) / nrow(dfA)
+probs["B|-A"] <- nrow(dfAnot[dfAnot$H == 1, ]) / nrow(dfAnot)
+probs["A"] <- nrow(dfA) / nrow(df)
+probs["-A"] <- nrow(dfAnot) / nrow(df)
+probs$x <- (probs[["B|A"]] * probs[["A"]]) /
+  (probs[["B|A"]] * probs[["A"]] + probs[["B|-A"]] * probs[["-A"]])
+stopifnot(near(probs$x, probs[["A|B"]]))
+msg <- sprintf("%0.6f = %0.6f", probs[["A|B"]], probs$x)
+message(msg)
+```
+
+### Exercise 4
+
+See section 2.2, top of p. 23, for comment that *conditional mean independence
+implies unconditional uncorrelation, but not the other way around*.
+
+First, we see that the unconditional correlation is demonstrated.
+
+$$
+\begin{align*}
+E(XY) &= \sum_x \sum_y x \cdot y \cdot P(X = x, Y = y) \\
+&= 1 \cdot 1 \cdot P(X = 1, Y = 1) + 2 \cdot -2 \cdot P(X = 2, Y = -2) + 3 \cdot 1 \cdot P(X = 3, Y = 1) \\
+&= 1 \cdot 1 \cdot \frac{1}{3} + 2 \cdot -2 \cdot \frac{1}{3} + 3 \cdot 1 \cdot \frac{1}{3} = 0 \\ \\
+E(X)E(Y) &= \sum_x \sum_y x \cdot P(X = x, Y = y) \times \sum_x \sum_y y \cdot P(X = x, Y = y) \\
+&= \left( 1 \cdot \frac{1}{3} + 2 \cdot \frac{1}{3} + 3 \cdot \frac{1}{3} \right) \times
+ \left( 1 \cdot \frac{2}{3} + -2 \cdot \frac{1}{3} \right) = 0 \\ \\
+&\therefore \\
+E(XY) &= 0 = E(X)E(Y)
+\end{align*}
+$$
+
+and to show that we **do not** have a mean conditional independence, it is 
+sufficient to show for any value $x$ that $E(Y \mid X = x) \neq E(Y)$
+
+$$
+\begin{align*}
+E(Y \mid X = 1) &= \sum_y y P(Y = y \mid X = 1) \\
+ &= \sum_y y \frac{P(X = 1, Y = y)}{P(X = 1)} \\
+ &= 1 \cdot \frac{P(X = 1, Y = 1)}{P(X = 1)} -2 \cdot \frac{P(X = 1, Y = -2)}{P(X = 1)} \\
+ &= 1 \cdot \frac{\frac{1}{3}}{\frac{1}{3}} - 2 \cdot \frac{0}{\frac{1}{3}} = 1 \\ \\
+E(Y) &= \sum_y y  \cdot P(Y= y) \\
+ &= 1 \cdot \frac{2}{3} - 2 \cdot \frac{1}{3} = 0 \\ \\
+&\therefore \\
+E(Y \mid X = 1) &\neq E(Y)
+\end{align*}
+$$
+
+### Exercise 5
+
+See section 2.4 at the end on how to do this, p. 34 and 35.
+
+The nonparametric estimate and ci is
+
+
+```{r}
+df <- whatifdat
+df <- df[(df$A == 1) & (df$H == 0) & (df$`T` == 1), ]
+nonparametric <- list(
+  est = mean(df$Y),
+  se = sqrt(var(df$Y) / nrow(df))
+  )
+nonparametric <- within(nonparametric, {
+  lci <- est - 1.96 * se
+  uci <- est + 1.96 * se
+})
+nonparametric
+```
+
+and using the bootstrap function from above we get the parametric estimate and 
+ci
+
+
+```{r}
+parametric <- lmodboot.r(whatifdat, formula = Y ~ `T` + A + H, 
+                         cond = Y ~ `T` + A)
+parametric
+```
+
+which is very similar to the nonparametric and a little narrower because of the 
+*bias-variance tradeoff* as discussed in the last paragraph of chapter 2.

@@ -223,7 +223,24 @@ div.csl-indent {
 <li class="chapter" data-level="1.3.8" data-path="intro.html"><a href="intro.html#exercise-8"><i class="fa fa-check"></i><b>1.3.8</b> Exercise 8</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="probability.html"><a href="probability.html"><i class="fa fa-check"></i><b>2</b> Conditional Probability and Expectation</a></li>
+<li class="chapter" data-level="2" data-path="probability.html"><a href="probability.html"><i class="fa fa-check"></i><b>2</b> Conditional Probability and Expectation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="probability.html"><a href="probability.html#conditional-probability"><i class="fa fa-check"></i><b>2.1</b> Conditional Probability</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="probability.html"><a href="probability.html#law-of-total-probability"><i class="fa fa-check"></i><b>2.1.1</b> Law of total probability</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-he-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and he Law of Total expectation</a></li>
+<li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation</a></li>
+<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap</a></li>
+<li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-2"><i class="fa fa-check"></i><b>2.5</b> Exercises</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="probability.html"><a href="probability.html#exercise-1-2"><i class="fa fa-check"></i><b>2.5.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="2.5.2" data-path="probability.html"><a href="probability.html#exercise-2-1"><i class="fa fa-check"></i><b>2.5.2</b> Exercise 2</a></li>
+<li class="chapter" data-level="2.5.3" data-path="probability.html"><a href="probability.html#exercise-3-1"><i class="fa fa-check"></i><b>2.5.3</b> Exercise 3</a></li>
+<li class="chapter" data-level="2.5.4" data-path="probability.html"><a href="probability.html#exercise-4-1"><i class="fa fa-check"></i><b>2.5.4</b> Exercise 4</a></li>
+<li class="chapter" data-level="2.5.5" data-path="probability.html"><a href="probability.html#exercise-5-2"><i class="fa fa-check"></i><b>2.5.5</b> Exercise 5</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference</a></li>
 <li class="chapter" data-level="4" data-path="measures.html"><a href="measures.html"><i class="fa fa-check"></i><b>4</b> Effect-Measure Modification and Causal Interaction</a></li>
 <li class="chapter" data-level="5" data-path="dag.html"><a href="dag.html"><i class="fa fa-check"></i><b>5</b> Causal Directed Acyclic Graphs</a></li>
@@ -251,7 +268,307 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="probability" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Conditional Probability and Expectation</h1>
+<p>The mortality data is</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="probability.html#cb6-1" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-2"><a href="probability.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>),</span>
+<span id="cb6-3"><a href="probability.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;H&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
+<span id="cb6-4"><a href="probability.html#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;deaths&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">756340</span>, <span class="dv">2152660</span>, <span class="dv">2923480</span>, <span class="dv">7517520</span>),</span>
+<span id="cb6-5"><a href="probability.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;population&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">282305227</span>, <span class="dv">48262955</span>, <span class="dv">1297258493</span>, <span class="dv">133015479</span>),</span>
+<span id="cb6-6"><a href="probability.html#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.002679</span>, <span class="fl">0.044603</span>, <span class="fl">0.002254</span>, <span class="fl">0.056516</span>)</span>
+<span id="cb6-7"><a href="probability.html#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-8"><a href="probability.html#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(dataMortality<span class="sc">$</span>Y), <span class="fu">sum</span>(dataMortality<span class="sc">$</span>deaths <span class="sc">/</span> dataMortality<span class="sc">$</span>population), </span>
+<span id="cb6-9"><a href="probability.html#cb6-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">tol =</span> <span class="fl">1e-6</span>))</span></code></pre></div>
+<div id="conditional-probability" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Conditional Probability</h2>
+<div id="law-of-total-probability" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Law of total probability</h3>
+<p>It is important to note that <span class="math inline">\(\sum_i{H_i} = H\)</span>, that is <span class="math inline">\(H\)</span> can be partioned
+in <span class="math inline">\(i\)</span> non-overlapping partitions.</p>
+<p>Then the law of total probabilities is</p>
+<p><span class="math display">\[
+\begin{align*}
+P(A) &amp;= \sum_i{P(A \cap H_i)}= \sum_i{P(A \mid H_i) P(H_i)} \\
+&amp;\text{and we condition the whole expression with B} \\
+P(A \mid B) &amp;= \sum_i{P(A \cap H_i \mid B)}= \sum_i{P(A \mid B, H_i) P(B,H_i)} \\
+\end{align*}
+\]</span></p>
+<p>and the multiplication rule is</p>
+<p><span class="math display">\[
+\begin{align*}
+P(A, B \mid C) &amp;= \frac{P(A, B, C)}{P(C)} \\
+&amp;= \frac{P(A \mid B, C) P(B, C)}{P(C)} \\
+&amp;= \frac{P(A \mid B, C) P(B \mid C) P(C)}{P(C)} \\
+&amp;= P(A \mid B, C) P(B \mid C)
+\end{align*}
+\]</span></p>
+</div>
+</div>
+<div id="conditional-expectation-and-he-law-of-total-expectation" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Conditional Expectation and he Law of Total expectation</h2>
+<p>The function <code>expit()</code> used by the author is actually the same as
+<code>gtools::inv.logit()</code> or <code>stats::plogis()</code>. In this project we use
+<code>stats::plogis()</code> because it is in base R and we want to minimize
+dependencies.</p>
+</div>
+<div id="estimation" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Estimation</h2>
+<p>Using the <em>What-if</em> example we have</p>
+<p><span class="math display">\[
+\begin{align*}
+X_i \beta &amp;= X_{i,1} \beta_i +\ldots+X_{i, p}\beta_p \\
+&amp;\therefore \\
+X_i \beta &amp;= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i \\
+\end{align*}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+X_i^T(Y_i - X_i \beta) \\
+\therefore \\
+\begin{bmatrix}
+1 \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
+A_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
+T_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)\\
+H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
+\end{bmatrix}
+\]</span></p>
+</div>
+<div id="sampling-distributions-and-the-bootstrap" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Sampling Distributions and the Bootstrap</h2>
+<p>This code reflects better coding practices than the textbook’s I think.
+In particular with the use of <code>replicate()</code> and avoiding the <code>for</code> loop.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a>sim.r <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">nsim =</span> <span class="fl">1e4</span>, <span class="at">n =</span> <span class="fl">1e4</span>) {</span>
+<span id="cb7-2"><a href="probability.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the statistics from the 2 samplings</span></span>
+<span id="cb7-3"><a href="probability.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="at">n =</span> nsim, <span class="at">expr =</span> {</span>
+<span id="cb7-4"><a href="probability.html#cb7-4" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb7-5"><a href="probability.html#cb7-5" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb7-6"><a href="probability.html#cb7-6" aria-hidden="true" tabindex="-1"></a>    muhaty <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)  <span class="co"># mean of the y sample</span></span>
+<span id="cb7-7"><a href="probability.html#cb7-7" aria-hidden="true" tabindex="-1"></a>    sehaty <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">var</span>(y) <span class="sc">/</span> n)  <span class="co"># standard error of the y sample</span></span>
+<span id="cb7-8"><a href="probability.html#cb7-8" aria-hidden="true" tabindex="-1"></a>    lci <span class="ot">&lt;-</span> muhaty <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> sehaty  <span class="co"># lower bound of the y sample</span></span>
+<span id="cb7-9"><a href="probability.html#cb7-9" aria-hidden="true" tabindex="-1"></a>    uci <span class="ot">&lt;-</span> muhaty <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> sehaty  <span class="co"># upper bound of the y sample</span></span>
+<span id="cb7-10"><a href="probability.html#cb7-10" aria-hidden="true" tabindex="-1"></a>    muhatx <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)  <span class="co"># mean of the x sample</span></span>
+<span id="cb7-11"><a href="probability.html#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># is mean(x) within the interval from y?</span></span>
+<span id="cb7-12"><a href="probability.html#cb7-12" aria-hidden="true" tabindex="-1"></a>    bad <span class="ot">&lt;-</span> (muhatx <span class="sc">&gt;=</span> lci) <span class="sc">&amp;</span> (muhatx <span class="sc">&lt;=</span> uci)</span>
+<span id="cb7-13"><a href="probability.html#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># is the true mean of 0 within the interval from y?</span></span>
+<span id="cb7-14"><a href="probability.html#cb7-14" aria-hidden="true" tabindex="-1"></a>    good <span class="ot">&lt;-</span> (<span class="dv">0</span> <span class="sc">&gt;=</span> lci) <span class="sc">&amp;</span> (<span class="dv">0</span> <span class="sc">&lt;=</span> uci)</span>
+<span id="cb7-15"><a href="probability.html#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># return the results</span></span>
+<span id="cb7-16"><a href="probability.html#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;bad&quot;</span> <span class="ot">=</span> bad, <span class="st">&quot;good&quot;</span> <span class="ot">=</span> good)</span>
+<span id="cb7-17"><a href="probability.html#cb7-17" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-18"><a href="probability.html#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert to data.frame</span></span>
+<span id="cb7-19"><a href="probability.html#cb7-19" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(out))</span>
+<span id="cb7-20"><a href="probability.html#cb7-20" aria-hidden="true" tabindex="-1"></a>  pbad <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>bad) <span class="sc">/</span> <span class="fu">nrow</span>(out)  <span class="co"># proportion in bad interval</span></span>
+<span id="cb7-21"><a href="probability.html#cb7-21" aria-hidden="true" tabindex="-1"></a>  pgood <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>good) <span class="sc">/</span> <span class="fu">nrow</span>(out)  <span class="co"># proportion in good interval</span></span>
+<span id="cb7-22"><a href="probability.html#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return results in a list</span></span>
+<span id="cb7-23"><a href="probability.html#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;bad&quot;</span> <span class="ot">=</span> pbad, <span class="st">&quot;good&quot;</span> <span class="ot">=</span> pgood)</span>
+<span id="cb7-24"><a href="probability.html#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Run and verify with author’s results on p. 32</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="probability.html#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim.r</span>()</span>
+<span id="cb8-2"><a href="probability.html#cb8-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<pre><code>## $bad
+## [1] 0.8318
+## 
+## $good
+## [1] 0.9515</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="probability.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d<span class="sc">$</span>bad, <span class="fl">0.8374</span>, <span class="at">tol =</span> <span class="fl">0.01</span>), </span>
+<span id="cb10-2"><a href="probability.html#cb10-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d<span class="sc">$</span>good, <span class="fl">0.948</span>, <span class="at">tol =</span> <span class="fl">0.01</span>))</span></code></pre></div>
+<p>The textbook’s version of this function has 13 lines. This one only has 7
+and use <code>boot::boot.ci()</code> and <code>stats::plogis()</code> to simplify.</p>
+<p>Also we change the way the function works to</p>
+<ul>
+<li>harmonize it with other similar functions coming up in later chapters</li>
+<li>use formulas in the parameters to better understand what the process is.
+This point is important as this is, in my experience, the tricky part to
+understand.</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="probability.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#  - Estimate the unconditional sampling distribution when using all</span></span>
+<span id="cb11-2"><a href="probability.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    variables with cond = all.vars(formula[[3]]).</span></span>
+<span id="cb11-3"><a href="probability.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - It is the conditional sampling distribution when using only some predictors</span></span>
+<span id="cb11-4"><a href="probability.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    such as with Y ~ `T` + A + H as is done in exercise 5 below.</span></span>
+<span id="cb11-5"><a href="probability.html#cb11-5" aria-hidden="true" tabindex="-1"></a>lmodboot.r <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H,</span>
+<span id="cb11-6"><a href="probability.html#cb11-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cond =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
+<span id="cb11-7"><a href="probability.html#cb11-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb11-8"><a href="probability.html#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
+<span id="cb11-9"><a href="probability.html#cb11-9" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
+<span id="cb11-10"><a href="probability.html#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the predictor variables in the condition formula</span></span>
+<span id="cb11-11"><a href="probability.html#cb11-11" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond[[<span class="dv">3</span>]])</span>
+<span id="cb11-12"><a href="probability.html#cb11-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-13"><a href="probability.html#cb11-13" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb11-14"><a href="probability.html#cb11-14" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb11-15"><a href="probability.html#cb11-15" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> binomial, <span class="at">data =</span> dat))</span>
+<span id="cb11-16"><a href="probability.html#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use cond to identify conditioned variables.</span></span>
+<span id="cb11-17"><a href="probability.html#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. the user can decide not to use all variables from the formula</span></span>
+<span id="cb11-18"><a href="probability.html#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or, in other words, condition on some variables</span></span>
+<span id="cb11-19"><a href="probability.html#cb11-19" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> coefs[<span class="fu">c</span>(x0, cond)]</span>
+<span id="cb11-20"><a href="probability.html#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(coefs)</span>
+<span id="cb11-21"><a href="probability.html#cb11-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-22"><a href="probability.html#cb11-22" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R)</span>
+<span id="cb11-23"><a href="probability.html#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the estimate on the logit scale</span></span>
+<span id="cb11-24"><a href="probability.html#cb11-24" aria-hidden="true" tabindex="-1"></a>  est.logit <span class="ot">&lt;-</span> boot.out<span class="sc">$</span>t0</span>
+<span id="cb11-25"><a href="probability.html#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the confidence interval on the logit scale using normal interval</span></span>
+<span id="cb11-26"><a href="probability.html#cb11-26" aria-hidden="true" tabindex="-1"></a>  ci.logit <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(boot.out, <span class="at">conf =</span> conf, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>)<span class="sc">$</span>normal</span>
+<span id="cb11-27"><a href="probability.html#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the estimate and confidence interval on the natural scale</span></span>
+<span id="cb11-28"><a href="probability.html#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># </span><span class="al">NOTE</span><span class="co">: the plogis() function gives the inverse logit</span></span>
+<span id="cb11-29"><a href="probability.html#cb11-29" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span> <span class="ot">=</span> <span class="fu">plogis</span>(est.logit), <span class="st">&quot;conf&quot;</span> <span class="ot">=</span> ci.logit[<span class="dv">1</span>], </span>
+<span id="cb11-30"><a href="probability.html#cb11-30" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;lci&quot;</span> <span class="ot">=</span> <span class="fu">plogis</span>(ci.logit[<span class="dv">2</span>]), <span class="st">&quot;uci&quot;</span> <span class="ot">=</span>  <span class="fu">plogis</span>(ci.logit[<span class="dv">3</span>]))</span>
+<span id="cb11-31"><a href="probability.html#cb11-31" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb11-32"><a href="probability.html#cb11-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Run and verify against the author’s results on p.34</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="probability.html#cb12-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">lmodboot.r</span>(whatifdat)</span>
+<span id="cb12-2"><a href="probability.html#cb12-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<pre><code>##       est      conf       lci       uci 
+## 0.6059581 0.9500000 0.4147740 0.7652328</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="probability.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
+<span id="cb14-2"><a href="probability.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d[<span class="st">&quot;est&quot;</span>], <span class="fl">0.60596</span>, <span class="fl">0.01</span>),</span>
+<span id="cb14-3"><a href="probability.html#cb14-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;lci&quot;</span>], <span class="fl">0.41638</span>, <span class="fl">0.01</span>),</span>
+<span id="cb14-4"><a href="probability.html#cb14-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;uci&quot;</span>], <span class="fl">0.76823</span>, <span class="fl">0.015</span>))</span></code></pre></div>
+</div>
+<div id="exercises-2" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Exercises</h2>
+<p>Please note that the solutions to exercises of <span class="citation"><a href="#ref-brumback2022" role="doc-biblioref">Brumback</a> (<a href="#ref-brumback2022" role="doc-biblioref">2022</a>)</span> below are my own
+and have not been verified or approved in any way by the author.</p>
+<div id="exercise-1-2" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Exercise 1</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="probability.html#cb15-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb15-2"><a href="probability.html#cb15-2" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb15-3"><a href="probability.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># probability of having A = 1 and T = 1</span></span>
+<span id="cb15-4"><a href="probability.html#cb15-4" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B,C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df[df<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> df<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb15-5"><a href="probability.html#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># conditioning on C means conditioning on T = 1 which means</span></span>
+<span id="cb15-6"><a href="probability.html#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># that we have to filter the data with the condition T = 1</span></span>
+<span id="cb15-7"><a href="probability.html#cb15-7" aria-hidden="true" tabindex="-1"></a>dfC <span class="ot">&lt;-</span> df[df<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb15-8"><a href="probability.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># the probability of C, i.e. T = 1</span></span>
+<span id="cb15-9"><a href="probability.html#cb15-9" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfC) <span class="sc">/</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb15-10"><a href="probability.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># the prob of B given C (i.e. nb of row with A = 1 using filtered data)</span></span>
+<span id="cb15-11"><a href="probability.html#cb15-11" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B|C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfC[dfC<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfC)</span>
+<span id="cb15-12"><a href="probability.html#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check the result</span></span>
+<span id="cb15-13"><a href="probability.html#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(probs[[<span class="st">&quot;B,C&quot;</span>]], probs[[<span class="st">&quot;B|C&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;C&quot;</span>]]))</span>
+<span id="cb15-14"><a href="probability.html#cb15-14" aria-hidden="true" tabindex="-1"></a>msg <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&quot;prob(B,C) = %0.6f, prob(B|C) x prob(C) = %0.6f&quot;</span>,</span>
+<span id="cb15-15"><a href="probability.html#cb15-15" aria-hidden="true" tabindex="-1"></a>               probs[[<span class="st">&quot;B,C&quot;</span>]], probs[[<span class="st">&quot;B|C&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;C&quot;</span>]])</span>
+<span id="cb15-16"><a href="probability.html#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(msg)</span></code></pre></div>
+<pre><code>## prob(B,C) = 0.315152, prob(B|C) x prob(C) = 0.315152</code></pre>
+</div>
+<div id="exercise-2-1" class="section level3" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Exercise 2</h3>
+<p>We create the datasets to reflect the conditioning, i.e. the filtering based
+on the conditions given.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="probability.html#cb17-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> nces</span>
+<span id="cb17-2"><a href="probability.html#cb17-2" aria-hidden="true" tabindex="-1"></a>dfAC <span class="ot">&lt;-</span> df[df<span class="sc">$</span>highmathsat <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> df<span class="sc">$</span>selective <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb17-3"><a href="probability.html#cb17-3" aria-hidden="true" tabindex="-1"></a>dfBC <span class="ot">&lt;-</span> df[df<span class="sc">$</span>female <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> df<span class="sc">$</span>selective <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb17-4"><a href="probability.html#cb17-4" aria-hidden="true" tabindex="-1"></a>dfC <span class="ot">&lt;-</span> df[df<span class="sc">$</span>selective <span class="sc">==</span> <span class="dv">1</span>, ]</span></code></pre></div>
+<p>then we calculate the conditional probabilities</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="probability.html#cb18-1" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb18-2"><a href="probability.html#cb18-2" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;A|B,C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfBC[dfBC<span class="sc">$</span>highmathsat <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfBC)</span>
+<span id="cb18-3"><a href="probability.html#cb18-3" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B|A,C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfAC[dfAC<span class="sc">$</span>female <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfAC)</span>
+<span id="cb18-4"><a href="probability.html#cb18-4" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;A|C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfC[dfC<span class="sc">$</span>highmathsat <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfC)</span>
+<span id="cb18-5"><a href="probability.html#cb18-5" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B|C&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfC[dfC<span class="sc">$</span>female <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfC)</span>
+<span id="cb18-6"><a href="probability.html#cb18-6" aria-hidden="true" tabindex="-1"></a>probs<span class="sc">$</span>x <span class="ot">&lt;-</span> probs[[<span class="st">&quot;B|A,C&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;A|C&quot;</span>]] <span class="sc">/</span> probs[[<span class="st">&quot;B|C&quot;</span>]]</span>
+<span id="cb18-7"><a href="probability.html#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(probs[[<span class="st">&quot;A|B,C&quot;</span>]], probs<span class="sc">$</span>x))</span>
+<span id="cb18-8"><a href="probability.html#cb18-8" aria-hidden="true" tabindex="-1"></a>msg <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&quot;%0.6f = %0.6f&quot;</span>, probs[[<span class="st">&quot;A|B,C&quot;</span>]], probs<span class="sc">$</span>x)</span>
+<span id="cb18-9"><a href="probability.html#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(msg)</span></code></pre></div>
+<pre><code>## 0.345238 = 0.345238</code></pre>
+</div>
+<div id="exercise-3-1" class="section level3" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Exercise 3</h3>
+<p>Mathematically</p>
+<p><span class="math display">\[
+\begin{align*}
+P(A \mid B) &amp;= \frac{P(A,B)}{P(B)} \\
+&amp;= \frac{P(B \mid A) P(A)}{P(B, A) + P(B, \neg{A})} \\
+&amp;= \frac{P(B \mid A) P(A)}{P(B \mid A)P(A) + P(B \mid \neg{A})P(\neg A)}
+\end{align*}
+\]</span></p>
+<p>Empirically</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="probability.html#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb20-2"><a href="probability.html#cb20-2" aria-hidden="true" tabindex="-1"></a>dfA <span class="ot">&lt;-</span> df[df<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb20-3"><a href="probability.html#cb20-3" aria-hidden="true" tabindex="-1"></a>dfAnot <span class="ot">&lt;-</span> df[df<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">!=</span> <span class="dv">1</span>, ]</span>
+<span id="cb20-4"><a href="probability.html#cb20-4" aria-hidden="true" tabindex="-1"></a>dfB <span class="ot">&lt;-</span> df[df<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>, ]</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="probability.html#cb21-1" aria-hidden="true" tabindex="-1"></a>probs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb21-2"><a href="probability.html#cb21-2" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;A|B&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfB[dfB<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfB)</span>
+<span id="cb21-3"><a href="probability.html#cb21-3" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B|A&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfA[dfA<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfA)</span>
+<span id="cb21-4"><a href="probability.html#cb21-4" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;B|-A&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfAnot[dfAnot<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>, ]) <span class="sc">/</span> <span class="fu">nrow</span>(dfAnot)</span>
+<span id="cb21-5"><a href="probability.html#cb21-5" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;A&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfA) <span class="sc">/</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb21-6"><a href="probability.html#cb21-6" aria-hidden="true" tabindex="-1"></a>probs[<span class="st">&quot;-A&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dfAnot) <span class="sc">/</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb21-7"><a href="probability.html#cb21-7" aria-hidden="true" tabindex="-1"></a>probs<span class="sc">$</span>x <span class="ot">&lt;-</span> (probs[[<span class="st">&quot;B|A&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;A&quot;</span>]]) <span class="sc">/</span></span>
+<span id="cb21-8"><a href="probability.html#cb21-8" aria-hidden="true" tabindex="-1"></a>  (probs[[<span class="st">&quot;B|A&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;A&quot;</span>]] <span class="sc">+</span> probs[[<span class="st">&quot;B|-A&quot;</span>]] <span class="sc">*</span> probs[[<span class="st">&quot;-A&quot;</span>]])</span>
+<span id="cb21-9"><a href="probability.html#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(probs<span class="sc">$</span>x, probs[[<span class="st">&quot;A|B&quot;</span>]]))</span>
+<span id="cb21-10"><a href="probability.html#cb21-10" aria-hidden="true" tabindex="-1"></a>msg <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">&quot;%0.6f = %0.6f&quot;</span>, probs[[<span class="st">&quot;A|B&quot;</span>]], probs<span class="sc">$</span>x)</span>
+<span id="cb21-11"><a href="probability.html#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(msg)</span></code></pre></div>
+<pre><code>## 0.542373 = 0.542373</code></pre>
+</div>
+<div id="exercise-4-1" class="section level3" number="2.5.4">
+<h3><span class="header-section-number">2.5.4</span> Exercise 4</h3>
+<p>See section 2.2, top of p. 23, for comment that <em>conditional mean independence
+implies unconditional uncorrelation, but not the other way around</em>.</p>
+<p>First, we see that the unconditional correlation is demonstrated.</p>
+<p><span class="math display">\[
+\begin{align*}
+E(XY) &amp;= \sum_x \sum_y x \cdot y \cdot P(X = x, Y = y) \\
+&amp;= 1 \cdot 1 \cdot P(X = 1, Y = 1) + 2 \cdot -2 \cdot P(X = 2, Y = -2) + 3 \cdot 1 \cdot P(X = 3, Y = 1) \\
+&amp;= 1 \cdot 1 \cdot \frac{1}{3} + 2 \cdot -2 \cdot \frac{1}{3} + 3 \cdot 1 \cdot \frac{1}{3} = 0 \\ \\
+E(X)E(Y) &amp;= \sum_x \sum_y x \cdot P(X = x, Y = y) \times \sum_x \sum_y y \cdot P(X = x, Y = y) \\
+&amp;= \left( 1 \cdot \frac{1}{3} + 2 \cdot \frac{1}{3} + 3 \cdot \frac{1}{3} \right) \times
+ \left( 1 \cdot \frac{2}{3} + -2 \cdot \frac{1}{3} \right) = 0 \\ \\
+&amp;\therefore \\
+E(XY) &amp;= 0 = E(X)E(Y)
+\end{align*}
+\]</span></p>
+<p>and to show that we <strong>do not</strong> have a mean conditional independence, it is
+sufficient to show for any value <span class="math inline">\(x\)</span> that <span class="math inline">\(E(Y \mid X = x) \neq E(Y)\)</span></p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y \mid X = 1) &amp;= \sum_y y P(Y = y \mid X = 1) \\
+ &amp;= \sum_y y \frac{P(X = 1, Y = y)}{P(X = 1)} \\
+ &amp;= 1 \cdot \frac{P(X = 1, Y = 1)}{P(X = 1)} -2 \cdot \frac{P(X = 1, Y = -2)}{P(X = 1)} \\
+ &amp;= 1 \cdot \frac{\frac{1}{3}}{\frac{1}{3}} - 2 \cdot \frac{0}{\frac{1}{3}} = 1 \\ \\
+E(Y) &amp;= \sum_y y  \cdot P(Y= y) \\
+ &amp;= 1 \cdot \frac{2}{3} - 2 \cdot \frac{1}{3} = 0 \\ \\
+&amp;\therefore \\
+E(Y \mid X = 1) &amp;\neq E(Y)
+\end{align*}
+\]</span></p>
+</div>
+<div id="exercise-5-2" class="section level3" number="2.5.5">
+<h3><span class="header-section-number">2.5.5</span> Exercise 5</h3>
+<p>See section 2.4 at the end on how to do this, p. 34 and 35.</p>
+<p>The nonparametric estimate and ci is</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="probability.html#cb23-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb23-2"><a href="probability.html#cb23-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df[(df<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">&amp;</span> (df<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (df<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>), ]</span>
+<span id="cb23-3"><a href="probability.html#cb23-3" aria-hidden="true" tabindex="-1"></a>nonparametric <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb23-4"><a href="probability.html#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">mean</span>(df<span class="sc">$</span>Y),</span>
+<span id="cb23-5"><a href="probability.html#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">se =</span> <span class="fu">sqrt</span>(<span class="fu">var</span>(df<span class="sc">$</span>Y) <span class="sc">/</span> <span class="fu">nrow</span>(df))</span>
+<span id="cb23-6"><a href="probability.html#cb23-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-7"><a href="probability.html#cb23-7" aria-hidden="true" tabindex="-1"></a>nonparametric <span class="ot">&lt;-</span> <span class="fu">within</span>(nonparametric, {</span>
+<span id="cb23-8"><a href="probability.html#cb23-8" aria-hidden="true" tabindex="-1"></a>  lci <span class="ot">&lt;-</span> est <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
+<span id="cb23-9"><a href="probability.html#cb23-9" aria-hidden="true" tabindex="-1"></a>  uci <span class="ot">&lt;-</span> est <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
+<span id="cb23-10"><a href="probability.html#cb23-10" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb23-11"><a href="probability.html#cb23-11" aria-hidden="true" tabindex="-1"></a>nonparametric</span></code></pre></div>
+<pre><code>## $est
+## [1] 0.1
+## 
+## $se
+## [1] 0.0557086
+## 
+## $uci
+## [1] 0.2091889
+## 
+## $lci
+## [1] -0.009188859</code></pre>
+<p>and using the bootstrap function from above we get the parametric estimate and
+ci</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="probability.html#cb25-1" aria-hidden="true" tabindex="-1"></a>parametric <span class="ot">&lt;-</span> <span class="fu">lmodboot.r</span>(whatifdat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
+<span id="cb25-2"><a href="probability.html#cb25-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cond =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A)</span>
+<span id="cb25-3"><a href="probability.html#cb25-3" aria-hidden="true" tabindex="-1"></a>parametric</span></code></pre></div>
+<pre><code>##        est       conf        lci        uci 
+## 0.09001343 0.95000000 0.04382705 0.21463501</code></pre>
+<p>which is very similar to the nonparametric and a little narrower because of the
+<em>bias-variance tradeoff</em> as discussed in the last paragraph of chapter 2.</p>
 
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-brumback2022" class="csl-entry">
+Brumback, Babette A. 2022. <em>Fundamentals of Causal Inference with r</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://www.crcpress.com">https://www.crcpress.com</a>.
+</div>
 </div>
             </section>
 
