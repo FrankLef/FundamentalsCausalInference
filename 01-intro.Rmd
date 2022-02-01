@@ -1,4 +1,184 @@
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(ggplot2, quietly = TRUE)
+library(ggdag, quietly = TRUE)
+```
+
+
 # Introduction {#intro}
 
-Introduction
 
+## A Brief History
+
+
+## Data Examples
+
+
+### Mortality Rates by Country
+
+
+### National Center for Education Statistics
+
+
+### Reducing Alcohol Consumption
+
+#### The What-If? Study
+
+##### The Double What-If^ Study
+
+
+The code can be found in the file `doublewhatifsim.R` and is verified
+against the author's file just below.
+
+```{r include=FALSE}
+a_dir <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 1")
+load(file.path(a_dir, "doublewhatifdat.RData"))
+```
+
+
+The DAG for the *Double What-If?* study in the `dagitty` version is
+
+```{r}
+scm <- list()
+scm <- within(scm, {
+  the_nodes <- c("U" = "Unmeasured, healthy behavior (U=1)", 
+                 "AD0" = "Adherence time 0", 
+                 "VL0" = "Viral Load time 0", 
+                 "T" = "Naltrexone (T=1)", 
+                 "A" = "Reduced drinking (A=1)", 
+                 "AD1" = "Adherence time 1", 
+                 "VL1" = "Viral Load time 1")
+  coords <- data.frame(
+    name = names(the_nodes),
+    x = c(2, 3, 4, 1, 2, 3, 4),
+    y = c(2, 2, 2, 1, 1, 1, 1)
+  )
+  dag <- dagify(
+    AD0 ~ U,
+    VL0 ~ AD0,
+    A ~ `T` + U,
+    AD1 ~ A,
+    VL1 ~ AD0 + AD1 + U,
+  outcome = "VL1",
+  exposure = "T",
+  latent = "U",
+  coords = coords,
+  labels = the_nodes)
+  
+  # status' colors
+  colrs <- c("latent" = "palevioletred", "exposure" = "mediumspringgreen", 
+             "outcome" = "cornflowerblue")
+  # plot the DAG
+  plot <- dag %>% 
+    tidy_dagitty() %>%
+    ggdag_status(color = status, text = TRUE,  node_size = 10, text_size = 3, 
+                 text_col = "black") +
+    scale_color_manual(values = colrs, na.value = "honeydew3") +
+    scale_fill_manual(values = colrs, na.value = "honeydew3") +
+    ggdag::theme_dag_blank(panel.background = 
+                             element_rect(fill="snow", color="snow")) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank()) +
+    labs(title = "The Double What-If? Study")
+})
+scm$plot
+```
+
+and the code for `doublewhatifsim.R` is
+
+```{r}
+doublewhatifsim <- function(n = 1000, seed = 444) {
+  
+  set.seed(seed)
+  
+  # variables each with probability 0.5
+  U <- rbinom(n, size = 1, prob = 0.5)
+  # probability of AD0 depends on U
+  AD0prob <- 0.2 + 0.6 * U
+  # generate independent bernoulli variables with varying probabilities
+  AD0 <- rbinom(n, size = 1, prob = AD0prob)
+  VL0prob <- 0.8 - 0.4 * AD0
+  VL0 <- rbinom(n, size = 1, prob = VL0prob)
+  `T` <- rbinom(n, size = 1, prob = 0.5)
+  Aprob <- 0.05 + `T` * U * 0.8
+  A <- rbinom(n, size = 1, prob = Aprob)
+  AD1prob <- 0.1 + 0.8 * A
+  AD1 <- rbinom(n, size = 1, prob = AD1prob)
+  VL1prob <- VL0prob + 0.1 - 0.45 * AD1
+  VL1 <- rbinom(n, size =1 , prob = VL1prob)
+  
+  data.frame(
+    "AD0" = AD0,
+    "VL0" = VL0,
+    "T" = `T`,
+    "A" = A,
+    "AD1" = AD1,
+    "VL1" = VL1
+    )
+  }
+```
+
+
+which we verify against the raw data set provided by the author.
+
+```{r}
+bb <- doublewhatifdat
+d <- doublewhatifsim()
+stopifnot(identical(d, bb))
+```
+
+
+### General Social Survey
+
+
+### A Cancer Clinical Trial
+
+
+## Exercises
+
+Please note that the solutions to exercises of @brumback2022 below are my own 
+and have not been verified or approved in any way by the author.
+
+### Exercise 1
+
+8 Experiment
+
+### Exercise 2
+
+9 Analogy
+
+### Exercise 3
+
+2 Consistency: *They are well known to cause substantial weight gain*. That is,
+observed by different persons, different places and time.
+
+6 Plausability
+
+7 Coherence
+
+### Exercise 4
+
+8 Experiment
+
+9 Analogy
+
+### Exercise 5
+
+3 Specificity
+
+### Exercise 6
+
+5 Biological gradient: *increasing levels of physical activity are more strongly
+protective*
+
+8 Experiment
+
+### Exercise 7
+
+6 Plausability
+
+4 Temporality
+
+### Exercise 8
+
+4 Temporality
