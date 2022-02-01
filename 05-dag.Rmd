@@ -17,7 +17,7 @@ We also sue the `simstudy` package from now on to perform the simulations.
 
 ## Theory
 
-```{r fig.cap="Figure 5.1", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 # Source:
 # to be able to use mathematical expressions in the DAG we use the trick from
 # https://www.r-bloggers.com/2019/10/how-to-use-math-symbols-with-ggdag-2/
@@ -57,12 +57,15 @@ scm <- within(scm, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "Example of a Directed Acyclic Graph")
 })
-scm$plot
-knitr::write_bib(c("simstudy"), width = 80)
 ```
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.1", warning=FALSE, out.width="60%"}
+scm$plot
+```
+
 and for the graphical structures
 
-```{r fig.align='center', echo=FALSE, warning=FALSE}
+```{r echo=TRUE}
 scm <- list()
 scm <- within(scm, {
   colr <- "snow"  # color used by ggdag
@@ -156,15 +159,20 @@ scm <- within(scm, {
     theme(title = element_text(size = 10)) +
     labs(title = "Descendant: Z is an effect of a common effect")
 })
+```
+
+
+```{r echo=FALSE, fig.align='center', warning=FALSE}
 gridExtra::grid.arrange(scm$plotChain, scm$plotFork, scm$plotColl, scm$plotDesc, 
                         nrow = 2, ncol = 2,
                         top = "Graphical structures", bottom = "Figure 5.2")
 ```
 
+
 and for our first practice of d-separation we have
 
 
-```{r fig.cap="Figure 5.3", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.3 <- list()
 scm_5.3 <- within(scm_5.3, {
   dag <- dagify(
@@ -188,8 +196,13 @@ scm_5.3 <- within(scm_5.3, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "Causal DAG With Collider")
 })
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.3", warning=FALSE, out.width="60%"}
 scm_5.3$plot
 ```
+
 
 
 The conditional independences can be obtained using `impliedConditionalIndependencies`
@@ -206,8 +219,7 @@ length(impliedConditionalIndependencies(scm_5.3$dag, type = "all.pairs"))
 ## Examples
 
 
-
-```{r fig.cap="Figure 5.4", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.4 <- list()
 scm_5.4 <- within(scm_5.4, {
   dag <- dagify(
@@ -225,13 +237,15 @@ scm_5.4 <- within(scm_5.4, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "Causal DAG With Intermediate Variable")
 })
+```
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.4", warning=FALSE, out.width="60%"}
 scm_5.4$plot
 ```
 
 
 
-
-```{r fig.cap="Figure 5.5", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.5 <- list()
 scm_5.5 <- within(scm_5.5, {
 
@@ -254,15 +268,19 @@ scm_5.5 <- within(scm_5.5, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "A Counfounder May Occur After the Exposure")
 })
+```
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.4", warning=FALSE, out.width="60%"}
 scm_5.5$plot
 ```
+
 
 
 ### Structural Causal Model 5.6
 
 We are given the causal DAG
 
-```{r fig.cap="Figure 5.6", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.6 <- list()
 scm_5.6 <- within(scm_5.6, {
   the_nodes <- c("A" = "", 
@@ -288,10 +306,15 @@ scm_5.6 <- within(scm_5.6, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "One way to generate cofounding")
 })
+```
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.6", warning=FALSE, out.width="60%"}
 scm_5.6$plot
 ```
 
-for th works that follows the tables will be formatted with this function
+
+
+for the works that follows the tables will be formatted with this function
 
 ```{r}
 tbl_probs <- function(df, title, subtitle) {
@@ -474,7 +497,7 @@ $$
 
 The causal DAG is
 
-```{r fig.cap="Figure 5.7", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.7 <- list()
 scm_5.7 <- within(scm_5.7, {
   dag <- dagify(
@@ -495,6 +518,10 @@ scm_5.7 <- within(scm_5.7, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "One way to generate cofounding")
 })
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.7", warning=FALSE, out.width="60%"}
 scm_5.7$plot
 ```
 
@@ -678,7 +705,7 @@ that $Y0 = 0$ . . . but not always.
 
 
 
-```{r fig.cap="Figure 5.8", fig.align='center', warning=FALSE, out.width="60%"}
+```{r echo=TRUE}
 scm_5.8 <- list()
 scm_5.8 <- within(scm_5.8, {
   the_nodes <- c("A" = "", 
@@ -705,6 +732,10 @@ scm_5.8 <- within(scm_5.8, {
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
     labs(title = "Potential Outcomes Behind the Scenes")
 })
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.8", warning=FALSE, out.width="60%"}
 scm_5.8$plot
 ```
 
