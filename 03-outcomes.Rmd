@@ -1,4 +1,690 @@
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr, quietly = TRUE)
+library(tidyr, quietly = TRUE)
+library(gt, quietly = TRUE)
+library(boot, quietly = TRUE)
+```
+
+```{r}
+# the directory of documentation for chapter 1
+dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 1")
+# the directory of documentation for chapter 3
+dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 3")
+# directory of data files
+dir_data <- file.path(getwd(), "data")
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# a_dir <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 1")
+load(file.path(dir_docs01, "whatifdat.RData"))
+load(file.path(dir_docs01, "nces.RData"))
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+load(file.path(dir_docs01, "whatifdat.RData"))
+load(file.path(dir_docs01, "gss.RData"))
+# dataGSS <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
+# dataGSS <- gss[complete.cases(dataGSS), ]
+# stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+# a_dir <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 3")
+load(file.path(dir_docs03, "brfss.RData"))
+```
+
+
+
 # Potential Outcomes and the Fundamental Problem of Causal Inference {#outcomes}
 
 
+## Potential Outcomes and the Consistency Assumption
 
+
+## Circumventing the Fundamental Problem of Causal Inference
+
+
+## Effect Measures
+
+
+```{r}
+# Compute estimates of the unconditional association measures, 
+# hence the u in bootu.r, and their confidence intervals.
+# 1- We use Gaussian, Poisson and Binomial glm to solve the 
+#    estimating equations of the measures, not their distributions
+# 2- The association measures' distributions (ci) are estimated by
+#    bootstrapping
+# Assumptions: Weassume that (3.2) holds but not (3.1)
+# See p. 45 and 46 for more details.
+bootu.r <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
+  
+  # get the name of dependent variable from the formula
+  y <- all.vars(formula[[2]])
+  # get the name of independent variables from the formula
+  x <- all.vars(formula[[3]])
+  # the name of the intercept variable used by glm
+  x0 <- "(Intercept)"
+  
+  # estimate the conditional probabilities 
+  # and the four association measures
+  estimator <- function(data, ids) {
+    dat <- data[ids, ]
+    # estimate the conditional probabilities
+    coefs <- coef(glm(formula = formula, family = gaussian, data = dat))
+    p0 <- coefs[x0]
+    p1 <- sum(coefs)
+    # estimate the risk difference
+    rd <- p1 - p0
+    
+    # use loglinear model to estimate the log relative risk
+    coefs <- coef(glm(formula = formula, family = poisson, data = dat))
+    logrr <- coefs[x]
+    
+    # prepare data to estimate the log other relative risk
+    ystar <- 1 - dat[, y]
+    xstar <- 1 - dat[, x]
+    # use loglinear model to estimate the log other relative risk
+    coefs <- coef(glm(ystar ~ xstar, family = poisson))
+    logrrstar <- coefs[2]
+    
+    # use logistic model to estimate the log of other risk
+    coefs <- coef(glm(formula = formula, family = binomial, data = dat))
+    logor <- coefs[x]
+    
+    # return the results
+    out <- c(p0, p1, rd, logrr, logrrstar, logor)
+    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
+    out
+  }
+  
+  # run the bootstrapping
+  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
+  
+  # extract the estimated values and confidence intervals from the boot object
+  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
+    est <- boot.out$t0[i]
+    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
+    out <- c(est, ci)
+    names(out) <- c("est", "conf", "lci", "uci")
+    out
+  })
+  
+  # create the dataframe to hold the results
+  out <- data.frame(t(out))
+  # add the first column as the names of the results
+  out <- data.frame(name = names(boot.out$t0), out)
+  
+  # convert link to natural scales and add to the output
+  sel <- c("rr" = "logrr","rrstar"  = "logrrstar", "or" = "logor")
+  out <- within(out, {
+   est[name %in% sel] <- exp(est[name %in% sel])
+   lci[name %in% sel] <- exp(lci[name %in% sel])
+   uci[name %in% sel] <- exp(uci[name %in% sel])
+   name[name %in% sel] <- names(sel)
+  })
+
+  out
+}
+```
+
+
+
+```{r}
+# create a function for the table as it will used several times
+tbl_bootc.r <- function(df, title = "Title", subtitle = "Subtitle") {
+  df %>%
+    gt() %>%
+    tab_header(
+      title = md(paste0("**", title, "**")),
+      subtitle = md(paste0("**", subtitle, "**"))
+    ) %>%
+    fmt_number(columns = !matches("name"), decimals = 2) %>%
+    cols_align(align = "center", columns = !matches("name")) %>% 
+    opt_row_striping() %>%
+    tab_options(
+      heading.background.color = "gainsboro",
+      column_labels.font.weight = "bold")
+}
+```
+
+
+run the function to get the association measures
+
+```{r}
+dataGSS <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
+dataGSS <- gss[complete.cases(dataGSS), ]
+stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
+```
+
+
+```{r}
+message("this takes 30 sec.: we load a saved file instead")
+startTime <- Sys.time()
+# d <- bootu.r(dat = dataGSS, formula = trump ~ gthsedu)
+a_file <- file.path(dir_data, "chap03_bootu.rds")
+# saveRDS(d, file = a_file)
+d <- readRDS(file = a_file)
+endTime <- Sys.time()
+# print(endTime - startTime)
+```
+
+```{r}
+tbl_bootc.r(d, 
+            title = "Table 3.2", 
+            subtitle = "Unconditional probabilities and association measures with 95% CI")
+```
+
+
+
+
+verify with author's results, p. 48-49
+
+```{r}
+bb <- data.frame(
+  name = c("p0", "p1", "rd", "rr", "rrstar", "or"),
+  est = c(0.23338, 0.27117, 0.037782, 1.1619, 1.0518, 1.221),
+  lci = c(0.21030, 0.24095, 0.00078085, 1.0047, 1.0006, 1.0056),
+  uci = c(0.25647, 0.30139, 0.07478354, 1.3437, 1.1057, 1.4853))
+stopifnot(
+  all(abs(d$est - bb$est) < 0.01),
+  all(abs(d$lci - bb$lci) < 0.015),
+  all(abs(d$uci - bb$uci) < 0.02))
+```
+
+
+
+Now we estimate the four effect measures using *conditional* association
+measures. We notice that
+
+* The function used in chapter 3 on p. 50-52 is called `lmodboot.r()`. 
+* The same name is used in chapter 2 on p.33-34 for a function computing only 
+the estimand  (sampling distribution) but *not the association measures*
+
+**We therefore rename the `lmodboot.r()` of chapter 3 as `bootc.r`** to
+
+* show it relates to `bootu.r` with the `c` meaning **conditional** and
+* avoid conflicting function names with `lmodboot.r()` of chapter 2
+
+
+
+```{r}
+# IMPORTANT: This is the function in chapter 3 called lmodboot.r
+#            It has been renamed bootc.r to avoid conflict with
+#            lmodboot.r of chapter 2
+# Estimate the expected conditional outcomes and the
+# conditional effect or association measures
+bootc.r <- function(dat, formula = Y ~ `T` + A + H,
+                    cond0 = Y ~ A + H,
+                    cond1 = Y ~ `T` + A + H, 
+                    family = c("binomial", "poisson", "gaussian"), 
+                    R = 1000, conf = 0.95) {
+  # the family used by glm
+  family <- match.arg(family)
+  
+  # the name of the intercept variable used by glm
+  x0 <- "(Intercept)"
+  # the name of the predictors from condition formulas cond0 and cond1
+  cond0 <- all.vars(cond0[[3]])
+  cond1 <- all.vars(cond1[[3]])
+  
+  estimator <- function(data, ids) {
+    dat <- data[ids, ]
+    coefs <- coef(glm(formula = formula, family = family, data = dat))
+    # use cond to identify conditioned variables.
+    # i.e. the user can decide not to use all variables from the formula
+    # or, in other words, condition on some variables
+    xbeta0 <- sum(coefs[c(x0, cond0)])
+    xbeta1 <- sum(coefs[c(x0, cond1)])
+    p0 <- plogis(xbeta0)  # plogis is the inverse of logit
+    p1 <- plogis(xbeta1)  # plogis is the inverse of logit
+    rd <- p1 - p0
+    logrr <- log(p1) - log(p0)
+    logrrstar <- log(1 - p0) - log(1 - p1)
+    logor <- log(p1 / (1 - p1)) - log(p0 / (1 - p0))
+    
+    # return the results
+    out <- c(p0, p1, rd, logrr, logrrstar, logor)
+    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
+    out
+  }
+  
+  # run the bootstrapping
+  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
+  
+  # extract the estimated values and confidence intervals from the boot object
+  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
+    est <- boot.out$t0[i]
+    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
+    out <- c(est, ci)
+    names(out) <- c("est", "conf", "lci", "uci")
+    out
+  })
+  
+  # create the dataframe to hold the results
+  out <- data.frame(t(out))
+  # add the first column as the names of the results
+  out <- data.frame(name = names(boot.out$t0), out)
+  
+  # convert link to natural scales and add to the output
+  sel <- c("rr" = "logrr","rrstar"  = "logrrstar", "or" = "logor")
+  out <- within(out, {
+   est[name %in% sel] <- exp(est[name %in% sel])
+   lci[name %in% sel] <- exp(lci[name %in% sel])
+   uci[name %in% sel] <- exp(uci[name %in% sel])
+   name[name %in% sel] <- names(sel)
+  })
+
+  out
+}
+```
+
+To use the function with conditioning on variables, i.e. filtering on variables,
+we note that
+
+$$
+\begin{align*}
+Y &= \text{trump} \\
+T &= \text{gthsedu} \\
+H_1 &= \text{magthsedu} \\
+H_2 &= \text{white} \\
+H_3 &= \text{female} \\
+H_4 &= \text{gt65} \\
+\end{align*}
+$$
+
+Therefore
+
+$$
+\begin{align*}
+E(Y &\mid T = 0, H_1 = 1, H_2 = 1, H_3 = 1, H_4 = 1) \\
+&\therefore \text{because T = 0} \\
+Y &\sim H_1 + H_2 + H_3 + H_4 \\
+\text{trump} &\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
+\end{align*}
+$$
+
+
+```{r}
+# we use cond = c("magthsedu", "white", "female", "gt65")
+# to exclude gthsedu = 0
+message("this takes 10 sec.: we load a saved file instead")
+startTime <- Sys.time()
+# d <- bootc.r(dat = dataGSS, 
+#              formula = trump ~ gthsedu + magthsedu + white + female + gt65, 
+#              cond0 = trump ~ magthsedu + white + female + gt65,
+#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)
+a_file <- file.path(dir_data, "chap03_bootc.rds")
+# saveRDS(d, file = a_file)
+d <- readRDS(file = a_file)
+endTime <- Sys.time()
+# print(endTime - startTime)
+```
+
+
+```{r}
+tbl_bootc.r(d, 
+            title = "Table 3.3",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+verify with author's results, p.52
+
+```{r}
+bb <- data.frame(
+  name = c("p0", "p1", "rd", "rr", "rrstar", "or"),
+  est = c(0.25458, 0.30101, 0.046438, 1.1824, 1.0664, 1.261),
+  lci = c(0.18518, 0.22995, 0.0022706, 1.0039, 1.0018, 1.0091),
+  uci = c(0.32397, 0.37208, 0.0906057, 1.3927, 1.1352, 1.5758))
+stopifnot(
+  all(abs(d$est - bb$est) < 0.01),
+  all(abs(d$lci - bb$lci) < 0.015),
+  all(abs(d$uci - bb$uci) < 0.02))
+```
+
+
+## Exercises
+
+Please note that the solutions to exercises of @brumback2022 below are my own 
+and have not been verified or approved in any way by the author.
+
+### Exercise 1
+
+```{r}
+dataGSS1 <- gss[, c("owngun", "conservative", "gt65", "female", "white")]
+dataGSS1 <- gss[complete.cases(dataGSS1), ]
+stopifnot(nrow(dataGSS1) == 1461)
+```
+
+#### a) unconditional probabilites
+
+This model corresponds to 
+
+$$
+\begin{align*}
+E(Y \mid T) &= \beta_0 + \beta_1 T \\
+&\therefore \\
+E(T \mid T = 0) &= E(owngun \mid conservative = 0) = \beta_0 \\ \\
+E(T \mid T = 1) &= E(owngun \mid conservative = 1) = \beta_0 + \beta_1 \\
+\end{align*}
+$$
+
+
+```{r}
+message("this takes 20 sec.: we load a saved file instead")
+# startTime <- Sys.time()
+d1a <- bootu.r(dat = dataGSS1, formula = owngun ~ conservative)
+a_file <- file.path(dir_data, "chap03_Ex1a.rds")
+# saveRDS(d1a, file = a_file)
+d1a <- readRDS(file = a_file)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+```
+
+```{r}
+tbl_bootc.r(d1a[, c("name", "est", "lci", "uci")], 
+            title = "Exercise 1 a): Table 3.2",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+From the results just above  have that 
+$E(owngun) = E(owngun \mid conservative = 0)$ and $E(owngun \mid conservative = 1)$
+and that $E(owngun) - E(owngun \mid conservative = 1)$ is 0.17 (0.11, 0.22).
+Therefore people with conservative views sem more likely to oen a gun.  But
+there is not necessarily a causality.  See *Inference* section below.
+
+
+
+#### b) conditional probabilites
+
+
+
+```{r}
+message("this takes 10 sec.: we load a saved file instead")
+# startTime <- Sys.time()
+# d1b <- bootc.r(dat = dataGSS1, 
+#              formula = owngun ~ conservative + gt65 + female + white, 
+#              cond0 = owngun ~ gt65 + white,
+#              cond1 = owngun ~ conservative + gt65 + white)
+a_file <- file.path(dir_data, "chap03_Ex1b.rds")
+# saveRDS(d1b, file = a_file)
+d1b <- readRDS(file = a_file)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+```
+
+```{r}
+tbl_bootc.r(d1b[, c("name", "est", "lci", "uci")], 
+            title = "Exercise 1 b): Table 3.2",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+Now if we let $E(owngun \mid gt65, white) = E(Y \mid T = 0, H = 1)$ and
+$E(owngun \mid conservative, gt65, white) = E(Y \mid T = 1, H = 1)$ then
+$RD = E(Y \mid T = 1, H = 1) - E(Y \mid T = 0, H = 1)$ is 0.16 (0.10, 0.21)
+indicating that white male older than 65 with conservative views are more likely
+to own a gun than white male older than 65 with no declared conservative views.
+Again see comment in *Inference* section below which explains why we cannot
+conclude causality.
+
+
+
+#### Inference
+
+*Is the assumption that political views are formed before gun purchases realistic?*
+
+Conservative views could be seen as preliminary to gun purchase but it could 
+easily be argued that many people without conservative views buy guns.  
+It is also unclear as to what conservative views are.  This can be variable in 
+different contexts and break the *consistency assumption*.
+
+*The consistency assumption (see section 3.1, p.38) requires that the observed outcome 
+be consistent with the potential outcomes. Importantly, he consistency 
+assumption requires the potential outcomes to be well-defined (p.39).*
+
+Therefore we would refrain from concluding that political views are a cause
+of gun ownership.
+
+
+*What assumptions would be needed to interpret these estimates casually?*
+
+
+The assumptions necessary to interpret the assumptions causally would be that
+
+* there is no dependencies between white, gt65 and conservative
+* owning a gun is not in itself a cause of conservative views
+
+
+### Exercise 2
+
+```{r}
+dataGSS2 <- gss[, c("trump", "gthsedu", "magthsedu", "pagthsedu", 
+                    "white", "female", "gt65")]
+dataGSS2$pamiss <- ifelse(is.na(dataGSS2$pagthsedu), 1, 0)
+dataGSS2$pagthsedu[is.na(dataGSS2$pagthsedu)] <- 0
+dataGSS2 <- dataGSS2[complete.cases(dataGSS2), ]
+stopifnot(nrow(dataGSS2) == 2168)
+```
+
+
+Let $Y = trump, T = gthsedu, H = white \cap female \cap gt65$ then we have
+
+$$
+\begin{align*}
+E(Y \mid T, H, pagthsedu, pamiss)
+\end{align*}
+$$
+and we are using the following conditioning
+
+$$
+\begin{align*}
+p_0 = E(Y \mid T = 0, H, pagthsedu = 1, pamiss = 0) \\
+p_1 = E(Y \mid T = 1, H, pagthsedu = 1, pamiss = 0)
+\end{align*}
+$$
+
+and we use the logistic model to estimate the associaiton measures as follows
+
+```{r}
+message("this takes 10 sec.: we load a saved file instead")
+# startTime <- Sys.time()
+d2 <- bootc.r(dat = dataGSS2, 
+             formula = trump ~ gthsedu + magthsedu + white + female + gt65 +
+               pagthsedu + pamiss, 
+             cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,
+             cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)
+a_file <- file.path(dir_data, "chap03_Ex2.rds")
+# saveRDS(d2, file = a_file)
+d2 <- readRDS(file = a_file)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+```
+
+```{r}
+tbl_bootc.r(d2[, c("name", "est", "lci", "uci")], 
+            title = "Exercise 2: Table 3.3",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+
+The results are identical to the ones in table 3.3 of section 3.3. Since we are
+conditioning on $pagthsedu = 1, pamiss = 0$ and that $(pagthsedu = 1) \Rightarrow (pamiss = 0)$
+then it is the same as conditioning on $(pagthsedu = 1)$ and so, since $pagthsedu$
+is always constant at 1, then it has no impact on the result.
+
+
+### Exercise 3
+
+#### a)
+
+```{r}
+dataBRFSSa <- brfss
+dataBRFSSa %>%
+  mutate(cat = paste(whitenh, blacknh, hisp, othernh, multinh, sep = "-")) %>%
+  group_by(cat) %>%
+  count()
+```
+
+Note on the data: As just shown above, the variables `whitenh`, `blacknh`, 
+`hisp`, `othernh`, `multinh` are mutually exclusive and thus can be seen as
+dummy variables for a category called $ethnicity$. Therefore we need to include
+all of them in the analysis. Not just `whitenh` as one could wrongly assumed
+after reading the question. Yes, I made that mistake myself.
+
+Also, since they are dummy variavles, the reference variable need not be included.
+In this case the reference variable is `othernh`.
+
+
+The probabilities of consuming zero drinks $zerodrinks$ related to residence 
+in rural county $rural$, conditioned on being male $female = 0$, 
+white non-hispanic $whitenh = 1$, younger than 65 year-old $gt65 = 0$ and having 
+greater than high school education $gthsedu = 1$ is
+
+$$
+\begin{align*}
+P(zerodrinks &\mid rural \cap female = 0 \cap whitenh = 1 \cap gt65 = 0 \cap gthsedu = 1) \\
+&\text{let} \\ 
+Y &= zerodrinks \\ 
+T &= rural \\ 
+H = h \ &:= female = 0 \cap whitenh = 1 \cap gt65 = 0 \cap gthsedu = 1 \\
+&\therefore \\
+P(Y &\mid T, H = h)
+\end{align*}
+$$
+
+and we are measuring
+
+$$
+\begin{align*}
+p_0 = E(Y \mid T = 0, H) \\
+p_1 = E(Y \mid T = 1, H)
+\end{align*}
+$$
+
+We use `boot.c` from above and remember that `whitenh`, `blacknh`, 
+`hisp`, `othernh`, `multinh` are mutually exclusive dummy variables and so
+$whitenh = 1 \implies blacknh = 0 \cap hisp = 0 \cap othernh = 0 \cap multinh = 0$.
+We also use only 500 bootstrapping iterations given te large volume of data.
+
+```{r}
+# startTime <- Sys.time()
+# d3a <- bootc.r(dat = dataBRFSSa,
+#              formula = zerodrinks ~ rural + female + whitenh + blacknh +
+#                hisp + multinh + gt65 + gthsedu,
+#              cond0 = zerodrinks ~ whitenh + gthsedu,
+#              cond1 = zerodrinks ~ rural + whitenh + gthsedu,
+#              R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+message("This took 26 min, so we load a saved file.")
+a_file <- file.path(dir_data, "chap03_Ex3a.rds")
+# saveRDS(d3a, file = a_file)
+d3a <- readRDS(a_file)
+```
+
+```{r}
+tbl_bootc.r(d3a[, c("name", "est", "lci", "uci")], 
+            title = "Exercise 3 a): Table 3.3",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+
+We observe that $P(Y \mid T = 1, H = h) = 0.35$ and $P(Y \mid T = 0, H = h) = 0.29$
+so that the fact that male, white non-hispanic people younger than 65 with higher
+education are more likely to not have any drink in the past month.
+
+To conclude causality we must ensure the *consistency assumption* (see p. 39)
+and the *positivity assumption* (see p. 41). In other words
+
+* consistency assumption: The relation between the the potential and observed 
+outcome is well defined. Here it seems that not having a drink in the past month
+is clearly linked to the potential outcome.
+
+* positivity assumption: We must have $0 < P(Y \mid T, H) < 1$ which is the case here.
+
+
+
+#### b)
+
+We restrict the `brfss` data to only include lines where respondents
+consumed alcoholic drinks during the past 30 days $maxdrinks \neq 0$
+
+```{r}
+dataBRFSSb <- brfss[brfss$maxdrinks != 0, 
+                    c("whitenh", "blacknh", "hisp", "othernh", "multinh", "gt65", "female",
+                      "rural", "gthsedu", "zerodrinks", "maxdrinks")]
+```
+
+
+
+All the comments from a) above on the ethnicity variables applies.  The same
+rational is used to define the variables so that we now have
+
+
+```{r}
+# startTime <- Sys.time()
+# d3b <- bootc.r(dat = dataBRFSSb,
+#              formula = maxdrinks ~ rural + female + whitenh + blacknh +
+#                hisp + multinh + gt65 + gthsedu,
+#              cond0 = maxdrinks ~ whitenh + gthsedu,
+#              cond1 = maxdrinks ~ rural + whitenh + gthsedu,
+#              family = "poisson", R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+message("This took 20 min, so we load a saved file.")
+a_file <- file.path(dir_data, "chap03_Ex3b.rds")
+# saveRDS(d3b, file = a_file)
+d3b <- readRDS(a_file)
+```
+
+
+```{r}
+tbl_bootc.r(d3b[, c("name", "est", "lci", "uci")], 
+            title = "Exercise 3 b)",
+            subtitle = "Cond. prob. and association measures with 95% CI")
+```
+
+
+
+
+We note that the expected rate  for rural $p_1 = 0.82$ vs non-rural residents 
+$p_1 = 0.82$ is not much different. Therefore whether the person resides
+in a rural area or not does not make it more likely to drink.
+
+The consistency and positivity assumptions as described in a) above would also
+be reauired to conclude causality.
+
+
+### Exercise 4
+
+As discussed on p. 39, the consistency assumption requires that *the potential 
+outcome be well defined*. We have to state that the extrapolation would
+apply only to the specific percentages of exposure in the experiment. To say it
+in the words of page 39, 
+*Extrapolation to a situation where the percentage is not the same would be tenuous*.
+
+
+also, the following points, mentioned in p. 40, are important
+
+* The fact that the difference in exposure rate is caused by chance is always
+a possibility and makes extrapolation tenuous
+* The study population may no longer be relevant as vaccination rate and recovery  rate
+(i.e. infected people who recovered) could have changed significantly in the meantime
+* One must keep in mind that extrapolating an average result to any individual
+is problematic.

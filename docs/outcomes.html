@@ -241,7 +241,19 @@ div.csl-indent {
 <li class="chapter" data-level="2.5.5" data-path="probability.html"><a href="probability.html#exercise-5-2"><i class="fa fa-check"></i><b>2.5.5</b> Exercise 5</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference</a></li>
+<li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="outcomes.html"><a href="outcomes.html#potential-outcomes-and-the-consistency-assumption"><i class="fa fa-check"></i><b>3.1</b> Potential Outcomes and the Consistency Assumption</a></li>
+<li class="chapter" data-level="3.2" data-path="outcomes.html"><a href="outcomes.html#circumventing-the-fundamental-problem-of-causal-inference"><i class="fa fa-check"></i><b>3.2</b> Circumventing the Fundamental Problem of Causal Inference</a></li>
+<li class="chapter" data-level="3.3" data-path="outcomes.html"><a href="outcomes.html#effect-measures"><i class="fa fa-check"></i><b>3.3</b> Effect Measures</a></li>
+<li class="chapter" data-level="3.4" data-path="outcomes.html"><a href="outcomes.html#exercises-3"><i class="fa fa-check"></i><b>3.4</b> Exercises</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="outcomes.html"><a href="outcomes.html#exercise-1-3"><i class="fa fa-check"></i><b>3.4.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="3.4.2" data-path="outcomes.html"><a href="outcomes.html#exercise-2-2"><i class="fa fa-check"></i><b>3.4.2</b> Exercise 2</a></li>
+<li class="chapter" data-level="3.4.3" data-path="outcomes.html"><a href="outcomes.html#exercise-3-2"><i class="fa fa-check"></i><b>3.4.3</b> Exercise 3</a></li>
+<li class="chapter" data-level="3.4.4" data-path="outcomes.html"><a href="outcomes.html#exercise-4-2"><i class="fa fa-check"></i><b>3.4.4</b> Exercise 4</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="measures.html"><a href="measures.html"><i class="fa fa-check"></i><b>4</b> Effect-Measure Modification and Causal Interaction</a></li>
 <li class="chapter" data-level="5" data-path="dag.html"><a href="dag.html"><i class="fa fa-check"></i><b>5</b> Causal Directed Acyclic Graphs</a></li>
 <li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method vis Standardization</a></li>
@@ -268,7 +280,3234 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="outcomes" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Potential Outcomes and the Fundamental Problem of Causal Inference</h1>
+<div id="potential-outcomes-and-the-consistency-assumption" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Potential Outcomes and the Consistency Assumption</h2>
+</div>
+<div id="circumventing-the-fundamental-problem-of-causal-inference" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Circumventing the Fundamental Problem of Causal Inference</h2>
+</div>
+<div id="effect-measures" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Effect Measures</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="outcomes.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute estimates of the unconditional association measures, </span></span>
+<span id="cb29-2"><a href="outcomes.html#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># hence the u in bootu.r, and their confidence intervals.</span></span>
+<span id="cb29-3"><a href="outcomes.html#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1- We use Gaussian, Poisson and Binomial glm to solve the </span></span>
+<span id="cb29-4"><a href="outcomes.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    estimating equations of the measures, not their distributions</span></span>
+<span id="cb29-5"><a href="outcomes.html#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2- The association measures&#39; distributions (ci) are estimated by</span></span>
+<span id="cb29-6"><a href="outcomes.html#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    bootstrapping</span></span>
+<span id="cb29-7"><a href="outcomes.html#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assumptions: Weassume that (3.2) holds but not (3.1)</span></span>
+<span id="cb29-8"><a href="outcomes.html#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># See p. 45 and 46 for more details.</span></span>
+<span id="cb29-9"><a href="outcomes.html#cb29-9" aria-hidden="true" tabindex="-1"></a>bootu.r <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb29-10"><a href="outcomes.html#cb29-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-11"><a href="outcomes.html#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the name of dependent variable from the formula</span></span>
+<span id="cb29-12"><a href="outcomes.html#cb29-12" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">2</span>]])</span>
+<span id="cb29-13"><a href="outcomes.html#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the name of independent variables from the formula</span></span>
+<span id="cb29-14"><a href="outcomes.html#cb29-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])</span>
+<span id="cb29-15"><a href="outcomes.html#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
+<span id="cb29-16"><a href="outcomes.html#cb29-16" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
+<span id="cb29-17"><a href="outcomes.html#cb29-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-18"><a href="outcomes.html#cb29-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the conditional probabilities </span></span>
+<span id="cb29-19"><a href="outcomes.html#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and the four association measures</span></span>
+<span id="cb29-20"><a href="outcomes.html#cb29-20" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb29-21"><a href="outcomes.html#cb29-21" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb29-22"><a href="outcomes.html#cb29-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the conditional probabilities</span></span>
+<span id="cb29-23"><a href="outcomes.html#cb29-23" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> gaussian, <span class="at">data =</span> dat))</span>
+<span id="cb29-24"><a href="outcomes.html#cb29-24" aria-hidden="true" tabindex="-1"></a>    p0 <span class="ot">&lt;-</span> coefs[x0]</span>
+<span id="cb29-25"><a href="outcomes.html#cb29-25" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
+<span id="cb29-26"><a href="outcomes.html#cb29-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the risk difference</span></span>
+<span id="cb29-27"><a href="outcomes.html#cb29-27" aria-hidden="true" tabindex="-1"></a>    rd <span class="ot">&lt;-</span> p1 <span class="sc">-</span> p0</span>
+<span id="cb29-28"><a href="outcomes.html#cb29-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-29"><a href="outcomes.html#cb29-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use loglinear model to estimate the log relative risk</span></span>
+<span id="cb29-30"><a href="outcomes.html#cb29-30" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> poisson, <span class="at">data =</span> dat))</span>
+<span id="cb29-31"><a href="outcomes.html#cb29-31" aria-hidden="true" tabindex="-1"></a>    logrr <span class="ot">&lt;-</span> coefs[x]</span>
+<span id="cb29-32"><a href="outcomes.html#cb29-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-33"><a href="outcomes.html#cb29-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prepare data to estimate the log other relative risk</span></span>
+<span id="cb29-34"><a href="outcomes.html#cb29-34" aria-hidden="true" tabindex="-1"></a>    ystar <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> dat[, y]</span>
+<span id="cb29-35"><a href="outcomes.html#cb29-35" aria-hidden="true" tabindex="-1"></a>    xstar <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> dat[, x]</span>
+<span id="cb29-36"><a href="outcomes.html#cb29-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use loglinear model to estimate the log other relative risk</span></span>
+<span id="cb29-37"><a href="outcomes.html#cb29-37" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(ystar <span class="sc">~</span> xstar, <span class="at">family =</span> poisson))</span>
+<span id="cb29-38"><a href="outcomes.html#cb29-38" aria-hidden="true" tabindex="-1"></a>    logrrstar <span class="ot">&lt;-</span> coefs[<span class="dv">2</span>]</span>
+<span id="cb29-39"><a href="outcomes.html#cb29-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-40"><a href="outcomes.html#cb29-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use logistic model to estimate the log of other risk</span></span>
+<span id="cb29-41"><a href="outcomes.html#cb29-41" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> binomial, <span class="at">data =</span> dat))</span>
+<span id="cb29-42"><a href="outcomes.html#cb29-42" aria-hidden="true" tabindex="-1"></a>    logor <span class="ot">&lt;-</span> coefs[x]</span>
+<span id="cb29-43"><a href="outcomes.html#cb29-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-44"><a href="outcomes.html#cb29-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># return the results</span></span>
+<span id="cb29-45"><a href="outcomes.html#cb29-45" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p0, p1, rd, logrr, logrrstar, logor)</span>
+<span id="cb29-46"><a href="outcomes.html#cb29-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;logrr&quot;</span>, <span class="st">&quot;logrrstar&quot;</span>, <span class="st">&quot;logor&quot;</span>)</span>
+<span id="cb29-47"><a href="outcomes.html#cb29-47" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb29-48"><a href="outcomes.html#cb29-48" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-49"><a href="outcomes.html#cb29-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-50"><a href="outcomes.html#cb29-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb29-51"><a href="outcomes.html#cb29-51" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R)</span>
+<span id="cb29-52"><a href="outcomes.html#cb29-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-53"><a href="outcomes.html#cb29-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the estimated values and confidence intervals from the boot object</span></span>
+<span id="cb29-54"><a href="outcomes.html#cb29-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(boot.out<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb29-55"><a href="outcomes.html#cb29-55" aria-hidden="true" tabindex="-1"></a>    est <span class="ot">&lt;-</span> boot.out<span class="sc">$</span>t0[i]</span>
+<span id="cb29-56"><a href="outcomes.html#cb29-56" aria-hidden="true" tabindex="-1"></a>    ci <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(boot.out, <span class="at">conf =</span> conf, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>, <span class="at">index =</span> i)<span class="sc">$</span>normal</span>
+<span id="cb29-57"><a href="outcomes.html#cb29-57" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(est, ci)</span>
+<span id="cb29-58"><a href="outcomes.html#cb29-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)</span>
+<span id="cb29-59"><a href="outcomes.html#cb29-59" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb29-60"><a href="outcomes.html#cb29-60" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb29-61"><a href="outcomes.html#cb29-61" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-62"><a href="outcomes.html#cb29-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the dataframe to hold the results</span></span>
+<span id="cb29-63"><a href="outcomes.html#cb29-63" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(out))</span>
+<span id="cb29-64"><a href="outcomes.html#cb29-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the first column as the names of the results</span></span>
+<span id="cb29-65"><a href="outcomes.html#cb29-65" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">names</span>(boot.out<span class="sc">$</span>t0), out)</span>
+<span id="cb29-66"><a href="outcomes.html#cb29-66" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-67"><a href="outcomes.html#cb29-67" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert link to natural scales and add to the output</span></span>
+<span id="cb29-68"><a href="outcomes.html#cb29-68" aria-hidden="true" tabindex="-1"></a>  sel <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;rr&quot;</span> <span class="ot">=</span> <span class="st">&quot;logrr&quot;</span>,<span class="st">&quot;rrstar&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logrrstar&quot;</span>, <span class="st">&quot;or&quot;</span> <span class="ot">=</span> <span class="st">&quot;logor&quot;</span>)</span>
+<span id="cb29-69"><a href="outcomes.html#cb29-69" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">within</span>(out, {</span>
+<span id="cb29-70"><a href="outcomes.html#cb29-70" aria-hidden="true" tabindex="-1"></a>   est[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(est[name <span class="sc">%in%</span> sel])</span>
+<span id="cb29-71"><a href="outcomes.html#cb29-71" aria-hidden="true" tabindex="-1"></a>   lci[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(lci[name <span class="sc">%in%</span> sel])</span>
+<span id="cb29-72"><a href="outcomes.html#cb29-72" aria-hidden="true" tabindex="-1"></a>   uci[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(uci[name <span class="sc">%in%</span> sel])</span>
+<span id="cb29-73"><a href="outcomes.html#cb29-73" aria-hidden="true" tabindex="-1"></a>   name[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">names</span>(sel)</span>
+<span id="cb29-74"><a href="outcomes.html#cb29-74" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb29-75"><a href="outcomes.html#cb29-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-76"><a href="outcomes.html#cb29-76" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb29-77"><a href="outcomes.html#cb29-77" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="outcomes.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a function for the table as it will used several times</span></span>
+<span id="cb30-2"><a href="outcomes.html#cb30-2" aria-hidden="true" tabindex="-1"></a>tbl_bootc.r <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">title =</span> <span class="st">&quot;Title&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Subtitle&quot;</span>) {</span>
+<span id="cb30-3"><a href="outcomes.html#cb30-3" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="outcomes.html#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-5"><a href="outcomes.html#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_header</span>(</span>
+<span id="cb30-6"><a href="outcomes.html#cb30-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">md</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, title, <span class="st">&quot;**&quot;</span>)),</span>
+<span id="cb30-7"><a href="outcomes.html#cb30-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, subtitle, <span class="st">&quot;**&quot;</span>))</span>
+<span id="cb30-8"><a href="outcomes.html#cb30-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="outcomes.html#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="sc">!</span><span class="fu">matches</span>(<span class="st">&quot;name&quot;</span>), <span class="at">decimals =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-10"><a href="outcomes.html#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="sc">!</span><span class="fu">matches</span>(<span class="st">&quot;name&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-11"><a href="outcomes.html#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">opt_row_striping</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-12"><a href="outcomes.html#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_options</span>(</span>
+<span id="cb30-13"><a href="outcomes.html#cb30-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.background.color =</span> <span class="st">&quot;gainsboro&quot;</span>,</span>
+<span id="cb30-14"><a href="outcomes.html#cb30-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">column_labels.font.weight =</span> <span class="st">&quot;bold&quot;</span>)</span>
+<span id="cb30-15"><a href="outcomes.html#cb30-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>run the function to get the association measures</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="outcomes.html#cb31-1" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb31-2"><a href="outcomes.html#cb31-2" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(dataGSS), ]</span>
+<span id="cb31-3"><a href="outcomes.html#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="outcomes.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 30 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="outcomes.html#cb34-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb34-2"><a href="outcomes.html#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d &lt;- bootu.r(dat = dataGSS, formula = trump ~ gthsedu)</span></span>
+<span id="cb34-3"><a href="outcomes.html#cb34-3" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
+<span id="cb34-4"><a href="outcomes.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d, file = a_file)</span></span>
+<span id="cb34-5"><a href="outcomes.html#cb34-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb34-6"><a href="outcomes.html#cb34-6" aria-hidden="true" tabindex="-1"></a>endTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb34-7"><a href="outcomes.html#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="outcomes.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d, </span>
+<span id="cb35-2"><a href="outcomes.html#cb35-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
+<span id="cb35-3"><a href="outcomes.html#cb35-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Unconditional probabilities and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="yvfsjcrdob" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
 
+#yvfsjcrdob .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yvfsjcrdob .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yvfsjcrdob .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yvfsjcrdob .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yvfsjcrdob .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yvfsjcrdob .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yvfsjcrdob .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yvfsjcrdob .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yvfsjcrdob .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yvfsjcrdob .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yvfsjcrdob .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yvfsjcrdob .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yvfsjcrdob .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#yvfsjcrdob .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yvfsjcrdob .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yvfsjcrdob .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yvfsjcrdob .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yvfsjcrdob .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yvfsjcrdob .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yvfsjcrdob .gt_left {
+  text-align: left;
+}
+
+#yvfsjcrdob .gt_center {
+  text-align: center;
+}
+
+#yvfsjcrdob .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yvfsjcrdob .gt_font_normal {
+  font-weight: normal;
+}
+
+#yvfsjcrdob .gt_font_bold {
+  font-weight: bold;
+}
+
+#yvfsjcrdob .gt_font_italic {
+  font-style: italic;
+}
+
+#yvfsjcrdob .gt_super {
+  font-size: 65%;
+}
+
+#yvfsjcrdob .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="5" class="gt_heading gt_title gt_font_normal" style><strong>Table 3.2</strong></th>
+    </tr>
+    <tr>
+      <th colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Unconditional probabilities and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.23</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">0.21</td>
+<td class="gt_row gt_center">0.26</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.27</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">0.24</td>
+<td class="gt_row gt_center gt_striped">0.30</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.04</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center">0.08</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.16</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">1.00</td>
+<td class="gt_row gt_center gt_striped">1.35</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.05</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">1.00</td>
+<td class="gt_row gt_center">1.11</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.22</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">1.01</td>
+<td class="gt_row gt_center gt_striped">1.50</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>verify with author’s results, p. 48-49</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="outcomes.html#cb36-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb36-2"><a href="outcomes.html#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
+<span id="cb36-3"><a href="outcomes.html#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.23338</span>, <span class="fl">0.27117</span>, <span class="fl">0.037782</span>, <span class="fl">1.1619</span>, <span class="fl">1.0518</span>, <span class="fl">1.221</span>),</span>
+<span id="cb36-4"><a href="outcomes.html#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
+<span id="cb36-5"><a href="outcomes.html#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
+<span id="cb36-6"><a href="outcomes.html#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb36-7"><a href="outcomes.html#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb36-8"><a href="outcomes.html#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb36-9"><a href="outcomes.html#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<p>Now we estimate the four effect measures using <em>conditional</em> association
+measures. We notice that</p>
+<ul>
+<li>The function used in chapter 3 on p. 50-52 is called <code>lmodboot.r()</code>.</li>
+<li>The same name is used in chapter 2 on p.33-34 for a function computing only
+the estimand (sampling distribution) but <em>not the association measures</em></li>
+</ul>
+<p><strong>We therefore rename the <code>lmodboot.r()</code> of chapter 3 as <code>bootc.r</code></strong> to</p>
+<ul>
+<li>show it relates to <code>bootu.r</code> with the <code>c</code> meaning <strong>conditional</strong> and</li>
+<li>avoid conflicting function names with <code>lmodboot.r()</code> of chapter 2</li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="outcomes.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: This is the function in chapter 3 called lmodboot.r</span></span>
+<span id="cb37-2"><a href="outcomes.html#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co">#            It has been renamed bootc.r to avoid conflict with</span></span>
+<span id="cb37-3"><a href="outcomes.html#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co">#            lmodboot.r of chapter 2</span></span>
+<span id="cb37-4"><a href="outcomes.html#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the expected conditional outcomes and the</span></span>
+<span id="cb37-5"><a href="outcomes.html#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># conditional effect or association measures</span></span>
+<span id="cb37-6"><a href="outcomes.html#cb37-6" aria-hidden="true" tabindex="-1"></a>bootc.r <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H,</span>
+<span id="cb37-7"><a href="outcomes.html#cb37-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cond0 =</span> Y <span class="sc">~</span> A <span class="sc">+</span> H,</span>
+<span id="cb37-8"><a href="outcomes.html#cb37-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cond1 =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
+<span id="cb37-9"><a href="outcomes.html#cb37-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">c</span>(<span class="st">&quot;binomial&quot;</span>, <span class="st">&quot;poisson&quot;</span>, <span class="st">&quot;gaussian&quot;</span>), </span>
+<span id="cb37-10"><a href="outcomes.html#cb37-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb37-11"><a href="outcomes.html#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the family used by glm</span></span>
+<span id="cb37-12"><a href="outcomes.html#cb37-12" aria-hidden="true" tabindex="-1"></a>  family <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(family)</span>
+<span id="cb37-13"><a href="outcomes.html#cb37-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-14"><a href="outcomes.html#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
+<span id="cb37-15"><a href="outcomes.html#cb37-15" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
+<span id="cb37-16"><a href="outcomes.html#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the predictors from condition formulas cond0 and cond1</span></span>
+<span id="cb37-17"><a href="outcomes.html#cb37-17" aria-hidden="true" tabindex="-1"></a>  cond0 <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond0[[<span class="dv">3</span>]])</span>
+<span id="cb37-18"><a href="outcomes.html#cb37-18" aria-hidden="true" tabindex="-1"></a>  cond1 <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond1[[<span class="dv">3</span>]])</span>
+<span id="cb37-19"><a href="outcomes.html#cb37-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-20"><a href="outcomes.html#cb37-20" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb37-21"><a href="outcomes.html#cb37-21" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb37-22"><a href="outcomes.html#cb37-22" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> family, <span class="at">data =</span> dat))</span>
+<span id="cb37-23"><a href="outcomes.html#cb37-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use cond to identify conditioned variables.</span></span>
+<span id="cb37-24"><a href="outcomes.html#cb37-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. the user can decide not to use all variables from the formula</span></span>
+<span id="cb37-25"><a href="outcomes.html#cb37-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or, in other words, condition on some variables</span></span>
+<span id="cb37-26"><a href="outcomes.html#cb37-26" aria-hidden="true" tabindex="-1"></a>    xbeta0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs[<span class="fu">c</span>(x0, cond0)])</span>
+<span id="cb37-27"><a href="outcomes.html#cb37-27" aria-hidden="true" tabindex="-1"></a>    xbeta1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs[<span class="fu">c</span>(x0, cond1)])</span>
+<span id="cb37-28"><a href="outcomes.html#cb37-28" aria-hidden="true" tabindex="-1"></a>    p0 <span class="ot">&lt;-</span> <span class="fu">plogis</span>(xbeta0)  <span class="co"># plogis is the inverse of logit</span></span>
+<span id="cb37-29"><a href="outcomes.html#cb37-29" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="fu">plogis</span>(xbeta1)  <span class="co"># plogis is the inverse of logit</span></span>
+<span id="cb37-30"><a href="outcomes.html#cb37-30" aria-hidden="true" tabindex="-1"></a>    rd <span class="ot">&lt;-</span> p1 <span class="sc">-</span> p0</span>
+<span id="cb37-31"><a href="outcomes.html#cb37-31" aria-hidden="true" tabindex="-1"></a>    logrr <span class="ot">&lt;-</span> <span class="fu">log</span>(p1) <span class="sc">-</span> <span class="fu">log</span>(p0)</span>
+<span id="cb37-32"><a href="outcomes.html#cb37-32" aria-hidden="true" tabindex="-1"></a>    logrrstar <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> p0) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> p1)</span>
+<span id="cb37-33"><a href="outcomes.html#cb37-33" aria-hidden="true" tabindex="-1"></a>    logor <span class="ot">&lt;-</span> <span class="fu">log</span>(p1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p1)) <span class="sc">-</span> <span class="fu">log</span>(p0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p0))</span>
+<span id="cb37-34"><a href="outcomes.html#cb37-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-35"><a href="outcomes.html#cb37-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># return the results</span></span>
+<span id="cb37-36"><a href="outcomes.html#cb37-36" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p0, p1, rd, logrr, logrrstar, logor)</span>
+<span id="cb37-37"><a href="outcomes.html#cb37-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;logrr&quot;</span>, <span class="st">&quot;logrrstar&quot;</span>, <span class="st">&quot;logor&quot;</span>)</span>
+<span id="cb37-38"><a href="outcomes.html#cb37-38" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb37-39"><a href="outcomes.html#cb37-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb37-40"><a href="outcomes.html#cb37-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-41"><a href="outcomes.html#cb37-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb37-42"><a href="outcomes.html#cb37-42" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R)</span>
+<span id="cb37-43"><a href="outcomes.html#cb37-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-44"><a href="outcomes.html#cb37-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the estimated values and confidence intervals from the boot object</span></span>
+<span id="cb37-45"><a href="outcomes.html#cb37-45" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(boot.out<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb37-46"><a href="outcomes.html#cb37-46" aria-hidden="true" tabindex="-1"></a>    est <span class="ot">&lt;-</span> boot.out<span class="sc">$</span>t0[i]</span>
+<span id="cb37-47"><a href="outcomes.html#cb37-47" aria-hidden="true" tabindex="-1"></a>    ci <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(boot.out, <span class="at">conf =</span> conf, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>, <span class="at">index =</span> i)<span class="sc">$</span>normal</span>
+<span id="cb37-48"><a href="outcomes.html#cb37-48" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(est, ci)</span>
+<span id="cb37-49"><a href="outcomes.html#cb37-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)</span>
+<span id="cb37-50"><a href="outcomes.html#cb37-50" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb37-51"><a href="outcomes.html#cb37-51" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb37-52"><a href="outcomes.html#cb37-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-53"><a href="outcomes.html#cb37-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the dataframe to hold the results</span></span>
+<span id="cb37-54"><a href="outcomes.html#cb37-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(out))</span>
+<span id="cb37-55"><a href="outcomes.html#cb37-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the first column as the names of the results</span></span>
+<span id="cb37-56"><a href="outcomes.html#cb37-56" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">names</span>(boot.out<span class="sc">$</span>t0), out)</span>
+<span id="cb37-57"><a href="outcomes.html#cb37-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-58"><a href="outcomes.html#cb37-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert link to natural scales and add to the output</span></span>
+<span id="cb37-59"><a href="outcomes.html#cb37-59" aria-hidden="true" tabindex="-1"></a>  sel <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;rr&quot;</span> <span class="ot">=</span> <span class="st">&quot;logrr&quot;</span>,<span class="st">&quot;rrstar&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logrrstar&quot;</span>, <span class="st">&quot;or&quot;</span> <span class="ot">=</span> <span class="st">&quot;logor&quot;</span>)</span>
+<span id="cb37-60"><a href="outcomes.html#cb37-60" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">within</span>(out, {</span>
+<span id="cb37-61"><a href="outcomes.html#cb37-61" aria-hidden="true" tabindex="-1"></a>   est[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(est[name <span class="sc">%in%</span> sel])</span>
+<span id="cb37-62"><a href="outcomes.html#cb37-62" aria-hidden="true" tabindex="-1"></a>   lci[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(lci[name <span class="sc">%in%</span> sel])</span>
+<span id="cb37-63"><a href="outcomes.html#cb37-63" aria-hidden="true" tabindex="-1"></a>   uci[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">exp</span>(uci[name <span class="sc">%in%</span> sel])</span>
+<span id="cb37-64"><a href="outcomes.html#cb37-64" aria-hidden="true" tabindex="-1"></a>   name[name <span class="sc">%in%</span> sel] <span class="ot">&lt;-</span> <span class="fu">names</span>(sel)</span>
+<span id="cb37-65"><a href="outcomes.html#cb37-65" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb37-66"><a href="outcomes.html#cb37-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-67"><a href="outcomes.html#cb37-67" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb37-68"><a href="outcomes.html#cb37-68" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>To use the function with conditioning on variables, i.e. filtering on variables,
+we note that</p>
+<p><span class="math display">\[
+\begin{align*}
+Y &amp;= \text{trump} \\
+T &amp;= \text{gthsedu} \\
+H_1 &amp;= \text{magthsedu} \\
+H_2 &amp;= \text{white} \\
+H_3 &amp;= \text{female} \\
+H_4 &amp;= \text{gt65} \\
+\end{align*}
+\]</span></p>
+<p>Therefore</p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y &amp;\mid T = 0, H_1 = 1, H_2 = 1, H_3 = 1, H_4 = 1) \\
+&amp;\therefore \text{because T = 0} \\
+Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
+\text{trump} &amp;\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
+\end{align*}
+\]</span></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="outcomes.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we use cond = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;)</span></span>
+<span id="cb38-2"><a href="outcomes.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to exclude gthsedu = 0</span></span>
+<span id="cb38-3"><a href="outcomes.html#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="outcomes.html#cb40-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb40-2"><a href="outcomes.html#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d &lt;- bootc.r(dat = dataGSS, </span></span>
+<span id="cb40-3"><a href="outcomes.html#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65, </span></span>
+<span id="cb40-4"><a href="outcomes.html#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65,</span></span>
+<span id="cb40-5"><a href="outcomes.html#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)</span></span>
+<span id="cb40-6"><a href="outcomes.html#cb40-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
+<span id="cb40-7"><a href="outcomes.html#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d, file = a_file)</span></span>
+<span id="cb40-8"><a href="outcomes.html#cb40-8" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb40-9"><a href="outcomes.html#cb40-9" aria-hidden="true" tabindex="-1"></a>endTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb40-10"><a href="outcomes.html#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="outcomes.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d, </span>
+<span id="cb41-2"><a href="outcomes.html#cb41-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>,</span>
+<span id="cb41-3"><a href="outcomes.html#cb41-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="llseixaila" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#llseixaila .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#llseixaila .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#llseixaila .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#llseixaila .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#llseixaila .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#llseixaila .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#llseixaila .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#llseixaila .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#llseixaila .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#llseixaila .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#llseixaila .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#llseixaila .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#llseixaila .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#llseixaila .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#llseixaila .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#llseixaila .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#llseixaila .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#llseixaila .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#llseixaila .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#llseixaila .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#llseixaila .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#llseixaila .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#llseixaila .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#llseixaila .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#llseixaila .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#llseixaila .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#llseixaila .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#llseixaila .gt_left {
+  text-align: left;
+}
+
+#llseixaila .gt_center {
+  text-align: center;
+}
+
+#llseixaila .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#llseixaila .gt_font_normal {
+  font-weight: normal;
+}
+
+#llseixaila .gt_font_bold {
+  font-weight: bold;
+}
+
+#llseixaila .gt_font_italic {
+  font-style: italic;
+}
+
+#llseixaila .gt_super {
+  font-size: 65%;
+}
+
+#llseixaila .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="5" class="gt_heading gt_title gt_font_normal" style><strong>Table 3.3</strong></th>
+    </tr>
+    <tr>
+      <th colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">conf</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.25</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">0.19</td>
+<td class="gt_row gt_center">0.32</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.30</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">0.23</td>
+<td class="gt_row gt_center gt_striped">0.37</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.05</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center">0.09</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.18</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">1.01</td>
+<td class="gt_row gt_center gt_striped">1.38</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.07</td>
+<td class="gt_row gt_center">0.95</td>
+<td class="gt_row gt_center">1.00</td>
+<td class="gt_row gt_center">1.13</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.26</td>
+<td class="gt_row gt_center gt_striped">0.95</td>
+<td class="gt_row gt_center gt_striped">1.01</td>
+<td class="gt_row gt_center gt_striped">1.56</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>verify with author’s results, p.52</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="outcomes.html#cb42-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb42-2"><a href="outcomes.html#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
+<span id="cb42-3"><a href="outcomes.html#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
+<span id="cb42-4"><a href="outcomes.html#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
+<span id="cb42-5"><a href="outcomes.html#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
+<span id="cb42-6"><a href="outcomes.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb42-7"><a href="outcomes.html#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb42-8"><a href="outcomes.html#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb42-9"><a href="outcomes.html#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+</div>
+<div id="exercises-3" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Exercises</h2>
+<p>Please note that the solutions to exercises of <span class="citation"><a href="#ref-brumback2022" role="doc-biblioref">Brumback</a> (<a href="#ref-brumback2022" role="doc-biblioref">2022</a>)</span> below are my own
+and have not been verified or approved in any way by the author.</p>
+<div id="exercise-1-3" class="section level3" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Exercise 1</h3>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="outcomes.html#cb43-1" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;owngun&quot;</span>, <span class="st">&quot;conservative&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;white&quot;</span>)]</span>
+<span id="cb43-2"><a href="outcomes.html#cb43-2" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(dataGSS1), ]</span>
+<span id="cb43-3"><a href="outcomes.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS1) <span class="sc">==</span> <span class="dv">1461</span>)</span></code></pre></div>
+<div id="a-unconditional-probabilites" class="section level4" number="3.4.1.1">
+<h4><span class="header-section-number">3.4.1.1</span> a) unconditional probabilites</h4>
+<p>This model corresponds to</p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y \mid T) &amp;= \beta_0 + \beta_1 T \\
+&amp;\therefore \\
+E(T \mid T = 0) &amp;= E(owngun \mid conservative = 0) = \beta_0 \\ \\
+E(T \mid T = 1) &amp;= E(owngun \mid conservative = 1) = \beta_0 + \beta_1 \\
+\end{align*}
+\]</span></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="outcomes.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb46-2"><a href="outcomes.html#cb46-2" aria-hidden="true" tabindex="-1"></a>d1a <span class="ot">&lt;-</span> <span class="fu">bootu.r</span>(<span class="at">dat =</span> dataGSS1, <span class="at">formula =</span> owngun <span class="sc">~</span> conservative)</span>
+<span id="cb46-3"><a href="outcomes.html#cb46-3" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1a.rds&quot;</span>)</span>
+<span id="cb46-4"><a href="outcomes.html#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1a, file = a_file)</span></span>
+<span id="cb46-5"><a href="outcomes.html#cb46-5" aria-hidden="true" tabindex="-1"></a>d1a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb46-6"><a href="outcomes.html#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb46-7"><a href="outcomes.html#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="outcomes.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d1a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb47-2"><a href="outcomes.html#cb47-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 a): Table 3.2&quot;</span>,</span>
+<span id="cb47-3"><a href="outcomes.html#cb47-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="pscvzxyboh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#pscvzxyboh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pscvzxyboh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pscvzxyboh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pscvzxyboh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pscvzxyboh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pscvzxyboh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pscvzxyboh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pscvzxyboh .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pscvzxyboh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pscvzxyboh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pscvzxyboh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pscvzxyboh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pscvzxyboh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#pscvzxyboh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pscvzxyboh .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pscvzxyboh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pscvzxyboh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#pscvzxyboh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pscvzxyboh .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#pscvzxyboh .gt_left {
+  text-align: left;
+}
+
+#pscvzxyboh .gt_center {
+  text-align: center;
+}
+
+#pscvzxyboh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pscvzxyboh .gt_font_normal {
+  font-weight: normal;
+}
+
+#pscvzxyboh .gt_font_bold {
+  font-weight: bold;
+}
+
+#pscvzxyboh .gt_font_italic {
+  font-style: italic;
+}
+
+#pscvzxyboh .gt_super {
+  font-size: 65%;
+}
+
+#pscvzxyboh .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 1 a): Table 3.2</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.31</td>
+<td class="gt_row gt_center">0.28</td>
+<td class="gt_row gt_center">0.34</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.47</td>
+<td class="gt_row gt_center gt_striped">0.43</td>
+<td class="gt_row gt_center gt_striped">0.52</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.17</td>
+<td class="gt_row gt_center">0.11</td>
+<td class="gt_row gt_center">0.22</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.54</td>
+<td class="gt_row gt_center gt_striped">1.35</td>
+<td class="gt_row gt_center gt_striped">1.76</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.32</td>
+<td class="gt_row gt_center">1.19</td>
+<td class="gt_row gt_center">1.45</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">2.03</td>
+<td class="gt_row gt_center gt_striped">1.61</td>
+<td class="gt_row gt_center gt_striped">2.55</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>From the results just above have that
+<span class="math inline">\(E(owngun) = E(owngun \mid conservative = 0)\)</span> and <span class="math inline">\(E(owngun \mid conservative = 1)\)</span>
+and that <span class="math inline">\(E(owngun) - E(owngun \mid conservative = 1)\)</span> is 0.17 (0.11, 0.22).
+Therefore people with conservative views sem more likely to oen a gun. But
+there is not necessarily a causality. See <em>Inference</em> section below.</p>
+</div>
+<div id="b-conditional-probabilites" class="section level4" number="3.4.1.2">
+<h4><span class="header-section-number">3.4.1.2</span> b) conditional probabilites</h4>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="outcomes.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="outcomes.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb50-2"><a href="outcomes.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d1b &lt;- bootc.r(dat = dataGSS1, </span></span>
+<span id="cb50-3"><a href="outcomes.html#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = owngun ~ conservative + gt65 + female + white, </span></span>
+<span id="cb50-4"><a href="outcomes.html#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = owngun ~ gt65 + white,</span></span>
+<span id="cb50-5"><a href="outcomes.html#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = owngun ~ conservative + gt65 + white)</span></span>
+<span id="cb50-6"><a href="outcomes.html#cb50-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1b.rds&quot;</span>)</span>
+<span id="cb50-7"><a href="outcomes.html#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1b, file = a_file)</span></span>
+<span id="cb50-8"><a href="outcomes.html#cb50-8" aria-hidden="true" tabindex="-1"></a>d1b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb50-9"><a href="outcomes.html#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb50-10"><a href="outcomes.html#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="outcomes.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d1b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb51-2"><a href="outcomes.html#cb51-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 b): Table 3.2&quot;</span>,</span>
+<span id="cb51-3"><a href="outcomes.html#cb51-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="bjxzjdmfcv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#bjxzjdmfcv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bjxzjdmfcv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bjxzjdmfcv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bjxzjdmfcv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bjxzjdmfcv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bjxzjdmfcv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bjxzjdmfcv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bjxzjdmfcv .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bjxzjdmfcv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bjxzjdmfcv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bjxzjdmfcv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bjxzjdmfcv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bjxzjdmfcv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#bjxzjdmfcv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjxzjdmfcv .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjxzjdmfcv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bjxzjdmfcv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bjxzjdmfcv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bjxzjdmfcv .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bjxzjdmfcv .gt_left {
+  text-align: left;
+}
+
+#bjxzjdmfcv .gt_center {
+  text-align: center;
+}
+
+#bjxzjdmfcv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bjxzjdmfcv .gt_font_normal {
+  font-weight: normal;
+}
+
+#bjxzjdmfcv .gt_font_bold {
+  font-weight: bold;
+}
+
+#bjxzjdmfcv .gt_font_italic {
+  font-style: italic;
+}
+
+#bjxzjdmfcv .gt_super {
+  font-size: 65%;
+}
+
+#bjxzjdmfcv .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 1 b): Table 3.2</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.47</td>
+<td class="gt_row gt_center">0.40</td>
+<td class="gt_row gt_center">0.54</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.63</td>
+<td class="gt_row gt_center gt_striped">0.55</td>
+<td class="gt_row gt_center gt_striped">0.70</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.16</td>
+<td class="gt_row gt_center">0.10</td>
+<td class="gt_row gt_center">0.21</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.33</td>
+<td class="gt_row gt_center gt_striped">1.19</td>
+<td class="gt_row gt_center gt_striped">1.48</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.41</td>
+<td class="gt_row gt_center">1.22</td>
+<td class="gt_row gt_center">1.62</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.88</td>
+<td class="gt_row gt_center gt_striped">1.47</td>
+<td class="gt_row gt_center gt_striped">2.37</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>Now if we let <span class="math inline">\(E(owngun \mid gt65, white) = E(Y \mid T = 0, H = 1)\)</span> and
+<span class="math inline">\(E(owngun \mid conservative, gt65, white) = E(Y \mid T = 1, H = 1)\)</span> then
+<span class="math inline">\(RD = E(Y \mid T = 1, H = 1) - E(Y \mid T = 0, H = 1)\)</span> is 0.16 (0.10, 0.21)
+indicating that white male older than 65 with conservative views are more likely
+to own a gun than white male older than 65 with no declared conservative views.
+Again see comment in <em>Inference</em> section below which explains why we cannot
+conclude causality.</p>
+</div>
+<div id="inference" class="section level4" number="3.4.1.3">
+<h4><span class="header-section-number">3.4.1.3</span> Inference</h4>
+<p><em>Is the assumption that political views are formed before gun purchases realistic?</em></p>
+<p>Conservative views could be seen as preliminary to gun purchase but it could
+easily be argued that many people without conservative views buy guns.<br />
+It is also unclear as to what conservative views are. This can be variable in
+different contexts and break the <em>consistency assumption</em>.</p>
+<p><em>The consistency assumption (see section 3.1, p.38) requires that the observed outcome
+be consistent with the potential outcomes. Importantly, he consistency
+assumption requires the potential outcomes to be well-defined (p.39).</em></p>
+<p>Therefore we would refrain from concluding that political views are a cause
+of gun ownership.</p>
+<p><em>What assumptions would be needed to interpret these estimates casually?</em></p>
+<p>The assumptions necessary to interpret the assumptions causally would be that</p>
+<ul>
+<li>there is no dependencies between white, gt65 and conservative</li>
+<li>owning a gun is not in itself a cause of conservative views</li>
+</ul>
+</div>
+</div>
+<div id="exercise-2-2" class="section level3" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Exercise 2</h3>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="outcomes.html#cb52-1" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;pagthsedu&quot;</span>, </span>
+<span id="cb52-2"><a href="outcomes.html#cb52-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb52-3"><a href="outcomes.html#cb52-3" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pamiss <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb52-4"><a href="outcomes.html#cb52-4" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pagthsedu[<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb52-5"><a href="outcomes.html#cb52-5" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> dataGSS2[<span class="fu">complete.cases</span>(dataGSS2), ]</span>
+<span id="cb52-6"><a href="outcomes.html#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS2) <span class="sc">==</span> <span class="dv">2168</span>)</span></code></pre></div>
+<p>Let <span class="math inline">\(Y = trump, T = gthsedu, H = white \cap female \cap gt65\)</span> then we have</p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y \mid T, H, pagthsedu, pamiss)
+\end{align*}
+\]</span>
+and we are using the following conditioning</p>
+<p><span class="math display">\[
+\begin{align*}
+p_0 = E(Y \mid T = 0, H, pagthsedu = 1, pamiss = 0) \\
+p_1 = E(Y \mid T = 1, H, pagthsedu = 1, pamiss = 0)
+\end{align*}
+\]</span></p>
+<p>and we use the logistic model to estimate the associaiton measures as follows</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="outcomes.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="outcomes.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb55-2"><a href="outcomes.html#cb55-2" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">bootc.r</span>(<span class="at">dat =</span> dataGSS2, </span>
+<span id="cb55-3"><a href="outcomes.html#cb55-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">formula =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65 <span class="sc">+</span></span>
+<span id="cb55-4"><a href="outcomes.html#cb55-4" aria-hidden="true" tabindex="-1"></a>               pagthsedu <span class="sc">+</span> pamiss, </span>
+<span id="cb55-5"><a href="outcomes.html#cb55-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">cond0 =</span> trump <span class="sc">~</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65 <span class="sc">+</span> pagthsedu,</span>
+<span id="cb55-6"><a href="outcomes.html#cb55-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">cond1 =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65 <span class="sc">+</span> pagthsedu)</span>
+<span id="cb55-7"><a href="outcomes.html#cb55-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex2.rds&quot;</span>)</span>
+<span id="cb55-8"><a href="outcomes.html#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d2, file = a_file)</span></span>
+<span id="cb55-9"><a href="outcomes.html#cb55-9" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb55-10"><a href="outcomes.html#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb55-11"><a href="outcomes.html#cb55-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="outcomes.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d2[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb56-2"><a href="outcomes.html#cb56-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 2: Table 3.3&quot;</span>,</span>
+<span id="cb56-3"><a href="outcomes.html#cb56-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="ijqfhuwvho" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ijqfhuwvho .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ijqfhuwvho .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ijqfhuwvho .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ijqfhuwvho .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ijqfhuwvho .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ijqfhuwvho .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ijqfhuwvho .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ijqfhuwvho .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ijqfhuwvho .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ijqfhuwvho .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ijqfhuwvho .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ijqfhuwvho .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ijqfhuwvho .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ijqfhuwvho .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijqfhuwvho .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijqfhuwvho .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ijqfhuwvho .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ijqfhuwvho .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijqfhuwvho .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ijqfhuwvho .gt_left {
+  text-align: left;
+}
+
+#ijqfhuwvho .gt_center {
+  text-align: center;
+}
+
+#ijqfhuwvho .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ijqfhuwvho .gt_font_normal {
+  font-weight: normal;
+}
+
+#ijqfhuwvho .gt_font_bold {
+  font-weight: bold;
+}
+
+#ijqfhuwvho .gt_font_italic {
+  font-style: italic;
+}
+
+#ijqfhuwvho .gt_super {
+  font-size: 65%;
+}
+
+#ijqfhuwvho .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 2: Table 3.3</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.25</td>
+<td class="gt_row gt_center">0.17</td>
+<td class="gt_row gt_center">0.32</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.29</td>
+<td class="gt_row gt_center gt_striped">0.21</td>
+<td class="gt_row gt_center gt_striped">0.36</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.04</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center">0.09</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.17</td>
+<td class="gt_row gt_center gt_striped">0.98</td>
+<td class="gt_row gt_center gt_striped">1.39</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.06</td>
+<td class="gt_row gt_center">0.99</td>
+<td class="gt_row gt_center">1.12</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.23</td>
+<td class="gt_row gt_center gt_striped">0.97</td>
+<td class="gt_row gt_center gt_striped">1.55</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>The results are identical to the ones in table 3.3 of section 3.3. Since we are
+conditioning on <span class="math inline">\(pagthsedu = 1, pamiss = 0\)</span> and that <span class="math inline">\((pagthsedu = 1) \Rightarrow (pamiss = 0)\)</span>
+then it is the same as conditioning on <span class="math inline">\((pagthsedu = 1)\)</span> and so, since <span class="math inline">\(pagthsedu\)</span>
+is always constant at 1, then it has no impact on the result.</p>
+</div>
+<div id="exercise-3-2" class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Exercise 3</h3>
+<div id="a" class="section level4" number="3.4.3.1">
+<h4><span class="header-section-number">3.4.3.1</span> a)</h4>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="outcomes.html#cb57-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="ot">&lt;-</span> brfss</span>
+<span id="cb57-2"><a href="outcomes.html#cb57-2" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="sc">%&gt;%</span></span>
+<span id="cb57-3"><a href="outcomes.html#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="fu">paste</span>(whitenh, blacknh, hisp, othernh, multinh, <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb57-4"><a href="outcomes.html#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb57-5"><a href="outcomes.html#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 5 x 2
+## # Groups:   cat [5]
+##   cat            n
+##   &lt;chr&gt;      &lt;int&gt;
+## 1 0-0-0-0-1   7085
+## 2 0-0-0-1-0  16015
+## 3 0-0-1-0-0  25267
+## 4 0-1-0-0-0  25345
+## 5 1-0-0-0-0 273359</code></pre>
+<p>Note on the data: As just shown above, the variables <code>whitenh</code>, <code>blacknh</code>,
+<code>hisp</code>, <code>othernh</code>, <code>multinh</code> are mutually exclusive and thus can be seen as
+dummy variables for a category called <span class="math inline">\(ethnicity\)</span>. Therefore we need to include
+all of them in the analysis. Not just <code>whitenh</code> as one could wrongly assumed
+after reading the question. Yes, I made that mistake myself.</p>
+<p>Also, since they are dummy variavles, the reference variable need not be included.
+In this case the reference variable is <code>othernh</code>.</p>
+<p>The probabilities of consuming zero drinks <span class="math inline">\(zerodrinks\)</span> related to residence
+in rural county <span class="math inline">\(rural\)</span>, conditioned on being male <span class="math inline">\(female = 0\)</span>,
+white non-hispanic <span class="math inline">\(whitenh = 1\)</span>, younger than 65 year-old <span class="math inline">\(gt65 = 0\)</span> and having
+greater than high school education <span class="math inline">\(gthsedu = 1\)</span> is</p>
+<p><span class="math display">\[
+\begin{align*}
+P(zerodrinks &amp;\mid rural \cap female = 0 \cap whitenh = 1 \cap gt65 = 0 \cap gthsedu = 1) \\
+&amp;\text{let} \\ 
+Y &amp;= zerodrinks \\ 
+T &amp;= rural \\ 
+H = h \ &amp;:= female = 0 \cap whitenh = 1 \cap gt65 = 0 \cap gthsedu = 1 \\
+&amp;\therefore \\
+P(Y &amp;\mid T, H = h)
+\end{align*}
+\]</span></p>
+<p>and we are measuring</p>
+<p><span class="math display">\[
+\begin{align*}
+p_0 = E(Y \mid T = 0, H) \\
+p_1 = E(Y \mid T = 1, H)
+\end{align*}
+\]</span></p>
+<p>We use <code>boot.c</code> from above and remember that <code>whitenh</code>, <code>blacknh</code>,
+<code>hisp</code>, <code>othernh</code>, <code>multinh</code> are mutually exclusive dummy variables and so
+<span class="math inline">\(whitenh = 1 \implies blacknh = 0 \cap hisp = 0 \cap othernh = 0 \cap multinh = 0\)</span>.
+We also use only 500 bootstrapping iterations given te large volume of data.</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="outcomes.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb59-2"><a href="outcomes.html#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3a &lt;- bootc.r(dat = dataBRFSSa,</span></span>
+<span id="cb59-3"><a href="outcomes.html#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = zerodrinks ~ rural + female + whitenh + blacknh +</span></span>
+<span id="cb59-4"><a href="outcomes.html#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
+<span id="cb59-5"><a href="outcomes.html#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = zerodrinks ~ whitenh + gthsedu,</span></span>
+<span id="cb59-6"><a href="outcomes.html#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = zerodrinks ~ rural + whitenh + gthsedu,</span></span>
+<span id="cb59-7"><a href="outcomes.html#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              R = 500)</span></span>
+<span id="cb59-8"><a href="outcomes.html#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb59-9"><a href="outcomes.html#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb59-10"><a href="outcomes.html#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 26 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This took 26 min, so we load a saved file.</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="outcomes.html#cb61-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3a.rds&quot;</span>)</span>
+<span id="cb61-2"><a href="outcomes.html#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3a, file = a_file)</span></span>
+<span id="cb61-3"><a href="outcomes.html#cb61-3" aria-hidden="true" tabindex="-1"></a>d3a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="outcomes.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d3a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb62-2"><a href="outcomes.html#cb62-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 a): Table 3.3&quot;</span>,</span>
+<span id="cb62-3"><a href="outcomes.html#cb62-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="mnbxodlzmr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mnbxodlzmr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mnbxodlzmr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mnbxodlzmr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mnbxodlzmr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mnbxodlzmr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mnbxodlzmr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mnbxodlzmr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mnbxodlzmr .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mnbxodlzmr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mnbxodlzmr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mnbxodlzmr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mnbxodlzmr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mnbxodlzmr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#mnbxodlzmr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mnbxodlzmr .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mnbxodlzmr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mnbxodlzmr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mnbxodlzmr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mnbxodlzmr .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mnbxodlzmr .gt_left {
+  text-align: left;
+}
+
+#mnbxodlzmr .gt_center {
+  text-align: center;
+}
+
+#mnbxodlzmr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mnbxodlzmr .gt_font_normal {
+  font-weight: normal;
+}
+
+#mnbxodlzmr .gt_font_bold {
+  font-weight: bold;
+}
+
+#mnbxodlzmr .gt_font_italic {
+  font-style: italic;
+}
+
+#mnbxodlzmr .gt_super {
+  font-size: 65%;
+}
+
+#mnbxodlzmr .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 3 a): Table 3.3</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.29</td>
+<td class="gt_row gt_center">0.29</td>
+<td class="gt_row gt_center">0.30</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.35</td>
+<td class="gt_row gt_center gt_striped">0.35</td>
+<td class="gt_row gt_center gt_striped">0.36</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.06</td>
+<td class="gt_row gt_center">0.05</td>
+<td class="gt_row gt_center">0.06</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.19</td>
+<td class="gt_row gt_center gt_striped">1.18</td>
+<td class="gt_row gt_center gt_striped">1.21</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.09</td>
+<td class="gt_row gt_center">1.08</td>
+<td class="gt_row gt_center">1.09</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.30</td>
+<td class="gt_row gt_center gt_striped">1.27</td>
+<td class="gt_row gt_center gt_striped">1.32</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>We observe that <span class="math inline">\(P(Y \mid T = 1, H = h) = 0.35\)</span> and <span class="math inline">\(P(Y \mid T = 0, H = h) = 0.29\)</span>
+so that the fact that male, white non-hispanic people younger than 65 with higher
+education are more likely to not have any drink in the past month.</p>
+<p>To conclude causality we must ensure the <em>consistency assumption</em> (see p. 39)
+and the <em>positivity assumption</em> (see p. 41). In other words</p>
+<ul>
+<li><p>consistency assumption: The relation between the the potential and observed
+outcome is well defined. Here it seems that not having a drink in the past month
+is clearly linked to the potential outcome.</p></li>
+<li><p>positivity assumption: We must have <span class="math inline">\(0 &lt; P(Y \mid T, H) &lt; 1\)</span> which is the case here.</p></li>
+</ul>
+</div>
+<div id="b" class="section level4" number="3.4.3.2">
+<h4><span class="header-section-number">3.4.3.2</span> b)</h4>
+<p>We restrict the <code>brfss</code> data to only include lines where respondents
+consumed alcoholic drinks during the past 30 days <span class="math inline">\(maxdrinks \neq 0\)</span></p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="outcomes.html#cb63-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSb <span class="ot">&lt;-</span> brfss[brfss<span class="sc">$</span>maxdrinks <span class="sc">!=</span> <span class="dv">0</span>, </span>
+<span id="cb63-2"><a href="outcomes.html#cb63-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">&quot;whitenh&quot;</span>, <span class="st">&quot;blacknh&quot;</span>, <span class="st">&quot;hisp&quot;</span>, <span class="st">&quot;othernh&quot;</span>, <span class="st">&quot;multinh&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>,</span>
+<span id="cb63-3"><a href="outcomes.html#cb63-3" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;rural&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;zerodrinks&quot;</span>, <span class="st">&quot;maxdrinks&quot;</span>)]</span></code></pre></div>
+<p>All the comments from a) above on the ethnicity variables applies. The same
+rational is used to define the variables so that we now have</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="outcomes.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb64-2"><a href="outcomes.html#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3b &lt;- bootc.r(dat = dataBRFSSb,</span></span>
+<span id="cb64-3"><a href="outcomes.html#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = maxdrinks ~ rural + female + whitenh + blacknh +</span></span>
+<span id="cb64-4"><a href="outcomes.html#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
+<span id="cb64-5"><a href="outcomes.html#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = maxdrinks ~ whitenh + gthsedu,</span></span>
+<span id="cb64-6"><a href="outcomes.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = maxdrinks ~ rural + whitenh + gthsedu,</span></span>
+<span id="cb64-7"><a href="outcomes.html#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              family = &quot;poisson&quot;, R = 500)</span></span>
+<span id="cb64-8"><a href="outcomes.html#cb64-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb64-9"><a href="outcomes.html#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb64-10"><a href="outcomes.html#cb64-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 20 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This took 20 min, so we load a saved file.</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="outcomes.html#cb66-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3b.rds&quot;</span>)</span>
+<span id="cb66-2"><a href="outcomes.html#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3b, file = a_file)</span></span>
+<span id="cb66-3"><a href="outcomes.html#cb66-3" aria-hidden="true" tabindex="-1"></a>d3b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="outcomes.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_bootc.r</span>(d3b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb67-2"><a href="outcomes.html#cb67-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 b)&quot;</span>,</span>
+<span id="cb67-3"><a href="outcomes.html#cb67-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Cond. prob. and association measures with 95% CI&quot;</span>)</span></code></pre></div>
+<div id="dwkekbzkjs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#dwkekbzkjs .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#dwkekbzkjs .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#dwkekbzkjs .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#dwkekbzkjs .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#dwkekbzkjs .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#dwkekbzkjs .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#dwkekbzkjs .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#dwkekbzkjs .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dwkekbzkjs .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dwkekbzkjs .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#dwkekbzkjs .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#dwkekbzkjs .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#dwkekbzkjs .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#dwkekbzkjs .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwkekbzkjs .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwkekbzkjs .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#dwkekbzkjs .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#dwkekbzkjs .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dwkekbzkjs .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#dwkekbzkjs .gt_left {
+  text-align: left;
+}
+
+#dwkekbzkjs .gt_center {
+  text-align: center;
+}
+
+#dwkekbzkjs .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#dwkekbzkjs .gt_font_normal {
+  font-weight: normal;
+}
+
+#dwkekbzkjs .gt_font_bold {
+  font-weight: bold;
+}
+
+#dwkekbzkjs .gt_font_italic {
+  font-style: italic;
+}
+
+#dwkekbzkjs .gt_super {
+  font-size: 65%;
+}
+
+#dwkekbzkjs .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 3 b)</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Cond. prob. and association measures with 95% CI</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">lci</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">uci</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">p0</td>
+<td class="gt_row gt_center">0.82</td>
+<td class="gt_row gt_center">0.81</td>
+<td class="gt_row gt_center">0.82</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">p1</td>
+<td class="gt_row gt_center gt_striped">0.82</td>
+<td class="gt_row gt_center gt_striped">0.82</td>
+<td class="gt_row gt_center gt_striped">0.82</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center">0.01</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">1.01</td>
+<td class="gt_row gt_center gt_striped">1.00</td>
+<td class="gt_row gt_center gt_striped">1.01</td></tr>
+    <tr><td class="gt_row gt_left">rrstar</td>
+<td class="gt_row gt_center">1.02</td>
+<td class="gt_row gt_center">1.01</td>
+<td class="gt_row gt_center">1.04</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">or</td>
+<td class="gt_row gt_center gt_striped">1.03</td>
+<td class="gt_row gt_center gt_striped">1.02</td>
+<td class="gt_row gt_center gt_striped">1.04</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>We note that the expected rate for rural <span class="math inline">\(p_1 = 0.82\)</span> vs non-rural residents
+<span class="math inline">\(p_1 = 0.82\)</span> is not much different. Therefore whether the person resides
+in a rural area or not does not make it more likely to drink.</p>
+<p>The consistency and positivity assumptions as described in a) above would also
+be reauired to conclude causality.</p>
+</div>
+</div>
+<div id="exercise-4-2" class="section level3" number="3.4.4">
+<h3><span class="header-section-number">3.4.4</span> Exercise 4</h3>
+<p>As discussed on p. 39, the consistency assumption requires that <em>the potential
+outcome be well defined</em>. We have to state that the extrapolation would
+apply only to the specific percentages of exposure in the experiment. To say it
+in the words of page 39,
+<em>Extrapolation to a situation where the percentage is not the same would be tenuous</em>.</p>
+<p>also, the following points, mentioned in p. 40, are important</p>
+<ul>
+<li>The fact that the difference in exposure rate is caused by chance is always
+a possibility and makes extrapolation tenuous</li>
+<li>The study population may no longer be relevant as vaccination rate and recovery rate
+(i.e. infected people who recovered) could have changed significantly in the meantime</li>
+<li>One must keep in mind that extrapolating an average result to any individual
+is problematic.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-brumback2022" class="csl-entry">
+Brumback, Babette A. 2022. <em>Fundamentals of Causal Inference with r</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://www.crcpress.com">https://www.crcpress.com</a>.
+</div>
 </div>
             </section>
 
