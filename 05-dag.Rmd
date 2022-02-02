@@ -18,6 +18,13 @@ We also sue the `simstudy` package from now on to perform the simulations.
 
 ## Theory
 
+### Conditional Indepence and DAG
+
+> Causal directed acyclic graphs provide a convenient and efficient way to 
+represent statistical ans causal dependence.
+
+For example
+
 ```{r warning=FALSE}
 # Source:
 # to be able to use mathematical expressions in the DAG we use the trick from
@@ -25,8 +32,8 @@ We also sue the `simstudy` package from now on to perform the simulations.
 # NOTE ON LABELS:
 #   Label are not used, but the code for them is included and commented out.
 #   The author does not use labels, but they could be useful.
-scm <- list()
-scm <- within(scm, {
+scm_5.1 <- list()
+scm_5.1 <- within(scm_5.1, {
   the_nodes <- c("X1" = "X1 label", 
                  "X2" = "X2 label", 
                  "X3" = "X3 label", 
@@ -61,18 +68,33 @@ scm <- within(scm, {
 ```
 
 ```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.1", warning=FALSE, out.width="60%"}
-scm$plot
+scm_5.1$plot
 ```
+can be expressed in terms of conditional probabilities as
+
+$$
+\begin{align*}
+P(X_1, X_2, X_3, X_4) = P(X_4 \mid X_2, X_1)P(X_3 \mid X_2)P(X_2 \mid X_1)P(X_1)
+\end{align*}
+$$
+
+### D-Separation
 
 
+> A path is said to be d-separated, or blocked,, by a set of variables $C$ if
+and only if the path i) containis a *chain* as in figure 5.2a such that the 
+midlle variable $Z$ is in $C$  or ii) contains a *fork* as in figure 5.2b such 
+that such that the middle variable $Z$ is not in $C$ or iii) contains an inverted
+fork, or *collider*, as in figure 5.2c such that the midlle variable $Z$ is not
+in $C$ and such that no descendant of a collider is in $C$.
 
-and for the graphical structures
 
+and we illustrate the 3 basic graphical structures as follows
 
 
 ```{r echo=TRUE, warning=FALSE}
-scm <- list()
-scm <- within(scm, {
+scm_5.2 <- list()
+scm_5.2 <- within(scm_5.2, {
   colr <- "snow"  # color used by ggdag
   
   dagChain <- dagify(
@@ -170,18 +192,17 @@ scm <- within(scm, {
 
 
 ```{r fig.align='center', fig.cap="Figure 5.2", warning=FALSE}
-gridExtra::grid.arrange(scm$plotChain, scm$plotFork, scm$plotColl, scm$plotDesc, 
+gridExtra::grid.arrange(scm_5.2$plotChain, scm_5.2$plotFork, scm_5.2$plotColl, 
+                        scm_5.2$plotDesc, 
                         nrow = 2, ncol = 2,
                         top = "Graphical structures", bottom = "Figure 5.2")
 ```
 
 
+### Causal DAG with collider
 
 
-
-and for our first practice of d-separation we have
-
-
+and for our first practice of d-separation we have a DAG with a collider
 
 
 ```{r echo=TRUE, warning=FALSE}
@@ -228,8 +249,19 @@ We will not list all of them, just their number, 93.
 length(impliedConditionalIndependencies(scm_5.3$dag, type = "all.pairs"))
 ```
 
+some of those independence are
+
+```{r}
+impliedConditionalIndependencies(scm_5.3$dag, type = "missing.edge")
+```
+
+
 ## Examples
 
+### Causal DAG With Intermediate Value
+
+Here  we have $A \not\!\perp\!\!\!\perp Y \mid M$ because $M$ is a collider and
+conditioning on $M$ would open up the path.
 
 ```{r echo=TRUE, warning=FALSE}
 scm_5.4 <- list()
@@ -255,7 +287,11 @@ scm_5.4 <- within(scm_5.4, {
 scm_5.4$plot
 ```
 
+### A counfounder may occur after the exposure
 
+> Figure 5.5 illustrates and unmeasured true confounder $U$ of the effect of
+$A$ on $Y$ that can be handled by conditioning on the measured variable $Z$,
+even if $Z$ *occur after* $A$.
 
 ```{r echo=TRUE, warning=FALSE}
 scm_5.5 <- list()
@@ -265,19 +301,23 @@ scm_5.5 <- within(scm_5.5, {
     A ~ U,
     Z ~ U,
     Y ~ A + Z,
-    latent = "U")
+    latent = "U",
+    exposure = "A",
+    outcome = "Y")
 
   # plot the DAG
   colr <- "snow"
-  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     ggdag_status(color = status) +
     geom_dag_point() +
     geom_dag_edges() +
     geom_dag_text(size = 7, color = "midnightblue") +
-    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
+    scale_color_manual(values = status_colrs, na.value = colr) +
     ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank()) +
     labs(title = "A Counfounder May Occur After the Exposure")
 })
 ```
@@ -288,9 +328,13 @@ scm_5.5$plot
 
 
 
-### Structural Causal Model 5.6
+### Potential Outcomes are the Ultimate Counfounder
 
-We are given the causal DAG
+> The collection of potential outcomes $\{Y(a)\}_{a \in A}$ can be viewed as the
+ultimate confounder, even if it is not a tue confounder. The unmeasured 
+counfounder $U = \{Y(a)\}_{a \in A}$ will always block all backdoor paths
+from $A$ to $Y$, because $Y$ is a deterministic function of $A$ and $\{Y(a)\}_{a \in A}$;
+that is $Y = Y(A)$, or, for binary $Y$, $Y = AY(1) + (1-A)Y(0)$
 
 ```{r echo=TRUE, warning=FALSE}
 scm_5.6 <- list()
@@ -323,7 +367,6 @@ scm_5.6 <- within(scm_5.6, {
 ```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.6", warning=FALSE, out.width="60%"}
 scm_5.6$plot
 ```
-
 
 
 for the works that follows the tables will be formatted with this function
@@ -709,11 +752,30 @@ and so the likelihood that $Y0 = 1$ is only 39% and it is therefore more likely
 that $Y0 = 0$ . . . but not always.
 
 
+> Does the additional knowledge of $H$ help to identify $Y(0)$? We leave that 
+as a question  for the reader.
+
+If we include $H$ in the DAG of figure 5.6 we obtain the DAG of figure
+5.8 below. We observe that $(Y(0), Y(1)) \perp\!\!\!\perp A \mid H$. In addition,
+since $Y$ is a collider $(Y(0), Y(1)) \not\!\perp\!\!\!\perp A \mid Y$, therefore
+if we use the data from figure 5.8 below (`simall.r`) we have
+
+
+$$
+\begin{align*}
+P(Y0 = 1 \mid H = 1) &= \frac{P(Y0 = 1, H = 1)}{P(H = 1)} \\
+&= \frac{0.019 + 0.006 + 0.051 + 0.05}{0.031 + 0.02 + 0.019 + 0.006 + 0.109 + 0.117 + 0.051 + 0.05} \\
+&= \frac{0.126}{0.403} = 0.31
+\end{align*}
+$$
+Therefore $H$ is not entirely sufficient to determine $(Y(0), Y(1))$ as it
+will do it only 31% of the time for $Y(0) = 1$ and otherwise 69% of the time
+for $Y(0) = 0$.
 
 
 
 
-### Potential Outcomes Behind th Scenes
+### Potential Outcomes Behind the Scenes
 
 
 
@@ -815,4 +877,203 @@ simall.r <- function(n = 1000) {
   data.frame(cbind(H, A, Y0, Y1, Y))
 }
 ```
+
+
+and the causal DAG fortthe What-If? study is
+
+
+```{r echo=TRUE, fig.align='center', fig.cap="Figure 5.9", warning=FALSE, out.width="80%"}
+scm_5.9 <- list()
+scm_5.9 <- within(scm_5.9, {
+  the_nodes <- c("U" = "Unmeasured, healthy behavior (U=1)", 
+                 "AD0" = "Adherence time 0", 
+                 "VL0" = "Viral Load time 0", 
+                 "T" = "Naltrexone (T=1)", 
+                 "A" = "Reduced drinking (A=1)", 
+                 "AD1" = "Adherence time 1", 
+                 "VL1" = "Viral Load time 1")
+  coords <- data.frame(
+    name = names(the_nodes),
+    x = c(2, 3, 4, 1, 2, 3, 4),
+    y = c(2, 2, 2, 1, 1, 1, 1)
+  )
+  dag <- dagify(
+    AD0 ~ U,
+    VL0 ~ AD0,
+    A ~ `T` + U,
+    AD1 ~ A,
+    VL1 ~ AD0 + AD1 + U,
+  outcome = "VL1",
+  exposure = "T",
+  latent = "U",
+  labels = the_nodes)
+  
+  # default color
+  colr <- "snow"
+  # status' colors
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
+  # plot the DAG
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status(color = status) +
+    geom_dag_point(aes(color = status)) +
+    geom_dag_text(size = 5, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c("A", expression(AD[0]), expression(AD[1]),
+                            "T", "U", expression(VL[0]), expression(VL[1]))) +
+    scale_color_manual(values = status_colrs, na.value = colr) +
+    ggdag::theme_dag_blank(panel.background = 
+                             element_rect(fill=colr, color=colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank()) +
+    labs(title = "The Double What-If? Study")
+})
+scm_5.9$plot
+```
+
+
+
+## Exercises
+
+### Exercise 1
+
+
+
+```{r echo=TRUE, warning=FALSE}
+scm_5.10 <- list()
+scm_5.10 <- within(scm_5.10, {
+    the_nodes <- c("A" = "Weight",
+                   "W1" = "Exercise",
+                   "W2" = "Strength",
+                   "W3" = "Diet",
+                   "Y" = "Nutrient")
+  dag <- dagify(
+    A ~ W1,
+    Y ~ W3,
+    W2 ~ W1 + W3,
+    labels = the_nodes,
+    exposure = "W2",
+    outcome = "Y")
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status() +
+    geom_dag_point(aes(color = status)) +
+    geom_dag_edges() +
+    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 7, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c("A", expression(W[1]), expression(W[2]),
+                            expression(W[3]), "Y")) +
+    scale_color_manual(values = status_colrs, na.value = colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank()) +
+    labs(title = "Causal DAG for Exercise 1")
+})
+```
+
+
+> Math the vairable to the causal DAG
+
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.10", warning=FALSE, out.width="80%"}
+scm_5.10$plot
+```
+
+
+> How wwould you analyse the effect of nutrient intake on increased strength?
+
+Since we have
+
+$$
+Strength \perp\!\!\!\perp Nutrient \mid Diet
+$$
+
+The we should conditioned on $Diet$ an the regression formula to determine
+the effect of nutrient intake on increased strength would be to avoid the
+confounding effect
+
+$$
+Strength = \beta_0 + \beta_1 Nutrient + \beta_2 Diet
+$$
+
+> How might a reviewer critique your results
+
+The reviewer could raise the following points
+
+* The $exercise$ is a confounder and the analysis fail to take this into account
+* $weight$ also has an effect unless we condition on $exercise$
+
+### Exercise 2
+
+The DAG is 
+
+
+```{r echo=TRUE, warning=FALSE}
+scm_5.11 <- list()
+scm_5.11 <- within(scm_5.11, {
+    the_nodes <- c("A" = "Weight",
+                   "W1" = "Exercise",
+                   "W2" = "Strength",
+                   "W3" = "Diet",
+                   "Y" = "Nutrient")
+  dag <- dagify(
+    H2 ~ H1,
+    H3 ~ H1,
+    H4 ~ H1 + H3,
+    A ~ H2 + H3,
+    Y ~ A + H2 + H4,
+    exposure = "A",
+    outcome = "Y")
+
+  # plot the DAG
+  colr <- "snow"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
+  plot <- dag %>% 
+    tidy_dagitty(layout = "sugiyama") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status() +
+    geom_dag_point(aes(color = status)) +
+    geom_dag_edges() +
+    # geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+    #                      box.padding = 1) +
+    geom_dag_text(size = 7, color = "midnightblue" ,
+                  parse = TRUE,
+                  label = c("A", expression(H[1]), expression(H[2]),
+                            expression(H[3]), expression(H[4]), "Y")) +
+    scale_color_manual(values = status_colrs, na.value = colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank()) +
+    labs(title = "Causal DAG for Exercise 2")
+})
+```
+
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Figure 5.11", warning=FALSE, out.width="80%"}
+scm_5.11$plot
+```
+
+A true confounder is defined on p. 86 as
+
+> a variable that influences the exposure and that also influences the outcome
+via a directed path that does not include the exposure.
+
+
+
+
+```{r}
+adjustmentSets(scm_5.11$dag, exposure = "A", outcome = "Y")
+```
+
+
 

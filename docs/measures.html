@@ -280,12 +280,24 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="5" data-path="dag.html"><a href="dag.html"><i class="fa fa-check"></i><b>5</b> Causal Directed Acyclic Graphs</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="dag.html"><a href="dag.html#theory"><i class="fa fa-check"></i><b>5.1</b> Theory</a></li>
+<li class="chapter" data-level="5.1" data-path="dag.html"><a href="dag.html#theory"><i class="fa fa-check"></i><b>5.1</b> Theory</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="dag.html"><a href="dag.html#conditional-indepence-and-dag"><i class="fa fa-check"></i><b>5.1.1</b> Conditional Indepence and DAG</a></li>
+<li class="chapter" data-level="5.1.2" data-path="dag.html"><a href="dag.html#d-separation"><i class="fa fa-check"></i><b>5.1.2</b> D-Separation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="dag.html"><a href="dag.html#causal-dag-with-collider"><i class="fa fa-check"></i><b>5.1.3</b> Causal DAG with collider</a></li>
+</ul></li>
 <li class="chapter" data-level="5.2" data-path="dag.html"><a href="dag.html#examples"><i class="fa fa-check"></i><b>5.2</b> Examples</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="dag.html"><a href="dag.html#structural-causal-model-5.6"><i class="fa fa-check"></i><b>5.2.1</b> Structural Causal Model 5.6</a></li>
-<li class="chapter" data-level="5.2.2" data-path="dag.html"><a href="dag.html#structural-causal-model-5.7"><i class="fa fa-check"></i><b>5.2.2</b> Structural Causal Model 5.7</a></li>
-<li class="chapter" data-level="5.2.3" data-path="dag.html"><a href="dag.html#potential-outcomes-behind-th-scenes"><i class="fa fa-check"></i><b>5.2.3</b> Potential Outcomes Behind th Scenes</a></li>
+<li class="chapter" data-level="5.2.1" data-path="dag.html"><a href="dag.html#causal-dag-with-intermediate-value"><i class="fa fa-check"></i><b>5.2.1</b> Causal DAG With Intermediate Value</a></li>
+<li class="chapter" data-level="5.2.2" data-path="dag.html"><a href="dag.html#a-counfounder-may-occur-after-the-exposure"><i class="fa fa-check"></i><b>5.2.2</b> A counfounder may occur after the exposure</a></li>
+<li class="chapter" data-level="5.2.3" data-path="dag.html"><a href="dag.html#potential-outcomes-are-the-ultimate-counfounder"><i class="fa fa-check"></i><b>5.2.3</b> Potential Outcomes are the Ultimate Counfounder</a></li>
+<li class="chapter" data-level="5.2.4" data-path="dag.html"><a href="dag.html#structural-causal-model-5.7"><i class="fa fa-check"></i><b>5.2.4</b> Structural Causal Model 5.7</a></li>
+<li class="chapter" data-level="5.2.5" data-path="dag.html"><a href="dag.html#potential-outcomes-behind-the-scenes"><i class="fa fa-check"></i><b>5.2.5</b> Potential Outcomes Behind the Scenes</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="dag.html"><a href="dag.html#exercises-5"><i class="fa fa-check"></i><b>5.3</b> Exercises</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="dag.html"><a href="dag.html#exercise-1-5"><i class="fa fa-check"></i><b>5.3.1</b> Exercise 1</a></li>
+<li class="chapter" data-level="5.3.2" data-path="dag.html"><a href="dag.html#exercise-2-4"><i class="fa fa-check"></i><b>5.3.2</b> Exercise 2</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method via Standardization</a></li>
@@ -2500,14 +2512,13 @@ respondents aged less than 65.</p>
 <span id="cb152-2"><a href="measures.html#cb152-2" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out &lt;- boot.r(dataBRFSS, formula = insured ~ gthsedu + whitenh, </span></span>
 <span id="cb152-3"><a href="measures.html#cb152-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                     R = 500, conf = 0.95)</span></span>
 <span id="cb152-4"><a href="measures.html#cb152-4" aria-hidden="true" tabindex="-1"></a>endTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb152-5"><a href="measures.html#cb152-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(endTime <span class="sc">-</span> startTime)</span></code></pre></div>
-<pre><code>## Time difference of 0.01562905 secs</code></pre>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="measures.html#cb154-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_ex3.rds&quot;</span>)</span>
-<span id="cb154-2"><a href="measures.html#cb154-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(brfss.out, file = a_file)</span></span>
-<span id="cb154-3"><a href="measures.html#cb154-3" aria-hidden="true" tabindex="-1"></a>brfss.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<span id="cb152-5"><a href="measures.html#cb152-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb152-6"><a href="measures.html#cb152-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_ex3.rds&quot;</span>)</span>
+<span id="cb152-7"><a href="measures.html#cb152-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(brfss.out, file = a_file)</span></span>
+<span id="cb152-8"><a href="measures.html#cb152-8" aria-hidden="true" tabindex="-1"></a>brfss.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <p>then create the table of results</p>
-<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="measures.html#cb155-1" aria-hidden="true" tabindex="-1"></a>brfss.tbl <span class="ot">&lt;-</span> <span class="fu">tbl_boot.r</span>(brfss.out, <span class="at">title =</span> <span class="st">&quot;**BRFSS Survey**&quot;</span>)</span>
-<span id="cb155-2"><a href="measures.html#cb155-2" aria-hidden="true" tabindex="-1"></a>brfss.tbl</span></code></pre></div>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="measures.html#cb153-1" aria-hidden="true" tabindex="-1"></a>brfss.tbl <span class="ot">&lt;-</span> <span class="fu">tbl_boot.r</span>(brfss.out, <span class="at">title =</span> <span class="st">&quot;**BRFSS Survey**&quot;</span>)</span>
+<span id="cb153-2"><a href="measures.html#cb153-2" aria-hidden="true" tabindex="-1"></a>brfss.tbl</span></code></pre></div>
 <div id="veiaeqdmhn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -2947,8 +2958,8 @@ respondents aged less than 65.</p>
 </table>
 </div>
 <p>and plotting the results</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="measures.html#cb156-1" aria-hidden="true" tabindex="-1"></a>brfss.plot <span class="ot">&lt;-</span> <span class="fu">plot_boot.r</span>(brfss.out, <span class="at">title =</span> <span class="st">&quot;BRFSS Survey&quot;</span>)</span>
-<span id="cb156-2"><a href="measures.html#cb156-2" aria-hidden="true" tabindex="-1"></a>brfss.plot</span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="measures.html#cb154-1" aria-hidden="true" tabindex="-1"></a>brfss.plot <span class="ot">&lt;-</span> <span class="fu">plot_boot.r</span>(brfss.out, <span class="at">title =</span> <span class="st">&quot;BRFSS Survey&quot;</span>)</span>
+<span id="cb154-2"><a href="measures.html#cb154-2" aria-hidden="true" tabindex="-1"></a>brfss.plot</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
 <p>For causal interpretaion we would need to assume that <code>whitenh</code> and <code>gthsedu</code>
 are not correlated together by another latent variable which could possibly
@@ -2960,20 +2971,20 @@ interacts with higher education to have an increased chance of being insured.</p
 </div>
 <div id="exercise-4-3" class="section level3" number="4.4.4">
 <h3><span class="header-section-number">4.4.4</span> Exercise 4</h3>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="measures.html#cb157-1" aria-hidden="true" tabindex="-1"></a>dataWAVE <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb157-2"><a href="measures.html#cb157-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">T1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb157-3"><a href="measures.html#cb157-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">T2 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb157-4"><a href="measures.html#cb157-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="fl">0.019</span>, <span class="fl">0.057</span>, <span class="fl">0.039</span>, <span class="fl">0.094</span>),</span>
-<span id="cb157-5"><a href="measures.html#cb157-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">108</span>, <span class="dv">105</span>, <span class="dv">103</span>, <span class="dv">107</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="measures.html#cb155-1" aria-hidden="true" tabindex="-1"></a>dataWAVE <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb155-2"><a href="measures.html#cb155-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">T1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb155-3"><a href="measures.html#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">T2 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb155-4"><a href="measures.html#cb155-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="fl">0.019</span>, <span class="fl">0.057</span>, <span class="fl">0.039</span>, <span class="fl">0.094</span>),</span>
+<span id="cb155-5"><a href="measures.html#cb155-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">108</span>, <span class="dv">105</span>, <span class="dv">103</span>, <span class="dv">107</span>))</span></code></pre></div>
 <div id="using-glm" class="section level4" number="4.4.4.1">
 <h4><span class="header-section-number">4.4.4.1</span> Using <code>glm</code></h4>
 <p>To evaluate statistical significance we use the <code>glm()</code> function. Because our
 outcome is numeric, we choose to fit the gaussian parametric model.
 Also we use the <code>weights</code> parameter with the variable <span class="math inline">\(n\)</span> since the data is
 aggregated.</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="measures.html#cb158-1" aria-hidden="true" tabindex="-1"></a>wave.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> Y <span class="sc">~</span> T1 <span class="sc">+</span> T2 <span class="sc">+</span> T1<span class="sc">:</span>T2, </span>
-<span id="cb158-2"><a href="measures.html#cb158-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian, <span class="at">weights =</span> n, <span class="at">data =</span> dataWAVE)</span>
-<span id="cb158-3"><a href="measures.html#cb158-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wave.glm)</span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="measures.html#cb156-1" aria-hidden="true" tabindex="-1"></a>wave.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> Y <span class="sc">~</span> T1 <span class="sc">+</span> T2 <span class="sc">+</span> T1<span class="sc">:</span>T2, </span>
+<span id="cb156-2"><a href="measures.html#cb156-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> gaussian, <span class="at">weights =</span> n, <span class="at">data =</span> dataWAVE)</span>
+<span id="cb156-3"><a href="measures.html#cb156-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wave.glm)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = Y ~ T1 + T2 + T1:T2, family = gaussian, data = dataWAVE, 
@@ -3004,37 +3015,37 @@ the <code>gaussian</code> family.</p>
 <h4><span class="header-section-number">4.4.4.2</span> Using <code>gee</code></h4>
 <p><code>gee</code> does not have a <code>weights</code> parameter like <code>glm</code> so we expand the data
 before using <code>gee</code>.</p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="measures.html#cb160-1" aria-hidden="true" tabindex="-1"></a>dfs <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="dv">4</span>)</span>
-<span id="cb160-2"><a href="measures.html#cb160-2" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb160-3"><a href="measures.html#cb160-3" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
-<span id="cb160-4"><a href="measures.html#cb160-4" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
-<span id="cb160-5"><a href="measures.html#cb160-5" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">0</span>, <span class="at">T2 =</span> <span class="dv">0</span>, <span class="at">Y =</span> <span class="fl">0.019</span>), </span>
-<span id="cb160-6"><a href="measures.html#cb160-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb160-7"><a href="measures.html#cb160-7" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb160-8"><a href="measures.html#cb160-8" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
-<span id="cb160-9"><a href="measures.html#cb160-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
-<span id="cb160-10"><a href="measures.html#cb160-10" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">0</span>, <span class="at">T2 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="fl">0.057</span>), </span>
-<span id="cb160-11"><a href="measures.html#cb160-11" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb160-12"><a href="measures.html#cb160-12" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb160-13"><a href="measures.html#cb160-13" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
-<span id="cb160-14"><a href="measures.html#cb160-14" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
-<span id="cb160-15"><a href="measures.html#cb160-15" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">1</span>, <span class="at">T2 =</span> <span class="dv">0</span>, <span class="at">Y =</span> <span class="fl">0.039</span>), </span>
-<span id="cb160-16"><a href="measures.html#cb160-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb160-17"><a href="measures.html#cb160-17" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb160-18"><a href="measures.html#cb160-18" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
-<span id="cb160-19"><a href="measures.html#cb160-19" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
-<span id="cb160-20"><a href="measures.html#cb160-20" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">1</span>, <span class="at">T2 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="fl">0.094</span>), </span>
-<span id="cb160-21"><a href="measures.html#cb160-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb160-22"><a href="measures.html#cb160-22" aria-hidden="true" tabindex="-1"></a>dataWAVErep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, dfs)</span>
-<span id="cb160-23"><a href="measures.html#cb160-23" aria-hidden="true" tabindex="-1"></a>dataWAVErep<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dataWAVErep))</span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="measures.html#cb158-1" aria-hidden="true" tabindex="-1"></a>dfs <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="dv">4</span>)</span>
+<span id="cb158-2"><a href="measures.html#cb158-2" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb158-3"><a href="measures.html#cb158-3" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
+<span id="cb158-4"><a href="measures.html#cb158-4" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
+<span id="cb158-5"><a href="measures.html#cb158-5" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">0</span>, <span class="at">T2 =</span> <span class="dv">0</span>, <span class="at">Y =</span> <span class="fl">0.019</span>), </span>
+<span id="cb158-6"><a href="measures.html#cb158-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb158-7"><a href="measures.html#cb158-7" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb158-8"><a href="measures.html#cb158-8" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
+<span id="cb158-9"><a href="measures.html#cb158-9" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
+<span id="cb158-10"><a href="measures.html#cb158-10" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">0</span>, <span class="at">T2 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="fl">0.057</span>), </span>
+<span id="cb158-11"><a href="measures.html#cb158-11" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb158-12"><a href="measures.html#cb158-12" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb158-13"><a href="measures.html#cb158-13" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
+<span id="cb158-14"><a href="measures.html#cb158-14" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
+<span id="cb158-15"><a href="measures.html#cb158-15" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">1</span>, <span class="at">T2 =</span> <span class="dv">0</span>, <span class="at">Y =</span> <span class="fl">0.039</span>), </span>
+<span id="cb158-16"><a href="measures.html#cb158-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb158-17"><a href="measures.html#cb158-17" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb158-18"><a href="measures.html#cb158-18" aria-hidden="true" tabindex="-1"></a>dfs[[pos]] <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, </span>
+<span id="cb158-19"><a href="measures.html#cb158-19" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">replicate</span>(dataWAVE<span class="sc">$</span>n[pos], </span>
+<span id="cb158-20"><a href="measures.html#cb158-20" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">data.frame</span>(<span class="at">T1 =</span> <span class="dv">1</span>, <span class="at">T2 =</span> <span class="dv">1</span>, <span class="at">Y =</span> <span class="fl">0.094</span>), </span>
+<span id="cb158-21"><a href="measures.html#cb158-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">simplify =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb158-22"><a href="measures.html#cb158-22" aria-hidden="true" tabindex="-1"></a>dataWAVErep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, dfs)</span>
+<span id="cb158-23"><a href="measures.html#cb158-23" aria-hidden="true" tabindex="-1"></a>dataWAVErep<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dataWAVErep))</span></code></pre></div>
 <p>then we use <code>gee</code></p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="measures.html#cb161-1" aria-hidden="true" tabindex="-1"></a>wave.gee <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(<span class="at">formula =</span> Y <span class="sc">~</span> T1 <span class="sc">+</span> T2 <span class="sc">+</span> T1 <span class="sc">*</span> T2,</span>
-<span id="cb161-2"><a href="measures.html#cb161-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id, <span class="at">family =</span> gaussian, <span class="at">data =</span> dataWAVErep)</span></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="measures.html#cb159-1" aria-hidden="true" tabindex="-1"></a>wave.gee <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(<span class="at">formula =</span> Y <span class="sc">~</span> T1 <span class="sc">+</span> T2 <span class="sc">+</span> T1 <span class="sc">*</span> T2,</span>
+<span id="cb159-2"><a href="measures.html#cb159-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id, <span class="at">family =</span> gaussian, <span class="at">data =</span> dataWAVErep)</span></code></pre></div>
 <pre><code>## Beginning Cgee S-function, @(#) geeformula.q 4.13 98/01/27</code></pre>
 <pre><code>## running glm to get initial regression estimate</code></pre>
 <pre><code>## (Intercept)          T1          T2       T1:T2 
 ##       0.019       0.020       0.038       0.017</code></pre>
-<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="measures.html#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wave.gee)</span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="measures.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wave.gee)</span></code></pre></div>
 <pre><code>## 
 ##  GEE:  GENERALIZED LINEAR MODELS FOR DEPENDENT DATA
 ##  gee S-function, version 4.13 modified 98/01/27 (1998) 
@@ -3068,24 +3079,24 @@ before using <code>gee</code>.</p>
 ## [1,]    1</code></pre>
 <p>Just by looking at the <code>Robust z</code> indicating that <span class="math inline">\(T1:T2\)</span> is 1.85e14 from
 zero it is obvious that the interaction is statistically significant.</p>
-<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="measures.html#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(wave.gee))</span></code></pre></div>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="measures.html#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(wave.gee))</span></code></pre></div>
 <pre><code>##             Estimate   Naive S.E.      Naive z  Robust S.E.     Robust z
 ## (Intercept)    0.019 4.658032e-17 4.078976e+14 8.713425e-17 2.180543e+14
 ## T1             0.020 6.666917e-17 2.999887e+14 8.854187e-17 2.258818e+14
 ## T2             0.038 6.634338e-17 5.727776e+14 9.066498e-17 4.191254e+14
 ## T1:T2          0.017 9.416210e-17 1.805397e+14 9.205772e-17 1.846668e+14</code></pre>
 <p>The actual p-value calculation (see p. 67 on how to do this) is</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="measures.html#cb169-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(wave.gee))[<span class="st">&quot;T1:T2&quot;</span>, <span class="st">&quot;Robust z&quot;</span>]</span>
-<span id="cb169-2"><a href="measures.html#cb169-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))</span></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="measures.html#cb167-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(wave.gee))[<span class="st">&quot;T1:T2&quot;</span>, <span class="st">&quot;Robust z&quot;</span>]</span>
+<span id="cb167-2"><a href="measures.html#cb167-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
 <p>and since the p-value is 0 then it is statistically significant.</p>
 </div>
 </div>
 <div id="exercise-5-3" class="section level3" number="4.4.5">
 <h3><span class="header-section-number">4.4.5</span> Exercise 5</h3>
-<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="measures.html#cb171-1" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;attend&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;female&quot;</span>)]</span>
-<span id="cb171-2"><a href="measures.html#cb171-2" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> dataGSS[<span class="fu">complete.cases</span>(dataGSS), ]</span>
-<span id="cb171-3"><a href="measures.html#cb171-3" aria-hidden="true" tabindex="-1"></a>dataGSS<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dataGSS))</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="measures.html#cb169-1" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;attend&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;female&quot;</span>)]</span>
+<span id="cb169-2"><a href="measures.html#cb169-2" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> dataGSS[<span class="fu">complete.cases</span>(dataGSS), ]</span>
+<span id="cb169-3"><a href="measures.html#cb169-3" aria-hidden="true" tabindex="-1"></a>dataGSS<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dataGSS))</span></code></pre></div>
 <p>To determine a synergetic effect we are looking for the pattern where
 <span class="math inline">\(Y(t_1 = 0, t_2 = 0) = 0\)</span>, <span class="math inline">\(Y(t_1 = 1, t_2 = 0) = 0\)</span>, <span class="math inline">\(Y(t_1 = 0, t_2 = 1) = 0\)</span>
 and <span class="math inline">\(Y(t_1 = 1, t_2 = 1) = 1\)</span>. That is, as explained in p. 76 of section 4.3,
@@ -3112,13 +3123,13 @@ then we hcan determine our result with the estimates</p>
 \]</span></p>
 <p>doing he fit with <code>gee</code>, with the binomial family because our outcome is binary,
 we obtain</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="measures.html#cb172-1" aria-hidden="true" tabindex="-1"></a>gss.gee <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(<span class="at">formula =</span> attend <span class="sc">~</span> gthsedu <span class="sc">+</span> female <span class="sc">+</span> gthsedu <span class="sc">*</span> female,</span>
-<span id="cb172-2"><a href="measures.html#cb172-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id, <span class="at">family =</span> binomial, <span class="at">data =</span> dataGSS)</span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="measures.html#cb170-1" aria-hidden="true" tabindex="-1"></a>gss.gee <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(<span class="at">formula =</span> attend <span class="sc">~</span> gthsedu <span class="sc">+</span> female <span class="sc">+</span> gthsedu <span class="sc">*</span> female,</span>
+<span id="cb170-2"><a href="measures.html#cb170-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id, <span class="at">family =</span> binomial, <span class="at">data =</span> dataGSS)</span></code></pre></div>
 <pre><code>## Beginning Cgee S-function, @(#) geeformula.q 4.13 98/01/27</code></pre>
 <pre><code>## running glm to get initial regression estimate</code></pre>
 <pre><code>##    (Intercept)        gthsedu         female gthsedu:female 
 ##     -1.0509842      0.4313711      0.5352755     -0.3694460</code></pre>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="measures.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gss.gee)</span></code></pre></div>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="measures.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gss.gee)</span></code></pre></div>
 <pre><code>## 
 ##  GEE:  GENERALIZED LINEAR MODELS FOR DEPENDENT DATA
 ##  gee S-function, version 4.13 modified 98/01/27 (1998) 
@@ -3157,11 +3168,11 @@ using the estimates from the regression</p>
 \hat{E}(Y(1, 1)) - \hat{E}(Y(0, 1)) - \hat{E}(Y(1, 0)) + \hat{E}(Y(0, 0))
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="measures.html#cb178-1" aria-hidden="true" tabindex="-1"></a>Y11 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;gthsedu:female&quot;</span>]</span>
-<span id="cb178-2"><a href="measures.html#cb178-2" aria-hidden="true" tabindex="-1"></a>Y01 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;female&quot;</span>]</span>
-<span id="cb178-3"><a href="measures.html#cb178-3" aria-hidden="true" tabindex="-1"></a>Y10 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;gthsedu&quot;</span>]</span>
-<span id="cb178-4"><a href="measures.html#cb178-4" aria-hidden="true" tabindex="-1"></a>Y00 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;(Intercept)&quot;</span>]</span>
-<span id="cb178-5"><a href="measures.html#cb178-5" aria-hidden="true" tabindex="-1"></a>Y11 <span class="sc">-</span> Y01 <span class="sc">-</span> Y10 <span class="sc">-</span> Y00</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="measures.html#cb176-1" aria-hidden="true" tabindex="-1"></a>Y11 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;gthsedu:female&quot;</span>]</span>
+<span id="cb176-2"><a href="measures.html#cb176-2" aria-hidden="true" tabindex="-1"></a>Y01 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;female&quot;</span>]</span>
+<span id="cb176-3"><a href="measures.html#cb176-3" aria-hidden="true" tabindex="-1"></a>Y10 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;gthsedu&quot;</span>]</span>
+<span id="cb176-4"><a href="measures.html#cb176-4" aria-hidden="true" tabindex="-1"></a>Y00 <span class="ot">&lt;-</span> <span class="fu">coef</span>(gss.gee)[<span class="st">&quot;(Intercept)&quot;</span>]</span>
+<span id="cb176-5"><a href="measures.html#cb176-5" aria-hidden="true" tabindex="-1"></a>Y11 <span class="sc">-</span> Y01 <span class="sc">-</span> Y10 <span class="sc">-</span> Y00</span></code></pre></div>
 <pre><code>## gthsedu:female 
 ##     -0.2851084</code></pre>
 <p>Therefore the sufficient condition is not met. We cannot positively
@@ -3173,13 +3184,13 @@ confirm a causal effect without more information.</p>
 the sufficient condition for synergy to each data set filtered for each value
 of H.</p>
 
-<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="measures.html#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb180-2"><a href="measures.html#cb180-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb180-3"><a href="measures.html#cb180-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
-<span id="cb180-4"><a href="measures.html#cb180-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb180-5"><a href="measures.html#cb180-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb180-6"><a href="measures.html#cb180-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb180-7"><a href="measures.html#cb180-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="measures.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb178-2"><a href="measures.html#cb178-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb178-3"><a href="measures.html#cb178-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb178-4"><a href="measures.html#cb178-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb178-5"><a href="measures.html#cb178-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb178-6"><a href="measures.html#cb178-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb178-7"><a href="measures.html#cb178-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
 </div>
 </div>
 </div>
