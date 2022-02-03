@@ -34,10 +34,10 @@ For example
 #   The author does not use labels, but they could be useful.
 scm_5.1 <- list()
 scm_5.1 <- within(scm_5.1, {
-  the_nodes <- c("X1" = "X1 label", 
-                 "X2" = "X2 label", 
-                 "X3" = "X3 label", 
-                 "X4" = "X4 label")
+  the_nodes <- c("X1" = "", 
+                 "X2" = "", 
+                 "X3" = "", 
+                 "X4" = "")
   dag <- dagify(
     X2 ~ X1,
     X3 ~ X2,
@@ -45,24 +45,23 @@ scm_5.1 <- within(scm_5.1, {
     labels = the_nodes)
 
   # plot the DAG
-  colr <- "snow"
-  status_colrs <- c("latent" = "snow3", "exposure" = colr, 
-                    "outcome" = colr)
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag_status(color = status) +
     geom_dag_point() +
     geom_dag_edges() +
-    geom_dag_text(size = 7, color = "midnightblue" ,
+    geom_dag_text(size = 7, color = text_colr,
                   parse = TRUE,
                   label = c(expression(X[1]), expression(X[2]),
                             expression(X[3]), expression(X[4]))) +
-    # NOTE ON LABELS: Use this line if you wnat to add labels
-    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
-    #                          show.legend = FALSE) +
-    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    geom_dag_label_repel(aes(label = label), col = text_colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -94,7 +93,9 @@ and we illustrate the 3 basic graphical structures as follows
 ```{r echo=TRUE, warning=FALSE}
 scm_5.2 <- list()
 scm_5.2 <- within(scm_5.2, {
-  colr <- "snow"  # color used by ggdag
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
   
   dagChain <- dagify(
     Z ~ X1,
@@ -105,15 +106,12 @@ scm_5.2 <- within(scm_5.2, {
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 5, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = text_colr,
                   parse = TRUE,
                   label = c(expression(X[1]), expression(X[2]), "Z")) +
-    # NOTE ON LABELS: Use this line if you wnat to add labels
-    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
-    #                          show.legend = FALSE) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(title = element_text(size = 10)) +
     labs(title = "Chain: Z is an intermediate variable")
 
@@ -128,15 +126,12 @@ scm_5.2 <- within(scm_5.2, {
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 5, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = text_colr,
                   parse = TRUE,
                   label = c(expression(X[1]), expression(X[2]), "Z")) +
-    # NOTE ON LABELS: Use this line if you wnat to add labels
-    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
-    #                          show.legend = FALSE) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(title = element_text(size = 10)) +
     labs(title = "Fork: Z is a common cause")
   
@@ -150,15 +145,12 @@ scm_5.2 <- within(scm_5.2, {
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 5, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = text_colr,
                   parse = TRUE,
                   label = c(expression(X[1]), expression(X[2]), "Z")) +
-    # NOTE ON LABELS: Use this line if you wnat to add labels
-    # geom_dag_label_repel(aes(label = label), col = "midnightblue",
-    #                          show.legend = FALSE) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(title = element_text(size = 10)) +
     labs(title = "Collider: Z is a common effect")
   
@@ -173,15 +165,15 @@ scm_5.2 <- within(scm_5.2, {
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 5, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = text_colr,
                   parse = TRUE,
                   label = c("W", expression(X[1]), expression(X[2]), "Z")) +
     # NOTE ON LABELS: Use this line if you wnat to add labels
     # geom_dag_label_repel(aes(label = label), col = "midnightblue",
     #                          show.legend = FALSE) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(title = element_text(size = 10)) +
     labs(title = "Descendant: Z is an effect of a common effect")
 })
@@ -213,18 +205,19 @@ scm_5.3 <- within(scm_5.3, {
     W4 ~ W2)
 
   # plot the DAG
-  colr <- "snow"
+  bg_colr <- "snow"
+  text_colr <- "midnightblue"
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 7, color = "midnightblue" ,
+    geom_dag_text(size = 7, color = text_colr,
                   parse = TRUE,
                   label = c("A", expression(W[1]), expression(W[2]),
                             expression(W[3]), expression(W[4], "Y"))) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -268,14 +261,15 @@ scm_5.4 <- within(scm_5.4, {
     Y ~ A + M + H)
 
   # plot the DAG
-  colr <- "snow"
+  bg_colr <- "snow"
+  text_colr <- "midnightblue"
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     ggdag() +
-    geom_dag_point(color = colr) +
+    geom_dag_point(color = bg_colr) +
     geom_dag_edges() +
-    geom_dag_text(size = 7, color = "midnightblue") +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    geom_dag_text(size = 7, color = text_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -302,16 +296,17 @@ scm_5.5 <- within(scm_5.5, {
     outcome = "Y")
 
   # plot the DAG
-  colr <- "snow"
+  bg_colr <- "snow"
+  text_colr <- "midnightblue"
   status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     ggdag_status(color = status) +
     geom_dag_point() +
     geom_dag_edges() +
-    geom_dag_text(size = 7, color = "midnightblue") +
-    scale_color_manual(values = status_colrs, na.value = colr) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    geom_dag_text(size = 7, color = text_colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(legend.position = "bottom",
           legend.title = element_blank())
 })
@@ -344,17 +339,19 @@ scm_5.6 <- within(scm_5.6, {
     labels = the_nodes)
 
   # plot the DAG
-  colr <- "snow"
-  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%
     ggdag_status(color = status, text = FALSE) +
-    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = label_colr,
                          box.padding = 1) +
-    geom_dag_text(size = 5, color = "midnightblue") +
-    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    geom_dag_text(size = 5, color = text_colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -383,7 +380,7 @@ tbl_probs <- function(df, title, subtitle) {
 
 
 
-and lets do the simulaiton of figure 5.6 on p. 88 with `simstudy`
+and lets do the simulation of figure 5.6 on p. 88 with `simstudy`
 
 ```{r warning=FALSE}
 scm_5.6 <- within(scm_5.6, {
@@ -554,17 +551,16 @@ scm_5.7 <- within(scm_5.7, {
     Y ~ A + H)
 
   # plot the DAG
-  colr <- "snow"
-  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  bg_colr <- "snow"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%
     ggdag_status(color = status, text = FALSE) +
-    # geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
-    #                      box.padding = 1) +
-    geom_dag_text(size = 5, color = "midnightblue") +
-    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    geom_dag_text(size = 5, color = text_colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -786,17 +782,19 @@ scm_5.8 <- within(scm_5.8, {
     labels = the_nodes)
 
   # plot the DAG
-  colr <- "snow"
-  status_colrs <- c("latent" = "snow3", "exposure" = colr, "outcome" = colr)
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
     arrange(name) %>%
     ggdag_status(color = status, text = FALSE) +
-    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = bg_colr,
                          box.padding = 1) +
-    geom_dag_text(size = 5, color = "midnightblue") +
-    scale_color_manual(values = status_colrs, na.value = colr, guide = "none") +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr))
+    geom_dag_text(size = 5, color = text_colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr, guide = "none") +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr))
 })
 ```
 
@@ -900,9 +898,9 @@ scm_5.9 <- within(scm_5.9, {
   latent = "U",
   labels = the_nodes)
   
-  # default color
-  colr <- "snow"
-  # status' colors
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
   status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   # plot the DAG
   plot <- dag %>% 
@@ -910,13 +908,13 @@ scm_5.9 <- within(scm_5.9, {
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag_status(color = status) +
     geom_dag_point(aes(color = status)) +
-    geom_dag_text(size = 5, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = text_colr,
                   parse = TRUE,
                   label = c("A", expression(AD[0]), expression(AD[1]),
                             "T", "U", expression(VL[0]), expression(VL[1]))) +
-    scale_color_manual(values = status_colrs, na.value = colr) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
     ggdag::theme_dag_blank(panel.background = 
-                             element_rect(fill=colr, color=colr)) +
+                             element_rect(fill=bg_colr, color=bg_colr)) +
     theme(legend.position = "bottom",
           legend.title = element_blank())
 })
@@ -932,8 +930,8 @@ scm_5.9$plot
 
 
 ```{r echo=TRUE, warning=FALSE}
-scm_5.10 <- list()
-scm_5.10 <- within(scm_5.10, {
+scm_ex5.1 <- list()
+scm_ex5.1 <- within(scm_ex5.1, {
     the_nodes <- c("A" = "Nutrient",
                    "W1" = "Diet",
                    "W2" = "Weight",
@@ -948,7 +946,9 @@ scm_5.10 <- within(scm_5.10, {
     outcome = "Y")
 
   # plot the DAG
-  colr <- "snow"
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
   status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
@@ -956,14 +956,14 @@ scm_5.10 <- within(scm_5.10, {
     ggdag_status() +
     geom_dag_point(aes(color = status)) +
     geom_dag_edges() +
-    geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = "oldlace",
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = label_colr,
                          box.padding = 3) +
-    geom_dag_text(size = 7, color = "midnightblue" ,
+    geom_dag_text(size = 7, color = text_colr,
                   parse = TRUE,
                   label = c("A", expression(W[1]), expression(W[2]),
                             expression(W[3]), "Y")) +
-    scale_color_manual(values = status_colrs, na.value = colr) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(legend.position = "bottom",
           legend.title = element_blank())
 })
@@ -975,7 +975,7 @@ scm_5.10 <- within(scm_5.10, {
 
 
 ```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 1", warning=FALSE, out.width="80%"}
-scm_5.10$plot
+scm_ex5.1$plot
 ```
 
 
@@ -1017,13 +1017,10 @@ The DAG is
 
 
 ```{r echo=TRUE, warning=FALSE}
-scm_5.11 <- list()
-scm_5.11 <- within(scm_5.11, {
-    the_nodes <- c("A" = "Weight",
-                   "W1" = "Exercise",
-                   "W2" = "Strength",
-                   "W3" = "Diet",
-                   "Y" = "Nutrient")
+scm_ex5.2 <- list()
+scm_ex5.2 <- within(scm_ex5.2, {
+  the_nodes <- c("A" = "", "H1" = "", "H2" = "", 
+                 "H3" = "", "H4" = "", "Y" = "")
   dag <- dagify(
     H2 ~ H1,
     H3 ~ H1,
@@ -1031,10 +1028,13 @@ scm_5.11 <- within(scm_5.11, {
     A ~ H2 + H3,
     Y ~ A + H2 + H4,
     exposure = "A",
-    outcome = "Y")
+    outcome = "Y",
+    labels = the_nodes)
 
   # plot the DAG
-  colr <- "snow"
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
   status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
     tidy_dagitty(layout = "sugiyama") %>%
@@ -1042,14 +1042,14 @@ scm_5.11 <- within(scm_5.11, {
     ggdag_status() +
     geom_dag_point(aes(color = status)) +
     geom_dag_edges() +
-    # geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = colr,
-    #                      box.padding = 1) +
-    geom_dag_text(size = 7, color = "midnightblue" ,
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = label_colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 7, color = text_colr,
                   parse = TRUE,
                   label = c("A", expression(H[1]), expression(H[2]),
                             expression(H[3]), expression(H[4]), "Y")) +
-    scale_color_manual(values = status_colrs, na.value = colr) +
-    ggdag::theme_dag(panel.background = element_rect(fill = colr, color = colr)) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
     theme(legend.position = "bottom",
           legend.title = element_blank())
 })
@@ -1058,7 +1058,7 @@ scm_5.11 <- within(scm_5.11, {
 
 
 ```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 2", warning=FALSE, out.width="80%"}
-scm_5.11$plot
+scm_ex5.2$plot
 ```
 
 
@@ -1097,13 +1097,12 @@ adjustmentSets(scm_5.11$dag, exposure = "A", outcome = "Y")
 
 > Redraw the DAG to include potential outcomes behind the scene.
 
-The true confounders are $\{H_2, H_3, H_4\}$ so the potential outcomes would
-block all backdoor paths as follows
+We block $\{H_2, H_4\}$ with the potential outcomes.
 
 
-```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 2 with potential outcomes", warning=FALSE, out.width="80%"}
-scm_5.12 <- list()
-scm_5.12 <- within(scm_5.12, {
+```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 2 with Potential Outcomes", warning=FALSE, out.width="80%"}
+scm_ex5.2po <- list()
+scm_ex5.2po <- within(scm_ex5.2po, {
     the_nodes <- c("A" = "",
                    "H1" = "",
                    "H2" = "",
@@ -1116,7 +1115,7 @@ scm_5.12 <- within(scm_5.12, {
     H3 ~ H1,
     H4 ~ H1 + H3,
     A ~ H2 + H3,
-    U ~ H2 + H3 + H4,
+    U ~ H2 + H4,
     Y ~ A + U,
     exposure = "A",
     latent = "U",
@@ -1127,14 +1126,14 @@ scm_5.12 <- within(scm_5.12, {
   colr <- "snow"
   status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
   plot <- dag %>% 
-    tidy_dagitty(layout = "sugiyama") %>%
+    tidy_dagitty(layout = "nicely") %>%
     arrange(name) %>%  # must sort by name to use mathematical expressions
     ggdag_status() +
     geom_dag_point(aes(color = status)) +
     geom_dag_edges() +
     geom_dag_label_repel(aes(label = label), color = "midnightblue", fill = "oldlace",
                          box.padding = 1) +
-    geom_dag_text(size = 7, color = "midnightblue" ,
+    geom_dag_text(size = 5, color = "midnightblue" ,
                   parse = TRUE,
                   label = c("A", expression(H[1]), expression(H[2]),
                             expression(H[3]), expression(H[4]), "U", "Y")) +
@@ -1143,7 +1142,7 @@ scm_5.12 <- within(scm_5.12, {
     theme(legend.position = "bottom",
           legend.title = element_blank())
 })
-scm_5.12$plot
+scm_ex5.2po$plot
 ```
 
 
@@ -1152,13 +1151,194 @@ scm_5.12$plot
 > Are the potenial outcomes true confounders?
 
 No as they do not influence the exposure. See also section 5.2 p. 87, after 
-figure 5.5
+figure 5.5, that says
+
+> The collection of potential outcomes $\{Y(a)\}_{a \in A}$ van be viewed as the 
+ultimate confounder, even *when it is not a true confounder*.
+
+And since the potential outcome is a latent variable it is not included in
+the minimal set. But the minimal set is clearly block by the potential outcomes node $U$.
+
+```{r}
+adjustmentSets(scm_ex5.2po$dag)
+```
+
+
+
+### Exercise 3
+
+The simulation is done with `simstudy`
+
+
+```{r warning=FALSE}
+scm_ex5.3 <- list()
+scm_ex5.3 <- within(scm_ex5.3, {
+  defs <- defData(varname = "H1", dist = "binomial", 
+                  formula = 0.1, variance = 1)
+  formulaH2 <- "0.1 + 0.1 * H1"
+  defs <- defData(defs, varname = "H2", dist = "binomial", 
+                  formula = formulaH2, variance = 1)
+  formulaH3<- "0.2 + 0.2 * H2"
+  defs <- defData(defs, varname = "H3", dist = "binomial", 
+                  formula = formulaH3, variance = 1)
+  defs <- defData(defs, varname = "H4", dist = "binomial", 
+                  formula = 0.5, variance = 1)
+  formulaA <- "0.1 + 0.1 * H2 + 0.1 * H3 + 0.1 * H4"
+  defs <- defData(defs, varname = "A", dist = "binomial", 
+                  formula = formulaA, variance = 1)
+  formulaY <- "0.1 + 0.2 * H1 + 0.2 * H2 + + 0.3 * A"
+  defs <- defData(defs, varname = "Y", dist = "binomial", 
+                  formula = formulaY, variance = 1)
+  
+  # generate the data
+  data <- genData(1000, defs)
+  
+  # create table of joint probabilities
+  tbl <- data %>%
+    group_by(H1, H2, H3, H4, A, Y) %>%
+    count(name = "prob") %>%
+    ungroup() %>%
+    mutate(prob = prob / sum(prob))
+  stopifnot(near(sum(tbl$prob), 1))
+
+  # format the tableau
+  summ <- tbl_probs(tbl, title = "Table exerce 5.3",
+                   subtitle = "Simulation Probabilities for `simex3.r`")
+})
+```
+
+> Draw a causal DAG
+
+```{r}
+scm_ex5.3 <- within(scm_ex5.3, {
+  the_nodes <- c("A" = "", "H1" = "", "H2" = "", 
+                 "H3" = "", "H4" = "", "Y" = "")
+  dag <- dagify(
+    H2 ~ H1,
+    H3 ~ H2,
+    A ~ H2 + H3 + H4,
+    Y ~ A + H1 + H2,
+    exposure = "A",
+    outcome = "Y",
+    labels = the_nodes)
+
+  # plot the DAG
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
+  plot <- dag %>% 
+    tidy_dagitty(layout = "nicely") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status() +
+    geom_dag_point(aes(color = status)) +
+    geom_dag_edges() +
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = label_colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 5, color = text_colr,
+                  parse = TRUE,
+                  label = c("A", expression(H[1]), expression(H[2]),
+                            expression(H[3]), expression(H[4]), "Y")) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
+})
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 3", warning=FALSE, out.width="80%"}
+scm_ex5.3$plot
+```
+
+> List the true confounders
+
+it is worth repeating the definition of true confounders found on p. 86
+
+> a variable that influences the exposure and that also influences the outcome
+via a directed path that does not include the exposure.
+
+which in this case are $\{H_1, H_2\}$ because
+
+* $H_1$ influence the exposure through $H_1 \rightarrow H_2 \rightarrow A$ and
+the outcome without the exposure in the path through $H_1 \rightarrow Y$
+* $H_2$ influence the exposure through $H_2 \rightarrow A$ and
+the outcome without the exposure in the path through $H_2 \rightarrow Y$
+
+> List the smallest sufficient set of true confounders
+
+That set would be $\{H_2\}$ since it blocks $H_1$ as well
+
+```{r}
+adjustmentSets(scm_ex5.3$dag)
+```
+
+Therefore to redraw with potential outcomes we would blovk the paths $H_2 \rightarrow Y$
+and $H_1 \rightarrow Y$ as follows
+
+
+```{r}
+scm_ex5.3po <- list()
+scm_ex5.3po <- within(scm_ex5.3po, {
+  the_nodes <- c("A" = "", "H1" = "", "H2" = "", 
+                 "H3" = "", "H4" = "", "U" = "(Y(0), Y(1))", "Y" = "")
+  dag <- dagify(
+    H2 ~ H1,
+    H3 ~ H2,
+    A ~ H2 + H3 + H4,
+    U ~ H1 + H2,
+    Y ~ A + U,
+    exposure = "A",
+    outcome = "Y",
+    latent = "U",
+    labels = the_nodes)
+
+  # plot the DAG
+  bg_colr <- "snow"
+  label_colr <- "oldlace"
+  text_colr <- "midnightblue"
+  status_colrs <- c("latent" = "snow3", "exposure" = "burlywood", "outcome" = "aquamarine")
+  plot <- dag %>% 
+    tidy_dagitty(layout = "nicely") %>%
+    arrange(name) %>%  # must sort by name to use mathematical expressions
+    ggdag_status() +
+    geom_dag_point(aes(color = status)) +
+    geom_dag_edges() +
+    geom_dag_label_repel(aes(label = label), color = text_colr, fill = label_colr,
+                         box.padding = 1) +
+    geom_dag_text(size = 5, color = text_colr,
+                  parse = TRUE,
+                  label = c("A", expression(H[1]), expression(H[2]),
+                            expression(H[3]), expression(H[4]), "U", "Y")) +
+    scale_color_manual(values = status_colrs, na.value = bg_colr) +
+    ggdag::theme_dag(panel.background = element_rect(fill = bg_colr, color = bg_colr)) +
+    theme(legend.position = "bottom",
+          legend.title = element_blank())
+})
+```
+
+
+```{r echo=FALSE, fig.align='center', fig.cap="Causal DAG for Exercise 3 With Potential Outcomes", warning=FALSE, out.width="80%"}
+scm_ex5.3po$plot
+```
+
+> Verify that they form a sufficient set of confounders
+
+and again the minimal set is $\{H_2\}$ but this time it is blocked by the latent
+variable $U$.
+
+
+```{r}
+adjustmentSets(scm_ex5.3po$dag)
+```
+
+> Are the potenial outcomes true confounders?
+
+No as they do not influence the exposure. See also section 5.2 p. 87, after 
+figure 5.5, that says
 
 > The collection of potential outcomes $\{Y(a)\}_{a \in A}$ van be viewed as the 
 ultimate confounder, even *when it is not a true confounder*.
 
 
-### Exercise 3
-
-
-
+### Exercise 4
