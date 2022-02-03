@@ -308,6 +308,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.3.2" data-path="dag.html"><a href="dag.html#exercise-2-5"><i class="fa fa-check"></i><b>5.3.2</b> Exercise 2</a></li>
 <li class="chapter" data-level="5.3.3" data-path="dag.html"><a href="dag.html#exercise-3-4"><i class="fa fa-check"></i><b>5.3.3</b> Exercise 3</a></li>
 <li class="chapter" data-level="5.3.4" data-path="dag.html"><a href="dag.html#exercise-4-4"><i class="fa fa-check"></i><b>5.3.4</b> Exercise 4</a></li>
+<li class="chapter" data-level="5.3.5" data-path="dag.html"><a href="dag.html#exercise-5-4"><i class="fa fa-check"></i><b>5.3.5</b> Exercise 5</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method via Standardization</a></li>
@@ -2627,38 +2628,39 @@ the minimal set. But the minimal set is clearly block by the potential outcomes 
 <p>The simulation is done with <code>simstudy</code></p>
 <div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="dag.html#cb229-1" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb229-2"><a href="dag.html#cb229-2" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_ex5<span class="fl">.3</span>, {</span>
-<span id="cb229-3"><a href="dag.html#cb229-3" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;H1&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-4"><a href="dag.html#cb229-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.1</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-5"><a href="dag.html#cb229-5" aria-hidden="true" tabindex="-1"></a>  formulaH2 <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.1 * H1&quot;</span></span>
-<span id="cb229-6"><a href="dag.html#cb229-6" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H2&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-7"><a href="dag.html#cb229-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaH2, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-8"><a href="dag.html#cb229-8" aria-hidden="true" tabindex="-1"></a>  formulaH3<span class="ot">&lt;-</span> <span class="st">&quot;0.2 + 0.2 * H2&quot;</span></span>
-<span id="cb229-9"><a href="dag.html#cb229-9" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H3&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-10"><a href="dag.html#cb229-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaH3, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-11"><a href="dag.html#cb229-11" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H4&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-12"><a href="dag.html#cb229-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.5</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-13"><a href="dag.html#cb229-13" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.1 * H2 + 0.1 * H3 + 0.1 * H4&quot;</span></span>
-<span id="cb229-14"><a href="dag.html#cb229-14" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-15"><a href="dag.html#cb229-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-16"><a href="dag.html#cb229-16" aria-hidden="true" tabindex="-1"></a>  formulaY <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.2 * H1 + 0.2 * H2 + + 0.3 * A&quot;</span></span>
-<span id="cb229-17"><a href="dag.html#cb229-17" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb229-18"><a href="dag.html#cb229-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaY, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb229-19"><a href="dag.html#cb229-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb229-20"><a href="dag.html#cb229-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
-<span id="cb229-21"><a href="dag.html#cb229-21" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
-<span id="cb229-22"><a href="dag.html#cb229-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb229-23"><a href="dag.html#cb229-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create table of joint probabilities</span></span>
-<span id="cb229-24"><a href="dag.html#cb229-24" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb229-25"><a href="dag.html#cb229-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(H1, H2, H3, H4, A, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb229-26"><a href="dag.html#cb229-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb229-27"><a href="dag.html#cb229-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb229-28"><a href="dag.html#cb229-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
-<span id="cb229-29"><a href="dag.html#cb229-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
-<span id="cb229-30"><a href="dag.html#cb229-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb229-31"><a href="dag.html#cb229-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb229-32"><a href="dag.html#cb229-32" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">tbl_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table exerce 5.3&quot;</span>,</span>
-<span id="cb229-33"><a href="dag.html#cb229-33" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `simex3.r`&quot;</span>)</span>
-<span id="cb229-34"><a href="dag.html#cb229-34" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<span id="cb229-3"><a href="dag.html#cb229-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb229-4"><a href="dag.html#cb229-4" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;H1&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-5"><a href="dag.html#cb229-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.1</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-6"><a href="dag.html#cb229-6" aria-hidden="true" tabindex="-1"></a>  formulaH2 <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.1 * H1&quot;</span></span>
+<span id="cb229-7"><a href="dag.html#cb229-7" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H2&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-8"><a href="dag.html#cb229-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaH2, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-9"><a href="dag.html#cb229-9" aria-hidden="true" tabindex="-1"></a>  formulaH3<span class="ot">&lt;-</span> <span class="st">&quot;0.2 + 0.2 * H2&quot;</span></span>
+<span id="cb229-10"><a href="dag.html#cb229-10" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H3&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-11"><a href="dag.html#cb229-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaH3, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-12"><a href="dag.html#cb229-12" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;H4&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-13"><a href="dag.html#cb229-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.5</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-14"><a href="dag.html#cb229-14" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.1 * H2 + 0.1 * H3 + 0.1 * H4&quot;</span></span>
+<span id="cb229-15"><a href="dag.html#cb229-15" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-16"><a href="dag.html#cb229-16" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-17"><a href="dag.html#cb229-17" aria-hidden="true" tabindex="-1"></a>  formulaY <span class="ot">&lt;-</span> <span class="st">&quot;0.1 + 0.2 * H1 + 0.2 * H2 + + 0.3 * A&quot;</span></span>
+<span id="cb229-18"><a href="dag.html#cb229-18" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb229-19"><a href="dag.html#cb229-19" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaY, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb229-20"><a href="dag.html#cb229-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb229-21"><a href="dag.html#cb229-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
+<span id="cb229-22"><a href="dag.html#cb229-22" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
+<span id="cb229-23"><a href="dag.html#cb229-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb229-24"><a href="dag.html#cb229-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create table of joint probabilities</span></span>
+<span id="cb229-25"><a href="dag.html#cb229-25" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb229-26"><a href="dag.html#cb229-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(H1, H2, H3, H4, A, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb229-27"><a href="dag.html#cb229-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb229-28"><a href="dag.html#cb229-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb229-29"><a href="dag.html#cb229-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb229-30"><a href="dag.html#cb229-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb229-31"><a href="dag.html#cb229-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb229-32"><a href="dag.html#cb229-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
+<span id="cb229-33"><a href="dag.html#cb229-33" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">tbl_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table exercise 5.3&quot;</span>,</span>
+<span id="cb229-34"><a href="dag.html#cb229-34" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `simex3.r`&quot;</span>)</span>
+<span id="cb229-35"><a href="dag.html#cb229-35" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
 <blockquote>
 <p>Draw a causal DAG</p>
 </blockquote>
@@ -2776,7 +2778,7 @@ variable <span class="math inline">\(U\)</span>.</p>
 <div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="dag.html#cb234-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adjustmentSets</span>(scm_ex5<span class="fl">.3</span>po<span class="sc">$</span>dag)</span></code></pre></div>
 <pre><code>## { H2 }</code></pre>
 <blockquote>
-<p>Are the potenial outcomes true confounders?</p>
+<p>Are the potential outcomes true confounders?</p>
 </blockquote>
 <p>No as they do not influence the exposure. See also section 5.2 p. 87, after
 figure 5.5, that says</p>
@@ -2787,6 +2789,115 @@ ultimate confounder, even <em>when it is not a true confounder</em>.</p>
 </div>
 <div id="exercise-4-4" class="section level3" number="5.3.4">
 <h3><span class="header-section-number">5.3.4</span> Exercise 4</h3>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="dag.html#cb236-1" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb236-2"><a href="dag.html#cb236-2" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_ex5<span class="fl">.4</span>, {</span>
+<span id="cb236-3"><a href="dag.html#cb236-3" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;O&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb236-4"><a href="dag.html#cb236-4" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb236-5"><a href="dag.html#cb236-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> O <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>,</span>
+<span id="cb236-6"><a href="dag.html#cb236-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">&quot;T&quot;</span>,</span>
+<span id="cb236-7"><a href="dag.html#cb236-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb236-8"><a href="dag.html#cb236-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels  =</span> the_nodes)</span>
+<span id="cb236-9"><a href="dag.html#cb236-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb236-10"><a href="dag.html#cb236-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># plot the DAG</span></span>
+<span id="cb236-11"><a href="dag.html#cb236-11" aria-hidden="true" tabindex="-1"></a>  bg_colr <span class="ot">&lt;-</span> <span class="st">&quot;snow&quot;</span></span>
+<span id="cb236-12"><a href="dag.html#cb236-12" aria-hidden="true" tabindex="-1"></a>  label_colr <span class="ot">&lt;-</span> <span class="st">&quot;oldlace&quot;</span></span>
+<span id="cb236-13"><a href="dag.html#cb236-13" aria-hidden="true" tabindex="-1"></a>  text_colr <span class="ot">&lt;-</span> <span class="st">&quot;midnightblue&quot;</span></span>
+<span id="cb236-14"><a href="dag.html#cb236-14" aria-hidden="true" tabindex="-1"></a>  status_colrs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;latent&quot;</span> <span class="ot">=</span> <span class="st">&quot;snow3&quot;</span>, <span class="st">&quot;exposure&quot;</span> <span class="ot">=</span> <span class="st">&quot;burlywood&quot;</span>, <span class="st">&quot;outcome&quot;</span> <span class="ot">=</span> <span class="st">&quot;aquamarine&quot;</span>)</span>
+<span id="cb236-15"><a href="dag.html#cb236-15" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> dag <span class="sc">%&gt;%</span> </span>
+<span id="cb236-16"><a href="dag.html#cb236-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy_dagitty</span>(<span class="at">layout =</span> <span class="st">&quot;sugiyama&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb236-17"><a href="dag.html#cb236-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(name) <span class="sc">%&gt;%</span>  <span class="co"># must sort by name to use mathematical expressions</span></span>
+<span id="cb236-18"><a href="dag.html#cb236-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggdag_status</span>() <span class="sc">+</span></span>
+<span id="cb236-19"><a href="dag.html#cb236-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> status)) <span class="sc">+</span></span>
+<span id="cb236-20"><a href="dag.html#cb236-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_edges</span>() <span class="sc">+</span></span>
+<span id="cb236-21"><a href="dag.html#cb236-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label), <span class="at">color =</span> text_colr, <span class="at">fill =</span> label_colr,</span>
+<span id="cb236-22"><a href="dag.html#cb236-22" aria-hidden="true" tabindex="-1"></a>                         <span class="at">box.padding =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb236-23"><a href="dag.html#cb236-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_text</span>(<span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> text_colr) <span class="sc">+</span></span>
+<span id="cb236-24"><a href="dag.html#cb236-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> status_colrs, <span class="at">na.value =</span> bg_colr) <span class="sc">+</span></span>
+<span id="cb236-25"><a href="dag.html#cb236-25" aria-hidden="true" tabindex="-1"></a>    ggdag<span class="sc">::</span><span class="fu">theme_dag</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bg_colr, <span class="at">color =</span> bg_colr)) <span class="sc">+</span></span>
+<span id="cb236-26"><a href="dag.html#cb236-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb236-27"><a href="dag.html#cb236-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb236-28"><a href="dag.html#cb236-28" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-159"></span>
+<img src="_main_files/figure-html/unnamed-chunk-159-1.png" alt="Causal DAG for Exercise 4" width="80%" />
+<p class="caption">
+Figure 5.15: Causal DAG for Exercise 4
+</p>
+</div>
+<blockquote>
+<p>Explain why assessing safety of the vaccine by estimating the association between
+<span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> for those with <span class="math inline">\(O = 1\)</span> is a biased analysis.</p>
+</blockquote>
+<p>By including <span class="math inline">\(O = 1\)</span> in the analysis <span class="math inline">\(Y\)</span> becomes a <em>common effect</em> of both
+<span class="math inline">\(O\)</span> and <span class="math inline">\(T\)</span>. Therefore conditioning on <span class="math inline">\(O\)</span> cause the study to focus on a slice
+of data that itself might influence the outcome since the fact that some
+participants are observed but not others might very well not be random and
+the result of one or many latent confounders.</p>
+</div>
+<div id="exercise-5-4" class="section level3" number="5.3.5">
+<h3><span class="header-section-number">5.3.5</span> Exercise 5</h3>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="dag.html#cb237-1" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb237-2"><a href="dag.html#cb237-2" aria-hidden="true" tabindex="-1"></a>scm_ex5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_ex5<span class="fl">.5</span>, {</span>
+<span id="cb237-3"><a href="dag.html#cb237-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb237-4"><a href="dag.html#cb237-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the simulation</span></span>
+<span id="cb237-5"><a href="dag.html#cb237-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">2468</span>)</span>
+<span id="cb237-6"><a href="dag.html#cb237-6" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;T&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb237-7"><a href="dag.html#cb237-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.5</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb237-8"><a href="dag.html#cb237-8" aria-hidden="true" tabindex="-1"></a>  formulaY <span class="ot">&lt;-</span> <span class="st">&quot;0.01 * T&quot;</span></span>
+<span id="cb237-9"><a href="dag.html#cb237-9" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb237-10"><a href="dag.html#cb237-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaY, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb237-11"><a href="dag.html#cb237-11" aria-hidden="true" tabindex="-1"></a>  formulaO <span class="ot">&lt;-</span> <span class="st">&quot;Y + 0.1 * (1- Y)&quot;</span></span>
+<span id="cb237-12"><a href="dag.html#cb237-12" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;O&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb237-13"><a href="dag.html#cb237-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaO, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb237-14"><a href="dag.html#cb237-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb237-15"><a href="dag.html#cb237-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
+<span id="cb237-16"><a href="dag.html#cb237-16" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="fl">1e4</span>, defs)</span>
+<span id="cb237-17"><a href="dag.html#cb237-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb237-18"><a href="dag.html#cb237-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create table of joint probabilities</span></span>
+<span id="cb237-19"><a href="dag.html#cb237-19" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb237-20"><a href="dag.html#cb237-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>, Y, O) <span class="sc">%&gt;%</span></span>
+<span id="cb237-21"><a href="dag.html#cb237-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb237-22"><a href="dag.html#cb237-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb237-23"><a href="dag.html#cb237-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb237-24"><a href="dag.html#cb237-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb237-25"><a href="dag.html#cb237-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-26"><a href="dag.html#cb237-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
+<span id="cb237-27"><a href="dag.html#cb237-27" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">tbl_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table exercise 5.5&quot;</span>,</span>
+<span id="cb237-28"><a href="dag.html#cb237-28" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `simex5.r`&quot;</span>)</span>
+<span id="cb237-29"><a href="dag.html#cb237-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb237-30"><a href="dag.html#cb237-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb237-31"><a href="dag.html#cb237-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The DAG</span></span>
+<span id="cb237-32"><a href="dag.html#cb237-32" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;O&quot;</span> <span class="ot">=</span> <span class="st">&quot;Inclusion&quot;</span>, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">&quot;Infection HPV&quot;</span>, <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;Cervical Cancer&quot;</span>)</span>
+<span id="cb237-33"><a href="dag.html#cb237-33" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb237-34"><a href="dag.html#cb237-34" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> O <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>,</span>
+<span id="cb237-35"><a href="dag.html#cb237-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">&quot;T&quot;</span>,</span>
+<span id="cb237-36"><a href="dag.html#cb237-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb237-37"><a href="dag.html#cb237-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels  =</span> the_nodes)</span>
+<span id="cb237-38"><a href="dag.html#cb237-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-39"><a href="dag.html#cb237-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># plot the DAG</span></span>
+<span id="cb237-40"><a href="dag.html#cb237-40" aria-hidden="true" tabindex="-1"></a>  bg_colr <span class="ot">&lt;-</span> <span class="st">&quot;snow&quot;</span></span>
+<span id="cb237-41"><a href="dag.html#cb237-41" aria-hidden="true" tabindex="-1"></a>  label_colr <span class="ot">&lt;-</span> <span class="st">&quot;oldlace&quot;</span></span>
+<span id="cb237-42"><a href="dag.html#cb237-42" aria-hidden="true" tabindex="-1"></a>  text_colr <span class="ot">&lt;-</span> <span class="st">&quot;midnightblue&quot;</span></span>
+<span id="cb237-43"><a href="dag.html#cb237-43" aria-hidden="true" tabindex="-1"></a>  status_colrs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;latent&quot;</span> <span class="ot">=</span> <span class="st">&quot;snow3&quot;</span>, <span class="st">&quot;exposure&quot;</span> <span class="ot">=</span> <span class="st">&quot;burlywood&quot;</span>, <span class="st">&quot;outcome&quot;</span> <span class="ot">=</span> <span class="st">&quot;aquamarine&quot;</span>)</span>
+<span id="cb237-44"><a href="dag.html#cb237-44" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> dag <span class="sc">%&gt;%</span> </span>
+<span id="cb237-45"><a href="dag.html#cb237-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy_dagitty</span>(<span class="at">layout =</span> <span class="st">&quot;sugiyama&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb237-46"><a href="dag.html#cb237-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(name) <span class="sc">%&gt;%</span>  <span class="co"># must sort by name to use mathematical expressions</span></span>
+<span id="cb237-47"><a href="dag.html#cb237-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggdag_status</span>() <span class="sc">+</span></span>
+<span id="cb237-48"><a href="dag.html#cb237-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> status)) <span class="sc">+</span></span>
+<span id="cb237-49"><a href="dag.html#cb237-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_edges</span>() <span class="sc">+</span></span>
+<span id="cb237-50"><a href="dag.html#cb237-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label), <span class="at">color =</span> text_colr, <span class="at">fill =</span> label_colr,</span>
+<span id="cb237-51"><a href="dag.html#cb237-51" aria-hidden="true" tabindex="-1"></a>                         <span class="at">box.padding =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb237-52"><a href="dag.html#cb237-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_dag_text</span>(<span class="at">size =</span> <span class="dv">5</span>, <span class="at">color =</span> text_colr) <span class="sc">+</span></span>
+<span id="cb237-53"><a href="dag.html#cb237-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> status_colrs, <span class="at">na.value =</span> bg_colr) <span class="sc">+</span></span>
+<span id="cb237-54"><a href="dag.html#cb237-54" aria-hidden="true" tabindex="-1"></a>    ggdag<span class="sc">::</span><span class="fu">theme_dag</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bg_colr, <span class="at">color =</span> bg_colr)) <span class="sc">+</span></span>
+<span id="cb237-55"><a href="dag.html#cb237-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb237-56"><a href="dag.html#cb237-56" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb237-57"><a href="dag.html#cb237-57" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-161"></span>
+<img src="_main_files/figure-html/unnamed-chunk-161-1.png" alt="Causal DAG for Exercise 5" width="80%" />
+<p class="caption">
+Figure 5.16: Causal DAG for Exercise 5
+</p>
+</div>
 
 </div>
 </div>
