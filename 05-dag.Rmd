@@ -1429,7 +1429,8 @@ scm_ex5.5 <- within(scm_ex5.5, {
   # The DAG
   the_nodes <- c("O" = "Inclusion", "T" = "Infection HPV", "Y" = "Cervical Cancer")
   dag <- dagify(
-    Y ~ O + `T`,
+    Y ~ `T`,
+    O ~ Y, 
     exposure = "T",
     outcome = "Y",
     labels  = the_nodes)
