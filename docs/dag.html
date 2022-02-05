@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-04" />
+<meta name="date" content="2022-02-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2595,7 +2595,7 @@ that does not include <span class="math inline">\(A\)</span></p>
 </blockquote>
 <p>The minimal adjustment sets, also called smallest sufficient set of true
 confounders, include the set <span class="math inline">\(\{H_2, H_4\}\)</span> so the answer is yes.</p>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="dag.html#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adjustmentSets</span>(scm_5<span class="fl">.11</span><span class="sc">$</span>dag, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="dag.html#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">adjustmentSets</span>(scm_ex5<span class="fl">.2</span><span class="sc">$</span>dag, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>)</span></code></pre></div>
 <pre><code>## { H2, H4 }
 ## { H2, H3 }</code></pre>
 <blockquote>
@@ -2899,7 +2899,89 @@ the result of one or many latent confounders.</p>
 Figure 5.16: Causal DAG for Exercise 5
 </p>
 </div>
+<p>As explained in section 3.3 of chapter 3 if we use the information from the
+simulation then</p>
+<p><span class="math display">\[
+\begin{align*}
+p_0 &amp;= E(Y = 1 \mid T = 0) = 0.01 * 0.5 = 0.005 \\
+p_1 &amp;= E(Y = 1 \mid T = 1) = 0.01 \\
+&amp;\therefore \\
+RD &amp;= 0.01 - 0.005 = 0.005 \\
+OR &amp;= \frac{\frac{p_1}{1 - p_1}}{\frac{p_0}{1-p_0}} = \frac{0.1}{0.9} \cdot \frac{0.995}{0.005} = 22\frac{1}{9} =22.11
+\end{align*}
+\]</span></p>
+<div id="a-1" class="section level4" number="5.3.5.1">
+<h4><span class="header-section-number">5.3.5.1</span> a)</h4>
+<p>Show mathematically that the odds ratio comparing with <span class="math inline">\(O\)</span> is the same as when
+not conditioning with <span class="math inline">\(O\)</span></p>
+<p>The odds ratio <span class="math inline">\(OR\)</span> is</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(Y=1 \mid T = 1, O =1)}{1 - P(Y=1 \mid T = 1, O =1)} \cdot \frac{1 - P(Y=1 \mid T=0, O =1)}{P(Y=1 \mid T=0, O =1)} \\
+&amp; =\frac{P(Y=1 \mid T = 1, O =1)}{P(Y=0 \mid T = 1, O =1)} \cdot \frac{P(Y=0 \mid T = 0, O =1)}{P(Y = 1 \mid T = 0, O =1)} \\
+\end{align*}
+\]</span>
+but we know that</p>
+<p><span class="math display">\[
+\begin{align*}
+P(Y \mid T, O)P(T, O) = P(T, Y, O) = P(T \mid Y, O) P(Y, O)
+\end{align*}
+\]</span>
+therefore</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(Y=1 \mid T=1, O=1)}{P(Y=0 \mid T=1, O=1)} \cdot \frac{P(Y=0 \mid T=0, O=1)}{P(Y=1 \mid T=0, O=1)} \\
+&amp;= \frac{P(T=1 \mid Y=1, O=1)}{P(T=1 \mid Y=0, O=1)} \cdot \frac{P(T=0 \mid Y=0, O=1)}{P(T=0 \mid Y=1, O =1)}
+\end{align*}
+\]</span>
+ans since</p>
+<p><span class="math display">\[
+T\perp\!\!\!\perp O \mid Y \implies P(T \mid Y, O) = P(T \mid Y)
+\]</span></p>
+<p>then</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(T=1 \mid Y=1, O=1)}{P(T=1 \mid Y=0, O=1)} \cdot \frac{P(T=0 \mid Y=0, O=1)}{P(T=0 \mid Y=1, O=1)} \\
+&amp;= \frac{P(T=1 \mid Y=1)}{P(T=1 \mid Y=0)} \cdot \frac{P(T=0 \mid Y=0)}{P(T=0 \mid Y=1)}
+\end{align*}
+\]</span></p>
+<p>and again by using</p>
+<p><span class="math display">\[
+\begin{align*}
+P(Y \mid T)P(T) = P(T, Y) = P(T \mid Y) P(Y)
+\end{align*}
+\]</span>
+we have</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(T=1 \mid Y=1)}{P(T=1 \mid Y=0)} \cdot \frac{P(T=0 \mid Y=0)}{P(T=0 \mid Y=1)} \\
+&amp;= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)}
+\end{align*}
+\]</span></p>
+</div>
+<div id="b-1" class="section level4" number="5.3.5.2">
+<h4><span class="header-section-number">5.3.5.2</span> b)</h4>
+<p>Show that when <span class="math inline">\(Y=1\)</span> is rare, the odds ratio is similar to the risk ratio.</p>
+<p>from a) above we have</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)}
+\end{align*}
+\]</span>
+and since <span class="math inline">\(Y\)</span> is rare</p>
+<p><span class="math display">\[
+P(Y=0 \mid T=0)\approx 1 \approx P(Y=0 \mid T=1)
+\]</span></p>
+<p>therefore</p>
+<p><span class="math display">\[
+\begin{align*}
+OR &amp;= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)} \\
+&amp;\approx \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \\
+&amp;= RR
+\end{align*}
+\]</span></p>
 
+</div>
 </div>
 </div>
 </div>

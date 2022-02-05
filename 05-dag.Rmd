@@ -1091,7 +1091,7 @@ The minimal adjustment sets, also called smallest sufficient set of true
 confounders, include the set $\{H_2, H_4\}$ so the answer is yes.
 
 ```{r}
-adjustmentSets(scm_5.11$dag, exposure = "A", outcome = "Y")
+adjustmentSets(scm_ex5.2$dag, exposure = "A", outcome = "Y")
 ```
 
 
@@ -1461,4 +1461,107 @@ scm_ex5.5 <- within(scm_ex5.5, {
 scm_ex5.5$plot
 ```
 
+As explained in section 3.3 of chapter 3 if we use the information from the
+simulation then
+
+$$
+\begin{align*}
+p_0 &= E(Y = 1 \mid T = 0) = 0.01 * 0.5 = 0.005 \\
+p_1 &= E(Y = 1 \mid T = 1) = 0.01 \\
+&\therefore \\
+RD &= 0.01 - 0.005 = 0.005 \\
+OR &= \frac{\frac{p_1}{1 - p_1}}{\frac{p_0}{1-p_0}} = \frac{0.1}{0.9} \cdot \frac{0.995}{0.005} = 22\frac{1}{9} =22.11
+\end{align*}
+$$
+
+#### a)
+
+Show mathematically that the odds ratio comparing with $O$ is the same as when
+not conditioning  with $O$
+
+The odds ratio $OR$ is
+
+$$
+\begin{align*}
+OR &= \frac{P(Y=1 \mid T = 1, O =1)}{1 - P(Y=1 \mid T = 1, O =1)} \cdot \frac{1 - P(Y=1 \mid T=0, O =1)}{P(Y=1 \mid T=0, O =1)} \\
+& =\frac{P(Y=1 \mid T = 1, O =1)}{P(Y=0 \mid T = 1, O =1)} \cdot \frac{P(Y=0 \mid T = 0, O =1)}{P(Y = 1 \mid T = 0, O =1)} \\
+\end{align*}
+$$
+but we know that
+
+$$
+\begin{align*}
+P(Y \mid T, O)P(T, O) = P(T, Y, O) = P(T \mid Y, O) P(Y, O)
+\end{align*}
+$$
+therefore
+
+
+$$
+\begin{align*}
+OR &= \frac{P(Y=1 \mid T=1, O=1)}{P(Y=0 \mid T=1, O=1)} \cdot \frac{P(Y=0 \mid T=0, O=1)}{P(Y=1 \mid T=0, O=1)} \\
+&= \frac{P(T=1 \mid Y=1, O=1)}{P(T=1 \mid Y=0, O=1)} \cdot \frac{P(T=0 \mid Y=0, O=1)}{P(T=0 \mid Y=1, O =1)}
+\end{align*}
+$$
+ans since
+
+$$
+T\perp\!\!\!\perp O \mid Y \implies P(T \mid Y, O) = P(T \mid Y)
+$$
+
+then
+
+
+
+$$
+\begin{align*}
+OR &= \frac{P(T=1 \mid Y=1, O=1)}{P(T=1 \mid Y=0, O=1)} \cdot \frac{P(T=0 \mid Y=0, O=1)}{P(T=0 \mid Y=1, O=1)} \\
+&= \frac{P(T=1 \mid Y=1)}{P(T=1 \mid Y=0)} \cdot \frac{P(T=0 \mid Y=0)}{P(T=0 \mid Y=1)}
+\end{align*}
+$$
+
+and again by using
+
+$$
+\begin{align*}
+P(Y \mid T)P(T) = P(T, Y) = P(T \mid Y) P(Y)
+\end{align*}
+$$
+we have
+
+$$
+\begin{align*}
+OR &= \frac{P(T=1 \mid Y=1)}{P(T=1 \mid Y=0)} \cdot \frac{P(T=0 \mid Y=0)}{P(T=0 \mid Y=1)} \\
+&= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)}
+\end{align*}
+$$
+
+#### b)
+
+Show that when $Y=1$ is rare, the odds ratio is similar to the risk ratio.
+
+from a) above we have
+
+$$
+\begin{align*}
+OR &= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)}
+\end{align*}
+$$
+and since $Y$ is rare
+
+
+$$
+P(Y=0 \mid T=0)\approx 1 \approx P(Y=0 \mid T=1)
+$$
+
+therefore
+
+
+$$
+\begin{align*}
+OR &= \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \cdot \frac{P(Y=0 \mid T=0)}{P(Y=0 \mid T=1)} \\
+&\approx \frac{P(Y=1 \mid T=1)}{P(Y=1 \mid T=0)} \\
+&= RR
+\end{align*}
+$$
 
