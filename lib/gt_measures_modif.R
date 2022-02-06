@@ -2,7 +2,7 @@
 #' 
 #' Create a table of effect-measure modifications with their CI.
 #' 
-#' The table will have 3 columns foreach of the 2 strata and the
+#' The table will have 3 columns for each of the 2 strata and the
 #' difference column. The measure name, the estimates and the 
 #' confidence interval.
 #'
@@ -12,7 +12,7 @@
 #' @param title The title of the table
 #' @param subtitle Subtitle of the table
 #'
-#' @return A gt object create by the `gt` package
+#' @return A gt object create by the \code{gt} package
 #' @export
 #'
 #' @examples

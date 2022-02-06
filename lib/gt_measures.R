@@ -11,7 +11,7 @@
 #' @param title The title of the table
 #' @param subtitle Subtitle of the table
 #'
-#' @return A gt object create by the `gt` package
+#' @return A gt object create by the \code{gt} package
 #' @export
 #'
 #' @examples
