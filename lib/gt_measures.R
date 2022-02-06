@@ -19,6 +19,7 @@
 #' }
 gt_measures <- function(df, conf = df$conf[1], digits = 3, 
                         title = "Title", subtitle = "Subtitle") {
+  
   # confidence interval label used in footnote
   ci_label <- sprintf("%.0f%% confidence interval", 100 * conf)
   

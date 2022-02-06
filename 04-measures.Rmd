@@ -24,10 +24,13 @@ dir_docs04 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 4")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
 ```
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "gt_measures_modif.R"))
 load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs03, "brfss.RData"))
 load(file.path(dir_docs04, "sepsis.RData"))
@@ -167,45 +170,10 @@ stopifnot(sum(comp$dev) < 0.01)
 and we communicate the results in a table
 
 ```{r}
-# we create a function for the table as it will be used again
-# later in this chapter
-tbl_boot.r <- function(df, title = "Effect Measures and CI",
-                       subtitle = "Effect-measure Modification") {
-  # prepare the dataframe to create the table
-  df <- df %>%
-    filter(!grepl(pattern = "log.+", name)) %>%
-    select(-conf) %>%
-    tidyr::pivot_longer(cols = c(est, lci, uci), names_to = "point", values_to = "value") %>%
-    tidyr::separate(col = "name", into = c("name", "stratum"), sep = "[.]") %>%
-    tidyr::unite(col = "estimate", stratum, point, sep = "_") %>%
-    pivot_wider(names_from = "estimate", values_from = "value")
-  
-  # create the table with gt
-  gt::gt(df, rowname_col = "name") %>%
-    tab_header(title = md(paste0("**", title, "**")), 
-               subtitle = md(paste0("**", subtitle, "**"))) %>%
-    tab_spanner_delim(delim = "_", columns = everything(), split = "last") %>%
-    fmt_number(columns = everything(), decimals = 2) %>%
-    cols_align(align = "center", columns = everything()) %>% 
-    opt_row_striping() %>%
-    tab_style(
-      style = cell_borders(sides = "left", color = "grey60", 
-                           weight = px(1.5), style = "solid"),
-      locations = cells_body( columns = c("M1_est", "diff_est"))
-    ) %>%
-    tab_style(
-      style = cell_borders(sides = "left", color = "grey60", 
-                           weight = px(1.5), style = "solid"),
-      locations = cells_column_labels(columns = c("M1_est", "diff_est"))
-    ) %>%
-    tab_options(
-      heading.title.font.weight = "bold", 
-      heading.subtitle.font.weight = "bold",
-      heading.background.color = "gainsboro",
-      column_labels.font.weight = "bold")
-}
-tbl_boot.r(recovery.out, title = "Table 4.2 RECOVERY Trial")
+gt_measures_modif(recovery.out, title = "Table 4.2 RECOVERY Trial")
 ```
+
+
 
 
 
@@ -343,7 +311,7 @@ stopifnot(sum(comp$dev) < 0.01)
 and the table is
 
 ```{r}
-tbl_boot.r(nces.out, title = "Table 4.3 NCES data")
+gt_measures_modif(nces.out, title = "Table 4.3 NCES data")
 ```
 
 and we plot the results
@@ -1120,8 +1088,7 @@ sepsis.out <- boot.r(sepsis, formula = zubrod45 ~ shock + gt65,
 then create the table of results
 
 ```{r}
-sepsi.tbl <- tbl_boot.r(sepsis.out, title = "**Sepsis Study**")
-sepsi.tbl
+gt_measures_modif(sepsis.out, title = "**Sepsis Study**")
 ```
 
 and plotting the results
@@ -1166,8 +1133,7 @@ brfss.out <- readRDS(file = a_file)
 then create the table of results
 
 ```{r}
-brfss.tbl <- tbl_boot.r(brfss.out, title = "**BRFSS Survey**")
-brfss.tbl
+gt_measures_modif(brfss.out, title = "**BRFSS Survey**")
 ```
 
 and plotting the results
