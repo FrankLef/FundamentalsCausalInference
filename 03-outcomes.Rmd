@@ -15,10 +15,13 @@ dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 3")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
 ```
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "gt_measures.R"))
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "nces.RData"))
 load(file.path(dir_docs01, "whatifdat.RData"))
@@ -122,25 +125,6 @@ bootu.r <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
 
 
 
-```{r}
-# create a function for the table as it will used several times
-tbl_bootc.r <- function(df, title = "Title", subtitle = "Subtitle") {
-  df %>%
-    gt() %>%
-    tab_header(
-      title = md(paste0("**", title, "**")),
-      subtitle = md(paste0("**", subtitle, "**"))
-    ) %>%
-    fmt_number(columns = !matches("name"), decimals = 2) %>%
-    cols_align(align = "center", columns = !matches("name")) %>% 
-    opt_row_striping() %>%
-    tab_options(
-      heading.background.color = "gainsboro",
-      column_labels.font.weight = "bold")
-}
-```
-
-
 run the function to get the association measures
 
 ```{r}
@@ -162,11 +146,10 @@ endTime <- Sys.time()
 ```
 
 ```{r}
-tbl_bootc.r(d, 
+gt_measures(d, 
             title = "Table 3.2", 
-            subtitle = "Unconditional probabilities and association measures with 95% CI")
+            subtitle = "Unconditional probabilities and association measures")
 ```
-
 
 
 
@@ -315,9 +298,9 @@ endTime <- Sys.time()
 
 
 ```{r}
-tbl_bootc.r(d, 
-            title = "Table 3.3",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d, 
+            title = "Table 3.3", 
+            subtitle = "Conditional probabilities and association measures")
 ```
 
 
@@ -367,7 +350,7 @@ $$
 ```{r}
 message("this takes 20 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-d1a <- bootu.r(dat = dataGSS1, formula = owngun ~ conservative)
+# d1a <- bootu.r(dat = dataGSS1, formula = owngun ~ conservative)
 a_file <- file.path(dir_data, "chap03_Ex1a.rds")
 # saveRDS(d1a, file = a_file)
 d1a <- readRDS(file = a_file)
@@ -376,9 +359,9 @@ d1a <- readRDS(file = a_file)
 ```
 
 ```{r}
-tbl_bootc.r(d1a[, c("name", "est", "lci", "uci")], 
-            title = "Exercise 1 a): Table 3.2",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d1a[, c("name", "est", "conf", "lci", "uci")], 
+            title = "Exercise 1 a): Table 3.2", 
+            subtitle = "Unconditional probabilities and association measures")
 ```
 
 
@@ -410,9 +393,9 @@ d1b <- readRDS(file = a_file)
 ```
 
 ```{r}
-tbl_bootc.r(d1b[, c("name", "est", "lci", "uci")], 
-            title = "Exercise 1 b): Table 3.2",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d1b[, c("name", "est", "conf", "lci", "uci")], 
+            title = "Exercise 1 b): Table 3.3", 
+            subtitle = "Conditional probabilities and association measures")
 ```
 
 
@@ -486,11 +469,11 @@ and we use the logistic model to estimate the associaiton measures as follows
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-d2 <- bootc.r(dat = dataGSS2, 
-             formula = trump ~ gthsedu + magthsedu + white + female + gt65 +
-               pagthsedu + pamiss, 
-             cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,
-             cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)
+# d2 <- bootc.r(dat = dataGSS2, 
+#              formula = trump ~ gthsedu + magthsedu + white + female + gt65 +
+#                pagthsedu + pamiss, 
+#              cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,
+#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)
 a_file <- file.path(dir_data, "chap03_Ex2.rds")
 # saveRDS(d2, file = a_file)
 d2 <- readRDS(file = a_file)
@@ -499,9 +482,9 @@ d2 <- readRDS(file = a_file)
 ```
 
 ```{r}
-tbl_bootc.r(d2[, c("name", "est", "lci", "uci")], 
-            title = "Exercise 2: Table 3.3",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d2[, c("name", "est", "conf", "lci", "uci")], 
+            title = "Exercise 2: Table 3.3", 
+            subtitle = "Conditional probabilities and association measures")
 ```
 
 
@@ -583,9 +566,9 @@ d3a <- readRDS(a_file)
 ```
 
 ```{r}
-tbl_bootc.r(d3a[, c("name", "est", "lci", "uci")], 
-            title = "Exercise 3 a): Table 3.3",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d3a[, c("name", "est", "conf", "lci", "uci")], 
+            title = "Exercise 3 a): Table 3.3", 
+            subtitle = "Conditional probabilities and association measures")
 ```
 
 
@@ -641,9 +624,9 @@ d3b <- readRDS(a_file)
 
 
 ```{r}
-tbl_bootc.r(d3b[, c("name", "est", "lci", "uci")], 
-            title = "Exercise 3 b)",
-            subtitle = "Cond. prob. and association measures with 95% CI")
+gt_measures(d3b[, c("name", "est", "conf", "lci", "uci")], 
+            title = "Exercise 3 b): Table 3.3", 
+            subtitle = "Conditional probabilities and association measures")
 ```
 
 
