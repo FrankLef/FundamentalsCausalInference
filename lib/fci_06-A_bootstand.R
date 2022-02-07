@@ -43,31 +43,10 @@ bootstand <- function(dat, formula = Y ~ `T` + H + `T`*H, R = 1000, conf = 0.95)
     out
   }
   
-  # estimate bootstrap confidence intervals and point estimate
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
-  
-  # extract the estimated values and confidence intervals from the boot object
-  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
-    est <- boot.out$t0[i]
-    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
-    out <- c(est, ci)
-    names(out) <- c("est", "conf", "lci", "uci")
-    out
-  })
-  
-  # create the dataframe to hold the results
-  out <- data.frame(t(out))
-  # add the first column as the names of the results
-  out <- data.frame(name = names(boot.out$t0), out)
-  
+  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+
   # exponentiate the log values
-  sel <- c("rr" = "logrr")
-  out <- within(out, {
-    est[name %in% sel] <- exp(est[name %in% sel])
-    lci[name %in% sel] <- exp(lci[name %in% sel])
-    uci[name %in% sel] <- exp(uci[name %in% sel])
-    name[name %in% sel] <- names(sel)
-  })
+  out <- exp_effects(data = out, vars = c("rr" = "logrr"))
 
   out
 }

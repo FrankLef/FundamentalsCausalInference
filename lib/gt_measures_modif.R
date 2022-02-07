@@ -57,7 +57,7 @@ gt_measures_modif <- function(df, conf = df$conf[1], digits = 3,
     tab_style(
       style = cell_borders(sides = "left", color = "grey60", 
                            weight = px(1.5), style = "solid"),
-      locations = cells_body( columns = c("M1_est", "diff_est"))
+      locations = cells_body(columns = c("M1_est", "diff_est"))
     ) %>%
     tab_style(
       style = cell_borders(sides = "left", color = "grey60", 
@@ -66,7 +66,7 @@ gt_measures_modif <- function(df, conf = df$conf[1], digits = 3,
     ) %>%
     tab_footnote(
       footnote = ci_label,
-      locations = cells_column_labels(columns = vars(M0_ci, M1_ci, diff_ci))
+      locations = cells_column_labels(columns = c("M0_ci", "M1_ci", "diff_ci"))
     ) %>%
     tab_source_note(
       source_note = "Fundamentals of Causal Inference, Babette A. Brumback, 2022"
@@ -76,6 +76,4 @@ gt_measures_modif <- function(df, conf = df$conf[1], digits = 3,
       heading.subtitle.font.weight = "bold",
       heading.background.color = "gainsboro",
       column_labels.font.weight = "bold")
-  
-  # df
 }

@@ -56,31 +56,14 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
                     "RD.diff", "logRR.diff", "logRRstar.diff", "logOR.diff")
     out
   }
-  # estimate bootstrap confidence intervals and point estimate
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
   
-  # extract the estimated values and confidence intervals from the boot object
-  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
-    est <- boot.out$t0[i]
-    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
-    out <- c(est, ci)
-    names(out) <- c("est", "conf", "lci", "uci")
-    out
-  })
+  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
   
-  # create the dataframe to hold the results
-  out <- data.frame(t(out))
-  # add the first column as the names of the results
-  out <- data.frame(name = names(boot.out$t0), out)
-  
-  # convert link to natural scales and add to output
-  sel <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
+  # vector of variables to exponentiate
+  vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
            "RRstar.M0"  = "logRRstar.M0", "RRstar.M1"  = "logRRstar.M1", "RRstar.diff" = "logRRstar.diff",
            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
-  df <- out[match(sel, out$name), ]
-  df <- as.data.frame(sapply(X = df[, c("est", "lci", "uci")], FUN = exp))
-  df <- cbind(name = names(sel), conf = conf, df)
-  
-  out <- rbind(out, df)
+  out <- exp_effects(data = out, vars = vars)
+
   out
 }

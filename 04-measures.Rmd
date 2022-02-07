@@ -13,7 +13,7 @@ library(ggvenn, quietly = TRUE)
 
 
 
-```{r}
+```{r include=FALSE}
 # the directory of documentation for chapter 1
 dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
@@ -31,6 +31,8 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "boot_utils.R"), 
+       local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_04-A_boot.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures_modif.R"),
@@ -85,6 +87,7 @@ run `boot()` with the RECOVERY data set
 ```{r}
 recovery.out <- boot(recovery, formula = Y ~ `T` + M)
 ```
+
 
 verify the results with the author's on p. 65.
 
@@ -703,8 +706,7 @@ necessary.
 We process the data with function `boot` from above.
 
 ```{r}
-sepsis.out <- boot(sepsis, formula = zubrod45 ~ shock + gt65, 
-                     R = 1000, conf = 0.95)
+sepsis.out <- boot(sepsis, formula = zubrod45 ~ shock + gt65)
 ```
 
 then create the table of results
@@ -741,10 +743,10 @@ we process with 500 boot iterations
 
 ```{r}
 message("This takes 2 min.: We used a saved file.")
-startTime <- Sys.time()
+# startTime <- Sys.time()
 # brfss.out <- boot(dataBRFSS, formula = insured ~ gthsedu + whitenh, 
 #                     R = 500, conf = 0.95)
-endTime <- Sys.time()
+# endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap04_ex3.rds")
 # saveRDS(brfss.out, file = a_file)

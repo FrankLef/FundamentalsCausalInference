@@ -26,15 +26,15 @@ lmodboot <- function(dat, formula = Y ~ `T` + A + H,
     # i.e. the user can decide not to use all variables from the formula
     # or, in other words, condition on some variables
     coefs <- coefs[c(x0, cond)]
-    sum(coefs)
+    p <- sum(coefs)
+    out <- c(p)
+    names(out) <- c("logitp")
+    out
   }
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
-  # the estimate on the logit scale
-  est.logit <- boot.out$t0
-  # the confidence interval on the logit scale using normal interval
-  ci.logit <- boot::boot.ci(boot.out, conf = conf, type = "norm")$normal
-  # the estimate and confidence interval on the natural scale
-  # NOTE: the plogis() function gives the inverse logit
-  c("est" = plogis(est.logit), "conf" = ci.logit[1], 
-    "lci" = plogis(ci.logit[2]), "uci" =  plogis(ci.logit[3]))
+  
+  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  
+  out <- invlogit_effects(out)
+
+  out
 }

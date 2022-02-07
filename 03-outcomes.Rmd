@@ -23,6 +23,8 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "boot_utils.R"), 
+       local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_03-A_bootu.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_03-B_bootc.R"), 
@@ -156,6 +158,7 @@ d <- readRDS(file = a_file)
 ```
 
 
+
 ```{r}
 gt_measures(d, 
             title = "Table 3.3", 
@@ -240,8 +243,8 @@ there is not necessarily a causality.  See *Inference* section below.
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d1b <- bootc(dat = dataGSS1, 
-#              formula = owngun ~ conservative + gt65 + female + white, 
+# d1b <- bootc(dat = dataGSS1,
+#              formula = owngun ~ conservative + gt65 + female + white,
 #              cond0 = owngun ~ gt65 + white,
 #              cond1 = owngun ~ conservative + gt65 + white)
 a_file <- file.path(dir_data, "chap03_Ex1b.rds")
@@ -328,9 +331,9 @@ and we use the logistic model to estimate the associaiton measures as follows
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d2 <- bootc(dat = dataGSS2, 
+# d2 <- bootc(dat = dataGSS2,
 #              formula = trump ~ gthsedu + magthsedu + white + female + gt65 +
-#                pagthsedu + pamiss, 
+#                pagthsedu + pamiss,
 #              cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,
 #              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)
 a_file <- file.path(dir_data, "chap03_Ex2.rds")
@@ -418,7 +421,7 @@ We also use only 500 bootstrapping iterations given te large volume of data.
 #              R = 500)
 # endTime <- Sys.time()
 # print(endTime - startTime)
-message("This took 26 min, so we load a saved file.")
+message("This took 20 min, so we load a saved file.")
 a_file <- file.path(dir_data, "chap03_Ex3a.rds")
 # saveRDS(d3a, file = a_file)
 d3a <- readRDS(a_file)
