@@ -8,11 +8,25 @@ library(boot, quietly = TRUE)
 
 
 ```{r include=FALSE}
-a_dir <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+# the directory of documentation for chapter 1
+dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
-load(file.path(a_dir, "whatifdat.RData"))
-load(file.path(a_dir, "nces.RData"))
+# directory of data files
+dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
 ```
+
+
+```{r include=FALSE}
+source(file = file.path(dir_lib, "fci_02-A_sim.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_02-B_lmodboot.R"), 
+       local = knitr::knit_global())
+load(file.path(dir_docs01, "whatifdat.RData"))
+load(file.path(dir_docs01, "nces.RData"))
+```
+
 
 
 The mortality data is
@@ -100,7 +114,7 @@ $$
 ## Sampling Distributions and the Bootstrap
 
 
-```{r echo=TRUE, file="lib\\fci_02-A_sim.R"}
+```{r echo=FALSE, file="lib\\fci_02-A_sim.R"}
 
 ```
 

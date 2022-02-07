@@ -8,7 +8,7 @@ library(boot, quietly = TRUE)
 ```
 
 
-```{r}
+```{r include=FALSE}
 # the directory of documentation for chapter 1
 dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
@@ -23,7 +23,12 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "gt_measures.R"), local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_03-A_bootu.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_03-B_bootc.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_measures.R"), 
+       local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "nces.RData"))
 load(file.path(dir_docs01, "whatifdat.RData"))
@@ -41,84 +46,8 @@ load(file.path(dir_docs03, "brfss.RData"))
 ## Effect Measures
 
 
-```{r}
-# Compute estimates of the unconditional association measures, 
-# hence the u in bootu.r, and their confidence intervals.
-# 1- We use Gaussian, Poisson and Binomial glm to solve the 
-#    estimating equations of the measures, not their distributions
-# 2- The association measures' distributions (ci) are estimated by
-#    bootstrapping
-# Assumptions: Weassume that (3.2) holds but not (3.1)
-# See p. 45 and 46 for more details.
-bootu.r <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
-  
-  # get the name of dependent variable from the formula
-  y <- all.vars(formula[[2]])
-  # get the name of independent variables from the formula
-  x <- all.vars(formula[[3]])
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
-  
-  # estimate the conditional probabilities 
-  # and the four association measures
-  estimator <- function(data, ids) {
-    dat <- data[ids, ]
-    # estimate the conditional probabilities
-    coefs <- coef(glm(formula = formula, family = gaussian, data = dat))
-    p0 <- coefs[x0]
-    p1 <- sum(coefs)
-    # estimate the risk difference
-    rd <- p1 - p0
-    
-    # use loglinear model to estimate the log relative risk
-    coefs <- coef(glm(formula = formula, family = poisson, data = dat))
-    logrr <- coefs[x]
-    
-    # prepare data to estimate the log other relative risk
-    ystar <- 1 - dat[, y]
-    xstar <- 1 - dat[, x]
-    # use loglinear model to estimate the log other relative risk
-    coefs <- coef(glm(ystar ~ xstar, family = poisson))
-    logrrstar <- coefs[2]
-    
-    # use logistic model to estimate the log of other risk
-    coefs <- coef(glm(formula = formula, family = binomial, data = dat))
-    logor <- coefs[x]
-    
-    # return the results
-    out <- c(p0, p1, rd, logrr, logrrstar, logor)
-    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
-    out
-  }
-  
-  # run the bootstrapping
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
-  
-  # extract the estimated values and confidence intervals from the boot object
-  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
-    est <- boot.out$t0[i]
-    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
-    out <- c(est, ci)
-    names(out) <- c("est", "conf", "lci", "uci")
-    out
-  })
-  
-  # create the dataframe to hold the results
-  out <- data.frame(t(out))
-  # add the first column as the names of the results
-  out <- data.frame(name = names(boot.out$t0), out)
-  
-  # convert link to natural scales and add to the output
-  sel <- c("rr" = "logrr","rrstar"  = "logrrstar", "or" = "logor")
-  out <- within(out, {
-   est[name %in% sel] <- exp(est[name %in% sel])
-   lci[name %in% sel] <- exp(lci[name %in% sel])
-   uci[name %in% sel] <- exp(uci[name %in% sel])
-   name[name %in% sel] <- names(sel)
-  })
+```{r eval=TRUE, echo=TRUE, file="lib\\fci_03-A_bootu.R"}
 
-  out
-}
 ```
 
 
@@ -134,12 +63,12 @@ stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
 
 ```{r}
 message("this takes 30 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# d <- bootu.r(dat = dataGSS, formula = trump ~ gthsedu)
+# startTime <- Sys.time()
+# d <- bootu(dat = dataGSS, formula = trump ~ gthsedu)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
 # saveRDS(d, file = a_file)
 d <- readRDS(file = a_file)
-endTime <- Sys.time()
+# endTime <- Sys.time()
 # print(endTime - startTime)
 ```
 
@@ -174,83 +103,17 @@ measures. We notice that
 * The same name is used in chapter 2 on p.33-34 for a function computing only 
 the estimand  (sampling distribution) but *not the association measures*
 
-**We therefore rename the `lmodboot.r()` of chapter 3 as `bootc.r`** to
+**We therefore rename the `lmodboot.r()` of chapter 3 as `bootc`** to
 
-* show it relates to `bootu.r` with the `c` meaning **conditional** and
+* show it relates to `bootu` with the `c` meaning **conditional** and
 * avoid conflicting function names with `lmodboot.r()` of chapter 2
 
 
 
-```{r}
-# IMPORTANT: This is the function in chapter 3 called lmodboot.r
-#            It has been renamed bootc.r to avoid conflict with
-#            lmodboot.r of chapter 2
-# Estimate the expected conditional outcomes and the
-# conditional effect or association measures
-bootc.r <- function(dat, formula = Y ~ `T` + A + H,
-                    cond0 = Y ~ A + H,
-                    cond1 = Y ~ `T` + A + H, 
-                    family = c("binomial", "poisson", "gaussian"), 
-                    R = 1000, conf = 0.95) {
-  # the family used by glm
-  family <- match.arg(family)
-  
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
-  # the name of the predictors from condition formulas cond0 and cond1
-  cond0 <- all.vars(cond0[[3]])
-  cond1 <- all.vars(cond1[[3]])
-  
-  estimator <- function(data, ids) {
-    dat <- data[ids, ]
-    coefs <- coef(glm(formula = formula, family = family, data = dat))
-    # use cond to identify conditioned variables.
-    # i.e. the user can decide not to use all variables from the formula
-    # or, in other words, condition on some variables
-    xbeta0 <- sum(coefs[c(x0, cond0)])
-    xbeta1 <- sum(coefs[c(x0, cond1)])
-    p0 <- plogis(xbeta0)  # plogis is the inverse of logit
-    p1 <- plogis(xbeta1)  # plogis is the inverse of logit
-    rd <- p1 - p0
-    logrr <- log(p1) - log(p0)
-    logrrstar <- log(1 - p0) - log(1 - p1)
-    logor <- log(p1 / (1 - p1)) - log(p0 / (1 - p0))
-    
-    # return the results
-    out <- c(p0, p1, rd, logrr, logrrstar, logor)
-    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
-    out
-  }
-  
-  # run the bootstrapping
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
-  
-  # extract the estimated values and confidence intervals from the boot object
-  out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
-    est <- boot.out$t0[i]
-    ci <- boot::boot.ci(boot.out, conf = conf, type = "norm", index = i)$normal
-    out <- c(est, ci)
-    names(out) <- c("est", "conf", "lci", "uci")
-    out
-  })
-  
-  # create the dataframe to hold the results
-  out <- data.frame(t(out))
-  # add the first column as the names of the results
-  out <- data.frame(name = names(boot.out$t0), out)
-  
-  # convert link to natural scales and add to the output
-  sel <- c("rr" = "logrr","rrstar"  = "logrrstar", "or" = "logor")
-  out <- within(out, {
-   est[name %in% sel] <- exp(est[name %in% sel])
-   lci[name %in% sel] <- exp(lci[name %in% sel])
-   uci[name %in% sel] <- exp(uci[name %in% sel])
-   name[name %in% sel] <- names(sel)
-  })
+```{r eval=TRUE, echo=TRUE, file="lib\\fci_03-B_bootc.R"}
 
-  out
-}
 ```
+
 
 To use the function with conditioning on variables, i.e. filtering on variables,
 we note that
@@ -279,18 +142,16 @@ $$
 
 
 ```{r}
-# we use cond = c("magthsedu", "white", "female", "gt65")
-# to exclude gthsedu = 0
 message("this takes 10 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# d <- bootc.r(dat = dataGSS, 
-#              formula = trump ~ gthsedu + magthsedu + white + female + gt65, 
+# startTime <- Sys.time()
+# d <- bootc(dat = dataGSS,
+#              formula = trump ~ gthsedu + magthsedu + white + female + gt65,
 #              cond0 = trump ~ magthsedu + white + female + gt65,
 #              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)
 a_file <- file.path(dir_data, "chap03_bootc.rds")
 # saveRDS(d, file = a_file)
 d <- readRDS(file = a_file)
-endTime <- Sys.time()
+# endTime <- Sys.time()
 # print(endTime - startTime)
 ```
 
@@ -348,7 +209,7 @@ $$
 ```{r}
 message("this takes 20 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d1a <- bootu.r(dat = dataGSS1, formula = owngun ~ conservative)
+# d1a <- bootu(dat = dataGSS1, formula = owngun ~ conservative)
 a_file <- file.path(dir_data, "chap03_Ex1a.rds")
 # saveRDS(d1a, file = a_file)
 d1a <- readRDS(file = a_file)
@@ -379,7 +240,7 @@ there is not necessarily a causality.  See *Inference* section below.
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d1b <- bootc.r(dat = dataGSS1, 
+# d1b <- bootc(dat = dataGSS1, 
 #              formula = owngun ~ conservative + gt65 + female + white, 
 #              cond0 = owngun ~ gt65 + white,
 #              cond1 = owngun ~ conservative + gt65 + white)
@@ -467,7 +328,7 @@ and we use the logistic model to estimate the associaiton measures as follows
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d2 <- bootc.r(dat = dataGSS2, 
+# d2 <- bootc(dat = dataGSS2, 
 #              formula = trump ~ gthsedu + magthsedu + white + female + gt65 +
 #                pagthsedu + pamiss, 
 #              cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,
@@ -549,7 +410,7 @@ We also use only 500 bootstrapping iterations given te large volume of data.
 
 ```{r}
 # startTime <- Sys.time()
-# d3a <- bootc.r(dat = dataBRFSSa,
+# d3a <- bootc(dat = dataBRFSSa,
 #              formula = zerodrinks ~ rural + female + whitenh + blacknh +
 #                hisp + multinh + gt65 + gthsedu,
 #              cond0 = zerodrinks ~ whitenh + gthsedu,
@@ -606,7 +467,7 @@ rational is used to define the variables so that we now have
 
 ```{r}
 # startTime <- Sys.time()
-# d3b <- bootc.r(dat = dataBRFSSb,
+# d3b <- bootc(dat = dataBRFSSb,
 #              formula = maxdrinks ~ rural + female + whitenh + blacknh +
 #                hisp + multinh + gt65 + gthsedu,
 #              cond0 = maxdrinks ~ whitenh + gthsedu,
