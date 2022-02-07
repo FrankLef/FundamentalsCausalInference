@@ -1,10 +1,10 @@
+# Conditional Probability and Expectation {#probability}
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr, quietly = TRUE)
 library(boot, quietly = TRUE)
 ```
 
-
-# Conditional Probability and Expectation {#probability}
 
 
 ```{r include=FALSE}
@@ -99,97 +99,32 @@ $$
 
 ## Sampling Distributions and the Bootstrap
 
-This code reflects better coding practices than the textbook's I think.
-In particular with the use of `replicate()` and avoiding the `for` loop.
 
-```{r}
-sim.r <- function(nsim = 1e4, n = 1e4) {
-  # get the statistics from the 2 samplings
-  out <- replicate(n = nsim, expr = {
-    y <- rnorm(n)
-    x <- rnorm(n)
-    muhaty <- mean(y)  # mean of the y sample
-    sehaty <- sqrt(var(y) / n)  # standard error of the y sample
-    lci <- muhaty - 1.96 * sehaty  # lower bound of the y sample
-    uci <- muhaty + 1.96 * sehaty  # upper bound of the y sample
-    muhatx <- mean(x)  # mean of the x sample
-    # is mean(x) within the interval from y?
-    bad <- (muhatx >= lci) & (muhatx <= uci)
-    # is the true mean of 0 within the interval from y?
-    good <- (0 >= lci) & (0 <= uci)
-    # return the results
-    c("bad" = bad, "good" = good)
-    })
-  # convert to data.frame
-  out <- data.frame(t(out))
-  pbad <- sum(out$bad) / nrow(out)  # proportion in bad interval
-  pgood <- sum(out$good) / nrow(out)  # proportion in good interval
-  # return results in a list
-  list("bad" = pbad, "good" = pgood)
-}
+```{r echo=TRUE, file="lib\\fci_02-A_sim.R"}
+
 ```
+
 
 Run and verify with author's results on p. 32
 
 
 ```{r}
-d <- sim.r()
-d
+d <- sim()
 stopifnot(near(d$bad, 0.8374, tol = 0.01), 
           near(d$good, 0.948, tol = 0.01))
+d
 ```
 
 
-The textbook's version of this function has 13 lines.  This one only has 7
-and use `boot::boot.ci()` and `stats::plogis()` to simplify.
+```{r echo=TRUE, file="lib\\fci_02-B_lmodboot.R"}
 
-Also we change the way the function works to
-
-* harmonize it with other similar functions coming up in later chapters
-* use formulas in the parameters to better understand what the process is. 
-This point is important as this is, in my experience, the tricky part to 
-understand.
-
-
-```{r}
-#  - Estimate the unconditional sampling distribution when using all
-#    variables with cond = all.vars(formula[[3]]).
-# - It is the conditional sampling distribution when using only some predictors
-#    such as with Y ~ `T` + A + H as is done in exercise 5 below.
-lmodboot.r <- function(dat, formula = Y ~ `T` + A + H,
-                       cond = Y ~ `T` + A + H, 
-                       R = 1000, conf = 0.95) {
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
-  # the name of the predictor variables in the condition formula
-  cond <- all.vars(cond[[3]])
-  
-  estimator <- function(data, ids) {
-    dat <- data[ids, ]
-    coefs <- coef(glm(formula = formula, family = binomial, data = dat))
-    # use cond to identify conditioned variables.
-    # i.e. the user can decide not to use all variables from the formula
-    # or, in other words, condition on some variables
-    coefs <- coefs[c(x0, cond)]
-    sum(coefs)
-  }
-  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
-  # the estimate on the logit scale
-  est.logit <- boot.out$t0
-  # the confidence interval on the logit scale using normal interval
-  ci.logit <- boot::boot.ci(boot.out, conf = conf, type = "norm")$normal
-  # the estimate and confidence interval on the natural scale
-  # NOTE: the plogis() function gives the inverse logit
-  out <- c("est" = plogis(est.logit), "conf" = ci.logit[1], 
-           "lci" = plogis(ci.logit[2]), "uci" =  plogis(ci.logit[3]))
-  out
-}
 ```
+
 
 Run and verify against the author's results on p.34
 
 ```{r}
-d <- lmodboot.r(whatifdat)
+d <- lmodboot(whatifdat)
 d
 # check results with book
 stopifnot(near(d["est"], 0.60596, 0.01),
@@ -352,7 +287,7 @@ ci
 
 
 ```{r}
-parametric <- lmodboot.r(whatifdat, formula = Y ~ `T` + A + H, 
+parametric <- lmodboot(whatifdat, formula = Y ~ `T` + A + H, 
                          cond = Y ~ `T` + A)
 parametric
 ```
