@@ -13,6 +13,9 @@ library(gt)
 
 
 ```{r}
+# the directory of documentation for chapter 1
+dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 1")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -21,10 +24,50 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "gt_measures.R"))
+source(file = file.path(dir_lib, "fci_06-A_bootstand.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_measures.R"), 
+       local = knitr::knit_global())
+load(file.path(dir_docs01, "whatifdat.RData"))
 ```
 
 
+## Standardization via Outome Modeling
 
 
+We use `R` to compute the standardized estimates with the following script
 
+
+```{r eval=TRUE, echo=TRUE, file="lib\\fci_06-A_bootstand.R"}
+
+```
+
+
+and for the What-If? study this gives
+
+
+```{r}
+whatif.out <- bootstand(whatifdat, formula = Y ~ A + H + A*H)
+```
+
+and we compare with the author's
+
+```{r}
+d <- data.frame(
+  name = c("EY0", "EY1", "RD", "RR"),
+  auth = c(0.375, 0.289, -0.086, 0.77),
+  est = whatif.out$est
+)
+stopifnot(sum(abs(d$auth - d$est)) < 0.01)
+```
+
+and the results are presented in table 6.1
+
+```{r}
+gt_measures(whatif.out, 
+            title = "Table 6.1", 
+            subtitle = "What-If Study: Standardized Estimates")
+```
+
+where we observe a reduction of the viral load but the difference is not
+statistically significant.

@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-06" />
+<meta name="date" content="2022-02-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -274,7 +274,10 @@ div.csl-indent {
 <li class="chapter" data-level="5.3.5" data-path="dag.html"><a href="dag.html#exercise-5-3"><i class="fa fa-check"></i><b>5.3.5</b> Exercise 5</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method via Standardization</a></li>
+<li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method via Standardization</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="backdoor.html"><a href="backdoor.html#standardization-via-outome-modeling"><i class="fa fa-check"></i><b>6.1</b> Standardization via Outome Modeling</a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata</a>
 <ul>
@@ -419,7 +422,7 @@ div.csl-indent {
 <span id="cb67-22"><a href="measures.html#cb67-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the modifier variable</span></span>
 <span id="cb67-23"><a href="measures.html#cb67-23" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">2</span>]</span>
 <span id="cb67-24"><a href="measures.html#cb67-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb67-25"><a href="measures.html#cb67-25" aria-hidden="true" tabindex="-1"></a>  bootinside.r <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb67-25"><a href="measures.html#cb67-25" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
 <span id="cb67-26"><a href="measures.html#cb67-26" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
 <span id="cb67-27"><a href="measures.html#cb67-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcomes</span></span>
 <span id="cb67-28"><a href="measures.html#cb67-28" aria-hidden="true" tabindex="-1"></a>    EYT0.M0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, t] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> dat[, m] <span class="sc">==</span> <span class="dv">0</span>, y])</span>
@@ -454,7 +457,7 @@ div.csl-indent {
 <span id="cb67-57"><a href="measures.html#cb67-57" aria-hidden="true" tabindex="-1"></a>    out</span>
 <span id="cb67-58"><a href="measures.html#cb67-58" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb67-59"><a href="measures.html#cb67-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate bootstrap confidence intervals and point estimate</span></span>
-<span id="cb67-60"><a href="measures.html#cb67-60" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> bootinside.r, <span class="at">R =</span> R)</span>
+<span id="cb67-60"><a href="measures.html#cb67-60" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R)</span>
 <span id="cb67-61"><a href="measures.html#cb67-61" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb67-62"><a href="measures.html#cb67-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the estimated values and confidence intervals from the boot object</span></span>
 <span id="cb67-63"><a href="measures.html#cb67-63" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(boot.out<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>

@@ -22,7 +22,7 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
   # the name of the modifier variable
   m <- all.vars(formula[[3]])[2]
   
-  bootinside.r <- function(data, ids) {
+  estimator <- function(data, ids) {
     dat <- data[ids, ]
     # estimate the expected potential outcomes
     EYT0.M0 <- mean(dat[dat[, t] == 0 & dat[, m] == 0, y])
@@ -57,7 +57,7 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
     out
   }
   # estimate bootstrap confidence intervals and point estimate
-  boot.out <- boot::boot(data = dat, statistic = bootinside.r, R = R)
+  boot.out <- boot::boot(data = dat, statistic = estimator, R = R)
   
   # extract the estimated values and confidence intervals from the boot object
   out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {
