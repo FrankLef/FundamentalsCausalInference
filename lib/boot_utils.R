@@ -1,13 +1,13 @@
-#' Boostrap and genarate a dataframe of estimates with CI
+#' Bootstrap and generate a dataframe of estimates with CI
 #' 
-#' Boostrap and genarate a dataframe of estimates with CI.
+#' Bootstrap and generate a dataframe of estimates with CI.
 #' 
 #' Generate a dataframe of estimates with the columns 
 #' \code{c("est", "conf", "lci", "uci")}.
 #'
 #' @param data Dataframe of raw data.
-#' @param statistic Function applied to data by bootstraaping.
-#' @param R Number of boostrap replicates. Default is 1000.
+#' @param statistic Function applied to data by bootstrapping.
+#' @param R Number of bootstrap replicates. Default is 1000.
 #' @param conf Confidence interval width. Default is 0.95.
 #'
 #' @return Dataframe of estimates with CI.

@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-07" />
+<meta name="date" content="2022-02-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,7 +276,10 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6" data-path="backdoor.html"><a href="backdoor.html"><i class="fa fa-check"></i><b>6</b> Backdoor Method via Standardization</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="backdoor.html"><a href="backdoor.html#standardization-via-outome-modeling"><i class="fa fa-check"></i><b>6.1</b> Standardization via Outome Modeling</a></li>
+<li class="chapter" data-level="6.1" data-path="backdoor.html"><a href="backdoor.html#standardization-via-outome-modeling"><i class="fa fa-check"></i><b>6.1</b> Standardization via Outome Modeling</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated"><i class="fa fa-check"></i><b>6.1.1</b> Average Effect of Treatment on the Treated</a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata</a>
@@ -369,6 +372,25 @@ div.csl-indent {
 <span id="cb223-6"><a href="backdoor.html#cb223-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span></code></pre></div>
 <div id="standardization-via-outome-modeling" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Standardization via Outome Modeling</h2>
+<blockquote>
+<p>Standardization vis via outcome modelingis one way to estimate <span class="math inline">\(E(Y(t))\)</span></p>
+</blockquote>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\text{by double expectation theorem} \\
+E(Y(t)) &amp;= E_H E(Y(t) \mid H) \\
+&amp;\text{by independence of T given H, (6.1)} \\
+&amp;= E_HE(Y(t) \mid T=t, H) \\
+&amp;\text{by consistency assumption} \\
+&amp;= E_HE(Y \mid T=t, H)
+\end{align*}
+\]</span></p>
+<p>and with a binary dataset we can write</p>
+<p><span class="math display">\[
+\begin{align*}
+E_H E(Y \mid T=t, H) = E(Y \mid T=t, H = 0) P(H = 0) + E(Y \mid T=t, H = 1) P(H = 1)
+\end{align*}
+\]</span></p>
 <p>We use <code>R</code> to compute the standardized estimates with the following script</p>
 <div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="backdoor.html#cb224-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates</span></span>
 <span id="cb224-2"><a href="backdoor.html#cb224-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
@@ -422,6 +444,7 @@ div.csl-indent {
 <span id="cb224-50"><a href="backdoor.html#cb224-50" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb224-51"><a href="backdoor.html#cb224-51" aria-hidden="true" tabindex="-1"></a>  out</span>
 <span id="cb224-52"><a href="backdoor.html#cb224-52" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Example: What-if? Study</strong></p>
 <p>and for the What-If? study this gives</p>
 <div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="backdoor.html#cb225-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> <span class="fu">bootstand</span>(whatifdat, <span class="at">formula =</span> Y <span class="sc">~</span> A <span class="sc">+</span> H <span class="sc">+</span> A<span class="sc">*</span>H)</span></code></pre></div>
 <p>and we compare with the author’s</p>
@@ -826,7 +849,801 @@ div.csl-indent {
 </div>
 <p>where we observe a reduction of the viral load but the difference is not
 statistically significant.</p>
+<p><strong>Example: Double What-if? Study</strong></p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="backdoor.html#cb228-1" aria-hidden="true" tabindex="-1"></a>dataDoubleWhatIf <span class="ot">&lt;-</span> <span class="fu">doublewhatifsim</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="backdoor.html#cb229-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> <span class="fu">bootstand</span>(dataDoubleWhatIf, <span class="at">formula =</span> VL1 <span class="sc">~</span> A <span class="sc">+</span> AD0 <span class="sc">+</span> A<span class="sc">*</span>AD0)</span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="backdoor.html#cb230-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(doublewhatif.out, </span>
+<span id="cb230-2"><a href="backdoor.html#cb230-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.2&quot;</span>, </span>
+<span id="cb230-3"><a href="backdoor.html#cb230-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study: Standardized Estimates&quot;</span>)</span></code></pre></div>
+<div id="safvwdbwhj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
 
+#safvwdbwhj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#safvwdbwhj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#safvwdbwhj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#safvwdbwhj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#safvwdbwhj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#safvwdbwhj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#safvwdbwhj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#safvwdbwhj .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#safvwdbwhj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#safvwdbwhj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#safvwdbwhj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#safvwdbwhj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#safvwdbwhj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#safvwdbwhj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#safvwdbwhj .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#safvwdbwhj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#safvwdbwhj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#safvwdbwhj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#safvwdbwhj .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#safvwdbwhj .gt_left {
+  text-align: left;
+}
+
+#safvwdbwhj .gt_center {
+  text-align: center;
+}
+
+#safvwdbwhj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#safvwdbwhj .gt_font_normal {
+  font-weight: normal;
+}
+
+#safvwdbwhj .gt_font_bold {
+  font-weight: bold;
+}
+
+#safvwdbwhj .gt_font_italic {
+  font-style: italic;
+}
+
+#safvwdbwhj .gt_super {
+  font-size: 65%;
+}
+
+#safvwdbwhj .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Table 6.2</strong></th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>What-If Study: Standardized Estimates</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Measure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">EY0</td>
+<td class="gt_row gt_center">0.669</td>
+<td class="gt_row gt_center">(0.636, 0.702)</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1</td>
+<td class="gt_row gt_center gt_striped">0.335</td>
+<td class="gt_row gt_center gt_striped">(0.272, 0.402)</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">-0.334</td>
+<td class="gt_row gt_center">(-0.402, -0.262)</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">0.500</td>
+<td class="gt_row gt_center gt_striped">(0.414, 0.619)</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="3">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="3">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          95% confidence interval
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<blockquote>
+<p>For comparisons, we repeat the standardization with <span class="math inline">\(H = VL_0\)</span></p>
+</blockquote>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="backdoor.html#cb231-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> <span class="fu">bootstand</span>(dataDoubleWhatIf, <span class="at">formula =</span> VL1 <span class="sc">~</span> A <span class="sc">+</span> VL0 <span class="sc">+</span> A<span class="sc">*</span>VL0)</span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="backdoor.html#cb232-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(doublewhatif.out, </span>
+<span id="cb232-2"><a href="backdoor.html#cb232-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.3&quot;</span>, </span>
+<span id="cb232-3"><a href="backdoor.html#cb232-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study: Standardized Estimates&quot;</span>)</span></code></pre></div>
+<div id="wovcmmqftm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#wovcmmqftm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wovcmmqftm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wovcmmqftm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wovcmmqftm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wovcmmqftm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wovcmmqftm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wovcmmqftm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wovcmmqftm .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wovcmmqftm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wovcmmqftm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wovcmmqftm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wovcmmqftm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wovcmmqftm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#wovcmmqftm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wovcmmqftm .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wovcmmqftm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wovcmmqftm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wovcmmqftm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wovcmmqftm .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wovcmmqftm .gt_left {
+  text-align: left;
+}
+
+#wovcmmqftm .gt_center {
+  text-align: center;
+}
+
+#wovcmmqftm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wovcmmqftm .gt_font_normal {
+  font-weight: normal;
+}
+
+#wovcmmqftm .gt_font_bold {
+  font-weight: bold;
+}
+
+#wovcmmqftm .gt_font_italic {
+  font-style: italic;
+}
+
+#wovcmmqftm .gt_super {
+  font-size: 65%;
+}
+
+#wovcmmqftm .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Table 6.3</strong></th>
+    </tr>
+    <tr>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>What-If Study: Standardized Estimates</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Measure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">EY0</td>
+<td class="gt_row gt_center">0.696</td>
+<td class="gt_row gt_center">(0.662, 0.729)</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1</td>
+<td class="gt_row gt_center gt_striped">0.245</td>
+<td class="gt_row gt_center gt_striped">(0.19, 0.3)</td></tr>
+    <tr><td class="gt_row gt_left">rd</td>
+<td class="gt_row gt_center">-0.450</td>
+<td class="gt_row gt_center">(-0.516, -0.384)</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">rr</td>
+<td class="gt_row gt_center gt_striped">0.353</td>
+<td class="gt_row gt_center gt_striped">(0.28, 0.448)</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="3">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="3">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          95% confidence interval
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<div id="average-effect-of-treatment-on-the-treated" class="section level3" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Average Effect of Treatment on the Treated</h3>
+
+</div>
 </div>
 </div>
 

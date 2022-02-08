@@ -24,7 +24,11 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "boot_utils.R"), 
+       local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-A_bootstand.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_01-A_doublewhatifsim.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures.R"), 
        local = knitr::knit_global())
@@ -34,6 +38,28 @@ load(file.path(dir_docs01, "whatifdat.RData"))
 
 ## Standardization via Outome Modeling
 
+> Standardization vis via outcome modelingis one way to estimate $E(Y(t))$
+
+
+$$
+\begin{align*}
+&\text{by double expectation theorem} \\
+E(Y(t)) &= E_H E(Y(t) \mid H) \\
+&\text{by independence of T given H, (6.1)} \\
+&= E_HE(Y(t) \mid T=t, H) \\
+&\text{by consistency assumption} \\
+&= E_HE(Y \mid T=t, H)
+\end{align*}
+$$
+
+and with a binary dataset we can write
+
+$$
+\begin{align*}
+E_H E(Y \mid T=t, H) = E(Y \mid T=t, H = 0) P(H = 0) + E(Y \mid T=t, H = 1) P(H = 1)
+\end{align*}
+$$
+
 
 We use `R` to compute the standardized estimates with the following script
 
@@ -42,6 +68,8 @@ We use `R` to compute the standardized estimates with the following script
 
 ```
 
+
+**Example: What-if? Study**
 
 and for the What-If? study this gives
 
@@ -71,3 +99,43 @@ gt_measures(whatif.out,
 
 where we observe a reduction of the viral load but the difference is not
 statistically significant.
+
+
+**Example: Double What-if? Study**
+
+
+```{r}
+dataDoubleWhatIf <- doublewhatifsim()
+```
+
+
+```{r}
+doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
+```
+
+
+```{r}
+gt_measures(doublewhatif.out, 
+            title = "Table 6.2", 
+            subtitle = "What-If Study: Standardized Estimates")
+```
+
+
+
+> For comparisons, we repeat the standardization with $H = VL_0$
+
+
+
+```{r}
+doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
+```
+
+
+```{r}
+gt_measures(doublewhatif.out, 
+            title = "Table 6.3", 
+            subtitle = "What-If Study: Standardized Estimates")
+```
+
+
+### Average Effect of Treatment on the Treated
