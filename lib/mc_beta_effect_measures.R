@@ -19,7 +19,7 @@
 #' @examples
 #' \dontrun{
 #' }
-betasim_effect_measures <- function(shape1_prms = 1, shape2_prms = 1, nrep = 5000, 
+mc_beta_effect_measures <- function(shape1_prms = 1, shape2_prms = 1, nrep = 5000, 
                                     constrained = FALSE) {
   stopifnot(nrep >= 1)
   # the shape parameters must be >= 0.5 to maintain

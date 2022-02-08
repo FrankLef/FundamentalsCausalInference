@@ -39,7 +39,7 @@ source(file = file.path(dir_lib, "gt_measures_modif.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "ggp_measures_modif.R"),
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "betasim_effect_measures.R"),
+source(file = file.path(dir_lib, "mc_beta_effect_measures.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "ggp_venn_sim.R"),
        local = knitr::knit_global())
@@ -258,7 +258,7 @@ is equivalent to $Uniform(0,1)$ used by @shanninbrumback2021.
 ```{r}
 message("this takes 1 sec.: we load a saved file instead")
 startTime <- Sys.time()
-# gridsim <- betasim_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)
+# gridsim <- mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)
 a_file <- file.path(dir_data, "chap04_gridsim.rds")
 # saveRDS(gridsim, file = a_file)
 gridsim <- readRDS(file = a_file)
@@ -364,7 +364,7 @@ now for **constrained data**
 ```{r}
 message("this takes 1 sec.: we load a saved file instead")
 startTime <- Sys.time()
-# gridsim_const <- betasim_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,
+# gridsim_const <- mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,
 #                                       constrained = TRUE)
 a_file <- file.path(dir_data, "chap04_gridsim_const.rds")
 # saveRDS(gridsim_const, file = a_file)
@@ -436,13 +436,13 @@ modifications.
 
 We run the Monte-Carlo simulation with 5000 repetitions, a grid of 
 `shape1` and `shape2` parameters for the Beta distribution and no
-constraint. Namely `betasim_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
+constraint. Namely `mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
 shape2 = c(0.5, 1, 3, 5, 7), nrep = 5000)`
 
 ```{r}
 message("this takes 25 sec.: we load a saved file instead")
 startTime <- Sys.time()
-# priorsim <- betasim_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
+# priorsim <- mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
 #                                   shape2 = c(0.5, 1, 3, 5, 7),
 #                                   nrep = 5000)
 a_file <- file.path(dir_data, "chap04_priorsim.rds")
@@ -506,7 +506,7 @@ Now we do it with constrained data
 ```{r}
 message("this takes 30 sec.: we load a saved file instead")
 startTime <- Sys.time()
-# priorsim_const <- betasim_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
+# priorsim_const <- mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
 #                                         shape2 = c(0.5, 1, 3, 5, 7),
 #                                         nrep = 5000, constrained = TRUE)
 a_file <- file.path(dir_data, "chap04_priorsim_const.rds")
