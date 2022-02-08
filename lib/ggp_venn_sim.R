@@ -20,11 +20,12 @@
 ggp_venn_sim <- function(data, n = 1000, 
                          fill_colr = c("blue", "yellow", "green", "red"),
                          title = "Venn diagram of effect measure modifications") {
-  the_events <- c("RD_RR", "RD_RRstar", "RD_OR", "RR_RRstar", "RR_OR",
-                "RRstar_OR", "RD_RR_RRstar", "RD_RR_OR", "RD_RRstar_OR",
-                "RR_RRstar_OR", "RD_RR_RRstar_OR")
-  dfs <- vector(mode = "list", length = length(the_events))
-  names(dfs) <- the_events
+  # the_events <- c("RD_RR", "RD_RRstar", "RD_OR", "RR_RRstar", "RR_OR",
+  #               "RRstar_OR", "RD_RR_RRstar", "RD_RR_OR", "RD_RRstar_OR",
+  #               "RR_RRstar_OR", "RD_RR_RRstar_OR")
+  # dfs <- vector(mode = "list", length = length(the_events))
+  # names(dfs) <- the_events
+  dfs <- list()
   
   id <- "RD_RR"
   nreps <- data[[id]] * n
