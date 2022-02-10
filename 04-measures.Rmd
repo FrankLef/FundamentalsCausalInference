@@ -33,6 +33,8 @@ dir_lib <- file.path(getwd(), "lib")
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 source(file = file.path(dir_lib, "boot_utils.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_utils.R"), 
+       local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_04-A_boot.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures_modif.R"),
@@ -712,7 +714,7 @@ sepsis.out <- boot(sepsis, formula = zubrod45 ~ shock + gt65)
 then create the table of results
 
 ```{r}
-gt_measures_modif(sepsis.out, title = "**Sepsis Study**")
+gt_measures_modif(sepsis.out, title = "Sepsis Study")
 ```
 
 and plotting the results
@@ -756,7 +758,7 @@ brfss.out <- readRDS(file = a_file)
 then create the table of results
 
 ```{r}
-gt_measures_modif(brfss.out, title = "**BRFSS Survey**")
+gt_measures_modif(brfss.out, title = "BRFSS Survey")
 ```
 
 and plotting the results
