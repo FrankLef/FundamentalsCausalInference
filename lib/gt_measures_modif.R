@@ -44,8 +44,9 @@ gt_measures_modif <- function(df, conf = df$conf[1], digits = 3,
   
   # create the table with gt
   gt::gt(df, rowname_col = "name") %>%
-    tab_header(title = md(paste0("**", title, "**")), 
-               subtitle = md(paste0("**", subtitle, "**"))) %>%
+    tab_header(
+      title = html(paste0("<strong>", title, "</strong>")),
+      subtitle = html(paste0("<strong>", subtitle, "</strong>"))) %>%
     tab_spanner_delim(delim = "_", columns = everything(), split = "last") %>%
     cols_align(align = "center", columns = everything()) %>% 
     cols_label(
@@ -54,6 +55,14 @@ gt_measures_modif <- function(df, conf = df$conf[1], digits = 3,
       M1_est = "Estimate", M1_ci = "CI",
       diff_est = "Estimate", diff_ci = "CI") %>%
     opt_row_striping() %>%
+    tab_style(
+      style = cell_text(color = "midnightblue"),
+      locations = cells_title(groups = "title")
+    ) %>%
+    tab_style(
+      style = cell_text(color = "midnightblue"),
+      locations = cells_title(groups = "subtitle")
+    ) %>%
     tab_style(
       style = cell_borders(sides = "left", color = "grey60", 
                            weight = px(1.5), style = "solid"),

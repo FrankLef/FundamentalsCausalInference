@@ -81,21 +81,61 @@ whatif.out <- bootstand(whatifdat, formula = Y ~ A + H + A*H)
 and we compare with the author's
 
 ```{r}
-d <- data.frame(
+comp <- data.frame(
   name = c("EY0", "EY1", "RD", "RR"),
   auth = c(0.375, 0.289, -0.086, 0.77),
   est = whatif.out$est
 )
-stopifnot(sum(abs(d$auth - d$est)) < 0.01)
+stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 ```
 
 and the results are presented in table 6.1
 
 ```{r}
-gt_measures(whatif.out, 
+t <- gt_measures(whatif.out, 
             title = "Table 6.1", 
             subtitle = "What-If Study: Standardized Estimates")
+t
+# a_file <- tempfile(fileext = ".png")
+# gtsave(t, a_file)
+# tpng <- png::readPNG(a_file, native = TRUE)
 ```
+
+```{r}
+df_lines <-
+  data.frame(x = "EY0", xend = "EY1",
+             y = whatif.out[whatif.out$name == "EY0", "est"],
+             yend = whatif.out[whatif.out$name == "EY1", "est"])
+df_points_Y <- data.frame(x = c("EY0", "EY1"),
+                          label = c("Y0", "Y1"),
+                          y = c(1 - mean(whatifdat$Y), mean(whatifdat$Y)))
+df_lines_Y <-
+  data.frame(x = "EY0", xend = "EY1",
+             y = df_points_Y[df_points_Y$x == "EY0", "y"],
+             yend = df_points_Y[df_points_Y$x == "EY1", "y"])
+p <- whatif.out %>%
+  filter(name %in% c("EY0", "EY1")) %>%
+  ggplot(mapping = aes(x = as.factor(name), y = est, ymin = lci, ymax = uci)) +
+  geom_linerange(size = 5, color = "gold") +
+  geom_point(shape = 19, size = 4, color = "mediumblue") +
+  geom_segment(df_lines, mapping = aes(x = x, xend = xend, y = y, yend = yend),
+               inherit.aes = FALSE, color = "mediumblue") +
+  geom_point(df_points_Y, mapping = aes(x = x, y = y), inherit.aes = FALSE,
+             shape = 19, size = 4, color = "violetred") +
+  geom_segment(df_lines_Y, mapping = aes(x = x, xend = xend, y = y, yend = yend),
+               inherit.aes = FALSE, color = "violetred") +
+  theme_minimal() +
+  theme(title = element_text(color = "midnightblue"),
+        axis.title = element_blank(),
+        axis.text.y = element_blank(),
+        panel.grid.major  = element_blank(),
+        panel.grid.minor  = element_blank(),
+        plot.background = element_rect(fill = "gainsboro", color = "gainsboro"),
+        plot.margin = unit(c(0, 0, 0, 0), "char"))
+p
+```
+
+
 
 where we observe a reduction of the viral load but the difference is not
 statistically significant.

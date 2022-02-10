@@ -33,14 +33,22 @@ gt_measures <- function(df, conf = df$conf[1], digits = 3,
            uci = NULL) %>%
     gt() %>%
     tab_header(
-      title = md(paste0("**", title, "**")),
-      subtitle = md(paste0("**", subtitle, "**"))
+      title = html(paste0("<strong>", title, "</strong>")),
+      subtitle = html(paste0("<strong>", subtitle, "</strong>"))
     ) %>%
     cols_align(align = "center", columns = !matches("name")) %>% 
     cols_label(
       name = "Measure",
       est = "Estimate",
       ci = "CI") %>%
+    tab_style(
+      style = cell_text(color = "midnightblue"),
+      locations = cells_title(groups = "title")
+    ) %>%
+    tab_style(
+      style = cell_text(color = "midnightblue"),
+      locations = cells_title(groups = "subtitle")
+    ) %>%
     opt_row_striping() %>%
     tab_footnote(
       footnote = ci_label,

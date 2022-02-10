@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-08" />
+<meta name="date" content="2022-02-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -366,8 +366,9 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 3</span> Potential Outcomes and the Fundamental Problem of Causal Inference</h1>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="outcomes.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb25-2"><a href="outcomes.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb25-3"><a href="outcomes.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb25-4"><a href="outcomes.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<span id="cb25-3"><a href="outcomes.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-4"><a href="outcomes.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-5"><a href="outcomes.html#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <div id="potential-outcomes-and-the-consistency-assumption" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Potential Outcomes and the Consistency Assumption</h2>
 </div>
@@ -445,18 +446,20 @@ div.csl-indent {
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="outcomes.html#cb27-1" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
 <span id="cb27-2"><a href="outcomes.html#cb27-2" aria-hidden="true" tabindex="-1"></a>dataGSS <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(dataGSS), ]</span>
 <span id="cb27-3"><a href="outcomes.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="outcomes.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="outcomes.html#cb28-1" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb28-2"><a href="outcomes.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 30 sec.: we load a saved file instead</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="outcomes.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb30-2"><a href="outcomes.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d &lt;- bootu(dat = dataGSS, formula = trump ~ gthsedu)</span></span>
+<span id="cb30-2"><a href="outcomes.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- bootu(dat = dataGSS, formula = trump ~ gthsedu)</span></span>
 <span id="cb30-3"><a href="outcomes.html#cb30-3" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
-<span id="cb30-4"><a href="outcomes.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d, file = a_file)</span></span>
-<span id="cb30-5"><a href="outcomes.html#cb30-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb30-4"><a href="outcomes.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
+<span id="cb30-5"><a href="outcomes.html#cb30-5" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
 <span id="cb30-6"><a href="outcomes.html#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
 <span id="cb30-7"><a href="outcomes.html#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="outcomes.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d, </span>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="outcomes.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
 <span id="cb31-2"><a href="outcomes.html#cb31-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
-<span id="cb31-3"><a href="outcomes.html#cb31-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Unconditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<span id="cb31-3"><a href="outcomes.html#cb31-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Association Measures Relating&lt;br&gt;&lt;em&gt;More than High School</span></span>
+<span id="cb31-4"><a href="outcomes.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="yvfsjcrdob" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -798,10 +801,11 @@ div.csl-indent {
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Table 3.2</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 3.2</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Unconditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Association Measures Relating<br><em>More than High School
+            Education</em> to <em>Voting for Trump</em></strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -859,9 +863,9 @@ div.csl-indent {
 <span id="cb32-4"><a href="outcomes.html#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
 <span id="cb32-5"><a href="outcomes.html#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
 <span id="cb32-6"><a href="outcomes.html#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb32-7"><a href="outcomes.html#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb32-8"><a href="outcomes.html#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb32-9"><a href="outcomes.html#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<span id="cb32-7"><a href="outcomes.html#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb32-8"><a href="outcomes.html#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb32-9"><a href="outcomes.html#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 <p>Now we estimate the four effect measures using <em>conditional</em> association
 measures. We notice that</p>
 <ul>
@@ -874,66 +878,6 @@ the estimand (sampling distribution) but <em>not the association measures</em></
 <li>show it relates to <code>bootu</code> with the <code>c</code> meaning <strong>conditional</strong> and</li>
 <li>avoid conflicting function names with <code>lmodboot.r()</code> of chapter 2</li>
 </ul>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="outcomes.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute estimates of the conditional association measures</span></span>
-<span id="cb33-2"><a href="outcomes.html#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb33-3"><a href="outcomes.html#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute estimates of the conditional association measures.</span></span>
-<span id="cb33-4"><a href="outcomes.html#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb33-5"><a href="outcomes.html#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Estimate the expected conditional outcomes and the</span></span>
-<span id="cb33-6"><a href="outcomes.html#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; conditional effect or association measures.</span></span>
-<span id="cb33-7"><a href="outcomes.html#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; IMPORTANT: This is the function in chapter 3 called lmodboot.r</span></span>
-<span id="cb33-8"><a href="outcomes.html#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;            It has been renamed bootc.r to avoid conflict with</span></span>
-<span id="cb33-9"><a href="outcomes.html#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;            lmodboot.r of chapter 2</span></span>
-<span id="cb33-10"><a href="outcomes.html#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb33-11"><a href="outcomes.html#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
-<span id="cb33-12"><a href="outcomes.html#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula of linear model.</span></span>
-<span id="cb33-13"><a href="outcomes.html#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param cond0 Formula of condition 0</span></span>
-<span id="cb33-14"><a href="outcomes.html#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param cond1 Formula of condition 1</span></span>
-<span id="cb33-15"><a href="outcomes.html#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param family Family used by \code{glm}</span></span>
-<span id="cb33-16"><a href="outcomes.html#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
-<span id="cb33-17"><a href="outcomes.html#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval</span></span>
-<span id="cb33-18"><a href="outcomes.html#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb33-19"><a href="outcomes.html#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of summarized results</span></span>
-<span id="cb33-20"><a href="outcomes.html#cb33-20" aria-hidden="true" tabindex="-1"></a>bootc <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H,</span>
-<span id="cb33-21"><a href="outcomes.html#cb33-21" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cond0 =</span> Y <span class="sc">~</span> A <span class="sc">+</span> H,</span>
-<span id="cb33-22"><a href="outcomes.html#cb33-22" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cond1 =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
-<span id="cb33-23"><a href="outcomes.html#cb33-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">c</span>(<span class="st">&quot;binomial&quot;</span>, <span class="st">&quot;poisson&quot;</span>, <span class="st">&quot;gaussian&quot;</span>), </span>
-<span id="cb33-24"><a href="outcomes.html#cb33-24" aria-hidden="true" tabindex="-1"></a>                    <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb33-25"><a href="outcomes.html#cb33-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the family used by glm</span></span>
-<span id="cb33-26"><a href="outcomes.html#cb33-26" aria-hidden="true" tabindex="-1"></a>  family <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(family)</span>
-<span id="cb33-27"><a href="outcomes.html#cb33-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-28"><a href="outcomes.html#cb33-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
-<span id="cb33-29"><a href="outcomes.html#cb33-29" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
-<span id="cb33-30"><a href="outcomes.html#cb33-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the predictors from condition formulas cond0 and cond1</span></span>
-<span id="cb33-31"><a href="outcomes.html#cb33-31" aria-hidden="true" tabindex="-1"></a>  cond0 <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond0[[<span class="dv">3</span>]])</span>
-<span id="cb33-32"><a href="outcomes.html#cb33-32" aria-hidden="true" tabindex="-1"></a>  cond1 <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond1[[<span class="dv">3</span>]])</span>
-<span id="cb33-33"><a href="outcomes.html#cb33-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-34"><a href="outcomes.html#cb33-34" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb33-35"><a href="outcomes.html#cb33-35" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb33-36"><a href="outcomes.html#cb33-36" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> family, <span class="at">data =</span> dat))</span>
-<span id="cb33-37"><a href="outcomes.html#cb33-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use cond to identify conditioned variables.</span></span>
-<span id="cb33-38"><a href="outcomes.html#cb33-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. the user can decide not to use all variables from the formula</span></span>
-<span id="cb33-39"><a href="outcomes.html#cb33-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or, in other words, condition on some variables</span></span>
-<span id="cb33-40"><a href="outcomes.html#cb33-40" aria-hidden="true" tabindex="-1"></a>    xbeta0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs[<span class="fu">c</span>(x0, cond0)])</span>
-<span id="cb33-41"><a href="outcomes.html#cb33-41" aria-hidden="true" tabindex="-1"></a>    xbeta1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs[<span class="fu">c</span>(x0, cond1)])</span>
-<span id="cb33-42"><a href="outcomes.html#cb33-42" aria-hidden="true" tabindex="-1"></a>    p0 <span class="ot">&lt;-</span> <span class="fu">plogis</span>(xbeta0)  <span class="co"># plogis is the inverse of logit</span></span>
-<span id="cb33-43"><a href="outcomes.html#cb33-43" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="fu">plogis</span>(xbeta1)  <span class="co"># plogis is the inverse of logit</span></span>
-<span id="cb33-44"><a href="outcomes.html#cb33-44" aria-hidden="true" tabindex="-1"></a>    rd <span class="ot">&lt;-</span> p1 <span class="sc">-</span> p0</span>
-<span id="cb33-45"><a href="outcomes.html#cb33-45" aria-hidden="true" tabindex="-1"></a>    logrr <span class="ot">&lt;-</span> <span class="fu">log</span>(p1) <span class="sc">-</span> <span class="fu">log</span>(p0)</span>
-<span id="cb33-46"><a href="outcomes.html#cb33-46" aria-hidden="true" tabindex="-1"></a>    logrrstar <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> p0) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> p1)</span>
-<span id="cb33-47"><a href="outcomes.html#cb33-47" aria-hidden="true" tabindex="-1"></a>    logor <span class="ot">&lt;-</span> <span class="fu">log</span>(p1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p1)) <span class="sc">-</span> <span class="fu">log</span>(p0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p0))</span>
-<span id="cb33-48"><a href="outcomes.html#cb33-48" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb33-49"><a href="outcomes.html#cb33-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># return the results</span></span>
-<span id="cb33-50"><a href="outcomes.html#cb33-50" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p0, p1, rd, logrr, logrrstar, logor)</span>
-<span id="cb33-51"><a href="outcomes.html#cb33-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;logrr&quot;</span>, <span class="st">&quot;logrrstar&quot;</span>, <span class="st">&quot;logor&quot;</span>)</span>
-<span id="cb33-52"><a href="outcomes.html#cb33-52" aria-hidden="true" tabindex="-1"></a>    out</span>
-<span id="cb33-53"><a href="outcomes.html#cb33-53" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb33-54"><a href="outcomes.html#cb33-54" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-55"><a href="outcomes.html#cb33-55" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb33-56"><a href="outcomes.html#cb33-56" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-57"><a href="outcomes.html#cb33-57" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">exp_effects</span>(out)</span>
-<span id="cb33-58"><a href="outcomes.html#cb33-58" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-59"><a href="outcomes.html#cb33-59" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb33-60"><a href="outcomes.html#cb33-60" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>To use the function with conditioning on variables, i.e. filtering on variables,
 we note that</p>
 <p><span class="math display">\[
@@ -955,21 +899,23 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 \text{trump} &amp;\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="outcomes.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="outcomes.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="outcomes.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb36-2"><a href="outcomes.html#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d &lt;- bootc(dat = dataGSS,</span></span>
-<span id="cb36-3"><a href="outcomes.html#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65,</span></span>
-<span id="cb36-4"><a href="outcomes.html#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65,</span></span>
-<span id="cb36-5"><a href="outcomes.html#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)</span></span>
-<span id="cb36-6"><a href="outcomes.html#cb36-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
-<span id="cb36-7"><a href="outcomes.html#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d, file = a_file)</span></span>
-<span id="cb36-8"><a href="outcomes.html#cb36-8" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb36-9"><a href="outcomes.html#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb36-10"><a href="outcomes.html#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="outcomes.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d, </span>
-<span id="cb37-2"><a href="outcomes.html#cb37-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
-<span id="cb37-3"><a href="outcomes.html#cb37-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="outcomes.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb35-2"><a href="outcomes.html#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- bootc(dat = dataGSS,</span></span>
+<span id="cb35-3"><a href="outcomes.html#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65,</span></span>
+<span id="cb35-4"><a href="outcomes.html#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65,</span></span>
+<span id="cb35-5"><a href="outcomes.html#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)</span></span>
+<span id="cb35-6"><a href="outcomes.html#cb35-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
+<span id="cb35-7"><a href="outcomes.html#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
+<span id="cb35-8"><a href="outcomes.html#cb35-8" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb35-9"><a href="outcomes.html#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb35-10"><a href="outcomes.html#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="outcomes.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
+<span id="cb36-2"><a href="outcomes.html#cb36-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
+<span id="cb36-3"><a href="outcomes.html#cb36-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Conditional Association or Effect Measures&lt;br&gt;</span></span>
+<span id="cb36-4"><a href="outcomes.html#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
+<span id="cb36-5"><a href="outcomes.html#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="llseixaila" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1311,10 +1257,12 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Table 3.3</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Conditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Conditional Association or Effect Measures<br>
+            Relating <em>More than High School Education</em> 
+            to <em>Voting for Trump</em></strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -1366,15 +1314,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 </table>
 </div>
 <p>verify with author’s results, p.52</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="outcomes.html#cb38-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb38-2"><a href="outcomes.html#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
-<span id="cb38-3"><a href="outcomes.html#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
-<span id="cb38-4"><a href="outcomes.html#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
-<span id="cb38-5"><a href="outcomes.html#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
-<span id="cb38-6"><a href="outcomes.html#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb38-7"><a href="outcomes.html#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb38-8"><a href="outcomes.html#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb38-9"><a href="outcomes.html#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(d<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="outcomes.html#cb37-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb37-2"><a href="outcomes.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
+<span id="cb37-3"><a href="outcomes.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
+<span id="cb37-4"><a href="outcomes.html#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
+<span id="cb37-5"><a href="outcomes.html#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
+<span id="cb37-6"><a href="outcomes.html#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb37-7"><a href="outcomes.html#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb37-8"><a href="outcomes.html#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb37-9"><a href="outcomes.html#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 </div>
 <div id="exercises-2" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Exercises</h2>
@@ -1382,9 +1330,9 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 and have not been verified or approved in any way by the author.</p>
 <div id="exercise-1-2" class="section level3" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Exercise 1</h3>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="outcomes.html#cb39-1" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;owngun&quot;</span>, <span class="st">&quot;conservative&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;white&quot;</span>)]</span>
-<span id="cb39-2"><a href="outcomes.html#cb39-2" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(dataGSS1), ]</span>
-<span id="cb39-3"><a href="outcomes.html#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS1) <span class="sc">==</span> <span class="dv">1461</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="outcomes.html#cb38-1" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;owngun&quot;</span>, <span class="st">&quot;conservative&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;white&quot;</span>)]</span>
+<span id="cb38-2"><a href="outcomes.html#cb38-2" aria-hidden="true" tabindex="-1"></a>dataGSS1 <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(dataGSS1), ]</span>
+<span id="cb38-3"><a href="outcomes.html#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS1) <span class="sc">==</span> <span class="dv">1461</span>)</span></code></pre></div>
 <div id="a-unconditional-probabilites" class="section level4" number="3.4.1.1">
 <h4><span class="header-section-number">3.4.1.1</span> a) unconditional probabilites</h4>
 <p>This model corresponds to</p>
@@ -1396,18 +1344,18 @@ E(T \mid T = 0) &amp;= E(owngun \mid conservative = 0) = \beta_0 \\ \\
 E(T \mid T = 1) &amp;= E(owngun \mid conservative = 1) = \beta_0 + \beta_1 \\
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="outcomes.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="outcomes.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="outcomes.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb42-2"><a href="outcomes.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d1a &lt;- bootu(dat = dataGSS1, formula = owngun ~ conservative)</span></span>
-<span id="cb42-3"><a href="outcomes.html#cb42-3" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1a.rds&quot;</span>)</span>
-<span id="cb42-4"><a href="outcomes.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1a, file = a_file)</span></span>
-<span id="cb42-5"><a href="outcomes.html#cb42-5" aria-hidden="true" tabindex="-1"></a>d1a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb42-6"><a href="outcomes.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb42-7"><a href="outcomes.html#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="outcomes.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d1a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
-<span id="cb43-2"><a href="outcomes.html#cb43-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 a): Table 3.2&quot;</span>, </span>
-<span id="cb43-3"><a href="outcomes.html#cb43-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Unconditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="outcomes.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb41-2"><a href="outcomes.html#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d1a &lt;- bootu(dat = dataGSS1, formula = owngun ~ conservative)</span></span>
+<span id="cb41-3"><a href="outcomes.html#cb41-3" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1a.rds&quot;</span>)</span>
+<span id="cb41-4"><a href="outcomes.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1a, file = a_file)</span></span>
+<span id="cb41-5"><a href="outcomes.html#cb41-5" aria-hidden="true" tabindex="-1"></a>d1a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb41-6"><a href="outcomes.html#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb41-7"><a href="outcomes.html#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="outcomes.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d1a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb42-2"><a href="outcomes.html#cb42-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 a): Table 3.2&quot;</span>, </span>
+<span id="cb42-3"><a href="outcomes.html#cb42-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Unconditional probabilities and association measures&quot;</span>)</span></code></pre></div>
 <div id="xofgsyzgwi" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1749,10 +1697,10 @@ E(T \mid T = 1) &amp;= E(owngun \mid conservative = 1) = \beta_0 + \beta_1 \\
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 1 a): Table 3.2</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Exercise 1 a): Table 3.2</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Unconditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Unconditional probabilities and association measures</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -1811,21 +1759,21 @@ there is not necessarily a causality. See <em>Inference</em> section below.</p>
 </div>
 <div id="b-conditional-probabilites" class="section level4" number="3.4.1.2">
 <h4><span class="header-section-number">3.4.1.2</span> b) conditional probabilites</h4>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="outcomes.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="outcomes.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb46-2"><a href="outcomes.html#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d1b &lt;- bootc(dat = dataGSS1,</span></span>
-<span id="cb46-3"><a href="outcomes.html#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = owngun ~ conservative + gt65 + female + white,</span></span>
-<span id="cb46-4"><a href="outcomes.html#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = owngun ~ gt65 + white,</span></span>
-<span id="cb46-5"><a href="outcomes.html#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = owngun ~ conservative + gt65 + white)</span></span>
-<span id="cb46-6"><a href="outcomes.html#cb46-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1b.rds&quot;</span>)</span>
-<span id="cb46-7"><a href="outcomes.html#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1b, file = a_file)</span></span>
-<span id="cb46-8"><a href="outcomes.html#cb46-8" aria-hidden="true" tabindex="-1"></a>d1b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb46-9"><a href="outcomes.html#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb46-10"><a href="outcomes.html#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="outcomes.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d1b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
-<span id="cb47-2"><a href="outcomes.html#cb47-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 b): Table 3.3&quot;</span>, </span>
-<span id="cb47-3"><a href="outcomes.html#cb47-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="outcomes.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb45-2"><a href="outcomes.html#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d1b &lt;- bootc(dat = dataGSS1,</span></span>
+<span id="cb45-3"><a href="outcomes.html#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = owngun ~ conservative + gt65 + female + white,</span></span>
+<span id="cb45-4"><a href="outcomes.html#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = owngun ~ gt65 + white,</span></span>
+<span id="cb45-5"><a href="outcomes.html#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = owngun ~ conservative + gt65 + white)</span></span>
+<span id="cb45-6"><a href="outcomes.html#cb45-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex1b.rds&quot;</span>)</span>
+<span id="cb45-7"><a href="outcomes.html#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d1b, file = a_file)</span></span>
+<span id="cb45-8"><a href="outcomes.html#cb45-8" aria-hidden="true" tabindex="-1"></a>d1b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb45-9"><a href="outcomes.html#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb45-10"><a href="outcomes.html#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d1b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb46-2"><a href="outcomes.html#cb46-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 1 b): Table 3.3&quot;</span>, </span>
+<span id="cb46-3"><a href="outcomes.html#cb46-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
 <div id="llyupbqoqs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -2167,10 +2115,10 @@ there is not necessarily a causality. See <em>Inference</em> section below.</p>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 1 b): Table 3.3</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Exercise 1 b): Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Conditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Conditional probabilities and association measures</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -2251,12 +2199,12 @@ of gun ownership.</p>
 </div>
 <div id="exercise-2-2" class="section level3" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Exercise 2</h3>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="outcomes.html#cb48-1" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;pagthsedu&quot;</span>, </span>
-<span id="cb48-2"><a href="outcomes.html#cb48-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
-<span id="cb48-3"><a href="outcomes.html#cb48-3" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pamiss <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu), <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb48-4"><a href="outcomes.html#cb48-4" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pagthsedu[<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb48-5"><a href="outcomes.html#cb48-5" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> dataGSS2[<span class="fu">complete.cases</span>(dataGSS2), ]</span>
-<span id="cb48-6"><a href="outcomes.html#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS2) <span class="sc">==</span> <span class="dv">2168</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="outcomes.html#cb47-1" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;pagthsedu&quot;</span>, </span>
+<span id="cb47-2"><a href="outcomes.html#cb47-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb47-3"><a href="outcomes.html#cb47-3" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pamiss <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb47-4"><a href="outcomes.html#cb47-4" aria-hidden="true" tabindex="-1"></a>dataGSS2<span class="sc">$</span>pagthsedu[<span class="fu">is.na</span>(dataGSS2<span class="sc">$</span>pagthsedu)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb47-5"><a href="outcomes.html#cb47-5" aria-hidden="true" tabindex="-1"></a>dataGSS2 <span class="ot">&lt;-</span> dataGSS2[<span class="fu">complete.cases</span>(dataGSS2), ]</span>
+<span id="cb47-6"><a href="outcomes.html#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(dataGSS2) <span class="sc">==</span> <span class="dv">2168</span>)</span></code></pre></div>
 <p>Let <span class="math inline">\(Y = trump, T = gthsedu, H = white \cap female \cap gt65\)</span> then we have</p>
 <p><span class="math display">\[
 \begin{align*}
@@ -2271,22 +2219,22 @@ p_1 = E(Y \mid T = 1, H, pagthsedu = 1, pamiss = 0)
 \end{align*}
 \]</span></p>
 <p>and we use the logistic model to estimate the associaiton measures as follows</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="outcomes.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="outcomes.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="outcomes.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb51-2"><a href="outcomes.html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d2 &lt;- bootc(dat = dataGSS2,</span></span>
-<span id="cb51-3"><a href="outcomes.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65 +</span></span>
-<span id="cb51-4"><a href="outcomes.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                pagthsedu + pamiss,</span></span>
-<span id="cb51-5"><a href="outcomes.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,</span></span>
-<span id="cb51-6"><a href="outcomes.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)</span></span>
-<span id="cb51-7"><a href="outcomes.html#cb51-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex2.rds&quot;</span>)</span>
-<span id="cb51-8"><a href="outcomes.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d2, file = a_file)</span></span>
-<span id="cb51-9"><a href="outcomes.html#cb51-9" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb51-10"><a href="outcomes.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb51-11"><a href="outcomes.html#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="outcomes.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d2[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
-<span id="cb52-2"><a href="outcomes.html#cb52-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 2: Table 3.3&quot;</span>, </span>
-<span id="cb52-3"><a href="outcomes.html#cb52-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="outcomes.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb50-2"><a href="outcomes.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d2 &lt;- bootc(dat = dataGSS2,</span></span>
+<span id="cb50-3"><a href="outcomes.html#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65 +</span></span>
+<span id="cb50-4"><a href="outcomes.html#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                pagthsedu + pamiss,</span></span>
+<span id="cb50-5"><a href="outcomes.html#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65 + pagthsedu,</span></span>
+<span id="cb50-6"><a href="outcomes.html#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65 + pagthsedu)</span></span>
+<span id="cb50-7"><a href="outcomes.html#cb50-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex2.rds&quot;</span>)</span>
+<span id="cb50-8"><a href="outcomes.html#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d2, file = a_file)</span></span>
+<span id="cb50-9"><a href="outcomes.html#cb50-9" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb50-10"><a href="outcomes.html#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb50-11"><a href="outcomes.html#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="outcomes.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d2[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb51-2"><a href="outcomes.html#cb51-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 2: Table 3.3&quot;</span>, </span>
+<span id="cb51-3"><a href="outcomes.html#cb51-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
 <div id="iqcijaqrxl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -2628,10 +2576,10 @@ p_1 = E(Y \mid T = 1, H, pagthsedu = 1, pamiss = 0)
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 2: Table 3.3</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Exercise 2: Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Conditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Conditional probabilities and association measures</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -2691,11 +2639,11 @@ is always constant at 1, then it has no impact on the result.</p>
 <h3><span class="header-section-number">3.4.3</span> Exercise 3</h3>
 <div id="a" class="section level4" number="3.4.3.1">
 <h4><span class="header-section-number">3.4.3.1</span> a)</h4>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="outcomes.html#cb53-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="ot">&lt;-</span> brfss</span>
-<span id="cb53-2"><a href="outcomes.html#cb53-2" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="sc">%&gt;%</span></span>
-<span id="cb53-3"><a href="outcomes.html#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="fu">paste</span>(whitenh, blacknh, hisp, othernh, multinh, <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb53-4"><a href="outcomes.html#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb53-5"><a href="outcomes.html#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="outcomes.html#cb52-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="ot">&lt;-</span> brfss</span>
+<span id="cb52-2"><a href="outcomes.html#cb52-2" aria-hidden="true" tabindex="-1"></a>dataBRFSSa <span class="sc">%&gt;%</span></span>
+<span id="cb52-3"><a href="outcomes.html#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="fu">paste</span>(whitenh, blacknh, hisp, othernh, multinh, <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb52-4"><a href="outcomes.html#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb52-5"><a href="outcomes.html#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 5 x 2
 ## # Groups:   cat [5]
 ##   cat            n
@@ -2738,23 +2686,23 @@ p_1 = E(Y \mid T = 1, H)
 <code>hisp</code>, <code>othernh</code>, <code>multinh</code> are mutually exclusive dummy variables and so
 <span class="math inline">\(whitenh = 1 \implies blacknh = 0 \cap hisp = 0 \cap othernh = 0 \cap multinh = 0\)</span>.
 We also use only 500 bootstrapping iterations given te large volume of data.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="outcomes.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb55-2"><a href="outcomes.html#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3a &lt;- bootc(dat = dataBRFSSa,</span></span>
-<span id="cb55-3"><a href="outcomes.html#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = zerodrinks ~ rural + female + whitenh + blacknh +</span></span>
-<span id="cb55-4"><a href="outcomes.html#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
-<span id="cb55-5"><a href="outcomes.html#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = zerodrinks ~ whitenh + gthsedu,</span></span>
-<span id="cb55-6"><a href="outcomes.html#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = zerodrinks ~ rural + whitenh + gthsedu,</span></span>
-<span id="cb55-7"><a href="outcomes.html#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              R = 500)</span></span>
-<span id="cb55-8"><a href="outcomes.html#cb55-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb55-9"><a href="outcomes.html#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb55-10"><a href="outcomes.html#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 20 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="outcomes.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb54-2"><a href="outcomes.html#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3a &lt;- bootc(dat = dataBRFSSa,</span></span>
+<span id="cb54-3"><a href="outcomes.html#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = zerodrinks ~ rural + female + whitenh + blacknh +</span></span>
+<span id="cb54-4"><a href="outcomes.html#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
+<span id="cb54-5"><a href="outcomes.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = zerodrinks ~ whitenh + gthsedu,</span></span>
+<span id="cb54-6"><a href="outcomes.html#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = zerodrinks ~ rural + whitenh + gthsedu,</span></span>
+<span id="cb54-7"><a href="outcomes.html#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              R = 500)</span></span>
+<span id="cb54-8"><a href="outcomes.html#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb54-9"><a href="outcomes.html#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb54-10"><a href="outcomes.html#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 20 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 20 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="outcomes.html#cb57-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3a.rds&quot;</span>)</span>
-<span id="cb57-2"><a href="outcomes.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3a, file = a_file)</span></span>
-<span id="cb57-3"><a href="outcomes.html#cb57-3" aria-hidden="true" tabindex="-1"></a>d3a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="outcomes.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d3a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
-<span id="cb58-2"><a href="outcomes.html#cb58-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 a): Table 3.3&quot;</span>, </span>
-<span id="cb58-3"><a href="outcomes.html#cb58-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="outcomes.html#cb56-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3a.rds&quot;</span>)</span>
+<span id="cb56-2"><a href="outcomes.html#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3a, file = a_file)</span></span>
+<span id="cb56-3"><a href="outcomes.html#cb56-3" aria-hidden="true" tabindex="-1"></a>d3a <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="outcomes.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d3a[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb57-2"><a href="outcomes.html#cb57-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 a): Table 3.3&quot;</span>, </span>
+<span id="cb57-3"><a href="outcomes.html#cb57-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
 <div id="iizpjarakv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -3096,10 +3044,10 @@ We also use only 500 bootstrapping iterations given te large volume of data.</p>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 3 a): Table 3.3</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Exercise 3 a): Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Conditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Conditional probabilities and association measures</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
@@ -3166,28 +3114,28 @@ is clearly linked to the potential outcome.</p></li>
 <h4><span class="header-section-number">3.4.3.2</span> b)</h4>
 <p>We restrict the <code>brfss</code> data to only include lines where respondents
 consumed alcoholic drinks during the past 30 days <span class="math inline">\(maxdrinks \neq 0\)</span></p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="outcomes.html#cb59-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSb <span class="ot">&lt;-</span> brfss[brfss<span class="sc">$</span>maxdrinks <span class="sc">!=</span> <span class="dv">0</span>, </span>
-<span id="cb59-2"><a href="outcomes.html#cb59-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">&quot;whitenh&quot;</span>, <span class="st">&quot;blacknh&quot;</span>, <span class="st">&quot;hisp&quot;</span>, <span class="st">&quot;othernh&quot;</span>, <span class="st">&quot;multinh&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>,</span>
-<span id="cb59-3"><a href="outcomes.html#cb59-3" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;rural&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;zerodrinks&quot;</span>, <span class="st">&quot;maxdrinks&quot;</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="outcomes.html#cb58-1" aria-hidden="true" tabindex="-1"></a>dataBRFSSb <span class="ot">&lt;-</span> brfss[brfss<span class="sc">$</span>maxdrinks <span class="sc">!=</span> <span class="dv">0</span>, </span>
+<span id="cb58-2"><a href="outcomes.html#cb58-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">&quot;whitenh&quot;</span>, <span class="st">&quot;blacknh&quot;</span>, <span class="st">&quot;hisp&quot;</span>, <span class="st">&quot;othernh&quot;</span>, <span class="st">&quot;multinh&quot;</span>, <span class="st">&quot;gt65&quot;</span>, <span class="st">&quot;female&quot;</span>,</span>
+<span id="cb58-3"><a href="outcomes.html#cb58-3" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;rural&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;zerodrinks&quot;</span>, <span class="st">&quot;maxdrinks&quot;</span>)]</span></code></pre></div>
 <p>All the comments from a) above on the ethnicity variables applies. The same
 rational is used to define the variables so that we now have</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="outcomes.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb60-2"><a href="outcomes.html#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3b &lt;- bootc(dat = dataBRFSSb,</span></span>
-<span id="cb60-3"><a href="outcomes.html#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = maxdrinks ~ rural + female + whitenh + blacknh +</span></span>
-<span id="cb60-4"><a href="outcomes.html#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
-<span id="cb60-5"><a href="outcomes.html#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = maxdrinks ~ whitenh + gthsedu,</span></span>
-<span id="cb60-6"><a href="outcomes.html#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = maxdrinks ~ rural + whitenh + gthsedu,</span></span>
-<span id="cb60-7"><a href="outcomes.html#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              family = &quot;poisson&quot;, R = 500)</span></span>
-<span id="cb60-8"><a href="outcomes.html#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb60-9"><a href="outcomes.html#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb60-10"><a href="outcomes.html#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 20 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="outcomes.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb59-2"><a href="outcomes.html#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d3b &lt;- bootc(dat = dataBRFSSb,</span></span>
+<span id="cb59-3"><a href="outcomes.html#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = maxdrinks ~ rural + female + whitenh + blacknh +</span></span>
+<span id="cb59-4"><a href="outcomes.html#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gt65 + gthsedu,</span></span>
+<span id="cb59-5"><a href="outcomes.html#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = maxdrinks ~ whitenh + gthsedu,</span></span>
+<span id="cb59-6"><a href="outcomes.html#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = maxdrinks ~ rural + whitenh + gthsedu,</span></span>
+<span id="cb59-7"><a href="outcomes.html#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co">#              family = &quot;poisson&quot;, R = 500)</span></span>
+<span id="cb59-8"><a href="outcomes.html#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb59-9"><a href="outcomes.html#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb59-10"><a href="outcomes.html#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 20 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 20 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="outcomes.html#cb62-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3b.rds&quot;</span>)</span>
-<span id="cb62-2"><a href="outcomes.html#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3b, file = a_file)</span></span>
-<span id="cb62-3"><a href="outcomes.html#cb62-3" aria-hidden="true" tabindex="-1"></a>d3b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="outcomes.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d3b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
-<span id="cb63-2"><a href="outcomes.html#cb63-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 b): Table 3.3&quot;</span>, </span>
-<span id="cb63-3"><a href="outcomes.html#cb63-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="outcomes.html#cb61-1" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_Ex3b.rds&quot;</span>)</span>
+<span id="cb61-2"><a href="outcomes.html#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(d3b, file = a_file)</span></span>
+<span id="cb61-3"><a href="outcomes.html#cb61-3" aria-hidden="true" tabindex="-1"></a>d3b <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="outcomes.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(d3b[, <span class="fu">c</span>(<span class="st">&quot;name&quot;</span>, <span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)], </span>
+<span id="cb62-2"><a href="outcomes.html#cb62-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 3 b): Table 3.3&quot;</span>, </span>
+<span id="cb62-3"><a href="outcomes.html#cb62-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;Conditional probabilities and association measures&quot;</span>)</span></code></pre></div>
 <div id="gffmkpgirv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -3529,10 +3477,10 @@ rational is used to define the variables so that we now have</p>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Exercise 3 b): Table 3.3</strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Exercise 3 b): Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style><strong>Conditional probabilities and association measures</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Conditional probabilities and association measures</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">

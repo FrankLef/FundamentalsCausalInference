@@ -3,6 +3,7 @@
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr, quietly = TRUE)
 library(tidyr, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
 library(gt, quietly = TRUE)
 library(boot, quietly = TRUE)
 ```
@@ -64,22 +65,23 @@ stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
 
 
 ```{r}
+uncond <- list()
 message("this takes 30 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d <- bootu(dat = dataGSS, formula = trump ~ gthsedu)
+# uncond <- bootu(dat = dataGSS, formula = trump ~ gthsedu)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
-# saveRDS(d, file = a_file)
-d <- readRDS(file = a_file)
+# saveRDS(uncond, file = a_file)
+uncond <- readRDS(file = a_file)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 ```
 
 ```{r}
-gt_measures(d, 
+gt_measures(uncond, 
             title = "Table 3.2", 
-            subtitle = "Unconditional probabilities and association measures")
+            subtitle = "4 Association Measures Relating<br><em>More than High School
+            Education</em> to <em>Voting for Trump</em>")
 ```
-
 
 
 verify with author's results, p. 48-49
@@ -91,9 +93,9 @@ bb <- data.frame(
   lci = c(0.21030, 0.24095, 0.00078085, 1.0047, 1.0006, 1.0056),
   uci = c(0.25647, 0.30139, 0.07478354, 1.3437, 1.1057, 1.4853))
 stopifnot(
-  all(abs(d$est - bb$est) < 0.01),
-  all(abs(d$lci - bb$lci) < 0.015),
-  all(abs(d$uci - bb$uci) < 0.02))
+  all(abs(uncond$est - bb$est) < 0.01),
+  all(abs(uncond$lci - bb$lci) < 0.015),
+  all(abs(uncond$uci - bb$uci) < 0.02))
 ```
 
 
@@ -110,11 +112,6 @@ the estimand  (sampling distribution) but *not the association measures*
 * show it relates to `bootu` with the `c` meaning **conditional** and
 * avoid conflicting function names with `lmodboot.r()` of chapter 2
 
-
-
-```{r eval=TRUE, echo=TRUE, file="lib\\fci_03-B_bootc.R"}
-
-```
 
 
 To use the function with conditioning on variables, i.e. filtering on variables,
@@ -146,13 +143,13 @@ $$
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# d <- bootc(dat = dataGSS,
+# condit <- bootc(dat = dataGSS,
 #              formula = trump ~ gthsedu + magthsedu + white + female + gt65,
 #              cond0 = trump ~ magthsedu + white + female + gt65,
 #              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)
 a_file <- file.path(dir_data, "chap03_bootc.rds")
-# saveRDS(d, file = a_file)
-d <- readRDS(file = a_file)
+# saveRDS(condit, file = a_file)
+condit <- readRDS(file = a_file)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 ```
@@ -160,9 +157,11 @@ d <- readRDS(file = a_file)
 
 
 ```{r}
-gt_measures(d, 
+gt_measures(condit, 
             title = "Table 3.3", 
-            subtitle = "Conditional probabilities and association measures")
+            subtitle = "4 Conditional Association or Effect Measures<br>
+            Relating <em>More than High School Education</em> 
+            to <em>Voting for Trump</em>")
 ```
 
 
@@ -176,9 +175,9 @@ bb <- data.frame(
   lci = c(0.18518, 0.22995, 0.0022706, 1.0039, 1.0018, 1.0091),
   uci = c(0.32397, 0.37208, 0.0906057, 1.3927, 1.1352, 1.5758))
 stopifnot(
-  all(abs(d$est - bb$est) < 0.01),
-  all(abs(d$lci - bb$lci) < 0.015),
-  all(abs(d$uci - bb$uci) < 0.02))
+  all(abs(condit$est - bb$est) < 0.01),
+  all(abs(condit$lci - bb$lci) < 0.015),
+  all(abs(condit$uci - bb$uci) < 0.02))
 ```
 
 
