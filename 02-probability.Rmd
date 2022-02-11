@@ -20,6 +20,8 @@ dir_lib <- file.path(getwd(), "lib")
 ```{r include=FALSE}
 source(file = file.path(dir_lib, "boot_utils.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_01-B_mortability.R"), 
+       local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_02-A_sim.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_02-B_lmodboot.R"), 
@@ -30,20 +32,11 @@ load(file.path(dir_docs01, "nces.RData"))
 
 
 
-The mortality data is
+The mortality data was given in chapter 1, secion 1.2.1.
 
 ```{r}
-dataMortality <- data.frame(
-  "T" = c(TRUE, TRUE, FALSE, FALSE),
-  "H" = c(FALSE, TRUE, FALSE, TRUE),
-  "deaths" = c(756340, 2152660, 2923480, 7517520),
-  "population" = c(282305227, 48262955, 1297258493, 133015479),
-  "Y" = c(0.002679, 0.044603, 0.002254, 0.056516)
-)
-stopifnot(near(sum(dataMortality$Y), sum(dataMortality$deaths / dataMortality$population), 
-               tol = 1e-6))
+dataMortality <- data_mortability()
 ```
-
 
 
 ## Conditional Probability
