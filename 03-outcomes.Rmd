@@ -51,11 +51,6 @@ load(file.path(dir_docs03, "brfss.RData"))
 ## Effect Measures
 
 
-```{r eval=TRUE, echo=TRUE, file="lib\\fci_03-A_bootu.R"}
-
-```
-
-
 
 run the function to get the association measures
 
@@ -67,7 +62,6 @@ stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
 
 
 ```{r}
-uncond <- list()
 message("this takes 30 sec.: we load a saved file instead")
 # startTime <- Sys.time()
 # uncond <- bootu(dat = dataGSS, formula = trump ~ gthsedu)
@@ -86,6 +80,36 @@ gt_measures(uncond,
             subtitle = "4 Association Measures Relating<br><em>More than High School
             Education</em> to <em>Voting for Trump</em>")
 ```
+
+```{r eval=FALSE, include=FALSE}
+# p <- uncond %>%
+#   filter(name %in% c("p0", "p1")) %>%
+#   ggplot(mapping = aes(x = name, y = est, ymin = lci, ymax = uci, group = 1)) +
+#   geom_linerange(size = 5, color = "gold") +
+#   geom_point(shape = 19, size = 4, color = "mediumblue") +
+#   geom_line(color = "mediumblue") +
+#   ggrepel::geom_text_repel(aes(y = est, label = round(est, 3)), color = "mediumblue") +
+#   ggrepel::geom_text_repel(aes(y = lci, label = round(lci, 3)), color = "mediumblue") +
+#   ggrepel::geom_text_repel(aes(y = uci, label = round(uci, 3)), color = "mediumblue") +
+#   theme_minimal() +
+#   theme(title = element_text(color = "midnightblue"),
+#         axis.title = element_blank(),
+#         axis.text.y = element_blank(),
+#         panel.grid.major  = element_blank(),
+#         panel.grid.minor  = element_blank(),
+#         plot.background = element_rect(fill = "gainsboro", color = "gainsboro"),
+#         plot.margin = unit(c(0, 0, 0, 0), "char"))
+# p
+```
+
+
+```{r eval=FALSE, include=FALSE}
+# tbl %>%
+#   gtsave("tbl_03_02.png", expand = 10, path = tempdir())
+# pn <- png::readPNG(source = file.path(tempdir(), "tbl_03_02.png"))
+# gridExtra::grid.arrange(p, grid::rasterGrob(pn), nrow = 1)
+```
+
 
 
 verify with author's results, p. 48-49
@@ -481,7 +505,7 @@ rational is used to define the variables so that we now have
 #              family = "poisson", R = 500)
 # endTime <- Sys.time()
 # print(endTime - startTime)
-message("This took 20 min, so we load a saved file.")
+message("This took 15 min, so we load a saved file.")
 a_file <- file.path(dir_data, "chap03_Ex3b.rds")
 # saveRDS(d3b, file = a_file)
 d3b <- readRDS(a_file)

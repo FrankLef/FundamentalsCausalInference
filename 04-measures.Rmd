@@ -97,7 +97,7 @@ verify the results with the author's on p. 65.
 bb <- data.frame(
   name = c("EYT0.M0", "EYT0.M1", "EYT1.M0", "EYT1.M1", "RD.M0", "RD.M1",
            "EYT0.diff", "EYT1.diff", "RD.diff", "RR.M0", "RR.M1", "RR.diff",
-           "RRstar.M0", "RRstar.M1", "RRstar.diff", "OR.M0", "OR.M1", "OR.diff"),
+           "RR*.M0", "RR*.M1", "RR*.diff", "OR.M0", "OR.M1", "OR.diff"),
   est = c(0.784, 0.593, 0.793, 0.735, 0.01, 0.142,
           -0.191, -0.059, 0.132, 1.012, 1.239, 1.224,
           1.046, 1.533, 1.466, 1.059, 1.9, 1.794)
@@ -198,7 +198,7 @@ verify the results with the author's on p. 70.
 bb <- data.frame(
   name = c("EYT0.M0", "EYT0.M1", "EYT1.M0", "EYT1.M1", "RD.M0", "RD.M1",
            "EYT0.diff", "EYT1.diff", "RD.diff", "RR.M0", "RR.M1", "RR.diff",
-           "RRstar.M0", "RRstar.M1", "RRstar.diff", "OR.M0", "OR.M1", "OR.diff"),
+           "RR*.M0", "RR*.M1", "RR*.diff", "OR.M0", "OR.M1", "OR.diff"),
   est = c(0.167, 0.675, 0.081, 0.345, -0.086, -0.33,
           0.509, 0.264, -0.244, 0.486, 0.511, 1.052,
           0.907, 0.496, 0.547, 0.44, 0.254, 0.576)
@@ -646,7 +646,7 @@ RR1star <- (1-p2) / (1-p3)
 RO0 <- (p1 / (1-p1)) / (p0 / (1-p0))
 RO1 <- (p3 / (1-p3)) / (p2 / (1-p2))
 c("RD0" = RD0, "RD1" = RD1, "RR0" = RR0, "RR1" = RR1,
-  "RR0star" = RR0star, "RR1star" = RR1star, "RO0" = RO0, "RO1" = RO1)
+  "RR0*" = RR0star, "RR1*" = RR1star, "RO0" = RO0, "RO1" = RO1)
 ```
 
 and if we define
@@ -655,7 +655,7 @@ $$
 \begin{align*}
 RD &= RD_1 - RD_0 \\
 RR &= RR_1 - RR_0 \\
-RRstar &= RR1star_1 - RRstar_0 \\
+RR^* &= RR1_1^* - RR_0^* \\
 RO &= RO_1 - RO_0
 \end{align*}
 $$
@@ -667,7 +667,7 @@ RD = RD1 - RD0
 RR = RR1 - RR0
 RRstar = RR1star - RR0star
 RO = RO1 - RO0
-c("RD" = RD, "RR" = RR, "RRstar" = RRstar, "RO" = RO)
+c("RD" = RD, "RR" = RR, "RR*" = RRstar, "RO" = RO)
 ```
 *Is there a clear answer to determining which age group has a stronger effect
 of disability having a cost barrier to health care?*
@@ -714,13 +714,13 @@ sepsis.out <- boot(sepsis, formula = zubrod45 ~ shock + gt65)
 then create the table of results
 
 ```{r}
-gt_measures_modif(sepsis.out, title = "Sepsis Study")
+gt_measures_modif(sepsis.out, title = "Exercise 2: Sepsis Study")
 ```
 
 and plotting the results
 
 ```{r}
-ggp_measures_modif(sepsis.out, title = "Sepsis Study")
+ggp_measures_modif(sepsis.out, title = "Exercise 2: Sepsis Study")
 ```
 
 Both $RR$ and $OR$ are show a reduction in relative terms when comparing 65-yars 
@@ -746,7 +746,7 @@ we process with 500 boot iterations
 ```{r}
 message("This takes 2 min.: We used a saved file.")
 # startTime <- Sys.time()
-# brfss.out <- boot(dataBRFSS, formula = insured ~ gthsedu + whitenh, 
+# brfss.out <- boot(dataBRFSS, formula = insured ~ gthsedu + whitenh,
 #                     R = 500, conf = 0.95)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -758,13 +758,13 @@ brfss.out <- readRDS(file = a_file)
 then create the table of results
 
 ```{r}
-gt_measures_modif(brfss.out, title = "BRFSS Survey")
+gt_measures_modif(brfss.out, title = "Exercise 3: BRFSS Survey")
 ```
 
 and plotting the results
 
 ```{r}
-ggp_measures_modif(brfss.out, title = "BRFSS Survey")
+ggp_measures_modif(brfss.out, title = "Exercise 3: BRFSS Survey")
 ```
 
 For causal interpretaion we would need to assume that `whitenh` and `gthsedu`

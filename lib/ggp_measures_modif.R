@@ -16,7 +16,8 @@
 #' @examples
 #' \dontrun{
 #' }
-ggp_measures_modif <- function(df, title = "Change in effect measures") {
+ggp_measures_modif <- function(df, title = "Change in effect measures",
+                               subtitle = "Effect-Measure Modification and Statistical Interaction") {
   # prepare the dataframe used to pcreate the plot
   df <- df %>%
     filter(!grepl(pattern = "log.+", name)) %>%
@@ -33,11 +34,9 @@ ggp_measures_modif <- function(df, title = "Change in effect measures") {
               nudge_x = 0.05, nudge_y = 0.05) +
     scale_linetype_manual(values = c("EYT0" = "dashed", "EYT1" = "dashed", 
                                      "OR" = "solid", "RD" = "solid", 
-                                     "RR" = "solid", "RRstar" = "solid")) +
+                                     "RR" = "solid", "RR*" = "solid")) +
     theme_minimal() +
     theme(legend.position = "right",
           legend.title = element_blank()) +
-    labs(title = title,
-         subtitle = "Effect-Measure Modification and Statistical Interaction",
-         y = "estimated expected value")
+    labs(title = title, subtitle = subtitle, y = "estimated expected value")
 }

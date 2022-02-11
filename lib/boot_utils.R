@@ -1,3 +1,55 @@
+#' Calculate the effect measures
+#' 
+#' Calculate the effect measures.
+#' 
+#' Calculate the effect measures and put them in a named numeric() vector.
+#'
+#' @param val0 Numeric, base value
+#' @param val1 Numeric, treated value
+#' @param log If FALSE (default) compute the effect measures on the natural 
+#' scale. If TRUE compute the effect measures on the log scale. The risk
+#' difference measure (RD) is always on the natural scale.
+#'
+#' @return Named numeric vector.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' }
+calc_effect_measures <- function(val0, val1, log = FALSE) {
+  stopifnot(val0 >= 0, val1 >= 0)  # Important check for the next steps.
+  
+  # make sure the values are unnamed
+  val0 <- unname(val0)
+  val1 <- unname(val1)
+  
+  # Risk Difference
+  rd <- val1 - val0
+  
+  rr <- NA_real_  # Risk Ratio
+  rrstar <- NA_real_  # Other Risk Ratio
+  ro <- NA_real_  # Odds Ratio
+  if (!log) {
+    if (val0 != 0) rr <- val1 / val0
+    if (val0 < 1 & val1 < 1) rrstar <- (1 - val0) / (1 - val1)
+    if (val0 != 0 & val0 < 1 & val1 < 1) {
+      or <- (val1 / (1 - val1)) / (val0 / (1 - val0))
+    }
+    out <- c("RD" = rd, "RR" = rr, "RR*" = rrstar, "OR" = or)
+  } else {
+    if (val0 != 0 & val1 != 0) rr <- log(val1) - log(val0)
+    if (val0 < 1 & val1 < 1) rrstar <- log(1 - val0) - log(1 - val1)
+    if (val0 != 0 & val1 != 0 & val0 < 1 & val1 < 1) {
+      or <- log(val1 / (1 - val1)) - log(val0 / (1 - val0))
+    }
+    out <- c("RD" = rd, "logRR" = rr, "logRR*" = rrstar, "logOR" = or)
+  }
+  
+  # output only the measures that were calculated
+  out[!is.na(out)]
+}
+
+
 #' Bootstrap and generate a dataframe of estimates with CI
 #' 
 #' Bootstrap and generate a dataframe of estimates with CI.
@@ -55,8 +107,8 @@ run_boot <- function(data, statistic, R = 1000, conf = 0.95) {
 #' \dontrun{
 #' }
 exp_effects <- function(data, 
-                        vars = c("rr" = "logrr","rrstar"  = "logrrstar", 
-                                 "or" = "logor")) {
+                        vars = c("RR" = "logRR","RR*"  = "logRR*", 
+                                 "OR" = "logOR")) {
   pos <- match(vars, data$name)
   within(data, {
     est[pos] <- exp(est[pos])
@@ -82,7 +134,7 @@ exp_effects <- function(data,
 #' @examples
 #' \dontrun{
 #' }
-invlogit_effects <- function(data, vars = c("p" = "logitp")) {
+invlogit_effects <- function(data, vars = c("P" = "logitP")) {
   pos <- match(vars, data$name)
   within(data, {
     est[pos] <- plogis(est[pos])

@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-10" />
+<meta name="date" content="2022-02-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -278,7 +278,9 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.1" data-path="backdoor.html"><a href="backdoor.html#standardization-via-outome-modeling"><i class="fa fa-check"></i><b>6.1</b> Standardization via Outome Modeling</a>
 <ul>
+<li class="chapter" data-level="" data-path="backdoor.html"><a href="backdoor.html#examples-1"><i class="fa fa-check"></i>Examples</a></li>
 <li class="chapter" data-level="6.1.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated"><i class="fa fa-check"></i><b>6.1.1</b> Average Effect of Treatment on the Treated</a></li>
+<li class="chapter" data-level="6.1.2" data-path="backdoor.html"><a href="backdoor.html#standardization-with-a-parametric-outcome-model"><i class="fa fa-check"></i><b>6.1.2</b> Standardization with a Parametric Outcome Model</a></li>
 </ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
@@ -318,6 +320,10 @@ div.csl-indent {
 <li class="chapter" data-level="B.2.1" data-path="notes.html"><a href="notes.html#section-4.1"><i class="fa fa-check"></i><b>B.2.1</b> Section 4.1</a></li>
 <li class="chapter" data-level="B.2.2" data-path="notes.html"><a href="notes.html#section-4.2"><i class="fa fa-check"></i><b>B.2.2</b> Section 4.2</a></li>
 <li class="chapter" data-level="B.2.3" data-path="notes.html"><a href="notes.html#exercises-5"><i class="fa fa-check"></i><b>B.2.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="B.3" data-path="notes.html"><a href="notes.html#chapter-6-1"><i class="fa fa-check"></i><b>B.3</b> Chapter 6</a>
+<ul>
+<li class="chapter" data-level="B.3.1" data-path="notes.html"><a href="notes.html#section-6.1.1-att"><i class="fa fa-check"></i><b>B.3.1</b> Section 6.1.1 ATT</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="C" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>C</b> Functions</a>
@@ -472,7 +478,7 @@ H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
 <span id="cb9-28"><a href="probability.html#cb9-28" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> coefs[<span class="fu">c</span>(x0, cond)]</span>
 <span id="cb9-29"><a href="probability.html#cb9-29" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
 <span id="cb9-30"><a href="probability.html#cb9-30" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p)</span>
-<span id="cb9-31"><a href="probability.html#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;logitp&quot;</span>)</span>
+<span id="cb9-31"><a href="probability.html#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;logitP&quot;</span>)</span>
 <span id="cb9-32"><a href="probability.html#cb9-32" aria-hidden="true" tabindex="-1"></a>    out</span>
 <span id="cb9-33"><a href="probability.html#cb9-33" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb9-34"><a href="probability.html#cb9-34" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -486,7 +492,7 @@ H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="probability.html#cb10-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">lmodboot</span>(whatifdat)</span>
 <span id="cb10-2"><a href="probability.html#cb10-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>##   name       est conf      lci       uci
-## 1    p 0.6059581 0.95 0.414774 0.7652328</code></pre>
+## 1    P 0.6059581 0.95 0.414774 0.7652328</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="probability.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
 <span id="cb12-2"><a href="probability.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d[<span class="st">&quot;est&quot;</span>], <span class="fl">0.60596</span>, <span class="fl">0.01</span>),</span>
 <span id="cb12-3"><a href="probability.html#cb12-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;lci&quot;</span>], <span class="fl">0.41638</span>, <span class="fl">0.01</span>),</span>
@@ -628,7 +634,7 @@ ci</p>
 <span id="cb23-2"><a href="probability.html#cb23-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cond =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A)</span>
 <span id="cb23-3"><a href="probability.html#cb23-3" aria-hidden="true" tabindex="-1"></a>parametric</span></code></pre></div>
 <pre><code>##   name        est conf        lci      uci
-## 1    p 0.09001343 0.95 0.04382705 0.214635</code></pre>
+## 1    P 0.09001343 0.95 0.04382705 0.214635</code></pre>
 <p>which is very similar to the nonparametric and a little narrower because of the
 <em>bias-variance tradeoff</em> as discussed in the last paragraph of chapter 2.</p>
 

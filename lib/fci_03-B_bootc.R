@@ -41,14 +41,10 @@ bootc <- function(dat, formula = Y ~ `T` + A + H,
     xbeta1 <- sum(coefs[c(x0, cond1)])
     p0 <- plogis(xbeta0)  # plogis is the inverse of logit
     p1 <- plogis(xbeta1)  # plogis is the inverse of logit
-    rd <- p1 - p0
-    logrr <- log(p1) - log(p0)
-    logrrstar <- log(1 - p0) - log(1 - p1)
-    logor <- log(p1 / (1 - p1)) - log(p0 / (1 - p0))
+    # calculate effect measures
+    out <- calc_effect_measures(val0 = p0, val1 = p1, log = TRUE)
     
-    # return the results
-    out <- c(p0, p1, rd, logrr, logrrstar, logor)
-    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
+    out <- c("P0" = unname(p0), "P1" = unname(p1), out)
     out
   }
   

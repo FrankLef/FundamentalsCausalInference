@@ -28,7 +28,7 @@ lmodboot <- function(dat, formula = Y ~ `T` + A + H,
     coefs <- coefs[c(x0, cond)]
     p <- sum(coefs)
     out <- c(p)
-    names(out) <- c("logitp")
+    names(out) <- c("logitP")
     out
   }
   

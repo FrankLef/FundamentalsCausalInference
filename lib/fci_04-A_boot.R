@@ -51,9 +51,9 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
              logOR.M0, logOR.M1, EYT0.diff, EYT1.diff, 
              RD.diff, logRR.diff, logRRstar.diff, logOR.diff)
     names(out) <- c("EYT0.M0", "EYT0.M1", "EYT1.M0", "EYT1.M1", "RD.M0", "RD.M1",
-                    "logRR.M0", "logRR.M1", "logRRstar.M0", "logRRstar.M1",
+                    "logRR.M0", "logRR.M1", "logRR*.M0", "logRR*.M1",
                     "logOR.M0", "logOR.M1", "EYT0.diff", "EYT1.diff", 
-                    "RD.diff", "logRR.diff", "logRRstar.diff", "logOR.diff")
+                    "RD.diff", "logRR.diff", "logRR*.diff", "logOR.diff")
     out
   }
   
@@ -61,7 +61,7 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
   
   # vector of variables to exponentiate
   vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
-           "RRstar.M0"  = "logRRstar.M0", "RRstar.M1"  = "logRRstar.M1", "RRstar.diff" = "logRRstar.diff",
+           "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
   out <- exp_effects(data = out, vars = vars)
 

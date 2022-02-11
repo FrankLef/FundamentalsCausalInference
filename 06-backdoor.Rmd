@@ -16,6 +16,8 @@ library(gt)
 # the directory of documentation for chapter 1
 dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
+dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -35,6 +37,7 @@ source(file = file.path(dir_lib, "fci_01-A_doublewhatifsim.R"),
 source(file = file.path(dir_lib, "gt_measures.R"), 
        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
+load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
 
@@ -71,13 +74,16 @@ We use `R` to compute the standardized estimates with the following script
 ```
 
 
-**Example: What-if? Study**
+### Examples {-}
+
+#### What-if? Study {-}
 
 and for the What-If? study this gives
 
 
 ```{r}
 whatif.out <- bootstand(whatifdat, formula = Y ~ A + H + A*H)
+whatif.out
 ```
 
 and we compare with the author's
@@ -86,7 +92,7 @@ and we compare with the author's
 comp <- data.frame(
   name = c("EY0", "EY1", "RD", "RR"),
   auth = c(0.375, 0.289, -0.086, 0.77),
-  est = whatif.out$est
+  est = whatif.out$est[whatif.out$name %in% c("EY0", "EY1", "RD", "RR")]
 )
 stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 ```
@@ -94,56 +100,17 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.1
 
 ```{r}
-t <- gt_measures(whatif.out, 
+gt_measures(whatif.out, 
             title = "Table 6.1", 
-            subtitle = "What-If Study: Standardized Estimates")
-t
-# a_file <- tempfile(fileext = ".png")
-# gtsave(t, a_file)
-# tpng <- png::readPNG(a_file, native = TRUE)
+            subtitle = "What-If Study<br>Standardized Estimates")
 ```
-
-```{r}
-df_lines <-
-  data.frame(x = "EY0", xend = "EY1",
-             y = whatif.out[whatif.out$name == "EY0", "est"],
-             yend = whatif.out[whatif.out$name == "EY1", "est"])
-df_points_Y <- data.frame(x = c("EY0", "EY1"),
-                          label = c("Y0", "Y1"),
-                          y = c(1 - mean(whatifdat$Y), mean(whatifdat$Y)))
-df_lines_Y <-
-  data.frame(x = "EY0", xend = "EY1",
-             y = df_points_Y[df_points_Y$x == "EY0", "y"],
-             yend = df_points_Y[df_points_Y$x == "EY1", "y"])
-p <- whatif.out %>%
-  filter(name %in% c("EY0", "EY1")) %>%
-  ggplot(mapping = aes(x = as.factor(name), y = est, ymin = lci, ymax = uci)) +
-  geom_linerange(size = 5, color = "gold") +
-  geom_point(shape = 19, size = 4, color = "mediumblue") +
-  geom_segment(df_lines, mapping = aes(x = x, xend = xend, y = y, yend = yend),
-               inherit.aes = FALSE, color = "mediumblue") +
-  geom_point(df_points_Y, mapping = aes(x = x, y = y), inherit.aes = FALSE,
-             shape = 19, size = 4, color = "violetred") +
-  geom_segment(df_lines_Y, mapping = aes(x = x, xend = xend, y = y, yend = yend),
-               inherit.aes = FALSE, color = "violetred") +
-  theme_minimal() +
-  theme(title = element_text(color = "midnightblue"),
-        axis.title = element_blank(),
-        axis.text.y = element_blank(),
-        panel.grid.major  = element_blank(),
-        panel.grid.minor  = element_blank(),
-        plot.background = element_rect(fill = "gainsboro", color = "gainsboro"),
-        plot.margin = unit(c(0, 0, 0, 0), "char"))
-p
-```
-
 
 
 where we observe a reduction of the viral load but the difference is not
 statistically significant.
 
 
-**Example: Double What-if? Study**
+#### Double What-if? Study {-}
 
 
 ```{r}
@@ -159,7 +126,7 @@ doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
 ```{r}
 gt_measures(doublewhatif.out, 
             title = "Table 6.2", 
-            subtitle = "What-If Study: Standardized Estimates")
+            subtitle = "What-If Study<br>Standardized Estimates with H = AD0")
 ```
 
 
@@ -176,8 +143,77 @@ doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
 ```{r}
 gt_measures(doublewhatif.out, 
             title = "Table 6.3", 
-            subtitle = "What-If Study: Standardized Estimates")
+            subtitle = "What-If Study<br>Standardized Estimates with H = VL0")
 ```
 
 
 ### Average Effect of Treatment on the Treated
+
+
+The function `bootstandatt` described in section 6.1.1 is not necessary,
+see the function `bootstand` which can do it with the addition of the
+argument `att`.
+
+#### Examples {-}
+
+##### What-if? Study {-}
+
+
+```{r}
+whatif.att <- bootstand(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
+```
+
+and we compare with the author's
+
+```{r}
+comp <- data.frame(
+  name = c("EY0", "EY1", "RD", "RR"),
+  auth = c(0.361, 0.276, -0.085, 0.765),
+  est = whatif.att$est[whatif.att$name %in% c("EY0", "EY1", "RD", "RR")]
+)
+stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+```
+
+and the results are presented in table 6.1
+
+```{r}
+gt_measures(whatif.att, 
+            title = "Table 6.4", 
+            subtitle = "What-If Study<br>Standardized ATT estimates")
+```
+#### Double What-if? Study {-}
+
+
+
+```{r}
+doublewhatif.att <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0,
+                              att = TRUE)
+```
+
+
+```{r}
+gt_measures(doublewhatif.att, 
+            title = "Table 6.5", 
+            subtitle = "What-If Study<br>Standardized ATT Estimates with H = AD0")
+```
+
+
+
+
+```{r}
+doublewhatif.att <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0,
+                              att = TRUE)
+```
+
+
+```{r}
+gt_measures(doublewhatif.att, 
+            title = "Table 6.6", 
+            subtitle = "What-If Study<br>Standardized ATT Estimates with H = VL0")
+```
+
+### Standardization with a Parametric Outcome Model
+
+
+
+

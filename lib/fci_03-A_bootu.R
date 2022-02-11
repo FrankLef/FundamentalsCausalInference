@@ -53,7 +53,7 @@ bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
     
     # return the results
     out <- c(p0, p1, rd, logrr, logrrstar, logor)
-    names(out) <- c("p0", "p1", "rd", "logrr", "logrrstar", "logor")
+    names(out) <- c("P0", "P1", "RD", "logRR", "logRR*", "logOR")
     out
   }
   
