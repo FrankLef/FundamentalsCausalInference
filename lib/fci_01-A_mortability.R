@@ -27,8 +27,7 @@ data_mortability <- function() {
 #' Create Mortability by Country dataset for exposure modeling.
 #' 
 #' Create Mortability by Country dataset for exposure modeling as described
-#' in section 6.2 of chapter 6. The function also perform the ATT calculations
-#' used in section 6.2.1.
+#' in section 6.2 of chapter 6.
 #'
 #' @return Dataframe of mortability rates and exposure model
 #' @export
@@ -48,36 +47,9 @@ data_mortability_exp <- function() {
             7517520,
             48262955 - 2152660,
             2152660))
-  out$p <- out$n / sum(out$n)  # compute proportion who died
-  # compute e(H=0)
-  dat0 <- out[out$H == 0, ]
-  eH0 <- sum(dat0$n[dat0$`T` == 1]) / sum(dat0)
-  # compute e(H=1)
-  dat1 <- out[out$H == 1, ]
-  eH1 <- sum(dat1$n[dat1$`T` == 1]) / sum(dat1)
-  # compute e(H) for all participants
-  out$eH <- eH0 * (1 - out$H) + eH1 * out$H
-  # compute the summands of the estimating equations
-  out$s1 <- out$`T` * out$Y / out$eH
-  out$s0 <- (1 - out$`T`) * out$Y / (1 - out$eH)
+  # compute proportion who died
+  out$p <- out$n / sum(out$n)
+  stopifnot(sum(out$p) == 1)
   
-  # estimate the expected values of the potential outcomes
-  EY1 <- sum(out$s1 * out$p)
-  EY0 <- sum(out$s0 * out$p)
-  
-  # include the ATT calculations
-  # estimate P(T = 1)
-  e0 <- sum(out$`T` * out$p)
-  # compute the summands of the estimating equation
-  s <- out$Y * (1 - out$`T`) * out$eH / (e0 * (1 - out$eH))
-  # estimate E(Y0|T=1)
-  EY0T1 <- sum(s * out$p)
-  
-  # test results
-  stopifnot(dplyr::near(EY0, 0.0078399, tol = 1e-7),
-            dplyr::near(EY1, 0.0069952, tol = 1e-7),
-            dplyr::near(EY0T1, 0.010176, tol = 1e-6))
-  
-  # final output
-  list("EY1" = EY1, "EY0" = EY0, "EY0T1" = EY0T1, "data" = out)
+  out
 }

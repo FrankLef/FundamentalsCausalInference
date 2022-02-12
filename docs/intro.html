@@ -284,7 +284,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="backdoor.html"><a href="backdoor.html#standardization-via-exposure-modeling"><i class="fa fa-check"></i><b>6.2</b> Standardization via Exposure Modeling</a>
 <ul>
-<li class="chapter" data-level="6.2.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated-1"><i class="fa fa-check"></i><b>6.2.1</b> Average Effect of treatment on the Treated</a></li>
+<li class="chapter" data-level="6.2.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated-1"><i class="fa fa-check"></i><b>6.2.1</b> Average Effect of Treatment on the Treated</a></li>
+<li class="chapter" data-level="6.2.2" data-path="backdoor.html"><a href="backdoor.html#standardization-with-a-parametric-exposure-model"><i class="fa fa-check"></i><b>6.2.2</b> Standardization with a Parametric Exposure Model</a></li>
 </ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
@@ -413,60 +414,32 @@ div.csl-indent {
 <span id="cb2-27"><a href="intro.html#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create Mortability by Country dataset for exposure modeling.</span></span>
 <span id="cb2-28"><a href="intro.html#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
 <span id="cb2-29"><a href="intro.html#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create Mortability by Country dataset for exposure modeling as described</span></span>
-<span id="cb2-30"><a href="intro.html#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; in section 6.2 of chapter 6. The function also perform the ATT calculations</span></span>
-<span id="cb2-31"><a href="intro.html#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; used in section 6.2.1.</span></span>
-<span id="cb2-32"><a href="intro.html#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb2-33"><a href="intro.html#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of mortability rates and exposure model</span></span>
-<span id="cb2-34"><a href="intro.html#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb2-35"><a href="intro.html#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb2-36"><a href="intro.html#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb2-37"><a href="intro.html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; data_mortability_exp()</span></span>
-<span id="cb2-38"><a href="intro.html#cb2-38" aria-hidden="true" tabindex="-1"></a>data_mortability_exp <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb2-39"><a href="intro.html#cb2-39" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-40"><a href="intro.html#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;H&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb2-41"><a href="intro.html#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb2-42"><a href="intro.html#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb2-43"><a href="intro.html#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;n&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1297258493</span> <span class="sc">-</span> <span class="dv">2923480</span>,</span>
-<span id="cb2-44"><a href="intro.html#cb2-44" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2923480</span>,</span>
-<span id="cb2-45"><a href="intro.html#cb2-45" aria-hidden="true" tabindex="-1"></a>            <span class="dv">282305227</span> <span class="sc">-</span> <span class="dv">756340</span>,</span>
-<span id="cb2-46"><a href="intro.html#cb2-46" aria-hidden="true" tabindex="-1"></a>            <span class="dv">756340</span>,</span>
-<span id="cb2-47"><a href="intro.html#cb2-47" aria-hidden="true" tabindex="-1"></a>            <span class="dv">133015479</span> <span class="sc">-</span> <span class="dv">7517520</span>,</span>
-<span id="cb2-48"><a href="intro.html#cb2-48" aria-hidden="true" tabindex="-1"></a>            <span class="dv">7517520</span>,</span>
-<span id="cb2-49"><a href="intro.html#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="dv">48262955</span> <span class="sc">-</span> <span class="dv">2152660</span>,</span>
-<span id="cb2-50"><a href="intro.html#cb2-50" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2152660</span>))</span>
-<span id="cb2-51"><a href="intro.html#cb2-51" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>p <span class="ot">&lt;-</span> out<span class="sc">$</span>n <span class="sc">/</span> <span class="fu">sum</span>(out<span class="sc">$</span>n)  <span class="co"># compute proportion who died</span></span>
-<span id="cb2-52"><a href="intro.html#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=0)</span></span>
-<span id="cb2-53"><a href="intro.html#cb2-53" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> out[out<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">0</span>, ]</span>
-<span id="cb2-54"><a href="intro.html#cb2-54" aria-hidden="true" tabindex="-1"></a>  eH0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat0<span class="sc">$</span>n[dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">/</span> <span class="fu">sum</span>(dat0)</span>
-<span id="cb2-55"><a href="intro.html#cb2-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=1)</span></span>
-<span id="cb2-56"><a href="intro.html#cb2-56" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> out[out<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>, ]</span>
-<span id="cb2-57"><a href="intro.html#cb2-57" aria-hidden="true" tabindex="-1"></a>  eH1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat1<span class="sc">$</span>n[dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">/</span> <span class="fu">sum</span>(dat1)</span>
-<span id="cb2-58"><a href="intro.html#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H) for all participants</span></span>
-<span id="cb2-59"><a href="intro.html#cb2-59" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>eH <span class="ot">&lt;-</span> eH0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>H) <span class="sc">+</span> eH1 <span class="sc">*</span> out<span class="sc">$</span>H</span>
-<span id="cb2-60"><a href="intro.html#cb2-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equations</span></span>
-<span id="cb2-61"><a href="intro.html#cb2-61" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>s1 <span class="ot">&lt;-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> out<span class="sc">$</span>Y <span class="sc">/</span> out<span class="sc">$</span>eH</span>
-<span id="cb2-62"><a href="intro.html#cb2-62" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>s0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> out<span class="sc">$</span>Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>eH)</span>
-<span id="cb2-63"><a href="intro.html#cb2-63" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-64"><a href="intro.html#cb2-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the expected values of the potential outcomes</span></span>
-<span id="cb2-65"><a href="intro.html#cb2-65" aria-hidden="true" tabindex="-1"></a>  EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>s1 <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb2-66"><a href="intro.html#cb2-66" aria-hidden="true" tabindex="-1"></a>  EY0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>s0 <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb2-67"><a href="intro.html#cb2-67" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-68"><a href="intro.html#cb2-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># include the ATT calculations</span></span>
-<span id="cb2-69"><a href="intro.html#cb2-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate P(T = 1)</span></span>
-<span id="cb2-70"><a href="intro.html#cb2-70" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb2-71"><a href="intro.html#cb2-71" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equation</span></span>
-<span id="cb2-72"><a href="intro.html#cb2-72" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> out<span class="sc">$</span>Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> out<span class="sc">$</span>eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>eH))</span>
-<span id="cb2-73"><a href="intro.html#cb2-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate E(Y0|T=1)</span></span>
-<span id="cb2-74"><a href="intro.html#cb2-74" aria-hidden="true" tabindex="-1"></a>  EY0T1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb2-75"><a href="intro.html#cb2-75" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-76"><a href="intro.html#cb2-76" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test results</span></span>
-<span id="cb2-77"><a href="intro.html#cb2-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dplyr<span class="sc">::</span><span class="fu">near</span>(EY0, <span class="fl">0.0078399</span>, <span class="at">tol =</span> <span class="fl">1e-7</span>),</span>
-<span id="cb2-78"><a href="intro.html#cb2-78" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">near</span>(EY1, <span class="fl">0.0069952</span>, <span class="at">tol =</span> <span class="fl">1e-7</span>),</span>
-<span id="cb2-79"><a href="intro.html#cb2-79" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">near</span>(EY0T1, <span class="fl">0.010176</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>))</span>
-<span id="cb2-80"><a href="intro.html#cb2-80" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-81"><a href="intro.html#cb2-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># final output</span></span>
-<span id="cb2-82"><a href="intro.html#cb2-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> EY1, <span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> EY0, <span class="st">&quot;EY0T1&quot;</span> <span class="ot">=</span> EY0T1, <span class="st">&quot;data&quot;</span> <span class="ot">=</span> out)</span>
-<span id="cb2-83"><a href="intro.html#cb2-83" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb2-30"><a href="intro.html#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; in section 6.2 of chapter 6.</span></span>
+<span id="cb2-31"><a href="intro.html#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb2-32"><a href="intro.html#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of mortability rates and exposure model</span></span>
+<span id="cb2-33"><a href="intro.html#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb2-34"><a href="intro.html#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb2-35"><a href="intro.html#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb2-36"><a href="intro.html#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; data_mortability_exp()</span></span>
+<span id="cb2-37"><a href="intro.html#cb2-37" aria-hidden="true" tabindex="-1"></a>data_mortability_exp <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb2-38"><a href="intro.html#cb2-38" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-39"><a href="intro.html#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;H&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb2-40"><a href="intro.html#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb2-41"><a href="intro.html#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb2-42"><a href="intro.html#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;n&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1297258493</span> <span class="sc">-</span> <span class="dv">2923480</span>,</span>
+<span id="cb2-43"><a href="intro.html#cb2-43" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2923480</span>,</span>
+<span id="cb2-44"><a href="intro.html#cb2-44" aria-hidden="true" tabindex="-1"></a>            <span class="dv">282305227</span> <span class="sc">-</span> <span class="dv">756340</span>,</span>
+<span id="cb2-45"><a href="intro.html#cb2-45" aria-hidden="true" tabindex="-1"></a>            <span class="dv">756340</span>,</span>
+<span id="cb2-46"><a href="intro.html#cb2-46" aria-hidden="true" tabindex="-1"></a>            <span class="dv">133015479</span> <span class="sc">-</span> <span class="dv">7517520</span>,</span>
+<span id="cb2-47"><a href="intro.html#cb2-47" aria-hidden="true" tabindex="-1"></a>            <span class="dv">7517520</span>,</span>
+<span id="cb2-48"><a href="intro.html#cb2-48" aria-hidden="true" tabindex="-1"></a>            <span class="dv">48262955</span> <span class="sc">-</span> <span class="dv">2152660</span>,</span>
+<span id="cb2-49"><a href="intro.html#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2152660</span>))</span>
+<span id="cb2-50"><a href="intro.html#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute proportion who died</span></span>
+<span id="cb2-51"><a href="intro.html#cb2-51" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>p <span class="ot">&lt;-</span> out<span class="sc">$</span>n <span class="sc">/</span> <span class="fu">sum</span>(out<span class="sc">$</span>n)</span>
+<span id="cb2-52"><a href="intro.html#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(out<span class="sc">$</span>p) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb2-53"><a href="intro.html#cb2-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-54"><a href="intro.html#cb2-54" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb2-55"><a href="intro.html#cb2-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre><code>##       T     H  deaths population           Y
 ## 1  TRUE FALSE  756340  282305227 0.002679157
 ## 2  TRUE  TRUE 2152660   48262955 0.044602739

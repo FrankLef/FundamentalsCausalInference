@@ -40,6 +40,8 @@ source(file = file.path(dir_lib, "fci_01-B_doublewhatifsim.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "calc_exposure.R"), 
+       local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs06, "whatif2dat.RData"))
@@ -290,26 +292,44 @@ gt_measures(whatif2.out,
 
 ## Standardization via Exposure Modeling
 
+See section 1.2.1 in chapter 1 for details on `data_mortability_exp`.
 
-Create the dataset using the mortability data from Table 1.1. The code
-is shown in 1.2.1 and again here
-
-```{r echo=TRUE, file="lib\\fci_01-A_mortability.R"}
-
-```
 
 ```{r}
-mortdat.out <- data_mortability_exp()
-mortdat.out
+mortdat <- data_mortability_exp()
 ```
 
-### Average Effect of treatment on the Treated
 
+Compute the standardized estimates using exposure modeling. The author puts
+it with the data itself.  We separate the data from the logic and faciliate
+code reuse and readability.
 
-See previous section for calculation with mortality data
+```{r echo=TRUE, file="lib\\calc_exposure.R"}
+
+```
+
 
 ```{r}
-mortdat.out$EY0T1
+mortdat.out <- calc_exposure(mortdat, formula = Y ~ `T` + H, weights = "n")
+mortdat.out[c("EY0", "EY1")]
+# verify with the author's
+stopifnot(abs(mortdat.out$EY0 - 0.0078399) < 1e-7,
+          abs(mortdat.out$EY1 - 0.0069952) < 1e-7)
 ```
+
+
+
+### Average Effect of Treatment on the Treated
+
+
+See previous section for calculation with mortality data for the function
+`calc_exposure`.
+
+```{r}
+mortdat.out[["EY0T1"]]
+stopifnot(abs(mortdat.out$EY0T1 - 0.010176) < 1e-6)
+```
+
+### Standardization with a Parametric Exposure Model
 
 

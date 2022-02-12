@@ -284,7 +284,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="backdoor.html"><a href="backdoor.html#standardization-via-exposure-modeling"><i class="fa fa-check"></i><b>6.2</b> Standardization via Exposure Modeling</a>
 <ul>
-<li class="chapter" data-level="6.2.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated-1"><i class="fa fa-check"></i><b>6.2.1</b> Average Effect of treatment on the Treated</a></li>
+<li class="chapter" data-level="6.2.1" data-path="backdoor.html"><a href="backdoor.html#average-effect-of-treatment-on-the-treated-1"><i class="fa fa-check"></i><b>6.2.1</b> Average Effect of Treatment on the Treated</a></li>
+<li class="chapter" data-level="6.2.2" data-path="backdoor.html"><a href="backdoor.html#standardization-with-a-parametric-exposure-model"><i class="fa fa-check"></i><b>6.2.2</b> Standardization with a Parametric Exposure Model</a></li>
 </ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
@@ -3690,117 +3691,86 @@ argument <code>att</code>.</p>
 </div>
 <div id="standardization-via-exposure-modeling" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Standardization via Exposure Modeling</h2>
-<p>Create the dataset using the mortability data from Table 1.1. The code
-is shown in 1.2.1 and again here</p>
-<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="backdoor.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create dataset Mortability Rate by Country</span></span>
-<span id="cb247-2"><a href="backdoor.html#cb247-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb247-3"><a href="backdoor.html#cb247-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create dataset Mortability Rate by Country.</span></span>
-<span id="cb247-4"><a href="backdoor.html#cb247-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb247-5"><a href="backdoor.html#cb247-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create dataset Mortability Rate by Country as shown in section 1.2.1.</span></span>
-<span id="cb247-6"><a href="backdoor.html#cb247-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb247-7"><a href="backdoor.html#cb247-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of mortability rates</span></span>
-<span id="cb247-8"><a href="backdoor.html#cb247-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb247-9"><a href="backdoor.html#cb247-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb247-10"><a href="backdoor.html#cb247-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb247-11"><a href="backdoor.html#cb247-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; data_mortability()</span></span>
-<span id="cb247-12"><a href="backdoor.html#cb247-12" aria-hidden="true" tabindex="-1"></a>data_mortability <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb247-13"><a href="backdoor.html#cb247-13" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb247-14"><a href="backdoor.html#cb247-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>),</span>
-<span id="cb247-15"><a href="backdoor.html#cb247-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;H&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
-<span id="cb247-16"><a href="backdoor.html#cb247-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;deaths&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">756340</span>, <span class="dv">2152660</span>, <span class="dv">2923480</span>, <span class="dv">7517520</span>),</span>
-<span id="cb247-17"><a href="backdoor.html#cb247-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;population&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">282305227</span>, <span class="dv">48262955</span>, <span class="dv">1297258493</span>, <span class="dv">133015479</span>))</span>
-<span id="cb247-18"><a href="backdoor.html#cb247-18" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>Y <span class="ot">&lt;-</span> out<span class="sc">$</span>deaths <span class="sc">/</span> out<span class="sc">$</span>population</span>
-<span id="cb247-19"><a href="backdoor.html#cb247-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># verify with book</span></span>
-<span id="cb247-20"><a href="backdoor.html#cb247-20" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.002679</span>, <span class="fl">0.0446</span>, <span class="fl">0.002254</span>, <span class="fl">0.05652</span>)</span>
-<span id="cb247-21"><a href="backdoor.html#cb247-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(out<span class="sc">$</span>Y <span class="sc">-</span> check)) <span class="sc">&lt;</span> <span class="fl">0.0001</span>)</span>
-<span id="cb247-22"><a href="backdoor.html#cb247-22" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb247-23"><a href="backdoor.html#cb247-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb247-24"><a href="backdoor.html#cb247-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb247-25"><a href="backdoor.html#cb247-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create Mortability by Country dataset for exposure modeling</span></span>
-<span id="cb247-26"><a href="backdoor.html#cb247-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb247-27"><a href="backdoor.html#cb247-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create Mortability by Country dataset for exposure modeling.</span></span>
-<span id="cb247-28"><a href="backdoor.html#cb247-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb247-29"><a href="backdoor.html#cb247-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Create Mortability by Country dataset for exposure modeling as described</span></span>
-<span id="cb247-30"><a href="backdoor.html#cb247-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; in section 6.2 of chapter 6. The function also perform the ATT calculations</span></span>
-<span id="cb247-31"><a href="backdoor.html#cb247-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; used in section 6.2.1.</span></span>
-<span id="cb247-32"><a href="backdoor.html#cb247-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb247-33"><a href="backdoor.html#cb247-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of mortability rates and exposure model</span></span>
-<span id="cb247-34"><a href="backdoor.html#cb247-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb247-35"><a href="backdoor.html#cb247-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb247-36"><a href="backdoor.html#cb247-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb247-37"><a href="backdoor.html#cb247-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; data_mortability_exp()</span></span>
-<span id="cb247-38"><a href="backdoor.html#cb247-38" aria-hidden="true" tabindex="-1"></a>data_mortability_exp <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb247-39"><a href="backdoor.html#cb247-39" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb247-40"><a href="backdoor.html#cb247-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;H&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb247-41"><a href="backdoor.html#cb247-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb247-42"><a href="backdoor.html#cb247-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb247-43"><a href="backdoor.html#cb247-43" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;n&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1297258493</span> <span class="sc">-</span> <span class="dv">2923480</span>,</span>
-<span id="cb247-44"><a href="backdoor.html#cb247-44" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2923480</span>,</span>
-<span id="cb247-45"><a href="backdoor.html#cb247-45" aria-hidden="true" tabindex="-1"></a>            <span class="dv">282305227</span> <span class="sc">-</span> <span class="dv">756340</span>,</span>
-<span id="cb247-46"><a href="backdoor.html#cb247-46" aria-hidden="true" tabindex="-1"></a>            <span class="dv">756340</span>,</span>
-<span id="cb247-47"><a href="backdoor.html#cb247-47" aria-hidden="true" tabindex="-1"></a>            <span class="dv">133015479</span> <span class="sc">-</span> <span class="dv">7517520</span>,</span>
-<span id="cb247-48"><a href="backdoor.html#cb247-48" aria-hidden="true" tabindex="-1"></a>            <span class="dv">7517520</span>,</span>
-<span id="cb247-49"><a href="backdoor.html#cb247-49" aria-hidden="true" tabindex="-1"></a>            <span class="dv">48262955</span> <span class="sc">-</span> <span class="dv">2152660</span>,</span>
-<span id="cb247-50"><a href="backdoor.html#cb247-50" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2152660</span>))</span>
-<span id="cb247-51"><a href="backdoor.html#cb247-51" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>p <span class="ot">&lt;-</span> out<span class="sc">$</span>n <span class="sc">/</span> <span class="fu">sum</span>(out<span class="sc">$</span>n)  <span class="co"># compute proportion who died</span></span>
-<span id="cb247-52"><a href="backdoor.html#cb247-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=0)</span></span>
-<span id="cb247-53"><a href="backdoor.html#cb247-53" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> out[out<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">0</span>, ]</span>
-<span id="cb247-54"><a href="backdoor.html#cb247-54" aria-hidden="true" tabindex="-1"></a>  eH0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat0<span class="sc">$</span>n[dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">/</span> <span class="fu">sum</span>(dat0)</span>
-<span id="cb247-55"><a href="backdoor.html#cb247-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=1)</span></span>
-<span id="cb247-56"><a href="backdoor.html#cb247-56" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> out[out<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>, ]</span>
-<span id="cb247-57"><a href="backdoor.html#cb247-57" aria-hidden="true" tabindex="-1"></a>  eH1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat1<span class="sc">$</span>n[dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">/</span> <span class="fu">sum</span>(dat1)</span>
-<span id="cb247-58"><a href="backdoor.html#cb247-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H) for all participants</span></span>
-<span id="cb247-59"><a href="backdoor.html#cb247-59" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>eH <span class="ot">&lt;-</span> eH0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>H) <span class="sc">+</span> eH1 <span class="sc">*</span> out<span class="sc">$</span>H</span>
-<span id="cb247-60"><a href="backdoor.html#cb247-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equations</span></span>
-<span id="cb247-61"><a href="backdoor.html#cb247-61" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>s1 <span class="ot">&lt;-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> out<span class="sc">$</span>Y <span class="sc">/</span> out<span class="sc">$</span>eH</span>
-<span id="cb247-62"><a href="backdoor.html#cb247-62" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>s0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> out<span class="sc">$</span>Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>eH)</span>
-<span id="cb247-63"><a href="backdoor.html#cb247-63" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb247-64"><a href="backdoor.html#cb247-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the expected values of the potential outcomes</span></span>
-<span id="cb247-65"><a href="backdoor.html#cb247-65" aria-hidden="true" tabindex="-1"></a>  EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>s1 <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb247-66"><a href="backdoor.html#cb247-66" aria-hidden="true" tabindex="-1"></a>  EY0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span>s0 <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb247-67"><a href="backdoor.html#cb247-67" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb247-68"><a href="backdoor.html#cb247-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># include the ATT calculations</span></span>
-<span id="cb247-69"><a href="backdoor.html#cb247-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate P(T = 1)</span></span>
-<span id="cb247-70"><a href="backdoor.html#cb247-70" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb247-71"><a href="backdoor.html#cb247-71" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equation</span></span>
-<span id="cb247-72"><a href="backdoor.html#cb247-72" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> out<span class="sc">$</span>Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> out<span class="sc">$</span>eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> out<span class="sc">$</span>eH))</span>
-<span id="cb247-73"><a href="backdoor.html#cb247-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate E(Y0|T=1)</span></span>
-<span id="cb247-74"><a href="backdoor.html#cb247-74" aria-hidden="true" tabindex="-1"></a>  EY0T1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s <span class="sc">*</span> out<span class="sc">$</span>p)</span>
-<span id="cb247-75"><a href="backdoor.html#cb247-75" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb247-76"><a href="backdoor.html#cb247-76" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test results</span></span>
-<span id="cb247-77"><a href="backdoor.html#cb247-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(dplyr<span class="sc">::</span><span class="fu">near</span>(EY0, <span class="fl">0.0078399</span>, <span class="at">tol =</span> <span class="fl">1e-7</span>),</span>
-<span id="cb247-78"><a href="backdoor.html#cb247-78" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">near</span>(EY1, <span class="fl">0.0069952</span>, <span class="at">tol =</span> <span class="fl">1e-7</span>),</span>
-<span id="cb247-79"><a href="backdoor.html#cb247-79" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">near</span>(EY0T1, <span class="fl">0.010176</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>))</span>
-<span id="cb247-80"><a href="backdoor.html#cb247-80" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb247-81"><a href="backdoor.html#cb247-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># final output</span></span>
-<span id="cb247-82"><a href="backdoor.html#cb247-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> EY1, <span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> EY0, <span class="st">&quot;EY0T1&quot;</span> <span class="ot">=</span> EY0T1, <span class="st">&quot;data&quot;</span> <span class="ot">=</span> out)</span>
-<span id="cb247-83"><a href="backdoor.html#cb247-83" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="backdoor.html#cb248-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> <span class="fu">data_mortability_exp</span>()</span>
-<span id="cb248-2"><a href="backdoor.html#cb248-2" aria-hidden="true" tabindex="-1"></a>mortdat.out</span></code></pre></div>
-<pre><code>## $EY1
-## [1] 0.006995184
-## 
-## $EY0
+<p>See section 1.2.1 in chapter 1 for details on <code>data_mortability_exp</code>.</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="backdoor.html#cb247-1" aria-hidden="true" tabindex="-1"></a>mortdat <span class="ot">&lt;-</span> <span class="fu">data_mortability_exp</span>()</span></code></pre></div>
+<p>Compute the standardized estimates using exposure modeling. The author puts
+it with the data itself. We separate the data from the logic and faciliate
+code reuse and readability.</p>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="backdoor.html#cb248-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardizedaverages using exposure modeling</span></span>
+<span id="cb248-2"><a href="backdoor.html#cb248-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb248-3"><a href="backdoor.html#cb248-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardizedaverages using exposure modeling.</span></span>
+<span id="cb248-4"><a href="backdoor.html#cb248-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb248-5"><a href="backdoor.html#cb248-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardizedaverages using exposure modeling asdescribed in</span></span>
+<span id="cb248-6"><a href="backdoor.html#cb248-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; section 6.1.2</span></span>
+<span id="cb248-7"><a href="backdoor.html#cb248-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb248-8"><a href="backdoor.html#cb248-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Datafa=rame</span></span>
+<span id="cb248-9"><a href="backdoor.html#cb248-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula, must be in the format \code{Y ~ `T` + H}</span></span>
+<span id="cb248-10"><a href="backdoor.html#cb248-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param weights String. Name of the columns with the weights that will</span></span>
+<span id="cb248-11"><a href="backdoor.html#cb248-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; be used to create probabilities summing up to 1.</span></span>
+<span id="cb248-12"><a href="backdoor.html#cb248-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb248-13"><a href="backdoor.html#cb248-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List with 3 elements: EY1, EY0, EY0T1. See section 6.1.2</span></span>
+<span id="cb248-14"><a href="backdoor.html#cb248-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; for more details.</span></span>
+<span id="cb248-15"><a href="backdoor.html#cb248-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb248-16"><a href="backdoor.html#cb248-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb248-17"><a href="backdoor.html#cb248-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb248-18"><a href="backdoor.html#cb248-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb248-19"><a href="backdoor.html#cb248-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb248-20"><a href="backdoor.html#cb248-20" aria-hidden="true" tabindex="-1"></a>calc_exposure <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>) {</span>
+<span id="cb248-21"><a href="backdoor.html#cb248-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the response variable</span></span>
+<span id="cb248-22"><a href="backdoor.html#cb248-22" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">2</span>]])</span>
+<span id="cb248-23"><a href="backdoor.html#cb248-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the treatment variable</span></span>
+<span id="cb248-24"><a href="backdoor.html#cb248-24" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">1</span>]</span>
+<span id="cb248-25"><a href="backdoor.html#cb248-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the histoy variable</span></span>
+<span id="cb248-26"><a href="backdoor.html#cb248-26" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">2</span>]</span>
+<span id="cb248-27"><a href="backdoor.html#cb248-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb248-28"><a href="backdoor.html#cb248-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=0)</span></span>
+<span id="cb248-29"><a href="backdoor.html#cb248-29" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[data[, h] <span class="sc">==</span> <span class="dv">0</span>, ]</span>
+<span id="cb248-30"><a href="backdoor.html#cb248-30" aria-hidden="true" tabindex="-1"></a>  eH0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat0[dat0[, t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat0[, weights])</span>
+<span id="cb248-31"><a href="backdoor.html#cb248-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=1)</span></span>
+<span id="cb248-32"><a href="backdoor.html#cb248-32" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[data[, h] <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb248-33"><a href="backdoor.html#cb248-33" aria-hidden="true" tabindex="-1"></a>  eH1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat1[dat1[, t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat1[, weights])</span>
+<span id="cb248-34"><a href="backdoor.html#cb248-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H) for all participants</span></span>
+<span id="cb248-35"><a href="backdoor.html#cb248-35" aria-hidden="true" tabindex="-1"></a>  eH <span class="ot">&lt;-</span> eH0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, h]) <span class="sc">+</span> eH1 <span class="sc">*</span> data[, h]</span>
+<span id="cb248-36"><a href="backdoor.html#cb248-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equations</span></span>
+<span id="cb248-37"><a href="backdoor.html#cb248-37" aria-hidden="true" tabindex="-1"></a>  s1 <span class="ot">&lt;-</span> data[, t] <span class="sc">*</span> data[, y] <span class="sc">/</span> eH</span>
+<span id="cb248-38"><a href="backdoor.html#cb248-38" aria-hidden="true" tabindex="-1"></a>  s0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> data[, t]) <span class="sc">*</span> data[, y] <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> eH)</span>
+<span id="cb248-39"><a href="backdoor.html#cb248-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb248-40"><a href="backdoor.html#cb248-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the expected values of the potential outcomes</span></span>
+<span id="cb248-41"><a href="backdoor.html#cb248-41" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> data[, weights] <span class="sc">/</span> <span class="fu">sum</span>(data[, weights])  <span class="co"># the probabilites</span></span>
+<span id="cb248-42"><a href="backdoor.html#cb248-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(probs) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb248-43"><a href="backdoor.html#cb248-43" aria-hidden="true" tabindex="-1"></a>  EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s1 <span class="sc">*</span> probs)</span>
+<span id="cb248-44"><a href="backdoor.html#cb248-44" aria-hidden="true" tabindex="-1"></a>  EY0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s0 <span class="sc">*</span> probs)</span>
+<span id="cb248-45"><a href="backdoor.html#cb248-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb248-46"><a href="backdoor.html#cb248-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ATT calculations</span></span>
+<span id="cb248-47"><a href="backdoor.html#cb248-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate P(T = 1)</span></span>
+<span id="cb248-48"><a href="backdoor.html#cb248-48" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(data[, t] <span class="sc">*</span> probs)</span>
+<span id="cb248-49"><a href="backdoor.html#cb248-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equation</span></span>
+<span id="cb248-50"><a href="backdoor.html#cb248-50" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[, y] <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, t]) <span class="sc">*</span> eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> eH))</span>
+<span id="cb248-51"><a href="backdoor.html#cb248-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate E(Y0|T=1)</span></span>
+<span id="cb248-52"><a href="backdoor.html#cb248-52" aria-hidden="true" tabindex="-1"></a>  EY0T1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s <span class="sc">*</span> probs)</span>
+<span id="cb248-53"><a href="backdoor.html#cb248-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb248-54"><a href="backdoor.html#cb248-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> EY1, <span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> EY0, <span class="st">&quot;EY0T1&quot;</span> <span class="ot">=</span> EY0T1)</span>
+<span id="cb248-55"><a href="backdoor.html#cb248-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="backdoor.html#cb249-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> <span class="fu">calc_exposure</span>(mortdat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb249-2"><a href="backdoor.html#cb249-2" aria-hidden="true" tabindex="-1"></a>mortdat.out[<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>)]</span></code></pre></div>
+<pre><code>## $EY0
 ## [1] 0.007839904
 ## 
-## $EY0T1
-## [1] 0.01017591
-## 
-## $data
-##   H T Y          n            p        eH       s1       s0
-## 1 0 0 0 1294335013 0.7350658945 0.1787235 0.000000 0.000000
-## 2 0 0 1    2923480 0.0016602737 0.1787235 0.000000 1.217617
-## 3 0 1 0  281548887 0.1598944496 0.1787235 0.000000 0.000000
-## 4 0 1 1     756340 0.0004295331 0.1787235 5.595234 0.000000
-## 5 1 0 0  125497959 0.0712715553 0.2662366 0.000000 0.000000
-## 6 1 0 1    7517520 0.0042692753 0.2662366 0.000000 1.362837
-## 7 1 1 0   46110295 0.0261865011 0.2662366 0.000000 0.000000
-## 8 1 1 1    2152660 0.0012225173 0.2662366 3.756058 0.000000</code></pre>
+## $EY1
+## [1] 0.006995183</code></pre>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="backdoor.html#cb251-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify with the author&#39;s</span></span>
+<span id="cb251-2"><a href="backdoor.html#cb251-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0 <span class="sc">-</span> <span class="fl">0.0078399</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>,</span>
+<span id="cb251-3"><a href="backdoor.html#cb251-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY1 <span class="sc">-</span> <span class="fl">0.0069952</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>)</span></code></pre></div>
 <div id="average-effect-of-treatment-on-the-treated-1" class="section level3" number="6.2.1">
-<h3><span class="header-section-number">6.2.1</span> Average Effect of treatment on the Treated</h3>
-<p>See previous section for calculation with mortality data</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="backdoor.html#cb250-1" aria-hidden="true" tabindex="-1"></a>mortdat.out<span class="sc">$</span>EY0T1</span></code></pre></div>
-<pre><code>## [1] 0.01017591</code></pre>
+<h3><span class="header-section-number">6.2.1</span> Average Effect of Treatment on the Treated</h3>
+<p>See previous section for calculation with mortality data for the function
+<code>calc_exposure</code>.</p>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="backdoor.html#cb252-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
+<pre><code>## [1] 0.01017592</code></pre>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="backdoor.html#cb254-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0T1 <span class="sc">-</span> <span class="fl">0.010176</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
+</div>
+<div id="standardization-with-a-parametric-exposure-model" class="section level3" number="6.2.2">
+<h3><span class="header-section-number">6.2.2</span> Standardization with a Parametric Exposure Model</h3>
 
 </div>
 </div>
