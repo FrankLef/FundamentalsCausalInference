@@ -43,8 +43,7 @@ bootstandout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     EY1 <- mean(EYhat1)
     
     # estimate the effect measures
-    # estimate the effect measures
-    out <- calc_effect_measures(val0 = EY0, val1 = EY1, log = TRUE)
+    out <- calc_effect_measures(val0 = EY0, val1 = EY1)
     
     c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
   }

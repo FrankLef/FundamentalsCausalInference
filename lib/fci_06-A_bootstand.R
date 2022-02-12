@@ -45,7 +45,7 @@ bootstand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
     EY1 <- coefs[x0] + coefs[t] + coefs[h] * EH  + coefs[th] * EH
 
     # estimate the effect measures
-    out <- calc_effect_measures(val0 = EY0, val1 = EY1, log = TRUE)
+    out <- calc_effect_measures(val0 = EY0, val1 = EY1)
     
     c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
   }

@@ -42,7 +42,7 @@ bootc <- function(dat, formula = Y ~ `T` + A + H,
     p0 <- plogis(xbeta0)  # plogis is the inverse of logit
     p1 <- plogis(xbeta1)  # plogis is the inverse of logit
     # calculate effect measures
-    out <- calc_effect_measures(val0 = p0, val1 = p1, log = TRUE)
+    out <- calc_effect_measures(val0 = p0, val1 = p1)
     
     out <- c("P0" = unname(p0), "P1" = unname(p1), out)
     out

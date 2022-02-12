@@ -6,9 +6,9 @@
 #'
 #' @param val0 Numeric, base value
 #' @param val1 Numeric, treated value
-#' @param log If FALSE (default) compute the effect measures on the natural 
-#' scale. If TRUE compute the effect measures on the log scale. The risk
-#' difference measure (RD) is always on the natural scale.
+#' @param log If TRUE (default) compute the effect measures on the log scale. 
+#' If FALSE compute the effect measures on the natural scale.
+#' The risk difference measure (RD) is always on the natural scale.
 #'
 #' @return Named numeric vector.
 #' @export
@@ -16,7 +16,7 @@
 #' @examples
 #' \dontrun{
 #' }
-calc_effect_measures <- function(val0, val1, log = FALSE) {
+calc_effect_measures <- function(val0, val1, log = TRUE) {
   
   # make sure the values are unnamed
   val0 <- unname(val0)
@@ -28,28 +28,28 @@ calc_effect_measures <- function(val0, val1, log = FALSE) {
   rr <- NA_real_  # Risk Ratio
   rrstar <- NA_real_  # Other Risk Ratio
   or <- NA_real_  # Odds Ratio
-  if (!log) {
-    if (val0 != 0) {
-      rr <- val1 / val0
-    }
-    if (0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1) {
-      rrstar <- (1 - val0) / (1 - val1)
-    }
-    if (0 < val0 & val0 < 1 & 0 < val1 & val1 < 1) {
-      or <- (val1 / (1 - val1)) / (val0 / (1 - val0))
-    }
-    out <- c("RD" = rd, "RR" = rr, "RR*" = rrstar, "OR" = or)
-  } else {
+  if (log) {
     if (val0 != 0 & val1 != 0) {
       rr <- log(val1) - log(val0)
-    }
+      }
     if (0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1) {
       rrstar <- log(1 - val0) - log(1 - val1)
-    }
+      }
     if (0 < val0 & val0 < 1 & 0 < val1 & val1 < 1) {
       or <- log(val1 / (1 - val1)) - log(val0 / (1 - val0))
-    }
+      }
     out <- c("RD" = rd, "logRR" = rr, "logRR*" = rrstar, "logOR" = or)
+  } else {
+    if (val0 != 0) {
+      rr <- val1 / val0
+      }
+    if (0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1) {
+      rrstar <- (1 - val0) / (1 - val1)
+      }
+    if (0 < val0 & val0 < 1 & 0 < val1 & val1 < 1) {
+      or <- (val1 / (1 - val1)) / (val0 / (1 - val0))
+      }
+    out <- c("RD" = rd, "RR" = rr, "RR*" = rrstar, "OR" = or)
   }
   
   # output only the measures that were calculated
