@@ -31,7 +31,7 @@ bootstand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
-    # marginal expected value of H
+    # marginal expected value of sH
     if (!att) {
       EH <- mean(dat[, h])
     } else {
@@ -44,13 +44,10 @@ bootstand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
     EY0 <- coefs[x0] + coefs[h] * EH
     EY1 <- coefs[x0] + coefs[t] + coefs[h] * EH  + coefs[th] * EH
 
-    # return the effect measures
+    # estimate the effect measures
     out <- calc_effect_measures(val0 = EY0, val1 = EY1, log = TRUE)
     
-    val0 <- EY0
-    val1 <- EY1
-    out <- c("EY0" = unname(EY0), 
-             "EY1" = unname(EY1), out)
+    c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
   }
   
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
