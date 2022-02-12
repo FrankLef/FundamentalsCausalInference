@@ -14,42 +14,47 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' }
+#' val0 <- 0.25
+#' val1 <- 0.5
+#' when log is required, we use default value
+#' out <- calc_effect_measures(val0, val1)
+#' stopifnot(all(is.finite(out)))
+#' when natural scale is required, we use log = FALSE
+#' out <- calc_effect_measures(val0, val1, log = FALSE)
+#' stopifnot(all(is.finite(out)))
 calc_effect_measures <- function(val0, val1, log = TRUE) {
+  # both values must be finite
+  stopifnot(is.finite(val0), is.finite(val1))
   
   # make sure the values are unnamed
   val0 <- unname(val0)
   val1 <- unname(val1)
   
-  # Risk Difference
-  rd <- val1 - val0
+  # only val0 required not to be zero
+  va0_not_zero <- !dplyr::near(val0, 0)
+  # either values cannot be zero
+  both_not_zero <- va0_not_zero & !dplyr::near(val1, 0)
+  # almost positivity assumtion: both values must be >= zero but < 1
+  both_gte_zero_lt_1 <- 0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1
+  # the positivity assumption is required for both values
+  is_positivity <- 0 < val0 & val0 < 1 & 0 < val1 & val1 < 1
   
-  rr <- NA_real_  # Risk Ratio
-  rrstar <- NA_real_  # Other Risk Ratio
-  or <- NA_real_  # Odds Ratio
+  # Risk Difference
+  RD <- val1 - val0
+  
+  RR <- NA_real_  # Risk Ratio
+  RRstar <- NA_real_  # Other Risk Ratio
+  OR <- NA_real_  # Odds Ratio
   if (log) {
-    if (val0 != 0 & val1 != 0) {
-      rr <- log(val1) - log(val0)
-      }
-    if (0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1) {
-      rrstar <- log(1 - val0) - log(1 - val1)
-      }
-    if (0 < val0 & val0 < 1 & 0 < val1 & val1 < 1) {
-      or <- log(val1 / (1 - val1)) - log(val0 / (1 - val0))
-      }
-    out <- c("RD" = rd, "logRR" = rr, "logRR*" = rrstar, "logOR" = or)
+    if (both_not_zero) RR <- log(val1) - log(val0)
+    if (both_gte_zero_lt_1) RRstar <- log(1 - val0) - log(1 - val1)
+    if (is_positivity) OR <- log(val1 / (1 - val1)) - log(val0 / (1 - val0))
+    out <- c("RD" = RD, "logRR" = RR, "logRR*" = RRstar, "logOR" = OR)
   } else {
-    if (val0 != 0) {
-      rr <- val1 / val0
-      }
-    if (0 <= val0 & val0 < 1 & 0 <= val1 & val1 < 1) {
-      rrstar <- (1 - val0) / (1 - val1)
-      }
-    if (0 < val0 & val0 < 1 & 0 < val1 & val1 < 1) {
-      or <- (val1 / (1 - val1)) / (val0 / (1 - val0))
-      }
-    out <- c("RD" = rd, "RR" = rr, "RR*" = rrstar, "OR" = or)
+    if (va0_not_zero) RR <- val1 / val0
+    if (both_gte_zero_lt_1) RRstar <- (1 - val0) / (1 - val1)
+    if (is_positivity) OR <- (val1 / (1 - val1)) / (val0 / (1 - val0))
+    out <- c("RD" = RD, "RR" = RR, "RR*" = RRstar, "OR" = OR)
   }
   
   # output only the measures that were calculated
