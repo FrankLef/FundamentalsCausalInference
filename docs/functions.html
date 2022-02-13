@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-12" />
+<meta name="date" content="2022-02-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -542,28 +542,45 @@ functions.</p>
 <span id="cb256-156"><a href="functions.html#cb256-156" aria-hidden="true" tabindex="-1"></a>  })</span>
 <span id="cb256-157"><a href="functions.html#cb256-157" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The file <code>gt_utils</code> includes utility functions to formattables.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="functions.html#cb257-1" aria-hidden="true" tabindex="-1"></a>gt_basic <span class="ot">&lt;-</span> <span class="cf">function</span>(tbl, title, subtitle) {</span>
-<span id="cb257-2"><a href="functions.html#cb257-2" aria-hidden="true" tabindex="-1"></a>  tbl <span class="sc">%&gt;%</span></span>
-<span id="cb257-3"><a href="functions.html#cb257-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_header</span>(</span>
-<span id="cb257-4"><a href="functions.html#cb257-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;strong&gt;&quot;</span>, title, <span class="st">&quot;&lt;/strong&gt;&quot;</span>)),</span>
-<span id="cb257-5"><a href="functions.html#cb257-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;strong&gt;&quot;</span>, subtitle, <span class="st">&quot;&lt;/strong&gt;&quot;</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb257-6"><a href="functions.html#cb257-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="sc">!</span><span class="fu">matches</span>(<span class="st">&quot;name&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb257-7"><a href="functions.html#cb257-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">opt_row_striping</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb257-8"><a href="functions.html#cb257-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(</span>
-<span id="cb257-9"><a href="functions.html#cb257-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>),</span>
-<span id="cb257-10"><a href="functions.html#cb257-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">&quot;title&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb257-11"><a href="functions.html#cb257-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(</span>
-<span id="cb257-12"><a href="functions.html#cb257-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>),</span>
-<span id="cb257-13"><a href="functions.html#cb257-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">&quot;subtitle&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb257-14"><a href="functions.html#cb257-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_source_note</span>(</span>
-<span id="cb257-15"><a href="functions.html#cb257-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">source_note =</span> <span class="st">&quot;Fundamentals of Causal Inference, Babette A. Brumback, 2022&quot;</span></span>
-<span id="cb257-16"><a href="functions.html#cb257-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb257-17"><a href="functions.html#cb257-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_options</span>(</span>
-<span id="cb257-18"><a href="functions.html#cb257-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.title.font.weight =</span> <span class="st">&quot;bold&quot;</span>,</span>
-<span id="cb257-19"><a href="functions.html#cb257-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.subtitle.font.weight =</span> <span class="st">&quot;bold&quot;</span>,</span>
-<span id="cb257-20"><a href="functions.html#cb257-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.background.color =</span> <span class="st">&quot;gainsboro&quot;</span>,</span>
-<span id="cb257-21"><a href="functions.html#cb257-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">column_labels.font.weight =</span> <span class="st">&quot;bold&quot;</span>)</span>
-<span id="cb257-22"><a href="functions.html#cb257-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="functions.html#cb257-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Basic format of table created with \code{gt}</span></span>
+<span id="cb257-2"><a href="functions.html#cb257-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb257-3"><a href="functions.html#cb257-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Basic format of table created with \code{gt}.</span></span>
+<span id="cb257-4"><a href="functions.html#cb257-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb257-5"><a href="functions.html#cb257-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Format of table created with \code{gt} for the heading, row stripping,</span></span>
+<span id="cb257-6"><a href="functions.html#cb257-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; source note, etc.</span></span>
+<span id="cb257-7"><a href="functions.html#cb257-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb257-8"><a href="functions.html#cb257-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param tbl Object of class \code{gt_tbl}.</span></span>
+<span id="cb257-9"><a href="functions.html#cb257-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param title String. Table title.</span></span>
+<span id="cb257-10"><a href="functions.html#cb257-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param subtitle String. Table subtitle.</span></span>
+<span id="cb257-11"><a href="functions.html#cb257-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb257-12"><a href="functions.html#cb257-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Formatted \code{gt_tbl} object.</span></span>
+<span id="cb257-13"><a href="functions.html#cb257-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb257-14"><a href="functions.html#cb257-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb257-15"><a href="functions.html#cb257-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb257-16"><a href="functions.html#cb257-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb257-17"><a href="functions.html#cb257-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb257-18"><a href="functions.html#cb257-18" aria-hidden="true" tabindex="-1"></a>gt_basic <span class="ot">&lt;-</span> <span class="cf">function</span>(tbl, title, subtitle) {</span>
+<span id="cb257-19"><a href="functions.html#cb257-19" aria-hidden="true" tabindex="-1"></a>  tbl <span class="sc">%&gt;%</span></span>
+<span id="cb257-20"><a href="functions.html#cb257-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_header</span>(</span>
+<span id="cb257-21"><a href="functions.html#cb257-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;strong&gt;&quot;</span>, title, <span class="st">&quot;&lt;/strong&gt;&quot;</span>)),</span>
+<span id="cb257-22"><a href="functions.html#cb257-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="st">&quot;&lt;strong&gt;&quot;</span>, subtitle, <span class="st">&quot;&lt;/strong&gt;&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb257-23"><a href="functions.html#cb257-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="sc">!</span><span class="fu">matches</span>(<span class="st">&quot;name&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb257-24"><a href="functions.html#cb257-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">opt_row_striping</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb257-25"><a href="functions.html#cb257-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(</span>
+<span id="cb257-26"><a href="functions.html#cb257-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>),</span>
+<span id="cb257-27"><a href="functions.html#cb257-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">&quot;title&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb257-28"><a href="functions.html#cb257-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(</span>
+<span id="cb257-29"><a href="functions.html#cb257-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>),</span>
+<span id="cb257-30"><a href="functions.html#cb257-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">&quot;subtitle&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb257-31"><a href="functions.html#cb257-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_source_note</span>(</span>
+<span id="cb257-32"><a href="functions.html#cb257-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">source_note =</span> <span class="st">&quot;Fundamentals of Causal Inference, Babette A. Brumback, 2022&quot;</span></span>
+<span id="cb257-33"><a href="functions.html#cb257-33" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb257-34"><a href="functions.html#cb257-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_options</span>(</span>
+<span id="cb257-35"><a href="functions.html#cb257-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.title.font.weight =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb257-36"><a href="functions.html#cb257-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.subtitle.font.weight =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb257-37"><a href="functions.html#cb257-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.background.color =</span> <span class="st">&quot;gainsboro&quot;</span>,</span>
+<span id="cb257-38"><a href="functions.html#cb257-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">column_labels.font.weight =</span> <span class="st">&quot;bold&quot;</span>)</span>
+<span id="cb257-39"><a href="functions.html#cb257-39" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="chapter-3-1" class="section level2" number="9.2">
 <h2><span class="header-section-number">C.2</span> Chapter 3</h2>
@@ -614,47 +631,7 @@ functions.</p>
 <span id="cb258-43"><a href="functions.html#cb258-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">footnote =</span> ci_label,</span>
 <span id="cb258-44"><a href="functions.html#cb258-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="st">&quot;ci&quot;</span>)</span>
 <span id="cb258-45"><a href="functions.html#cb258-45" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb258-46"><a href="functions.html#cb258-46" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-47"><a href="functions.html#cb258-47" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-48"><a href="functions.html#cb258-48" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-49"><a href="functions.html#cb258-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># df %&gt;%</span></span>
-<span id="cb258-50"><a href="functions.html#cb258-50" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   select(name, est, lci, uci) %&gt;%</span></span>
-<span id="cb258-51"><a href="functions.html#cb258-51" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   mutate(est = round(est, digits),</span></span>
-<span id="cb258-52"><a href="functions.html#cb258-52" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          lci = round(lci, digits),</span></span>
-<span id="cb258-53"><a href="functions.html#cb258-53" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          uci = round(uci, digits),</span></span>
-<span id="cb258-54"><a href="functions.html#cb258-54" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          ci = paste0(&quot;(&quot;, lci, &quot;, &quot;, uci, &quot;)&quot;),</span></span>
-<span id="cb258-55"><a href="functions.html#cb258-55" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          lci = NULL,</span></span>
-<span id="cb258-56"><a href="functions.html#cb258-56" aria-hidden="true" tabindex="-1"></a>  <span class="co">#          uci = NULL) %&gt;%</span></span>
-<span id="cb258-57"><a href="functions.html#cb258-57" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   gt() %&gt;%</span></span>
-<span id="cb258-58"><a href="functions.html#cb258-58" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_header(</span></span>
-<span id="cb258-59"><a href="functions.html#cb258-59" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     title = html(paste0(&quot;&lt;strong&gt;&quot;, title, &quot;&lt;/strong&gt;&quot;)),</span></span>
-<span id="cb258-60"><a href="functions.html#cb258-60" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     subtitle = html(paste0(&quot;&lt;strong&gt;&quot;, subtitle, &quot;&lt;/strong&gt;&quot;))</span></span>
-<span id="cb258-61"><a href="functions.html#cb258-61" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   ) %&gt;%</span></span>
-<span id="cb258-62"><a href="functions.html#cb258-62" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   cols_align(align = &quot;center&quot;, columns = !matches(&quot;name&quot;)) %&gt;% </span></span>
-<span id="cb258-63"><a href="functions.html#cb258-63" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   cols_label(</span></span>
-<span id="cb258-64"><a href="functions.html#cb258-64" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     name = &quot;Measure&quot;,</span></span>
-<span id="cb258-65"><a href="functions.html#cb258-65" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     est = &quot;Estimate&quot;,</span></span>
-<span id="cb258-66"><a href="functions.html#cb258-66" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     ci = &quot;CI&quot;) %&gt;%</span></span>
-<span id="cb258-67"><a href="functions.html#cb258-67" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_style(</span></span>
-<span id="cb258-68"><a href="functions.html#cb258-68" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     style = cell_text(color = &quot;midnightblue&quot;),</span></span>
-<span id="cb258-69"><a href="functions.html#cb258-69" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     locations = cells_title(groups = &quot;title&quot;)</span></span>
-<span id="cb258-70"><a href="functions.html#cb258-70" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   ) %&gt;%</span></span>
-<span id="cb258-71"><a href="functions.html#cb258-71" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_style(</span></span>
-<span id="cb258-72"><a href="functions.html#cb258-72" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     style = cell_text(color = &quot;midnightblue&quot;),</span></span>
-<span id="cb258-73"><a href="functions.html#cb258-73" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     locations = cells_title(groups = &quot;subtitle&quot;)</span></span>
-<span id="cb258-74"><a href="functions.html#cb258-74" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   ) %&gt;%</span></span>
-<span id="cb258-75"><a href="functions.html#cb258-75" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   opt_row_striping() %&gt;%</span></span>
-<span id="cb258-76"><a href="functions.html#cb258-76" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_footnote(</span></span>
-<span id="cb258-77"><a href="functions.html#cb258-77" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     footnote = ci_label,</span></span>
-<span id="cb258-78"><a href="functions.html#cb258-78" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     locations = cells_column_labels(columns = ci)</span></span>
-<span id="cb258-79"><a href="functions.html#cb258-79" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     ) %&gt;%</span></span>
-<span id="cb258-80"><a href="functions.html#cb258-80" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_source_note(</span></span>
-<span id="cb258-81"><a href="functions.html#cb258-81" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     source_note = &quot;Fundamentals of Causal Inference, Babette A. Brumback, 2022&quot;</span></span>
-<span id="cb258-82"><a href="functions.html#cb258-82" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     ) %&gt;%</span></span>
-<span id="cb258-83"><a href="functions.html#cb258-83" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   tab_options(</span></span>
-<span id="cb258-84"><a href="functions.html#cb258-84" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     heading.background.color = &quot;gainsboro&quot;,</span></span>
-<span id="cb258-85"><a href="functions.html#cb258-85" aria-hidden="true" tabindex="-1"></a>  <span class="co">#     column_labels.font.weight = &quot;bold&quot;)</span></span>
-<span id="cb258-86"><a href="functions.html#cb258-86" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb258-46"><a href="functions.html#cb258-46" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
 <div id="chapter-4-2" class="section level2" number="9.3">
@@ -1215,19 +1192,9 @@ functions.</p>
 <span id="cb265-19"><a href="functions.html#cb265-19" aria-hidden="true" tabindex="-1"></a>gt_probs <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">digits =</span> <span class="dv">3</span>, title, subtitle) {</span>
 <span id="cb265-20"><a href="functions.html#cb265-20" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span></span>
 <span id="cb265-21"><a href="functions.html#cb265-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb265-22"><a href="functions.html#cb265-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_header</span>(</span>
-<span id="cb265-23"><a href="functions.html#cb265-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">md</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, title, <span class="st">&quot;**&quot;</span>)),</span>
-<span id="cb265-24"><a href="functions.html#cb265-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="fu">paste0</span>(<span class="st">&quot;**&quot;</span>, subtitle, <span class="st">&quot;**&quot;</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb265-25"><a href="functions.html#cb265-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="st">&quot;prob&quot;</span>, <span class="at">decimals =</span> digits) <span class="sc">%&gt;%</span></span>
-<span id="cb265-26"><a href="functions.html#cb265-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">&quot;center&quot;</span>, <span class="at">columns =</span> <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb265-27"><a href="functions.html#cb265-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">opt_row_striping</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb265-28"><a href="functions.html#cb265-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_source_note</span>(</span>
-<span id="cb265-29"><a href="functions.html#cb265-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">source_note =</span> <span class="st">&quot;Fundamentals of Causal Inference, Babette A. Brumback, 2022&quot;</span></span>
-<span id="cb265-30"><a href="functions.html#cb265-30" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb265-31"><a href="functions.html#cb265-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_options</span>(</span>
-<span id="cb265-32"><a href="functions.html#cb265-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">heading.background.color =</span> <span class="st">&quot;gainsboro&quot;</span>,</span>
-<span id="cb265-33"><a href="functions.html#cb265-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">column_labels.font.weight =</span> <span class="st">&quot;bold&quot;</span>)</span>
-<span id="cb265-34"><a href="functions.html#cb265-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb265-22"><a href="functions.html#cb265-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gt_basic</span>(title, subtitle) <span class="sc">%&gt;%</span></span>
+<span id="cb265-23"><a href="functions.html#cb265-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="st">&quot;prob&quot;</span>, <span class="at">decimals =</span> digits)</span>
+<span id="cb265-24"><a href="functions.html#cb265-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 </div>

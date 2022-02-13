@@ -1,3 +1,20 @@
+#' Basic format of table created with \code{gt}
+#' 
+#' Basic format of table created with \code{gt}.
+#' 
+#' Format of table created with \code{gt} for the heading, row stripping,
+#' source note, etc.
+#'
+#' @param tbl Object of class \code{gt_tbl}.
+#' @param title String. Table title.
+#' @param subtitle String. Table subtitle.
+#'
+#' @return Formatted \code{gt_tbl} object.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' }
 gt_basic <- function(tbl, title, subtitle) {
   tbl %>%
     tab_header(

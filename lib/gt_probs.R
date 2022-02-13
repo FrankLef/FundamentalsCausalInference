@@ -19,16 +19,6 @@
 gt_probs <- function(df, digits = 3, title, subtitle) {
   df %>%
     gt() %>%
-    tab_header(
-      title = md(paste0("**", title, "**")),
-      subtitle = md(paste0("**", subtitle, "**"))) %>%
-    fmt_number(columns = "prob", decimals = digits) %>%
-    cols_align(align = "center", columns = everything()) %>% 
-    opt_row_striping() %>%
-    tab_source_note(
-      source_note = "Fundamentals of Causal Inference, Babette A. Brumback, 2022"
-      ) %>%
-    tab_options(
-      heading.background.color = "gainsboro",
-      column_labels.font.weight = "bold")
+    gt_basic(title, subtitle) %>%
+    fmt_number(columns = "prob", decimals = digits)
 }
