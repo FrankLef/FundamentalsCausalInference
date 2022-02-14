@@ -44,8 +44,7 @@ bootc <- function(dat, formula = Y ~ `T` + A + H,
     # calculate effect measures
     out <- calc_effect_measures(val0 = p0, val1 = p1)
     
-    out <- c("P0" = unname(p0), "P1" = unname(p1), out)
-    out
+    c("P0" = unname(p0), "P1" = unname(p1), out)
   }
   
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)

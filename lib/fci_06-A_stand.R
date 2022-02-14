@@ -14,7 +14,7 @@
 #' @conf Confidence interval
 #'
 #' @return Dataframe of estimates
-bootstand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
+stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
                       R = 1000, conf = 0.95) {
   
   # the name of the intercept variable used by lm

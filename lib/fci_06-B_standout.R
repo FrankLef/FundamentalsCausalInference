@@ -13,7 +13,7 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-bootstandout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   # name of the treatment variable
   t <- all.vars(formula[[3]])[1]
   

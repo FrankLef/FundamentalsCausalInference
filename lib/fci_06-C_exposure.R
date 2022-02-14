@@ -1,11 +1,11 @@
-#' Compute standardizedaverages using exposure modeling
+#' Compute standardized averages using exposure modeling
 #' 
-#' Compute standardizedaverages using exposure modeling.
+#' Compute standardized averages using exposure modeling.
 #' 
-#' Compute standardizedaverages using exposure modeling asdescribed in
+#' Compute standardized averages using exposure modeling as described in
 #' section 6.1.2
 #'
-#' @param data Datafa=rame
+#' @param data Dataframe
 #' @param formula Formula, must be in the format \code{Y ~ `T` + H}
 #' @param weights String. Name of the columns with the weights that will
 #' be used to create probabilities summing up to 1.

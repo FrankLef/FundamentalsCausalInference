@@ -30,17 +30,19 @@ source(file = file.path(dir_lib, "boot_utils.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_utils.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-A_bootstand.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-B_bootstandout.R"), 
+source(file = file.path(dir_lib, "gt_measures.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_01-B_doublewhatifsim.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures.R"), 
+source(file = file.path(dir_lib, "fci_06-A_stand.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "calc_exposure.R"), 
+source(file = file.path(dir_lib, "fci_06-B_standout.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-C_exposure.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-D_standexp.R"), 
        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
@@ -76,7 +78,7 @@ $$
 We use `R` to compute the standardized estimates with the following script
 
 
-```{r echo=FALSE, file="lib\\fci_06-A_bootstand.R"}
+```{r echo=FALSE, file="lib\\fci_06-A_stand.R"}
 
 ```
 
@@ -89,7 +91,7 @@ and for the What-If? study this gives
 
 
 ```{r}
-whatif.out <- bootstand(whatifdat, formula = Y ~ A + H + A*H)
+whatif.out <- stand(whatifdat, formula = Y ~ A + H + A*H)
 whatif.out
 ```
 
@@ -126,7 +128,7 @@ dataDoubleWhatIf <- doublewhatifsim()
 
 
 ```{r}
-doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
+doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
 ```
 
 
@@ -143,7 +145,7 @@ gt_measures(doublewhatif.out,
 
 
 ```{r}
-doublewhatif.out <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
+doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
 ```
 
 
@@ -167,7 +169,7 @@ argument `att`.
 
 
 ```{r}
-whatif.att <- bootstand(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
+whatif.att <- stand(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
 ```
 
 and we compare with the author's
@@ -193,7 +195,7 @@ gt_measures(whatif.att,
 
 
 ```{r}
-doublewhatif.att <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0,
+doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0,
                               att = TRUE)
 ```
 
@@ -208,7 +210,7 @@ gt_measures(doublewhatif.att,
 
 
 ```{r}
-doublewhatif.att <- bootstand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0,
+doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0,
                               att = TRUE)
 ```
 
@@ -223,7 +225,7 @@ gt_measures(doublewhatif.att,
 
 For a the parametric outome model the following script is used
 
-```{r echo=FALSE, file="lib\\fci_06-B_bootstandout.R"}
+```{r echo=FALSE, file="lib\\fci_06-B_standout.R"}
 
 ```
 
@@ -232,7 +234,7 @@ For a the parametric outome model the following script is used
 ##### `whatif2dat` {-}
 
 ```{r}
-whatif2.out <- bootstandout(whatif2dat, formula = vl4 ~ A + lvlcont0)
+whatif2.out <- standout(whatif2dat, formula = vl4 ~ A + lvlcont0)
 # whatif2.out
 ```
 
@@ -252,7 +254,7 @@ and the results are presented in table 6.1
 ```{r}
 gt_measures(whatif2.out, 
             title = "Table 6.7", 
-            subtitle = "What-If Study<br>Outome Model Standardization with H = lvlcont0")
+            subtitle = "What-If Study<br>Outome-model Standardization with <em>H = lvlcont0</ems>")
 ```
 
 ##### `gss` {-}
@@ -265,7 +267,7 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 
 
 ```{r}
-gssrcc.out <- bootstandout(gssrcc, 
+gssrcc.out <- standout(gssrcc, 
                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
 # gssrcc.out
 ```
@@ -281,13 +283,13 @@ comp <- data.frame(
 stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 ```
 
-and the results are presented in table 6.1
+and the results are presented in table 6.8
 
 ```{r}
 gt_measures(whatif2.out, 
             title = "Table 6.8", 
             subtitle = "Effect of <em>More than High School Education</em> on <em>
-            Voting for Trump</em><br>Outome Model Standardization")
+            Voting for Trump</em><br>Outome-model Standardization")
 ```
 
 ## Standardization via Exposure Modeling
@@ -304,7 +306,7 @@ Compute the standardized estimates using exposure modeling. The author puts
 it with the data itself.  We separate the data from the logic and faciliate
 code reuse and readability.
 
-```{r echo=TRUE, file="lib\\calc_exposure.R"}
+```{r echo=TRUE, file="lib\\fci_06-C_exposure.R"}
 
 ```
 
@@ -332,4 +334,23 @@ stopifnot(abs(mortdat.out$EY0T1 - 0.010176) < 1e-6)
 
 ### Standardization with a Parametric Exposure Model
 
+The function `standexp` used to standardized with a parametric exposure
+model
 
+```{r file="lib\\fci_06-D_standexp.R"}
+
+```
+
+
+```{r}
+whatif2.exp <- standexp(whatif2dat, formula = vl4 ~ A + lvlcont0)
+# whatif2.exp
+```
+
+and the results are presented in table 6.9
+
+```{r}
+gt_measures(whatif2.exp, 
+            title = "Table 6.9", 
+            subtitle = "What-If Study<br>Exposure-model Standardization <em>with H = lvlcont0</em>")
+```
