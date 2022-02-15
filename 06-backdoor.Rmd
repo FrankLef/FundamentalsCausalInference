@@ -8,6 +8,7 @@ library(dagitty)
 library(ggplot2)
 library(ggdag)
 library(gt)
+library(geepack)
 ```
 
 
@@ -44,6 +45,8 @@ source(file = file.path(dir_lib, "fci_06-C_exposure.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-D_standexp.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
+       local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs06, "whatif2dat.RData"))
@@ -78,7 +81,7 @@ $$
 We use `R` to compute the standardized estimates with the following script
 
 
-```{r echo=FALSE, file="lib\\fci_06-A_stand.R"}
+```{r echo=TRUE, file="lib\\fci_06-A_stand.R"}
 
 ```
 
@@ -135,7 +138,7 @@ doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
 ```{r}
 gt_measures(doublewhatif.out, 
             title = "Table 6.2", 
-            subtitle = "Double What-If Study<br>Standardized Estimates with H = AD0")
+            subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = AD0</em>")
 ```
 
 
@@ -152,7 +155,7 @@ doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
 ```{r}
 gt_measures(doublewhatif.out, 
             title = "Table 6.3", 
-            subtitle = "Double What-If Study<br>Standardized Estimates with H = VL0")
+            subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = VL0</em>")
 ```
 
 
@@ -160,12 +163,11 @@ gt_measures(doublewhatif.out,
 
 
 The function `bootstandatt` described in section 6.1.1 is not necessary,
-see the function `bootstand` which can do it with the addition of the
-argument `att`.
+see the function `bootstand` in the prious section which can do it with the 
+addition of the argument `att`.
 
-#### Examples {-}
 
-##### What-if? Study {-}
+#### What-if? Study {-}
 
 
 ```{r}
@@ -190,7 +192,7 @@ gt_measures(whatif.att,
             title = "Table 6.4", 
             subtitle = "What-If Study<br>Standardized ATT estimates")
 ```
-##### Double What-if? Study {-}
+#### Double What-if? Study {-}
 
 
 
@@ -203,7 +205,7 @@ doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0,
 ```{r}
 gt_measures(doublewhatif.att, 
             title = "Table 6.5", 
-            subtitle = "Double What-If Study<br>Standardized ATT Estimates with H = AD0")
+            subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = AD0</em>")
 ```
 
 
@@ -218,20 +220,19 @@ doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0,
 ```{r}
 gt_measures(doublewhatif.att, 
             title = "Table 6.6", 
-            subtitle = "Double What-If Study<br>Standardized ATT Estimates with H = VL0")
+            subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = VL0</em>")
 ```
 
 ### Standardization with a Parametric Outcome Model
 
-For a the parametric outome model the following script is used
+For a the parametric outcome model `standout` is used
 
-```{r echo=FALSE, file="lib\\fci_06-B_standout.R"}
+```{r echo=TRUE, file="lib\\fci_06-B_standout.R"}
 
 ```
 
-#### Examples {-}
 
-##### `whatif2dat` {-}
+#### What-if? Study {-}
 
 ```{r}
 whatif2.out <- standout(whatif2dat, formula = vl4 ~ A + lvlcont0)
@@ -257,7 +258,7 @@ gt_measures(whatif2.out,
             subtitle = "What-If Study<br>Outome-model Standardization with <em>H = lvlcont0</ems>")
 ```
 
-##### `gss` {-}
+#### General Social Survey {-}
 
 ```{r}
 gssrcc <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
@@ -288,11 +289,17 @@ and the results are presented in table 6.8
 ```{r}
 gt_measures(whatif2.out, 
             title = "Table 6.8", 
-            subtitle = "Effect of <em>More than High School Education</em> on <em>
-            Voting for Trump</em><br>Outome-model Standardization")
+            subtitle = "General Social Survey<br>
+            Outcome-model Standardization<br>
+            Effect of <em>More than High School Education</em> on <em>
+            Voting for Trump</em>")
 ```
 
 ## Standardization via Exposure Modeling
+
+### Examples {-}
+
+#### Mortality Rates by Country {-}
 
 See section 1.2.1 in chapter 1 for details on `data_mortability_exp`.
 
@@ -302,9 +309,9 @@ mortdat <- data_mortability_exp()
 ```
 
 
-Compute the standardized estimates using exposure modeling. The author puts
-it with the data itself.  We separate the data from the logic and faciliate
-code reuse and readability.
+Compute the standardized estimates using exposure modeling with `calc_exposure`. 
+The author puts the function it with the data itself. A better idea is to
+put the logic in a function separate from the data.
 
 ```{r echo=TRUE, file="lib\\fci_06-C_exposure.R"}
 
@@ -334,23 +341,116 @@ stopifnot(abs(mortdat.out$EY0T1 - 0.010176) < 1e-6)
 
 ### Standardization with a Parametric Exposure Model
 
-The function `standexp` used to standardized with a parametric exposure
-model
+
+The function `standexp` is used to standardized with a parametric exposure
+model and the `glm` fit. It is the main function used in the chapter.
 
 ```{r file="lib\\fci_06-D_standexp.R"}
 
 ```
 
+Alternatively the standardization could be done with `geeglm` from the `geepack`
+package. For *those focused primarily on the risk difference*. See the 
+explanation on section 6.2.2 on why `geeglm` is not really good for the
+risk ratio.
+
+The function is called `exp` in the book. We rename it `standexpgee` to be
+more informative and avoid mix up with the much-used base R function `exp.`
+
+
+```{r file="lib\\fci_06-E_standexpgee.R"}
+
+```
+
+
+
+#### What-if? Study {-}
+
+First we do it using the `glm` fit
 
 ```{r}
 whatif2.exp <- standexp(whatif2dat, formula = vl4 ~ A + lvlcont0)
 # whatif2.exp
 ```
 
+and compare with the author's
+
+
+```{r}
+comp <- data.frame(
+  name = c("EY0", "EY1", "RD", "RR"),
+  auth = c(0.36, 0.30, -0.06, 0.834),
+  est = whatif2.exp$est[whatif2.exp$name %in% c("EY0", "EY1", "RD", "RR")])
+stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+```
+
+
+
 and the results are presented in table 6.9
 
 ```{r}
 gt_measures(whatif2.exp, 
             title = "Table 6.9", 
-            subtitle = "What-If Study<br>Exposure-model Standardization <em>with H = lvlcont0</em>")
+            subtitle = "What-If Study<br>Exposure-model Standardization with <em>H = lvlcont0</em>")
 ```
+
+
+then we use the `geeglm` from the `geepack` package fit for risk difference
+
+```{r}
+whatif2.expgee <- standexpgee(whatif2dat, formula = vl4 ~ A + lvlcont0)
+# we don't use the risk ratio measures with this function
+whatif2.expgee <- whatif2.expgee[!(whatif2.expgee$name %in% c("RR", "RR*", "OR")), ]
+# whatif2.expgee
+```
+
+and the results are presented in table 6.9
+
+```{r}
+gt_measures(whatif2.expgee, 
+            title = "Table 6.9 geeglm", 
+            subtitle = "What-If Study<br>Exposure-model Standardization using <em>geeglm</em> wtih <em>H = lvlcont0</em>")
+```
+
+
+#### General Social Survey {-}
+
+The `gssrcc` is defined in section 6.1.2 above. It is the `gss` data with
+complete cases only.
+
+The `standexp` function on page 119-120 of section 6.2.2 is not needed anymore
+as `standexp` was created with parameters in the previous section. We just need
+to run it as follows
+
+
+
+```{r}
+gssrcc.exp <- standexp(gssrcc, 
+                        formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# gssrcc.exp
+```
+
+and compare with the author's
+
+
+```{r}
+comp <- data.frame(
+  name = c("EY0", "EY1", "RD", "RR"),
+  auth = c(0.231, 0.272, 0.041, 1.176),
+  est = gssrcc.exp$est[gssrcc.exp$name %in% c("EY0", "EY1", "RD", "RR")])
+stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+```
+
+
+and the results are presented in table 6.9
+
+```{r}
+gt_measures(gssrcc.exp, 
+            title = "Table 6.10", 
+            subtitle = "General Social Survey<br>Exposure-model Standardization<br>
+            Effect of <em>More than High School Education</em> on <em>
+            Voting for Trump</em>")
+```
+
+
+

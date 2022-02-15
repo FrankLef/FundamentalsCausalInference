@@ -2,18 +2,21 @@
 #' 
 #' Compute standardized estimates with parametric exposure model.
 #' 
-#' The standardized estimates are computed using the exposure model.
+#' The standardized estimates are computed using the exposure model and the
+#' \code{geeglm} from the \code{gee} package.
 #' This method requires 2 different formulas which are created from the
 #' arguments \code{formula}. The 2 formulas created are for the exposure model
 #' and another one for the weighted linear model.
 #'
 #' @param dat Dataframe of raw data.
-#' @param formula Formula must be in the form \code{Y ~ `T` + ...}
+#' @param formula Formula must be in the form \code{Y ~ `T` + H}
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
+#' 
+#' @seealso standexp
 #'
 #' @return Dataframe of estimates
-standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
+standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
   # the name of the intercept variable used by glm
   x0 <- "(Intercept)"
   # the name of the response variable
@@ -32,6 +35,7 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
+    dat$id <- seq_len(nrow(dat))  # id column used by geeglm
 
     # estimate the parametric exposure model
     e <- fitted(glm(formula = eformula, family = "binomial", data = dat))
@@ -42,7 +46,8 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
     dat$W <- (1 / e) * datT + (1 / (1 - e)) * (1 - datT)
 
     # fit the weighted linear model
-    coefs <- coef(glm(formula = lformula, data = dat, weights = W))
+    coefs <- coef(geepack::geeglm(formula = lformula, data = dat,
+                                  id = id, , weights = W))
 
     # estimate the expected potential outcome
     EY0 <- coefs[x0]
