@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-14" />
+<meta name="date" content="2022-02-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3791,51 +3791,46 @@ model</p>
 <span id="cb255-16"><a href="backdoor.html#cb255-16" aria-hidden="true" tabindex="-1"></a>standexp <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">5</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
 <span id="cb255-17"><a href="backdoor.html#cb255-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
 <span id="cb255-18"><a href="backdoor.html#cb255-18" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
-<span id="cb255-19"><a href="backdoor.html#cb255-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb255-20"><a href="backdoor.html#cb255-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the response variable</span></span>
-<span id="cb255-21"><a href="backdoor.html#cb255-21" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">2</span>]])</span>
-<span id="cb255-22"><a href="backdoor.html#cb255-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the treatment variable</span></span>
-<span id="cb255-23"><a href="backdoor.html#cb255-23" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">1</span>]</span>
-<span id="cb255-24"><a href="backdoor.html#cb255-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the latent variable</span></span>
-<span id="cb255-25"><a href="backdoor.html#cb255-25" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">2</span>]</span>
-<span id="cb255-26"><a href="backdoor.html#cb255-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb255-27"><a href="backdoor.html#cb255-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model</span></span>
-<span id="cb255-28"><a href="backdoor.html#cb255-28" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(t, <span class="st">&quot;~&quot;</span>, h))</span>
-<span id="cb255-29"><a href="backdoor.html#cb255-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model</span></span>
-<span id="cb255-30"><a href="backdoor.html#cb255-30" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(y, <span class="st">&quot;~&quot;</span>, t))</span>
-<span id="cb255-31"><a href="backdoor.html#cb255-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb255-32"><a href="backdoor.html#cb255-32" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb255-33"><a href="backdoor.html#cb255-33" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb255-34"><a href="backdoor.html#cb255-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-35"><a href="backdoor.html#cb255-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
-<span id="cb255-36"><a href="backdoor.html#cb255-36" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
-<span id="cb255-37"><a href="backdoor.html#cb255-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
-<span id="cb255-38"><a href="backdoor.html#cb255-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-39"><a href="backdoor.html#cb255-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
-<span id="cb255-40"><a href="backdoor.html#cb255-40" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, t]</span>
-<span id="cb255-41"><a href="backdoor.html#cb255-41" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
-<span id="cb255-42"><a href="backdoor.html#cb255-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(the_weights)</span></span>
-<span id="cb255-43"><a href="backdoor.html#cb255-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-44"><a href="backdoor.html#cb255-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
-<span id="cb255-45"><a href="backdoor.html#cb255-45" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat, <span class="at">weights =</span> W))</span>
-<span id="cb255-46"><a href="backdoor.html#cb255-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-47"><a href="backdoor.html#cb255-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
-<span id="cb255-48"><a href="backdoor.html#cb255-48" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[x0]</span>
-<span id="cb255-49"><a href="backdoor.html#cb255-49" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
-<span id="cb255-50"><a href="backdoor.html#cb255-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-51"><a href="backdoor.html#cb255-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
-<span id="cb255-52"><a href="backdoor.html#cb255-52" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">calc_effect_measures</span>(EY0, EY1, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb255-53"><a href="backdoor.html#cb255-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-54"><a href="backdoor.html#cb255-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(EY0), <span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(EY1), out)</span>
-<span id="cb255-55"><a href="backdoor.html#cb255-55" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb255-56"><a href="backdoor.html#cb255-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-57"><a href="backdoor.html#cb255-57" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
-<span id="cb255-58"><a href="backdoor.html#cb255-58" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb255-59"><a href="backdoor.html#cb255-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb255-60"><a href="backdoor.html#cb255-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
-<span id="cb255-61"><a href="backdoor.html#cb255-61" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
-<span id="cb255-62"><a href="backdoor.html#cb255-62" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb255-63"><a href="backdoor.html#cb255-63" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb255-19"><a href="backdoor.html#cb255-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the response variable</span></span>
+<span id="cb255-20"><a href="backdoor.html#cb255-20" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">2</span>]])</span>
+<span id="cb255-21"><a href="backdoor.html#cb255-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the treatment variable</span></span>
+<span id="cb255-22"><a href="backdoor.html#cb255-22" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">1</span>]</span>
+<span id="cb255-23"><a href="backdoor.html#cb255-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the latent variable</span></span>
+<span id="cb255-24"><a href="backdoor.html#cb255-24" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">2</span>]</span>
+<span id="cb255-25"><a href="backdoor.html#cb255-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb255-26"><a href="backdoor.html#cb255-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model</span></span>
+<span id="cb255-27"><a href="backdoor.html#cb255-27" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(t, h, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb255-28"><a href="backdoor.html#cb255-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model</span></span>
+<span id="cb255-29"><a href="backdoor.html#cb255-29" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(y, t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb255-30"><a href="backdoor.html#cb255-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb255-31"><a href="backdoor.html#cb255-31" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb255-32"><a href="backdoor.html#cb255-32" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb255-33"><a href="backdoor.html#cb255-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-34"><a href="backdoor.html#cb255-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
+<span id="cb255-35"><a href="backdoor.html#cb255-35" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
+<span id="cb255-36"><a href="backdoor.html#cb255-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
+<span id="cb255-37"><a href="backdoor.html#cb255-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-38"><a href="backdoor.html#cb255-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
+<span id="cb255-39"><a href="backdoor.html#cb255-39" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, t]</span>
+<span id="cb255-40"><a href="backdoor.html#cb255-40" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
+<span id="cb255-41"><a href="backdoor.html#cb255-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-42"><a href="backdoor.html#cb255-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
+<span id="cb255-43"><a href="backdoor.html#cb255-43" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat, <span class="at">weights =</span> W))</span>
+<span id="cb255-44"><a href="backdoor.html#cb255-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-45"><a href="backdoor.html#cb255-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
+<span id="cb255-46"><a href="backdoor.html#cb255-46" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[x0]</span>
+<span id="cb255-47"><a href="backdoor.html#cb255-47" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
+<span id="cb255-48"><a href="backdoor.html#cb255-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-49"><a href="backdoor.html#cb255-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
+<span id="cb255-50"><a href="backdoor.html#cb255-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
+<span id="cb255-51"><a href="backdoor.html#cb255-51" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb255-52"><a href="backdoor.html#cb255-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-53"><a href="backdoor.html#cb255-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb255-54"><a href="backdoor.html#cb255-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
+<span id="cb255-55"><a href="backdoor.html#cb255-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb255-56"><a href="backdoor.html#cb255-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
+<span id="cb255-57"><a href="backdoor.html#cb255-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
+<span id="cb255-58"><a href="backdoor.html#cb255-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="backdoor.html#cb256-1" aria-hidden="true" tabindex="-1"></a>whatif2.exp <span class="ot">&lt;-</span> <span class="fu">standexp</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
 <span id="cb256-2"><a href="backdoor.html#cb256-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.exp</span></span></code></pre></div>
 <p>and the results are presented in table 6.9</p>

@@ -43,15 +43,11 @@ standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     EY1 <- mean(EYhat1)
     
     # estimate the effect measures
-    out <- calc_effect_measures(val0 = EY0, val1 = EY1)
-    
-    c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
+    calc_effect_measures(val0 = EY0, val1 = EY1)
   }
   
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
-  out <- exp_effects(data = out)
-
-  out
+  exp_effects(data = out)
 }

@@ -16,7 +16,6 @@
 standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
   # the name of the intercept variable used by glm
   x0 <- "(Intercept)"
-  
   # the name of the response variable
   y <- all.vars(formula[[2]])
   # the name of the treatment variable
@@ -25,16 +24,16 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
   h <- all.vars(formula[[3]])[2]
   
   # exposure model
-  eformula <- formula(paste(t, "~", h))
+  eformula <- formula(paste(t, h, sep = "~"))
   # weighted linear model
-  lformula <- formula(paste(y, "~", t))
+  lformula <- formula(paste(y, t, sep = "~"))
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
 
     # estimate the parametric exposure model
     e <- fitted(glm(formula = eformula, family = "binomial", data = dat))
-    stopifnot(all(!near(e, 0)))  # e must not equal zero
+    stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
 
     # compute the weights
     datT <- dat[, t]
@@ -48,15 +47,12 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
     EY1 <- sum(coefs)
 
     # estimate the effect measures
-    out <- calc_effect_measures(EY0, EY1, log = TRUE)
-
-    c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
+    calc_effect_measures(EY0, EY1)
   }
 
   # run the bootstrapping
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
-  out <- exp_effects(data = out)
-  out
+  exp_effects(data = out)
 }

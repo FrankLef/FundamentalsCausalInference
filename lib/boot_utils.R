@@ -26,7 +26,12 @@ calc_effect_measures <- function(val0, val1, log = TRUE) {
   # both values must be finite
   stopifnot(is.finite(val0), is.finite(val1))
   
+  # create a vector of names used later when creating output
+  # this trick does not work on unamed variables (next step)
+  # so it must be done now.
+  nms <- c(deparse1(substitute(val0)), deparse1(substitute(val1)))
   # make sure the values are unnamed
+  # otherwise their names get combined with the new ones
   val0 <- unname(val0)
   val1 <- unname(val1)
   
@@ -58,7 +63,13 @@ calc_effect_measures <- function(val0, val1, log = TRUE) {
   }
   
   # output only the measures that were calculated
-  out[!is.na(out)]
+  out <- out[!is.na(out)]
+  
+  # vector of named input values
+  vals <- c(val0, val1)
+  names(vals) <- nms
+  
+  c(vals, out)
 }
 
 

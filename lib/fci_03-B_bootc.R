@@ -39,12 +39,13 @@ bootc <- function(dat, formula = Y ~ `T` + A + H,
     # or, in other words, condition on some variables
     xbeta0 <- sum(coefs[c(x0, cond0)])
     xbeta1 <- sum(coefs[c(x0, cond1)])
-    p0 <- plogis(xbeta0)  # plogis is the inverse of logit
-    p1 <- plogis(xbeta1)  # plogis is the inverse of logit
-    # calculate effect measures
-    out <- calc_effect_measures(val0 = p0, val1 = p1)
+    P0 <- plogis(xbeta0)  # plogis is the inverse of logit
+    P1 <- plogis(xbeta1)  # plogis is the inverse of logit
     
-    c("P0" = unname(p0), "P1" = unname(p1), out)
+    # calculate effect measures
+    out <- calc_effect_measures(val0 = P0, val1 = P1)
+    out
+    # c("P0" = unname(P0), "P1" = unname(P1), out)
   }
   
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)

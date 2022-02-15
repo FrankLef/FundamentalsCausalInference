@@ -45,15 +45,11 @@ stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
     EY1 <- coefs[x0] + coefs[t] + coefs[h] * EH  + coefs[th] * EH
 
     # estimate the effect measures
-    out <- calc_effect_measures(val0 = EY0, val1 = EY1)
-    
-    c("EY0" = unname(EY0), "EY1" = unname(EY1), out)
+    calc_effect_measures(val0 = EY0, val1 = EY1)
   }
   
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
-  out <- exp_effects(data = out)
-
-  out
+  exp_effects(data = out)
 }
