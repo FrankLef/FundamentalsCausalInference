@@ -1,22 +1,17 @@
-#' Compute standardized estimates with parametric exposure model
+#' Compute the doubly robust standardized estimates
 #' 
-#' Compute standardized estimates with parametric exposure model.
+#' Compute the doubly robust standardized estimates.
 #' 
-#' The standardized estimates are computed using the exposure model and the
-#' \code{geeglm} from the \code{gee} package.
-#' This method requires 2 different formulas which are created from the
-#' arguments \code{formula}. The 2 formulas created are for the exposure model
-#' and another one for the weighted linear model.
+#' Compute the doubly robust standardized estimates using the code from section
+#' 6.3
 #'
 #' @param dat Dataframe of raw data.
-#' @param formula Formula must be in the form \code{Y ~ `T` + H}
+#' @param formula Formula in format \code{Y ~ T + ...} see details above.
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
-#' 
-#' @seealso standexp
 #'
 #' @return Dataframe of estimates
-standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
+badstanddr <- function(dat, formula = Y ~ `T` + H, R = 10, conf = 0.95) {
   # the name of the intercept variable used by glm
   x0 <- "(Intercept)"
   # the name of the response variable
@@ -34,29 +29,34 @@ standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
-    dat$id <- seq_len(nrow(dat))  # id column used by geeglm
-
+    
     # estimate the parametric exposure model
     e <- fitted(glm(formula = eformula, family = "binomial", data = dat))
     stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
-
-    # compute the weights
+    
+    # fit a nonparametric outcome model that we do not believe
+    # i.e. a bad outcome model
+    lmod <- glm(formula = lformula, family = "binomial", data = dat)
+    
+    # predict potential outcome for each participant
+    dat0 <- dat
+    dat0[, t] <- 0
+    EYhat0 <- predict(lmod, newdata = dat0, type = "response")
+    dat1 <- dat
+    dat1[, t] <- 1
+    EYhat1 <- predict(lmod, newdata = dat1, type = "response")
+    
+    # Use the DR estimating equation to estimate the expected
+    # potential outcome
+    datY <- dat[, y]
     datT <- dat[, t]
-    dat$W <- (1 / e) * datT + (1 / (1 - e)) * (1 - datT)
-
-    # fit the weighted linear model
-    coefs <- coef(geepack::geeglm(formula = lformula, data = dat,
-                                  id = id, weights = W))
-
-    # estimate the expected potential outcome
-    EY0 <- coefs[x0]
-    EY1 <- sum(coefs)
-
+    EY0 <- mean(datY * (1 - datT) / (1 - e) + EYhat0 * (e - datT) / (1 - e))
+    EY1 <- mean(datY * (datT / e) - EYhat1 * (datT - e) / e)
+    
     # estimate the effect measures
     calc_effect_measures(EY0, EY1)
   }
-
-  # run the bootstrapping
+  
   out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values

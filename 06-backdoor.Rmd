@@ -47,6 +47,10 @@ source(file = file.path(dir_lib, "fci_06-D_standexp.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-F_badstanddr.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-G_simdr.R"), 
+       local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs06, "whatif2dat.RData"))
@@ -453,4 +457,69 @@ gt_measures(gssrcc.exp,
 ```
 
 
+## Doubly Robust Standardization
 
+The function `basstanddr` used for doubly robust standardization is defined
+as follows
+
+```{r file="lib\\fci_06-F_badstanddr.R"}
+
+```
+
+
+and using the What-if Study we obtain
+
+
+```{r}
+whatif2.dr <- badstanddr(whatif2dat, formula = vl4 ~ A + lvlcont0)
+# whatif2.dr
+```
+
+and compare with the author's
+
+
+```{r}
+comp <- data.frame(
+  name = c("EY0", "EY1", "RD", "RR"),
+  auth = c(0.362, 0.300, -0.062, 0.830),
+  est = whatif2.dr$est[whatif2.dr$name %in% c("EY0", "EY1", "RD", "RR")])
+stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+```
+
+
+
+and the results are presented in table 6.9
+
+```{r}
+gt_measures(whatif2.dr, 
+            title = "Table 6.12", 
+            subtitle = "What-If Study<br>Doubly Robust Standardizaion<br>
+            Combining the Misspecified Outome Model of Table 6.11<br>
+            and the Exposure Model of Table 6.9")
+```
+
+### Simulation
+
+The simulation is done with `simdr` as follows
+
+```{r file="lib\\fci_06-G_simdr.R"}
+
+```
+
+
+and the result is
+
+```{r}
+sim.out <- simdr()
+str(sim.out)
+# mean(replicate(n = 500, sum(simdr())))
+```
+
+
+> The column of $H$ were ind. indicator variables with probability 0.05
+
+```{r}
+sim.out$probH
+```
+
+> e simulated $T$ as indicator 
