@@ -1,4 +1,4 @@
-simdr <- function(n = 3000, ss = 100, probH = 0.05) {
+new_simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   
   # matrix of independent Bernoulli vector with prob = 0.05
   # "The columns of H were independent indicator variables each
@@ -9,7 +9,8 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   # "We simulated T  as indicator variables with probabilities that varied as
      # a linear function  of H such that approximately 600 individuals had T=1", 
   # i.e. 20% of n=3000
-  sumH <- apply(H, MARGIN = 1, FUN = sum) * 20 / ss
+  preH <- apply(H, MARGIN = 1, FUN = sum)  # preparation for sumH
+  sumH <- preH * 20 / ss
   probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
   stopifnot(all(probT > 0), all(probT < 1))
@@ -25,7 +26,7 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   Y <- rbinom(n = n, size = 1, prob = probY)
   
   # put results in a list
-  out <- list("probH" = probH,
+  out <- list("preH" = preH,
               "sumH" = c("min" = min(sumH), "mean" = mean(sumH), 
                          "max" = max(sumH)),
               "probT" = c("min" = min(probT), "mean" = mean(probT), 

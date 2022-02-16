@@ -49,7 +49,9 @@ source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-F_badstanddr.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-G_simdr.R"), 
+source(file = file.path(dir_lib, "fci_06-G_new_simdr.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-H_simdr.R"), 
        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
@@ -500,26 +502,42 @@ gt_measures(whatif2.dr,
 
 ### Simulation
 
-The simulation is done with `simdr` as follows
+The simulation is done with `new_simdr` which is the function `simdr` found
+in section 6.3 in p. 127-128. See the appendix [new_simdr](#new_simdr) for a printout.
 
-```{r file="lib\\fci_06-G_simdr.R"}
+The book use the function `simdr` found on p. 127-128. The code is in the 
+*Functions* appendix after [new_simdr](#new_simdr).
 
-```
+So lets run `simdr` as well as `new_simdr` to explain the alogrithm and also run
+`new_simdr` to prove it does the exact same thing, just faster and easier to read.
 
 
-and the result is
+
 
 ```{r}
-sim.out <- simdr()
-str(sim.out)
-# mean(replicate(n = 500, sum(simdr())))
+simdr.out <- simdr()
+# str(new_simdr.out)
+new_simdr.out <- new_simdr()
+# str(new_simdr.out)
 ```
 
 
-> The column of $H$ were ind. indicator variables with probability 0.05
+
+> One might think that standardization with the exposure model would be 
+preferable when the outcome indicates a rare condition. To see this,
+first suppose the condition is not rare. We might have 3000 individuals and 50%,
+or 1500, with the condition. Using the rule of thumb  for logistic regression 
+of Peduzzi et al. presented in chapter 2, we should be able to include 150 
+covariates in the outcome model.
+
+The Peduzzi rule can be found at the end of section 2.3, on top of p. 29. where
+it states that
+
+> both the numbers of individuals with $Y=0$ and $Y=1$ need to be larger than
+ten times the number of parameters.
+
 
 ```{r}
-sim.out$probH
+
 ```
 
-> e simulated $T$ as indicator 
