@@ -1,4 +1,8 @@
-simdr <- function(n = 3000, ss = 100, probH = 0.05) {
+simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
+                  out_choice = c("all", "sim", "est")) {
+  out_choice <- match.arg(out_choice)
+  set.seed(seed)
+  
   # ss is the number of confounders
   # i.e. the number of columns of H
   H <- matrix(0, n, ss)
@@ -7,12 +11,82 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   for (i in 1:ss) {
     H[, i] <- rbinom(n = 3000, size = 1, prob = probH)
   }
-  # NOT in original script
-  preH <- apply(H, 1, sum)  # preparation for sumH
-  sumH <- preH * 20 / ss
+  # Let the treatment depend on a function of H
+  sumH <- apply(H, 1, sum) * 20 / ss
+  # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
+  probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
   
+  `T` <- rbinom(n = n, size = 1, prob = probT)
   
+  # Generate the outcome depend on T and H
+  probY <- 0.01 * `T` + 0.01 * sumH
+  Y <- rbinom(n = n, size = 1, prob = probY)
   
-  list("preH" = preH,
-       "sumH" = sumH)
+  # put the simulated resuts in a list
+  sim <- list("sumH" = fivenum(sumH),
+       "probT" = fivenum(probT),
+       "sumT" = sum(`T`),
+       "probY" = fivenum(probY),
+       "sumY" = sum(Y))
+  
+  # fit the exposure model
+  e <- fitted(lm(`T` ~ H))
+  
+  # refit the exposure model using an incorrect logistic model
+  e2 <- predict(glm(`T` ~ H, family = "binomial"), type = "response")
+  
+  # compute the weights
+  w0 <- (1 - `T`) / (1 - e)
+  w1 <- `T` / e
+  w02 <- (1 - `T`) / (1 - e2)
+  w12 <- T / e2
+  
+  # fit an overspecified (saturated) outcome model
+  mod.out <- lm(Y ~ `T` * H)
+  
+  # Estimate the expected potential outcomes using the various methods
+  dat <- data.frame("Y" = Y, "T" = `T`)
+  dat0 <- dat
+  dat0$`T` <- 0
+  dat1 <- dat
+  dat1$`T` <- 1
+  
+  # the predicted data
+  preds0 <- predict(mod.out, newdata = dat0)
+  preds1 <- predict(mod.out, newdata = dat1)
+  
+  # calculate the estimates
+  EY0out <- mean(preds0)
+  EY1out <- mean(preds1)
+  EY0exp <- weighted.mean(Y, w = w0)
+  EY1exp <- weighted.mean(Y, w = w1)
+  EY0exp2 <- weighted.mean(Y, w = w02)
+  EY1exp2 <- weighted.mean(Y, w = w12)
+  EY0dr <- mean(w0 * Y + preds0 * (`T` - e) / (1 - e))
+  EY1dr <- mean(w1 * Y - preds1 * (`T` - e) / e)
+  EYT0 <- mean(Y * (1 - `T`))
+  EYT1 <- mean(Y * `T`)
+  
+  est <- list(
+    "EY0out" = EY0out,
+    "EY1out" = EY1out,
+    "EY0exp" = EY0exp,
+    "EY1exp" = EY1exp,
+    "EY0exp2" = EY0exp2,
+    "EY1exp2" = EY1exp2,
+    "EY0dr" = EY0dr,
+    "EY1dr" = EY1dr,
+    "EYT0" = EYT0,
+    "EYT1" = EYT1)
+  
+  if (out_choice == "all") {
+    out <- append(sim, est)
+  } else if(out_choice == "sim") {
+    out <- sim
+  } else if(out_choice == "est") {
+    out <- est
+  } else {
+    stop(sprintf("%s is an invalid out_choice", out_choice))
+  }
+  out
 }

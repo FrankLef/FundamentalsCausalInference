@@ -1,4 +1,11 @@
-new_simdr <- function(n = 3000, ss = 100, probH = 0.05) {
+mc_simdr <- function() {
+  
+}
+
+new_simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
+                      out_choice = c("all", "sim", "est")) {
+  out_choice <- match.arg(out_choice)
+  set.seed(seed)
   
   # matrix of independent Bernoulli vector with prob = 0.05
   # "The columns of H were independent indicator variables each
@@ -7,10 +14,8 @@ new_simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   
   # let the treatment depend on a function of H
   # "We simulated T  as indicator variables with probabilities that varied as
-     # a linear function  of H such that approximately 600 individuals had T=1", 
-  # i.e. 20% of n=3000
-  preH <- apply(H, MARGIN = 1, FUN = sum)  # preparation for sumH
-  sumH <- preH * 20 / ss
+  # a linear function  of H such that approximately 600 individuals had T=1"
+  sumH <- apply(H, MARGIN = 1, FUN = sum) * 20 / ss
   probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
   stopifnot(all(probT > 0), all(probT < 1))
@@ -22,25 +27,32 @@ new_simdr <- function(n = 3000, ss = 100, probH = 0.05) {
   # individuals had Y = 1"
   probY <- 0.01 * `T` + 0.01 * sumH
   # make sure P(Y=1) is between 0 and 1, i.e. positivity assumption
+  # NOTE ON ASSUMPTION:
+  # positivity assumtion not met because we need probY >= 0
   stopifnot(all(probY >= 0), all(probY < 1))
   Y <- rbinom(n = n, size = 1, prob = probY)
   
   # put results in a list
-  out <- list("preH" = preH,
-              "sumH" = c("min" = min(sumH), "mean" = mean(sumH), 
-                         "max" = max(sumH)),
-              "probT" = c("min" = min(probT), "mean" = mean(probT), 
-                          "max" = max(probT)),
-              "T" = c("sum" = sum(`T`)),
-              "probY" = c("min" = min(probY), "mean" = mean(probY), 
-                          "max" = max(probY)),
-              "Y" = c("sum" = sum(Y))
+  sim <- list("sumH" = fivenum(sumH),
+              "probT" = fivenum(probT),
+              "sumT" = sum(`T`),
+              "probY" = fivenum(probY),
+              "sumY" = sum(Y)
               )
   
   # Estimate the expected potential outcomes
   est <- simdr_est(Y, `T`, H)
   
-  append(out, est)
+  if (out_choice == "all") {
+    out <- append(sim, est)
+  } else if(out_choice == "sim") {
+    out <- sim
+  } else if(out_choice == "est") {
+    out <- est
+  } else {
+    stop(sprintf("%s is an invalid out_choice", out_choice))
+  }
+  out
 }
 
 simdr_est <- function(Y, `T`, H) {
@@ -83,8 +95,7 @@ simdr_est <- function(Y, `T`, H) {
   EYT0 <- mean(Y * (1 - `T`))
   EYT1 <- mean(Y * `T`)
   
-  list("mod.out" = coef(summary(mod.out)),
-       "EY0out" = EY0out,
+  list("EY0out" = EY0out,
        "EY1out" = EY1out,
        "EY0exp" = EY0exp,
        "EY1exp" = EY1exp,
