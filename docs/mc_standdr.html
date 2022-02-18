@@ -317,6 +317,7 @@ div.csl-indent {
 <li class="chapter" data-level="A.7" data-path="errata.html"><a href="errata.html#chapter-6"><i class="fa fa-check"></i><b>A.7</b> Chapter 6</a>
 <ul>
 <li class="chapter" data-level="A.7.1" data-path="errata.html"><a href="errata.html#section-6.1-p.-100-first-paragraph"><i class="fa fa-check"></i><b>A.7.1</b> Section 6.1 p. 100, first paragraph</a></li>
+<li class="chapter" data-level="A.7.2" data-path="errata.html"><a href="errata.html#section-6.3-p.-127-the-script-of-simdr"><i class="fa fa-check"></i><b>A.7.2</b> Section 6.3 p. 127, the script of <code>simdr</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="notes.html"><a href="notes.html"><i class="fa fa-check"></i><b>B</b> Notes</a>
@@ -361,7 +362,7 @@ div.csl-indent {
 <li class="chapter" data-level="D" data-path="mc_standdr.html"><a href="mc_standdr.html"><i class="fa fa-check"></i><b>D</b> Doubly Robust Simulation</a>
 <ul>
 <li class="chapter" data-level="D.1" data-path="mc_standdr.html"><a href="mc_standdr.html#functions-1"><i class="fa fa-check"></i><b>D.1</b> Functions</a></li>
-<li class="chapter" data-level="D.2" data-path="mc_standdr.html"><a href="mc_standdr.html#analyse-t-sum_i1jt_i"><i class="fa fa-check"></i><b>D.2</b> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span></a></li>
+<li class="chapter" data-level="D.2" data-path="mc_standdr.html"><a href="mc_standdr.html#errata6a"><i class="fa fa-check"></i><b>D.2</b> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span> (Errata)</a></li>
 <li class="chapter" data-level="D.3" data-path="mc_standdr.html"><a href="mc_standdr.html#analyse-y-sum_i1i-y_i"><i class="fa fa-check"></i><b>D.3</b> Analyse <span class="math inline">\(Y = \sum_{i=1}^I Y_i\)</span></a></li>
 <li class="chapter" data-level="D.4" data-path="mc_standdr.html"><a href="mc_standdr.html#simulation"><i class="fa fa-check"></i><b>D.4</b> Simulation</a></li>
 <li class="chapter" data-level="D.5" data-path="mc_standdr.html"><a href="mc_standdr.html#scripts"><i class="fa fa-check"></i><b>D.5</b> Scripts</a>
@@ -413,8 +414,8 @@ analysis. See the next section <em>Analysis</em>.</p>
 <p><code>mc_standdr</code> has been validated against <code>simdr</code> and gives exactly the same
 results.</p>
 </div>
-<div id="analyse-t-sum_i1jt_i" class="section level2" number="10.2">
-<h2><span class="header-section-number">D.2</span> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span></h2>
+<div id="errata6a" class="section level2" number="10.2">
+<h2><span class="header-section-number">D.2</span> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span> (Errata)</h2>
 <p>Section 6.3 claims that <span class="math inline">\(T=600\)</span> and <span class="math inline">\(P(T=1 \mid H) \in [0.041, 0.0468]\)</span>
 but the results obtained from running <code>simdr</code> as shown in the book are different.
 Not a lot but enough to puzzle the avid reader (like me for example).</p>
@@ -449,8 +450,8 @@ However, <em>the simulation with <code>simdr</code> returns <span class="math in
 <div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="mc_standdr.html#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sum of T</span></span>
 <span id="cb283-2"><a href="mc_standdr.html#cb283-2" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
 <pre><code>## [1] 541</code></pre>
-<div id="errata2" class="greeting message" style="color: red;">
-<p>We observe that <span class="math inline">\(\sum_i T_i \approx 540\)</span> and therefore <span class="math inline">\(\sum_i T_i \not \approx 600\)</span>.</p>
+<div id="errata1" class="greeting message" style="color: red;">
+<p>We observe that <span class="math inline">\(\sum_i T_i \approx 540 \not \approx 600\)</span>.</p>
 </div>
 <p>This is the part that needs explaining. The difference seems too large to be
 explained by the usual culprit, random process.</p>
@@ -547,6 +548,9 @@ E(T)&amp;= I (\alpha \cdot \beta \cdot p + p) \\
 <div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="mc_standdr.html#cb285-1" aria-hidden="true" tabindex="-1"></a>simdr600.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">seed =</span> <span class="dv">1009</span>, <span class="at">out_choice =</span> <span class="st">&quot;sim&quot;</span>)</span>
 <span id="cb285-2"><a href="mc_standdr.html#cb285-2" aria-hidden="true" tabindex="-1"></a>simdr600.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
 <pre><code>## [1] 593</code></pre>
+<div id="suggest1" class="greeting message" style="color: green;">
+<p>We suggest that <code>simdr</code> be modified to <strong>use 0.15 instead of 0.13</strong>.</p>
+</div>
 </div>
 <div id="analyse-y-sum_i1i-y_i" class="section level2" number="10.3">
 <h2><span class="header-section-number">D.3</span> Analyse <span class="math inline">\(Y = \sum_{i=1}^I Y_i\)</span></h2>
