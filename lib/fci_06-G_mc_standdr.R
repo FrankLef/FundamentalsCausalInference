@@ -2,7 +2,8 @@ mc_standdr <- function() {
   
 }
 
-standdr_sim <- function(n = 3000, ss = 100, gamma = 20, probH = 0.05, seed = NULL) {
+standdr_sim <- function(n = 3000, ss = 100, beta = 0.13, gamma = 20, 
+                        probH = 0.05, seed = NULL) {
   set.seed(seed)
   
   # matrix of independent Bernoulli vector with prob = 0.05
@@ -14,7 +15,7 @@ standdr_sim <- function(n = 3000, ss = 100, gamma = 20, probH = 0.05, seed = NUL
   # "We simulated T  as indicator variables with probabilities that varied as
   # a linear function  of H such that approximately 600 individuals had T=1"
   sumH <- apply(H, MARGIN = 1, FUN = sum) * gamma / ss
-  probT <- 0.13 * sumH + probH * rnorm(n = n, mean = 1, sd = 0.1)
+  probT <- beta * sumH + probH * rnorm(n = n, mean = 1, sd = 0.1)
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
   stopifnot(all(probT > 0), all(probT < 1))
   `T` <- rbinom(n = n, size = 1, prob = probT)

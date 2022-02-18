@@ -123,6 +123,7 @@ $$
 T_i \sim \mathcal{Bernoulli}(p_{i}), \, i = 1, \ldots, I
 \end{align*}
 $$
+
 where $I$ is set at $I=3000$ by Brumback.
 
 In addition, we let
@@ -137,9 +138,12 @@ and `simdr` defines $p_i$ as
 
 $$
 \begin{align*}
-&p_i = 0.13 \times \frac{\gamma}{J} S_i + p \times X_i \\
-&\text{where} \\
+&p_i = \beta \frac{\gamma}{J} S_i + p \times X_i \\
+\
+&\text{where we are given} \\
+&\beta = 0.13 \\
 &\gamma = 20 \\ 
+&p = 0.05 \\
 &X_i \sim \mathcal{Normal}(mean = 1, sd = 0.1)
 \end{align*}
 $$
@@ -162,11 +166,11 @@ and since $E()$ is a linear function then
 $$
 \begin{align*}
 E(T_i) &= p_i \\
-&= E(0.13 \cdot \frac{\gamma}{J} S_i + p \cdot X_i) \\
-&= 0.13 \cdot \frac{\gamma}{J} \sum_{j=1}^{J}E(H_{i, j}) + p \cdot E(X_i) \\
-&= 0.13 \cdot \frac{\gamma}{J} \sum_{j=1}^{J}p + p \cdot 1 \\
-&= 0.13 \cdot \frac{\gamma}{J} \cdot J \cdot p + p \\
-&= 0.13 \cdot \gamma \cdot p + p
+&= E(\beta \cdot \frac{\gamma}{J} S_i + p \cdot X_i) \\
+&= \beta \cdot \frac{\gamma}{J} \sum_{j=1}^{J}E(H_{i, j}) + p \cdot E(X_i) \\
+&= \beta \cdot \frac{\gamma}{J} \sum_{j=1}^{J}p + p \cdot 1 \\
+&= \beta \cdot \frac{\gamma}{J} \cdot J \cdot p + p \\
+&= \beta \cdot \gamma \cdot p + p
 \end{align*}
 $$
 
@@ -175,12 +179,12 @@ and the sum of the number of people treated is $T = \sum_i^IT_i$
 
 $$
 \begin{align*}
-E(T)  &= \sum_{i=1}^I{E(T_i)} = \\
-&= \sum_{i=1}^I{(0.13 \cdot \gamma \cdot p + p)} \\
-&= I (0.13 \cdot \gamma \cdot p + p) \\
+E(T)  &= \sum_{i=1}^I{E(T_i)} \\
+&= \sum_{i=1}^I{(\beta \cdot \gamma \cdot p + p)} \\
+&= I (\beta \cdot \gamma \cdot p + p) \\
 \\
 &\text{and since} \\ 
-&I = 3000, \gamma = 20, p = 0.05 \\
+&I = 3000, \, \beta = 0.13, \, \gamma = 20, \, p = 0.05 \\
 \\
 &\text{then} \\
 E(T) &= 3000 \cdot (0.13 \cdot 20 \cdot 0.05 + 0.05) \\
@@ -195,33 +199,31 @@ covariates rather than 60 by the Peduzzi rule.
 We observe that this *does not change the conclusions drawn from the simulation
 significantly*.
 
-Finally, we note thet the formula $0.13 \cdot \gamma \cdot p + p$ could be 
-modified to get $T=600$ by varying the coefficient $0.13$ and/or $\gamma=20$.
-If we change only $\gamma$ we could use the reult from above and with simple 
+Finally, we note thet the formula $\beta \cdot \gamma \cdot p + p$ could be 
+modified to get $T=600$ by varying the coefficient $\beta=0.13$ and/or $\gamma=20$.
+If we change only $\beta$ we could use the result from above and with simple 
 algebra
 
 $$
 \begin{align*}
-E(T)&= I (0.13 \cdot \gamma \cdot p + p) \\
+E(T)&= I (\beta \cdot \gamma \cdot p + p) \\
 \\
-&\text{and since we want } E(T) = 600 \text{ and that} \\ 
-&I = 3000, p = 0.05 \\
+&\text{and since we want } E(T) = 600 \\
+&\text{and that} \\
+&\gamma = 20, \, I = 3000, \, p = 0.05 \\
 \\
-&\text{then} \\
-600 &= 3000 \cdot (0.13 \cdot \gamma \cdot 0.05 + 0.05) \\
-\gamma &= \frac{600 - 0.05 \cdot 3000}{3000 \cdot0.13 \cdot0.05} = \frac{450}{19.5} = 23.0769 \\
-\gamma &\approx 23
+\text{then} \\
+600 &= 3000 \cdot (\beta \cdot 20 \cdot 0.05 + 0.05) \\
+\beta &= \frac{600 - 0.05 \cdot 3000}{3000 \cdot 20 \cdot0.05} = \frac{450}{3000} = 0.15
 \end{align*}
 $$
 
-and we also demonstrate with the simulation using $\gamma = 23$ to show that
-$\gamma=23 \implies T=600$.
+and we simulate using $\beta = 0.15$ to validate
 
 ```{r}
-simdr600.out <- simdr(gamma = 23, seed = 1009, out_choice = "sim")
+simdr600.out <- simdr(beta = 0.15, seed = 1009, out_choice = "sim")
 simdr600.out$`T`$sum
 ```
-
 
 Lets continue our reading
 
@@ -271,6 +273,7 @@ c("min" = simdr.out$probY$min, "max" = simdr.out$probY$max)
 And with this we are ready to proceed with the simulation with varying $ss$.
 
 ## Simulation
+
 
 
 

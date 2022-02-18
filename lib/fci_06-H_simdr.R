@@ -8,13 +8,17 @@
 #' the function returns. It replaces the numerous \code(return) such as
 #' \code{return(range(sumH))} found in the original script. \code{out_choice} is
 #' useful to prove the algorithm to the reader. Also, \code{standdr_stats} is
-#' used in the output to give more statistics.
+#' used in the output to give more statistics. Also the arguments 
+#' \code{beta = 0.13} and \code{gamma = 20} were necessary to analyse the
+#' algorithm, they don'e change anything.
 #'
-#' @param n Number of individuals (observations).
 #' @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}
+#' @param beta coefficient used to compute the distribution of \code{`T`}.
+#' @param gamma coefficient used to compute the distribution of \code{`T`}.
 #' @param probH Probability of success on each trial.
 #' @param seed Seed used for random number generation, default is \code{NULL}.
-#' @param out_choice 
+#' @param out_choice With "sim", output the simulation; with "est", output the
+#' estimates; with "both" (default), output everything.
 #'
 #' @return List of values depending on \code{out_choice}.
 #'
@@ -23,29 +27,29 @@
 #' simdr()
 #' }
 #' @export
-simdr <- function(n = 3000, ss = 100, gamma = 20, probH = 0.05, seed = NULL,
+simdr <- function(ss = 100, beta = 0.13, gamma = 20, seed = NULL,
                   out_choice = c("all", "sim", "est")) {
   out_choice <- match.arg(out_choice)
   set.seed(seed)
   
   # ss is the number of confounders
   # i.e. the number of columns of H
-  H <- matrix(0, n, ss)
+  H <- matrix(0, 3000, ss)
   # Let all components of H be independent Bernoulli variables with p=0.05
-  probH <- rep(0.05, n)
+  probH <- rep(0.05, 3000)
   for (i in 1:ss) {
     H[, i] <- rbinom(n = 3000, size = 1, prob = probH)
   }
   # Let the treatment depend on a function of H
   sumH <- apply(H, 1, sum) * gamma / ss
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
-  probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
+  probT <- beta * sumH + 0.05 * rnorm(n = 3000, mean = 1, sd = 0.1)
   
-  `T` <- rbinom(n = n, size = 1, prob = probT)
+  `T` <- rbinom(n = 3000, size = 1, prob = probT)
   
   # Generate the outcome depend on T and H
   probY <- 0.01 * `T` + 0.01 * sumH
-  Y <- rbinom(n = n, size = 1, prob = probY)
+  Y <- rbinom(n = 3000, size = 1, prob = probY)
   
   # put the simulated resuts in a list
   sim <- list("sumH" = simdr_stats(sumH),
