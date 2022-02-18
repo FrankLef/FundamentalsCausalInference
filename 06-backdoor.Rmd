@@ -49,7 +49,7 @@ source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-F_badstanddr.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-G_new_simdr.R"), 
+source(file = file.path(dir_lib, "fci_06-G_mc_standdr.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-H_simdr.R"), 
        local = knitr::knit_global())
@@ -500,90 +500,9 @@ gt_measures(whatif2.dr,
             and the Exposure Model of Table 6.9")
 ```
 
-### Simulation
+### Doubly Robust Standardization Simulation
 
-The simulation is done with `new_simdr` which is the function `simdr` found
-in section 6.3 in p. 127-128. See the appendix [new_simdr](#new_simdr) for a printout.
-This function has the following advantages
-* faster, see below for profiling
-* internal checp with `stopifnot`
-
-The book use the function `simdr` found on p. 127-128. The code is in the 
-*Functions* appendix after [new_simdr](#new_simdr).
-
-So lets run `simdr` as well as `new_simdr` to explain the alogrithm and also run
-`new_simdr` to prove it does the exact same thing, just faster and easier to read.
-
-
-
-
-```{r}
-simdr.out <- simdr(seed = 12345, out_choice = "sim")
-# str(simdr.out)
-new_simdr.out <- new_simdr(seed = 12345, out_choice = "sim")
-# str(new_simdr.out)
-```
-
-
-
-> One might think that standardization with the exposure model would be 
-preferable when the outcome indicates a rare condition. To see this,
-first suppose the condition is not rare. We might have 3000 individuals and 50%,
-or 1500, with the condition. Using the rule of thumb  for logistic regression 
-of Peduzzi et al. presented in chapter 2, we should be able to include 150 
-covariates in the outcome model.
-
-The Peduzzi rule can be found at the end of section 2.3, on top of p. 29. where
-it states that
-
-> both the numbers of individuals with $Y=0$ and $Y=1$ need to be larger than
-ten times the number of parameters.
-
-and therefore
-
-> Now suppose the exposure, $T$, is divided more evenly: that is, we have 600
-with $T=1$. This would suggest we can include 50 covariates in the exposure model.
-
-Brumback uses a special recipe to arrive at the distribution of $T$ that should
-result in 600 individuals with $T=1$
-
-A seed of $seed = 12345$ is used to be able to compare `simdr` and `new_simdr`.
-When the out has five numbers that's because the function `fivenum()` is used
-for summary statistics. See `?fivenum`.
-
-Both function give the same distribution used for $T$
-
-```{r}
-simdr.out$probT
-new_simdr.out$probT
-stopifnot(new_simdr.out$probT == simdr.out$probT)
-```
-
-and we can verify that the algorithm returns $T \approx 600$ **which is not
-exactly the case**. We will see in the full simulation below that the simulated
-sum is $\sum_i T_i \approx 540$ 
-
-```{r}
-simdr.out$sumT
-new_simdr.out$sumT
-stopifnot(new_simdr.out$sumT == simdr.out$sumT)
-```
-> We simulated $Y_i$ as a function of $T_i$ and $\sum_{k=1}^{ss}H_{i,k}$,
-such that approximately 35 individuals had $Y=1$.
-
-which is the result we get from both `simdr` and `new_simdr`.
-
-```{r}
-simdr.out$sumY
-new_simdr.out$sumY
-stopifnot(new_simdr.out$sumY == simdr.out$sumY)
-```
-
-and we do the simulation with `new_simdr`
-
-```{r}
-# new_sim.out <- replicate(n = 100, new_simdr(out_choice = "est"))
-# str(new_sim.out)
-```
-
+The simulation of doubly robust standardization discussed at the end of 
+section 6.3 in p. 126 to 130 is analyzed in an appendix at 
+[Doubly Robust Simulation](#mc_standdr).
 

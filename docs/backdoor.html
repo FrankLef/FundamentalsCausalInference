@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-16" />
+<meta name="date" content="2022-02-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -290,7 +290,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="6.3" data-path="backdoor.html"><a href="backdoor.html#doubly-robust-standardization"><i class="fa fa-check"></i><b>6.3</b> Doubly Robust Standardization</a>
 <ul>
-<li class="chapter" data-level="6.3.1" data-path="backdoor.html"><a href="backdoor.html#simulation"><i class="fa fa-check"></i><b>6.3.1</b> Simulation</a></li>
+<li class="chapter" data-level="6.3.1" data-path="backdoor.html"><a href="backdoor.html#doubly-robust-standardization-simulation"><i class="fa fa-check"></i><b>6.3.1</b> Doubly Robust Standardization Simulation</a></li>
 </ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
@@ -356,10 +356,12 @@ div.csl-indent {
 <li class="chapter" data-level="C.4.1" data-path="functions.html"><a href="functions.html#ggp_dag.r"><i class="fa fa-check"></i><b>C.4.1</b> <code>ggp_dag.R</code></a></li>
 <li class="chapter" data-level="C.4.2" data-path="functions.html"><a href="functions.html#gt_probs.r"><i class="fa fa-check"></i><b>C.4.2</b> <code>gt_probs.R</code></a></li>
 </ul></li>
-<li class="chapter" data-level="C.5" data-path="functions.html"><a href="functions.html#chapter-6-2"><i class="fa fa-check"></i><b>C.5</b> Chapter 6</a>
-<ul>
-<li class="chapter" data-level="C.5.1" data-path="functions.html"><a href="functions.html#new_simdr"><i class="fa fa-check"></i><b>C.5.1</b> Doubly Robust Standardization</a></li>
+<li class="chapter" data-level="C.5" data-path="functions.html"><a href="functions.html#chapter-6-2"><i class="fa fa-check"></i><b>C.5</b> Chapter 6</a></li>
 </ul></li>
+<li class="chapter" data-level="D" data-path="mc_standdr.html"><a href="mc_standdr.html"><i class="fa fa-check"></i><b>D</b> Doubly Robust Simulation</a>
+<ul>
+<li class="chapter" data-level="D.1" data-path="mc_standdr.html"><a href="mc_standdr.html#scripts"><i class="fa fa-check"></i><b>D.1</b> Scripts</a></li>
+<li class="chapter" data-level="D.2" data-path="mc_standdr.html"><a href="mc_standdr.html#analysis"><i class="fa fa-check"></i><b>D.2</b> Analysis</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -5733,72 +5735,11 @@ as follows</p>
   </tfoot>
 </table>
 </div>
-<div id="simulation" class="section level3" number="6.3.1">
-<h3><span class="header-section-number">6.3.1</span> Simulation</h3>
-<p>The simulation is done with <code>new_simdr</code> which is the function <code>simdr</code> found
-in section 6.3 in p. 127-128. See the appendix <a href="functions.html#new_simdr">new_simdr</a> for a printout.
-This function has the following advantages
-* faster, see below for profiling
-* internal checp with <code>stopifnot</code></p>
-<p>The book use the function <code>simdr</code> found on p. 127-128. The code is in the
-<em>Functions</em> appendix after <a href="functions.html#new_simdr">new_simdr</a>.</p>
-<p>So lets run <code>simdr</code> as well as <code>new_simdr</code> to explain the alogrithm and also run
-<code>new_simdr</code> to prove it does the exact same thing, just faster and easier to read.</p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a>simdr.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">seed =</span> <span class="dv">12345</span>, <span class="at">out_choice =</span> <span class="st">&quot;sim&quot;</span>)</span>
-<span id="cb271-2"><a href="backdoor.html#cb271-2" aria-hidden="true" tabindex="-1"></a><span class="co"># str(simdr.out)</span></span>
-<span id="cb271-3"><a href="backdoor.html#cb271-3" aria-hidden="true" tabindex="-1"></a>new_simdr.out <span class="ot">&lt;-</span> <span class="fu">new_simdr</span>(<span class="at">seed =</span> <span class="dv">12345</span>, <span class="at">out_choice =</span> <span class="st">&quot;sim&quot;</span>)</span>
-<span id="cb271-4"><a href="backdoor.html#cb271-4" aria-hidden="true" tabindex="-1"></a><span class="co"># str(new_simdr.out)</span></span></code></pre></div>
-<blockquote>
-<p>One might think that standardization with the exposure model would be
-preferable when the outcome indicates a rare condition. To see this,
-first suppose the condition is not rare. We might have 3000 individuals and 50%,
-or 1500, with the condition. Using the rule of thumb for logistic regression
-of Peduzzi et al. presented in chapter 2, we should be able to include 150
-covariates in the outcome model.</p>
-</blockquote>
-<p>The Peduzzi rule can be found at the end of section 2.3, on top of p. 29. where
-it states that</p>
-<blockquote>
-<p>both the numbers of individuals with <span class="math inline">\(Y=0\)</span> and <span class="math inline">\(Y=1\)</span> need to be larger than
-ten times the number of parameters.</p>
-</blockquote>
-<p>and therefore</p>
-<blockquote>
-<p>Now suppose the exposure, <span class="math inline">\(T\)</span>, is divided more evenly: that is, we have 600
-with <span class="math inline">\(T=1\)</span>. This would suggest we can include 50 covariates in the exposure model.</p>
-</blockquote>
-<p>Brumback uses a special recipe to arrive at the distribution of <span class="math inline">\(T\)</span> that should
-result in 600 individuals with <span class="math inline">\(T=1\)</span></p>
-<p>A seed of <span class="math inline">\(seed = 12345\)</span> is used to be able to compare <code>simdr</code> and <code>new_simdr</code>.
-When the out has five numbers that’s because the function <code>fivenum()</code> is used
-for summary statistics. See <code>?fivenum</code>.</p>
-<p>Both function give the same distribution used for <span class="math inline">\(T\)</span></p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="backdoor.html#cb272-1" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span>probT</span></code></pre></div>
-<pre><code>## [1] 0.0401691 0.1365390 0.1780839 0.2142438 0.3868105</code></pre>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a>new_simdr.out<span class="sc">$</span>probT</span></code></pre></div>
-<pre><code>## [1] 0.0401691 0.1365390 0.1780839 0.2142438 0.3868105</code></pre>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="backdoor.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(new_simdr.out<span class="sc">$</span>probT <span class="sc">==</span> simdr.out<span class="sc">$</span>probT)</span></code></pre></div>
-<p>and we can verify that the algorithm returns <span class="math inline">\(T \approx 600\)</span> <strong>which is not
-really the case</strong>. We will see in the full simulation below that the simulated
-sum is <span class="math inline">\(\sum_i T_i \approx 540\)</span></p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="backdoor.html#cb277-1" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span>sumT</span></code></pre></div>
-<pre><code>## [1] 560</code></pre>
-<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="backdoor.html#cb279-1" aria-hidden="true" tabindex="-1"></a>new_simdr.out<span class="sc">$</span>sumT</span></code></pre></div>
-<pre><code>## [1] 560</code></pre>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="backdoor.html#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(new_simdr.out<span class="sc">$</span>sumT <span class="sc">==</span> simdr.out<span class="sc">$</span>sumT)</span></code></pre></div>
-<blockquote>
-<p>We simulated <span class="math inline">\(Y_i\)</span> as a function of <span class="math inline">\(T_i\)</span> and <span class="math inline">\(\sum_{k=1}^{ss}H_{i,k}\)</span>,
-such that approximately 35 individuals had <span class="math inline">\(Y=1\)</span>.</p>
-</blockquote>
-<p>which is the result we get from both <code>simdr</code> and <code>new_simdr</code>.</p>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="backdoor.html#cb282-1" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span>sumY</span></code></pre></div>
-<pre><code>## [1] 34</code></pre>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="backdoor.html#cb284-1" aria-hidden="true" tabindex="-1"></a>new_simdr.out<span class="sc">$</span>sumY</span></code></pre></div>
-<pre><code>## [1] 34</code></pre>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="backdoor.html#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(new_simdr.out<span class="sc">$</span>sumY <span class="sc">==</span> simdr.out<span class="sc">$</span>sumY)</span></code></pre></div>
-<p>and we do the simulation with <code>new_simdr</code></p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="backdoor.html#cb287-1" aria-hidden="true" tabindex="-1"></a><span class="co"># new_sim.out &lt;- replicate(n = 100, new_simdr(out_choice = &quot;est&quot;))</span></span>
-<span id="cb287-2"><a href="backdoor.html#cb287-2" aria-hidden="true" tabindex="-1"></a><span class="co"># str(new_sim.out)</span></span></code></pre></div>
+<div id="doubly-robust-standardization-simulation" class="section level3" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Doubly Robust Standardization Simulation</h3>
+<p>The simulation of doubly robust standardization discussed at the end of
+section 6.3 in p. 126 to 130 is analyzed in an appendix at
+<a href="mc_standdr.html#mc_standdr">Doubly Robust Simulation</a>.</p>
 
 </div>
 </div>

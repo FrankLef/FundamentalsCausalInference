@@ -1,8 +1,8 @@
-mc_simdr <- function() {
+mc_standdr <- function() {
   
 }
 
-new_simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
+standdr_sim <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
                       out_choice = c("all", "sim", "est")) {
   out_choice <- match.arg(out_choice)
   set.seed(seed)
@@ -41,7 +41,7 @@ new_simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
               )
   
   # Estimate the expected potential outcomes
-  est <- simdr_est(Y, `T`, H)
+  est <- standdr_est(Y, `T`, H)
   
   if (out_choice == "all") {
     out <- append(sim, est)
@@ -55,7 +55,7 @@ new_simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
   out
 }
 
-simdr_est <- function(Y, `T`, H) {
+standdr_est <- function(Y, `T`, H) {
   
   # fit the exposure model
   e <- fitted(lm(`T` ~ H))

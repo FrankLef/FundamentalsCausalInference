@@ -1,3 +1,27 @@
+#' Doubly Robust Standardization Simulation
+#' 
+#' Doubly robust standardization simulation.
+#' 
+#' This is the function used in \emph{Fundamentals of Causal Inference} by
+#' B. Brumback in section 6.3 of chapter 6, p.127-128. This is the same except
+#' for the addition of \code{out_choice} which is only to select what output
+#' the function returns. It replaces the numerous \code(return) such as
+#' \code{return(range(sumH))} found in the original script. \code{out_choice} is
+#' useful to prove the algorithm to the reader.
+#'
+#' @param n Number of individuals (observations).
+#' @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}
+#' @param probH Probability of success on each trial.
+#' @param seed Seed used for random number generation, default is \code{NULL}.
+#' @param out_choice 
+#'
+#' @return List of values depending on \code{out_choice}.
+#'
+#' @examples
+#' \dontrun{
+#' simdr()
+#' }
+#' @export
 simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
                   out_choice = c("all", "sim", "est")) {
   out_choice <- match.arg(out_choice)
