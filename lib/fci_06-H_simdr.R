@@ -13,8 +13,8 @@
 #' algorithm, they don'e change anything.
 #'
 #' @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}
+#' @param alpha coefficient used to compute the distribution of \code{`T`}.
 #' @param beta coefficient used to compute the distribution of \code{`T`}.
-#' @param gamma coefficient used to compute the distribution of \code{`T`}.
 #' @param probH Probability of success on each trial.
 #' @param seed Seed used for random number generation, default is \code{NULL}.
 #' @param out_choice With "sim", output the simulation; with "est", output the
@@ -27,7 +27,7 @@
 #' simdr()
 #' }
 #' @export
-simdr <- function(ss = 100, beta = 0.13, gamma = 20, seed = NULL,
+simdr <- function(ss = 100, alpha = 0.13, beta = 20, seed = NULL,
                   out_choice = c("all", "sim", "est")) {
   out_choice <- match.arg(out_choice)
   set.seed(seed)
@@ -41,14 +41,20 @@ simdr <- function(ss = 100, beta = 0.13, gamma = 20, seed = NULL,
     H[, i] <- rbinom(n = 3000, size = 1, prob = probH)
   }
   # Let the treatment depend on a function of H
-  sumH <- apply(H, 1, sum) * gamma / ss
+  sumH <- apply(H, 1, sum) * beta / ss
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
-  probT <- beta * sumH + 0.05 * rnorm(n = 3000, mean = 1, sd = 0.1)
+  probT <- alpha * sumH + 0.05 * rnorm(n = 3000, mean = 1, sd = 0.1)
+  # validate the positivity assumption
+  stopifnot(probT > 0, probT < 1)
   
   `T` <- rbinom(n = 3000, size = 1, prob = probT)
   
   # Generate the outcome depend on T and H
   probY <- 0.01 * `T` + 0.01 * sumH
+  # positivity assumption is not required for the outcome
+  # see intro to chapter 6 p. 99
+  stopifnot(probY >= 0, probY <= 1)
+  
   Y <- rbinom(n = 3000, size = 1, prob = probY)
   
   # put the simulated resuts in a list

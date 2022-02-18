@@ -33,7 +33,7 @@ source(file = file.path(dir_lib, "fci_06-H_simdr.R"),
 
 
 
-## Functions used
+## Functions
 
 The function `simdr` is found on p. 127-128. See the script in the last section
 of this appendix. We just added some arguments and and output to facilitate the 
@@ -55,7 +55,7 @@ Note that `simdr` was rewritten as function `mc_standdr` to
 results.
 
 
-## Analysis
+## Analyse $T = \sum_{i=1}^J{T_i}$
 
 Section 6.3 claims that $T=600$ and $P(T=1 \mid H) \in [0.041, 0.0468]$
 but the results obtained from running `simdr` as shown in the book are different.
@@ -71,6 +71,8 @@ new_simdr.out <- standdr_sim(seed = 1009)
 stopifnot(identical(simdr.out, new_simdr.out))
 ```
 
+
+and we continue with our reading
 
 > One might think that standardization with the exposure model would be 
 preferable when the outcome indicates a rare condition. To see this,
@@ -92,7 +94,7 @@ with $T=1$. This would suggest we can include 60 covariates in the exposure mode
 
 
 Brumback uses a linear function of $H$ to create a distribution of $T_i$ that makes
-it dependent on $H$ and claims to give $\sum T_i \approx 600$. 
+it dependent on $H$ and which should give $\sum T_i \approx 600$. 
 However, *the simulation with `simdr` returns $\sum T_i \approx 540$*.
 
 ```{r}
@@ -100,8 +102,14 @@ However, *the simulation with `simdr` returns $\sum T_i \approx 540$*.
 simdr.out$`T`$sum
 ```
 
+
+::: {#errata2 .greeting .message style="color: red;"}
+We observe that $\sum_i T_i \approx 540$ and therefore $\sum_i T_i \not \approx 600$.
+:::
+
+
 This is the part that needs explaining. The difference seems too large to be
-explained by the usual culprit, random process
+explained by the usual culprit, random process.
 
 To be able to do that lets use some notations and go through the mechanics of `simdr`.
 
@@ -109,7 +117,7 @@ Let $H_{j}$ be the covariate $j$
 
 $$
 \begin{align*}
-H_j \sim i.i.d \ \mathcal{Bernoulli}(p), \, j = 1, \ldots, J
+H_j \text{ i.i.d. } \mathcal{Bernoulli}(p), \, j = 1, \ldots, J
 \end{align*}
 $$
 
@@ -120,7 +128,7 @@ and let $T_i$ be the treatment of individual $i$
 
 $$
 \begin{align*}
-T_i \sim \mathcal{Bernoulli}(p_{i}), \, i = 1, \ldots, I
+T_i \sim \mathcal{Bernoulli}(prob = P_i), \, i = 1, \ldots, I
 \end{align*}
 $$
 
@@ -133,16 +141,16 @@ S_i = \sum_{j=1}^{J}H_{i, j} \\
 \text{where } J = ss \text{ as mentioned above}
 $$
 
-and `simdr` defines $p_i$ as
+and `simdr` defines $P_i$ as a random variable
 
 
 $$
 \begin{align*}
-&p_i = \beta \frac{\gamma}{J} S_i + p \times X_i \\
-\
-&\text{where we are given} \\
-&\beta = 0.13 \\
-&\gamma = 20 \\ 
+&P_i = \alpha \frac{\beta}{J} S_i + p \times X_i \\
+\\
+&\text{where} \\
+&\alpha = 0.13 \\
+&\beta = 20 \\ 
 &p = 0.05 \\
 &X_i \sim \mathcal{Normal}(mean = 1, sd = 0.1)
 \end{align*}
@@ -155,7 +163,7 @@ now, since
 $$
 \begin{align*}
 H_i \text{ i.i.d. } \mathcal{Bernoulli}(p) &\implies E(H_i)=p \\
-T_i \sim \mathcal{Bernoulli}(p_{i}) &\implies E(T_i) = p_i \\
+T_i \sim \mathcal{Bernoulli}(p_{i}) &\implies E(T_i) = E(P_i) \\
 X_i \sim \mathcal{Normal}(mean = 1, sd = 0.1) &\implies E(X_i) = 1
 \end{align*}
 $$
@@ -165,12 +173,12 @@ and since $E()$ is a linear function then
 
 $$
 \begin{align*}
-E(T_i) &= p_i \\
-&= E(\beta \cdot \frac{\gamma}{J} S_i + p \cdot X_i) \\
-&= \beta \cdot \frac{\gamma}{J} \sum_{j=1}^{J}E(H_{i, j}) + p \cdot E(X_i) \\
-&= \beta \cdot \frac{\gamma}{J} \sum_{j=1}^{J}p + p \cdot 1 \\
-&= \beta \cdot \frac{\gamma}{J} \cdot J \cdot p + p \\
-&= \beta \cdot \gamma \cdot p + p
+E(T_i) &= E(P_i) \\
+&= E(\alpha \cdot \frac{\beta}{J} S_i + p \cdot X_i) \\
+&= \alpha \cdot \frac{\beta}{J} \sum_{j=1}^{J}E(H_{i, j}) + p \cdot E(X_i) \\
+&= \alpha \cdot \frac{\beta}{J} \sum_{j=1}^{J}p + p \cdot 1 \\
+&= \alpha \cdot \frac{\beta}{J} \cdot J \cdot p + p \\
+&= \alpha \cdot \beta \cdot p + p
 \end{align*}
 $$
 
@@ -180,11 +188,11 @@ and the sum of the number of people treated is $T = \sum_i^IT_i$
 $$
 \begin{align*}
 E(T)  &= \sum_{i=1}^I{E(T_i)} \\
-&= \sum_{i=1}^I{(\beta \cdot \gamma \cdot p + p)} \\
-&= I (\beta \cdot \gamma \cdot p + p) \\
+&= \sum_{i=1}^I{(\alpha \cdot \beta \cdot p + p)} \\
+&= I (\alpha \cdot \beta \cdot p + p) \\
 \\
 &\text{and since} \\ 
-&I = 3000, \, \beta = 0.13, \, \gamma = 20, \, p = 0.05 \\
+&I = 3000, \, \alpha = 0.13, \, \beta = 20, \, p = 0.05 \\
 \\
 &\text{then} \\
 E(T) &= 3000 \cdot (0.13 \cdot 20 \cdot 0.05 + 0.05) \\
@@ -199,38 +207,79 @@ covariates rather than 60 by the Peduzzi rule.
 We observe that this *does not change the conclusions drawn from the simulation
 significantly*.
 
-Finally, we note thet the formula $\beta \cdot \gamma \cdot p + p$ could be 
-modified to get $T=600$ by varying the coefficient $\beta=0.13$ and/or $\gamma=20$.
-If we change only $\beta$ we could use the result from above and with simple 
-algebra
+Finally, we note that the formula $\alpha \cdot \beta \cdot p + p$ could be 
+modified to get $T=600$ by varying the coefficient $\alpha=0.13$ and/or $\beta=20$.
+If we change only $\alpha$ and keep $\beta=20$ we could use the result from 
+above and with simple algebra
 
 $$
 \begin{align*}
-E(T)&= I (\beta \cdot \gamma \cdot p + p) \\
+E(T)&= I (\alpha \cdot \beta \cdot p + p) \\
 \\
 &\text{and since we want } E(T) = 600 \\
 &\text{and that} \\
-&\gamma = 20, \, I = 3000, \, p = 0.05 \\
+&\beta = 20, \, I = 3000, \, p = 0.05 \\
 \\
 \text{then} \\
-600 &= 3000 \cdot (\beta \cdot 20 \cdot 0.05 + 0.05) \\
-\beta &= \frac{600 - 0.05 \cdot 3000}{3000 \cdot 20 \cdot0.05} = \frac{450}{3000} = 0.15
+600 &= 3000 \cdot (\alpha \cdot 20 \cdot 0.05 + 0.05) \\
+\alpha &= \frac{600 - 0.05 \cdot 3000}{3000 \cdot 20 \cdot0.05} = \frac{450}{3000} = 0.15
 \end{align*}
 $$
 
-and we simulate using $\beta = 0.15$ to validate
+and we simulate using $\alpha = 0.15$ to validate
 
 ```{r}
-simdr600.out <- simdr(beta = 0.15, seed = 1009, out_choice = "sim")
+simdr600.out <- simdr(alpha = 0.15, seed = 1009, out_choice = "sim")
 simdr600.out$`T`$sum
 ```
 
-Lets continue our reading
+## Analyse $Y = \sum_{i=1}^I Y_i$
+
+First we analyse $Y = \sum Y_i$ mathematically using the same notation as above.
+
+$$
+\begin{align*}
+&\text{as defined in simdr} \\
+Y_i &= 0.1 T_i + 0.1 \frac{\beta}{J} S_i \\
+\\
+&\text{therefore} \\
+E(Y_i) &=0.1 E(T_i) + 0.1 \frac{\beta}{J} E(S_i) \\
+&= 0.01 E(P_i) + 0.01 \frac{\beta}{J} \sum_{j=1}^J{E(H_{ij})} \\
+&= 0.01 \cdot(\alpha \cdot \beta \cdot p + p) + 0.01 \sum_{j=1}^J{p} \\
+&= 0.01 \cdot(\alpha \cdot \beta \cdot p + p) + 0.01 \frac{\beta}{J} \cdot J \cdot p\\
+&= 0.01 \cdot(\alpha \cdot \beta \cdot p + p) + 0.01 \cdot \beta \cdot p \\
+\\
+&\text{and given} \\
+&\alpha = 0.13, \, \beta = 20, \, p = 0.05 \\
+\\
+&\text{therefore} \\
+E(Y_i) &= 0.01 \cdot(0.13 \cdot 20 \cdot 0.05 + 0.05) + 0.01 \cdot 20 \cdot 0.05 \\
+&=0.0013 + 0.0005 + 0.01 \\
+&= 0.0118
+\end{align*}
+$$
+and since $Y = \sum_{i=1}^I Y_i$ then
+
+$$
+\begin{align*}
+Y &= \sum_{i=1}^I Y_i \\
+E(Y) &= \sum_{i=1}^I E(Y_i) = I \cdot E(Y_i) \\
+\\
+&\text{and from above} \\
+E(Y_i) &= 0.0118 \\
+\\
+&\text{therefore} \\
+E(Y) &= I \cdot E(Y_i) = 3000 \cdot 0.0118 = 35.4 \\
+&\approx 35
+\end{align*}
+$$
+
+which mathematically proves the following
 
 > We simulated $Y_i$ as a function of $T_i$ and $\sum_{k=1}^{ss}H_{i,k}$,
 such that approximately 35 individuals had $Y=1$.
 
-the result we get from both `simdr` is 38, close enough.
+and the result we get from both `simdr` is 38, close enough.
 
 ```{r}
 simdr.out$Y$sum
@@ -239,28 +288,35 @@ simdr.out$Y$sum
 > The mean of $\sum_{k=1}^{ss}{H_{ik}}$ was fixed at one, but when $ss$ was set to 
 100, it ranged from 0.00 to 2.80.
 
-That is exactly waht we get.
+That is exactly what we get.
 
 ```{r}
 c("min" = simdr.out$sumH$min, "max" = simdr.out$sumH$max)
 ```
+
+then
+
 > $P(T = 1 \mid H)$ ranged from 0.041 to 0.468.
 
-*The results are different.*
+
+::: {#errata2 .greeting .message style="color: red;"}
+The results are different.
+:::
 
 
 ```{r}
 c("min" = simdr.out$probT$min, "max" = simdr.out$probT$max)
 ```
 
-Probably because the original simulation came up with $T = 600$ rather than 
-$T = 540$ as discussed above. Indeed if we verify with the simulation with
-$T=600$ the results are closer.
+Probably because the original simulation came up with $T=600$ rather than 
+$T=540$ as discussed above. Indeed if we verify with the simulation with
+$T=600$ the results are now reasonably close.
 
 
 ```{r}
 c("min" = simdr600.out$probT$min, "max" = simdr600.out$probT$max)
 ```
+
 
 > $E(Y \mid T, H)$ ranged from 0.000 to 0.036.
 

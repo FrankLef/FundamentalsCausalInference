@@ -2,7 +2,7 @@ mc_standdr <- function() {
   
 }
 
-standdr_sim <- function(n = 3000, ss = 100, beta = 0.13, gamma = 20, 
+standdr_sim <- function(n = 3000, ss = 100, alpha = 0.13, beta = 20, 
                         probH = 0.05, seed = NULL) {
   set.seed(seed)
   
@@ -14,10 +14,11 @@ standdr_sim <- function(n = 3000, ss = 100, beta = 0.13, gamma = 20,
   # let the treatment depend on a function of H
   # "We simulated T  as indicator variables with probabilities that varied as
   # a linear function  of H such that approximately 600 individuals had T=1"
-  sumH <- apply(H, MARGIN = 1, FUN = sum) * gamma / ss
-  probT <- beta * sumH + probH * rnorm(n = n, mean = 1, sd = 0.1)
-  # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
-  stopifnot(all(probT > 0), all(probT < 1))
+  sumH <- apply(H, MARGIN = 1, FUN = sum) * beta / ss
+  probT <- alpha * sumH + probH * rnorm(n = n, mean = 1, sd = 0.1)
+  # validate the positivity assumption
+  stopifnot(probT > 0, probT < 1)
+  
   `T` <- rbinom(n = n, size = 1, prob = probT)
   
   
@@ -25,10 +26,10 @@ standdr_sim <- function(n = 3000, ss = 100, beta = 0.13, gamma = 20,
   # "We simulated Y as a function T ans sumH such hat approximatey 35 
   # individuals had Y = 1"
   probY <- 0.01 * `T` + 0.01 * sumH
-  # make sure P(Y=1) is between 0 and 1, i.e. positivity assumption
-  # NOTE ON ASSUMPTION:
-  # positivity assumtion not met because we need probY >= 0
-  stopifnot(all(probY >= 0), all(probY < 1))
+  # positivity assumption is not required for the outcome
+  # see intro to chapter 6 p. 99
+  stopifnot(probY >= 0, probY <= 1)
+  
   Y <- rbinom(n = n, size = 1, prob = probY)
   
   # output results in a list
