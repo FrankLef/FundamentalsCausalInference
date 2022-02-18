@@ -1,7 +1,7 @@
 # Doubly Robust Simulation {#mc_standdr}
 
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -13,11 +13,6 @@ library(MonteCarlo)
 
 
 ```{r include=FALSE}
-# the directory of documentation for chapter 1
-dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 1")
-dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -26,8 +21,6 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_utils.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures.R"), 
@@ -36,57 +29,47 @@ source(file = file.path(dir_lib, "fci_06-G_mc_standdr.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-H_simdr.R"), 
        local = knitr::knit_global())
-load(file.path(dir_docs01, "whatifdat.RData"))
-load(file.path(dir_docs01, "gss.RData"))
-load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
 
 
-## Scripts
+## Functions used
 
-The simulation is done with a non-parametric Monte Carlo simulation `mc_standdr`
-with the following script
-
-
-```{r file="lib\\fci_06-G_mc_standdr.R"}
-
-```
+The function `simdr` is found on p. 127-128. See the script in the last section
+of this appendix. We just added some arguments and and output to facilitate the 
+analysis. See the next section *Analysis*.
 
 
-The book use the function `simdr` found on p. 127-128 with this script
+The Monte Carlo simulation is done with a non-parametric Monte Carlo function 
+`mc_standdr` with the following script. See the section *Simulation* blow.
 
+Note that `simdr` was rewritten as function `mc_standdr` to
 
-```{r file="lib\\fci_06-H_simdr.R"}
+* facilitate the analysis of the algorithm
+* perform a Monte Carlo simulation with the `MonteCarlo` package
+* separate the data simulation from the measurement of estimates in 2 sub functions
+  - `standdr_sim`: Simulate the data
+  - `standdr_est`: Calculate the estimates using the simulated data from `standdr_sim`
 
-```
+`mc_standdr` has been validated against `simdr` and gives exactly the same 
+results.
 
 
 ## Analysis
 
+Section 6.3 claims that $T=600$ and $P(T=1 \mid H) \in [0.041, 0.0468]$
+but the results obtained from running `simdr` as shown in the book are different.
+Not a lot but enough to puzzle the avid reader (like me for example).
 
-The simulation is done with `new_simdr` which is the function `simdr` found
-in section 6.3 in p. 127-128. See the appendix [new_simdr](#new_simdr) for a printout.
-This function has the following advantages
-* faster, see below for profiling
-* internal checp with `stopifnot`
-
-The book use the function `simdr` found on p. 127-128. The code is in the 
-*Functions* appendix after [new_simdr](#new_simdr).
-
-So lets run `simdr` as well as `new_simdr` to explain the alogrithm and also run
-`new_simdr` to prove it does the exact same thing, just faster and easier to read.
-
-
+So lets go through `simdr` to explain the differences.
 
 
 ```{r}
-simdr.out <- simdr(seed = 12345, out_choice = "sim")
-# str(simdr.out)
-new_simdr.out <- new_simdr(seed = 12345, out_choice = "sim")
-# str(new_simdr.out)
+simdr.out <- simdr(seed = 1009, out_choice = "sim")
+new_simdr.out <- standdr_sim(seed = 1009)
+# test the new function new_simdr.out vs simdr
+stopifnot(identical(simdr.out, new_simdr.out))
 ```
-
 
 
 > One might think that standardization with the exposure model would be 
@@ -105,49 +88,205 @@ ten times the number of parameters.
 and therefore
 
 > Now suppose the exposure, $T$, is divided more evenly: that is, we have 600
-with $T=1$. This would suggest we can include 50 covariates in the exposure model.
+with $T=1$. This would suggest we can include 60 covariates in the exposure model.
 
-Brumback uses a special recipe to arrive at the distribution of $T$ that should
-result in 600 individuals with $T=1$
 
-A seed of $seed = 12345$ is used to be able to compare `simdr` and `new_simdr`.
-When the out has five numbers that's because the function `fivenum()` is used
-for summary statistics. See `?fivenum`.
-
-Both function give the same distribution used for $T$
+Brumback uses a linear function of $H$ to create a distribution of $T_i$ that makes
+it dependent on $H$ and claims to give $\sum T_i \approx 600$. 
+However, *the simulation with `simdr` returns $\sum T_i \approx 540$*.
 
 ```{r}
-simdr.out$probT
-new_simdr.out$probT
-stopifnot(new_simdr.out$probT == simdr.out$probT)
+# sum of T
+simdr.out$`T`$sum
 ```
 
-and we can verify that the algorithm returns $T \approx 600$ **which is not
-exactly the case**. We will see in the full simulation below that the simulated
-sum is $\sum_i T_i \approx 540$ 
+This is the part that needs explaining. The difference seems too large to be
+explained by the usual culprit, random process
+
+To be able to do that lets use some notations and go through the mechanics of `simdr`.
+
+Let $H_{j}$ be the covariate $j$
+
+$$
+\begin{align*}
+H_j \sim i.i.d \ \mathcal{Bernoulli}(p), \, j = 1, \ldots, J
+\end{align*}
+$$
+
+where $J$ is the same variable as $ss$ from Brumback, i.e. $J = ss = 100$. Also
+$H_{i, j}$ is the value of covariate $H_j$ for individual $i$.
+
+and let $T_i$ be the treatment of individual $i$
+
+$$
+\begin{align*}
+T_i \sim \mathcal{Bernoulli}(p_{i}), \, i = 1, \ldots, I
+\end{align*}
+$$
+where $I$ is set at $I=3000$ by Brumback.
+
+In addition, we let
+
+$$
+S_i = \sum_{j=1}^{J}H_{i, j} \\
+\text{where } J = ss \text{ as mentioned above}
+$$
+
+and `simdr` defines $p_i$ as
+
+
+$$
+\begin{align*}
+&p_i = 0.13 \times \frac{\gamma}{J} S_i + p \times X_i \\
+&\text{where} \\
+&\gamma = 20 \\ 
+&X_i \sim \mathcal{Normal}(mean = 1, sd = 0.1)
+\end{align*}
+$$
+
+
+now, since 
+
+
+$$
+\begin{align*}
+H_i \text{ i.i.d. } \mathcal{Bernoulli}(p) &\implies E(H_i)=p \\
+T_i \sim \mathcal{Bernoulli}(p_{i}) &\implies E(T_i) = p_i \\
+X_i \sim \mathcal{Normal}(mean = 1, sd = 0.1) &\implies E(X_i) = 1
+\end{align*}
+$$
+
+and since $E()$ is a linear function then
+
+
+$$
+\begin{align*}
+E(T_i) &= p_i \\
+&= E(0.13 \cdot \frac{\gamma}{J} S_i + p \cdot X_i) \\
+&= 0.13 \cdot \frac{\gamma}{J} \sum_{j=1}^{J}E(H_{i, j}) + p \cdot E(X_i) \\
+&= 0.13 \cdot \frac{\gamma}{J} \sum_{j=1}^{J}p + p \cdot 1 \\
+&= 0.13 \cdot \frac{\gamma}{J} \cdot J \cdot p + p \\
+&= 0.13 \cdot \gamma \cdot p + p
+\end{align*}
+$$
+
+
+and the sum of the number of people treated is $T = \sum_i^IT_i$
+
+$$
+\begin{align*}
+E(T)  &= \sum_{i=1}^I{E(T_i)} = \\
+&= \sum_{i=1}^I{(0.13 \cdot \gamma \cdot p + p)} \\
+&= I (0.13 \cdot \gamma \cdot p + p) \\
+\\
+&\text{and since} \\ 
+&I = 3000, \gamma = 20, p = 0.05 \\
+\\
+&\text{then} \\
+E(T) &= 3000 \cdot (0.13 \cdot 20 \cdot 0.05 + 0.05) \\
+&= 540
+\end{align*}
+$$
+
+which proves that the expected number of $T$ is not really close to 600 but rather
+540 which is also the result of the simulation. Therefore we could use 54 
+covariates rather than 60 by the Peduzzi rule.
+
+We observe that this *does not change the conclusions drawn from the simulation
+significantly*.
+
+Finally, we note thet the formula $0.13 \cdot \gamma \cdot p + p$ could be 
+modified to get $T=600$ by varying the coefficient $0.13$ and/or $\gamma=20$.
+If we change only $\gamma$ we could use the reult from above and with simple 
+algebra
+
+$$
+\begin{align*}
+E(T)&= I (0.13 \cdot \gamma \cdot p + p) \\
+\\
+&\text{and since we want } E(T) = 600 \text{ and that} \\ 
+&I = 3000, p = 0.05 \\
+\\
+&\text{then} \\
+600 &= 3000 \cdot (0.13 \cdot \gamma \cdot 0.05 + 0.05) \\
+\gamma &= \frac{600 - 0.05 \cdot 3000}{3000 \cdot0.13 \cdot0.05} = \frac{450}{19.5} = 23.0769 \\
+\gamma &\approx 23
+\end{align*}
+$$
+
+and we also demonstrate with the simulation using $\gamma = 23$ to show that
+$\gamma=23 \implies T=600$.
 
 ```{r}
-simdr.out$sumT
-new_simdr.out$sumT
-stopifnot(new_simdr.out$sumT == simdr.out$sumT)
+simdr600.out <- simdr(gamma = 23, seed = 1009, out_choice = "sim")
+simdr600.out$`T`$sum
 ```
+
+
+Lets continue our reading
 
 > We simulated $Y_i$ as a function of $T_i$ and $\sum_{k=1}^{ss}H_{i,k}$,
 such that approximately 35 individuals had $Y=1$.
 
-which is the result we get from both `simdr` and `new_simdr`.
+the result we get from both `simdr` is 38, close enough.
 
 ```{r}
-simdr.out$sumY
-new_simdr.out$sumY
-stopifnot(new_simdr.out$sumY == simdr.out$sumY)
+simdr.out$Y$sum
 ```
 
-and we do the simulation with `new_simdr`
+> The mean of $\sum_{k=1}^{ss}{H_{ik}}$ was fixed at one, but when $ss$ was set to 
+100, it ranged from 0.00 to 2.80.
+
+That is exactly waht we get.
 
 ```{r}
-# new_sim.out <- replicate(n = 100, new_simdr(out_choice = "est"))
-# str(new_sim.out)
+c("min" = simdr.out$sumH$min, "max" = simdr.out$sumH$max)
+```
+> $P(T = 1 \mid H)$ ranged from 0.041 to 0.468.
+
+*The results are different.*
+
+
+```{r}
+c("min" = simdr.out$probT$min, "max" = simdr.out$probT$max)
+```
+
+Probably because the original simulation came up with $T = 600$ rather than 
+$T = 540$ as discussed above. Indeed if we verify with the simulation with
+$T=600$ the results are closer.
+
+
+```{r}
+c("min" = simdr600.out$probT$min, "max" = simdr600.out$probT$max)
+```
+
+> $E(Y \mid T, H)$ ranged from 0.000 to 0.036.
+
+and the results are almost identical
+
+```{r}
+c("min" = simdr.out$probY$min, "max" = simdr.out$probY$max)
+```
+
+And with this we are ready to proceed with the simulation with varying $ss$.
+
+## Simulation
+
+
+
+## Scripts
+
+### `simdr`
+
+
+```{r file="lib\\fci_06-H_simdr.R"}
+
 ```
 
 
+### `mc_standdr`
+
+
+```{r file="lib\\fci_06-G_mc_standdr.R"}
+
+```

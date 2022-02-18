@@ -7,7 +7,8 @@
 #' for the addition of \code{out_choice} which is only to select what output
 #' the function returns. It replaces the numerous \code(return) such as
 #' \code{return(range(sumH))} found in the original script. \code{out_choice} is
-#' useful to prove the algorithm to the reader.
+#' useful to prove the algorithm to the reader. Also, \code{standdr_stats} is
+#' used in the output to give more statistics.
 #'
 #' @param n Number of individuals (observations).
 #' @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}
@@ -22,7 +23,7 @@
 #' simdr()
 #' }
 #' @export
-simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
+simdr <- function(n = 3000, ss = 100, gamma = 20, probH = 0.05, seed = NULL,
                   out_choice = c("all", "sim", "est")) {
   out_choice <- match.arg(out_choice)
   set.seed(seed)
@@ -30,13 +31,13 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
   # ss is the number of confounders
   # i.e. the number of columns of H
   H <- matrix(0, n, ss)
-  # Let all componentsof H be independent Bernoulli variables with p=0.05
+  # Let all components of H be independent Bernoulli variables with p=0.05
   probH <- rep(0.05, n)
   for (i in 1:ss) {
     H[, i] <- rbinom(n = 3000, size = 1, prob = probH)
   }
   # Let the treatment depend on a function of H
-  sumH <- apply(H, 1, sum) * 20 / ss
+  sumH <- apply(H, 1, sum) * gamma / ss
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
   probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
   
@@ -47,11 +48,11 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
   Y <- rbinom(n = n, size = 1, prob = probY)
   
   # put the simulated resuts in a list
-  sim <- list("sumH" = fivenum(sumH),
-       "probT" = fivenum(probT),
-       "sumT" = sum(`T`),
-       "probY" = fivenum(probY),
-       "sumY" = sum(Y))
+  sim <- list("sumH" = simdr_stats(sumH),
+              "probT" = simdr_stats(probT),
+              "T" = simdr_stats(`T`),
+              "probY" = simdr_stats(probY),
+              "Y" = simdr_stats(Y))
   
   # fit the exposure model
   e <- fitted(lm(`T` ~ H))
@@ -113,4 +114,19 @@ simdr <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
     stop(sprintf("%s is an invalid out_choice", out_choice))
   }
   out
+}
+
+#' Compute statistics from \code{simdr}. Sames as \code{standdr_est}
+#'
+#' @param x Vector of numeric values.
+#'
+#' @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.
+#' 
+#' @seealso standdr_stats
+#'
+#' @examples
+#' simdr_stats(runif(20))
+#' @export
+simdr_stats <- function(x) {
+  list("sum" = sum(x), "mean" = mean(x), "min" = min(x), "max" = max(x))
 }

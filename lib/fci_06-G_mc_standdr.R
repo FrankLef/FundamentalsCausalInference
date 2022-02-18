@@ -2,9 +2,7 @@ mc_standdr <- function() {
   
 }
 
-standdr_sim <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
-                      out_choice = c("all", "sim", "est")) {
-  out_choice <- match.arg(out_choice)
+standdr_sim <- function(n = 3000, ss = 100, gamma = 20, probH = 0.05, seed = NULL) {
   set.seed(seed)
   
   # matrix of independent Bernoulli vector with prob = 0.05
@@ -15,8 +13,8 @@ standdr_sim <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
   # let the treatment depend on a function of H
   # "We simulated T  as indicator variables with probabilities that varied as
   # a linear function  of H such that approximately 600 individuals had T=1"
-  sumH <- apply(H, MARGIN = 1, FUN = sum) * 20 / ss
-  probT <- 0.13 * sumH + 0.05 * rnorm(n = n, mean = 1, sd = 0.1)
+  sumH <- apply(H, MARGIN = 1, FUN = sum) * gamma / ss
+  probT <- 0.13 * sumH + probH * rnorm(n = n, mean = 1, sd = 0.1)
   # make sure P(T=1) is between 0 and 1, i.e. positivity assumption
   stopifnot(all(probT > 0), all(probT < 1))
   `T` <- rbinom(n = n, size = 1, prob = probT)
@@ -32,28 +30,14 @@ standdr_sim <- function(n = 3000, ss = 100, probH = 0.05, seed = NULL,
   stopifnot(all(probY >= 0), all(probY < 1))
   Y <- rbinom(n = n, size = 1, prob = probY)
   
-  # put results in a list
-  sim <- list("sumH" = fivenum(sumH),
-              "probT" = fivenum(probT),
-              "sumT" = sum(`T`),
-              "probY" = fivenum(probY),
-              "sumY" = sum(Y)
-              )
-  
-  # Estimate the expected potential outcomes
-  est <- standdr_est(Y, `T`, H)
-  
-  if (out_choice == "all") {
-    out <- append(sim, est)
-  } else if(out_choice == "sim") {
-    out <- sim
-  } else if(out_choice == "est") {
-    out <- est
-  } else {
-    stop(sprintf("%s is an invalid out_choice", out_choice))
-  }
-  out
+  # output results in a list
+  list("sumH" = standdr_stats(sumH),
+       "probT" = standdr_stats(probT),
+       "T" = standdr_stats(`T`),
+       "probY" = standdr_stats(probY),
+       "Y" = standdr_stats(Y))
 }
+
 
 standdr_est <- function(Y, `T`, H) {
   
@@ -105,4 +89,17 @@ standdr_est <- function(Y, `T`, H) {
        "EY1dr" = EY1dr,
        "EYT0" = EYT0,
        "EYT1" = EYT1)
+}
+
+#' Compute statistics from \code{standdr_sim}.
+#'
+#' @param x Vector of numeric values.
+#'
+#' @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.
+#'
+#' @examples
+#' standdr_est(runif(20))
+#' @export
+standdr_stats <- function(x) {
+  list("sum" = sum(x), "mean" = mean(x), "min" = min(x), "max" = max(x))
 }
