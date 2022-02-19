@@ -14,8 +14,9 @@
 #'
 #' @return Dataframe of estimates
 standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
-  # name of the treatment variable
-  t <- all.vars(formula[[3]])[1]
+  
+  # extract the variables names from the formula
+  fvars <- formula2vars(formula)
   
   
   estimator <- function(data, ids) {
@@ -25,11 +26,11 @@ standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     
     # dataset with everyone untreated
     dat0 <- dat
-    dat0[, t] <- 0
+    dat0[, fvars$t] <- 0
     
     # dataset with everyone treated
     dat1 <- dat
-    dat1[, t] <- 1
+    dat1[, fvars$t] <- 1
     
     # compute the expected potential outcome for
     # each participant if untreated

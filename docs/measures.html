@@ -292,6 +292,10 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="backdoor.html"><a href="backdoor.html#doubly-robust-standardization-simulation"><i class="fa fa-check"></i><b>6.3.1</b> Doubly Robust Standardization Simulation</a></li>
 </ul></li>
+<li class="chapter" data-level="6.4" data-path="backdoor.html"><a href="backdoor.html#exercises-5"><i class="fa fa-check"></i><b>6.4</b> Exercises</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="backdoor.html"><a href="backdoor.html#exercise-1-5"><i class="fa fa-check"></i><b>6.4.1</b> Exercise 1</a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata</a>
@@ -330,7 +334,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="B.2.1" data-path="notes.html"><a href="notes.html#section-4.1"><i class="fa fa-check"></i><b>B.2.1</b> Section 4.1</a></li>
 <li class="chapter" data-level="B.2.2" data-path="notes.html"><a href="notes.html#section-4.2"><i class="fa fa-check"></i><b>B.2.2</b> Section 4.2</a></li>
-<li class="chapter" data-level="B.2.3" data-path="notes.html"><a href="notes.html#exercises-5"><i class="fa fa-check"></i><b>B.2.3</b> Exercises</a></li>
+<li class="chapter" data-level="B.2.3" data-path="notes.html"><a href="notes.html#exercises-6"><i class="fa fa-check"></i><b>B.2.3</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="B.3" data-path="notes.html"><a href="notes.html#chapter-6-1"><i class="fa fa-check"></i><b>B.3</b> Chapter 6</a>
 <ul>
@@ -436,58 +440,56 @@ div.csl-indent {
 <span id="cb66-15"><a href="measures.html#cb66-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of summarized results</span></span>
 <span id="cb66-16"><a href="measures.html#cb66-16" aria-hidden="true" tabindex="-1"></a>boot <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
 <span id="cb66-17"><a href="measures.html#cb66-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb66-18"><a href="measures.html#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the response variable</span></span>
-<span id="cb66-19"><a href="measures.html#cb66-19" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">2</span>]])</span>
-<span id="cb66-20"><a href="measures.html#cb66-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the treatment variable</span></span>
-<span id="cb66-21"><a href="measures.html#cb66-21" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">1</span>]</span>
-<span id="cb66-22"><a href="measures.html#cb66-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the modifier variable</span></span>
-<span id="cb66-23"><a href="measures.html#cb66-23" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula[[<span class="dv">3</span>]])[<span class="dv">2</span>]</span>
-<span id="cb66-24"><a href="measures.html#cb66-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb66-25"><a href="measures.html#cb66-25" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb66-26"><a href="measures.html#cb66-26" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb66-27"><a href="measures.html#cb66-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcomes</span></span>
-<span id="cb66-28"><a href="measures.html#cb66-28" aria-hidden="true" tabindex="-1"></a>    EYT0.M0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, t] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> dat[, m] <span class="sc">==</span> <span class="dv">0</span>, y])</span>
-<span id="cb66-29"><a href="measures.html#cb66-29" aria-hidden="true" tabindex="-1"></a>    EYT0.M1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, t] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> dat[, m] <span class="sc">==</span> <span class="dv">1</span>, y])</span>
-<span id="cb66-30"><a href="measures.html#cb66-30" aria-hidden="true" tabindex="-1"></a>    EYT1.M0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, t] <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> dat[, m] <span class="sc">==</span> <span class="dv">0</span>, y])</span>
-<span id="cb66-31"><a href="measures.html#cb66-31" aria-hidden="true" tabindex="-1"></a>    EYT1.M1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, t] <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> dat[, m] <span class="sc">==</span> <span class="dv">1</span>, y])</span>
-<span id="cb66-32"><a href="measures.html#cb66-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
-<span id="cb66-33"><a href="measures.html#cb66-33" aria-hidden="true" tabindex="-1"></a>    RD.M0 <span class="ot">&lt;-</span> EYT1.M0 <span class="sc">-</span> EYT0.M0</span>
-<span id="cb66-34"><a href="measures.html#cb66-34" aria-hidden="true" tabindex="-1"></a>    RD.M1 <span class="ot">&lt;-</span> EYT1.M1 <span class="sc">-</span> EYT0.M1</span>
-<span id="cb66-35"><a href="measures.html#cb66-35" aria-hidden="true" tabindex="-1"></a>    logRR.M0 <span class="ot">&lt;-</span> <span class="fu">log</span>(EYT1.M0 <span class="sc">/</span> EYT0.M0)</span>
-<span id="cb66-36"><a href="measures.html#cb66-36" aria-hidden="true" tabindex="-1"></a>    logRR.M1 <span class="ot">&lt;-</span> <span class="fu">log</span>(EYT1.M1 <span class="sc">/</span> EYT0.M1)</span>
-<span id="cb66-37"><a href="measures.html#cb66-37" aria-hidden="true" tabindex="-1"></a>    logRRstar.M0 <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> EYT0.M0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> EYT1.M0))</span>
-<span id="cb66-38"><a href="measures.html#cb66-38" aria-hidden="true" tabindex="-1"></a>    logRRstar.M1 <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> EYT0.M1) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> EYT1.M1))</span>
-<span id="cb66-39"><a href="measures.html#cb66-39" aria-hidden="true" tabindex="-1"></a>    logOR.M0 <span class="ot">&lt;-</span> logRR.M0 <span class="sc">+</span> logRRstar.M0</span>
-<span id="cb66-40"><a href="measures.html#cb66-40" aria-hidden="true" tabindex="-1"></a>    logOR.M1 <span class="ot">&lt;-</span> logRR.M1 <span class="sc">+</span> logRRstar.M1</span>
-<span id="cb66-41"><a href="measures.html#cb66-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the effect measure difference</span></span>
-<span id="cb66-42"><a href="measures.html#cb66-42" aria-hidden="true" tabindex="-1"></a>    EYT0.diff <span class="ot">&lt;-</span> EYT0.M1 <span class="sc">-</span> EYT0.M0</span>
-<span id="cb66-43"><a href="measures.html#cb66-43" aria-hidden="true" tabindex="-1"></a>    EYT1.diff <span class="ot">&lt;-</span> EYT1.M1 <span class="sc">-</span> EYT1.M0</span>
-<span id="cb66-44"><a href="measures.html#cb66-44" aria-hidden="true" tabindex="-1"></a>    RD.diff <span class="ot">&lt;-</span> RD.M1 <span class="sc">-</span> RD.M0</span>
-<span id="cb66-45"><a href="measures.html#cb66-45" aria-hidden="true" tabindex="-1"></a>    logRR.diff <span class="ot">&lt;-</span> logRR.M1 <span class="sc">-</span> logRR.M0</span>
-<span id="cb66-46"><a href="measures.html#cb66-46" aria-hidden="true" tabindex="-1"></a>    logRRstar.diff <span class="ot">&lt;-</span> logRRstar.M1 <span class="sc">-</span> logRRstar.M0</span>
-<span id="cb66-47"><a href="measures.html#cb66-47" aria-hidden="true" tabindex="-1"></a>    logOR.diff <span class="ot">&lt;-</span> logOR.M1 <span class="sc">-</span> logOR.M0</span>
-<span id="cb66-48"><a href="measures.html#cb66-48" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb66-49"><a href="measures.html#cb66-49" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(EYT0.M0, EYT0.M1, EYT1.M0, EYT1.M1, RD.M0, RD.M1,</span>
-<span id="cb66-50"><a href="measures.html#cb66-50" aria-hidden="true" tabindex="-1"></a>             logRR.M0, logRR.M1, logRRstar.M0, logRRstar.M1,</span>
-<span id="cb66-51"><a href="measures.html#cb66-51" aria-hidden="true" tabindex="-1"></a>             logOR.M0, logOR.M1, EYT0.diff, EYT1.diff, </span>
-<span id="cb66-52"><a href="measures.html#cb66-52" aria-hidden="true" tabindex="-1"></a>             RD.diff, logRR.diff, logRRstar.diff, logOR.diff)</span>
-<span id="cb66-53"><a href="measures.html#cb66-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;EYT0.M0&quot;</span>, <span class="st">&quot;EYT0.M1&quot;</span>, <span class="st">&quot;EYT1.M0&quot;</span>, <span class="st">&quot;EYT1.M1&quot;</span>, <span class="st">&quot;RD.M0&quot;</span>, <span class="st">&quot;RD.M1&quot;</span>,</span>
-<span id="cb66-54"><a href="measures.html#cb66-54" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;logRR*.M1&quot;</span>,</span>
-<span id="cb66-55"><a href="measures.html#cb66-55" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;EYT0.diff&quot;</span>, <span class="st">&quot;EYT1.diff&quot;</span>, </span>
-<span id="cb66-56"><a href="measures.html#cb66-56" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;RD.diff&quot;</span>, <span class="st">&quot;logRR.diff&quot;</span>, <span class="st">&quot;logRR*.diff&quot;</span>, <span class="st">&quot;logOR.diff&quot;</span>)</span>
-<span id="cb66-57"><a href="measures.html#cb66-57" aria-hidden="true" tabindex="-1"></a>    out</span>
-<span id="cb66-58"><a href="measures.html#cb66-58" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb66-18"><a href="measures.html#cb66-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
+<span id="cb66-19"><a href="measures.html#cb66-19" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
+<span id="cb66-20"><a href="measures.html#cb66-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only one H (the modifier)</span></span>
+<span id="cb66-21"><a href="measures.html#cb66-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(fvars<span class="sc">$</span>h) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb66-22"><a href="measures.html#cb66-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-23"><a href="measures.html#cb66-23" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb66-24"><a href="measures.html#cb66-24" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb66-25"><a href="measures.html#cb66-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcomes</span></span>
+<span id="cb66-26"><a href="measures.html#cb66-26" aria-hidden="true" tabindex="-1"></a>    EYT0.M0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> dat[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">0</span>, fvars<span class="sc">$</span>y])</span>
+<span id="cb66-27"><a href="measures.html#cb66-27" aria-hidden="true" tabindex="-1"></a>    EYT0.M1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> dat[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">1</span>, fvars<span class="sc">$</span>y])</span>
+<span id="cb66-28"><a href="measures.html#cb66-28" aria-hidden="true" tabindex="-1"></a>    EYT1.M0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> dat[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">0</span>, fvars<span class="sc">$</span>y])</span>
+<span id="cb66-29"><a href="measures.html#cb66-29" aria-hidden="true" tabindex="-1"></a>    EYT1.M1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat[dat[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> dat[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">1</span>, fvars<span class="sc">$</span>y])</span>
+<span id="cb66-30"><a href="measures.html#cb66-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
+<span id="cb66-31"><a href="measures.html#cb66-31" aria-hidden="true" tabindex="-1"></a>    RD.M0 <span class="ot">&lt;-</span> EYT1.M0 <span class="sc">-</span> EYT0.M0</span>
+<span id="cb66-32"><a href="measures.html#cb66-32" aria-hidden="true" tabindex="-1"></a>    RD.M1 <span class="ot">&lt;-</span> EYT1.M1 <span class="sc">-</span> EYT0.M1</span>
+<span id="cb66-33"><a href="measures.html#cb66-33" aria-hidden="true" tabindex="-1"></a>    logRR.M0 <span class="ot">&lt;-</span> <span class="fu">log</span>(EYT1.M0 <span class="sc">/</span> EYT0.M0)</span>
+<span id="cb66-34"><a href="measures.html#cb66-34" aria-hidden="true" tabindex="-1"></a>    logRR.M1 <span class="ot">&lt;-</span> <span class="fu">log</span>(EYT1.M1 <span class="sc">/</span> EYT0.M1)</span>
+<span id="cb66-35"><a href="measures.html#cb66-35" aria-hidden="true" tabindex="-1"></a>    logRRstar.M0 <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> EYT0.M0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> EYT1.M0))</span>
+<span id="cb66-36"><a href="measures.html#cb66-36" aria-hidden="true" tabindex="-1"></a>    logRRstar.M1 <span class="ot">&lt;-</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">-</span> EYT0.M1) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> EYT1.M1))</span>
+<span id="cb66-37"><a href="measures.html#cb66-37" aria-hidden="true" tabindex="-1"></a>    logOR.M0 <span class="ot">&lt;-</span> logRR.M0 <span class="sc">+</span> logRRstar.M0</span>
+<span id="cb66-38"><a href="measures.html#cb66-38" aria-hidden="true" tabindex="-1"></a>    logOR.M1 <span class="ot">&lt;-</span> logRR.M1 <span class="sc">+</span> logRRstar.M1</span>
+<span id="cb66-39"><a href="measures.html#cb66-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the effect measure difference</span></span>
+<span id="cb66-40"><a href="measures.html#cb66-40" aria-hidden="true" tabindex="-1"></a>    EYT0.diff <span class="ot">&lt;-</span> EYT0.M1 <span class="sc">-</span> EYT0.M0</span>
+<span id="cb66-41"><a href="measures.html#cb66-41" aria-hidden="true" tabindex="-1"></a>    EYT1.diff <span class="ot">&lt;-</span> EYT1.M1 <span class="sc">-</span> EYT1.M0</span>
+<span id="cb66-42"><a href="measures.html#cb66-42" aria-hidden="true" tabindex="-1"></a>    RD.diff <span class="ot">&lt;-</span> RD.M1 <span class="sc">-</span> RD.M0</span>
+<span id="cb66-43"><a href="measures.html#cb66-43" aria-hidden="true" tabindex="-1"></a>    logRR.diff <span class="ot">&lt;-</span> logRR.M1 <span class="sc">-</span> logRR.M0</span>
+<span id="cb66-44"><a href="measures.html#cb66-44" aria-hidden="true" tabindex="-1"></a>    logRRstar.diff <span class="ot">&lt;-</span> logRRstar.M1 <span class="sc">-</span> logRRstar.M0</span>
+<span id="cb66-45"><a href="measures.html#cb66-45" aria-hidden="true" tabindex="-1"></a>    logOR.diff <span class="ot">&lt;-</span> logOR.M1 <span class="sc">-</span> logOR.M0</span>
+<span id="cb66-46"><a href="measures.html#cb66-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb66-47"><a href="measures.html#cb66-47" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(EYT0.M0, EYT0.M1, EYT1.M0, EYT1.M1, RD.M0, RD.M1,</span>
+<span id="cb66-48"><a href="measures.html#cb66-48" aria-hidden="true" tabindex="-1"></a>             logRR.M0, logRR.M1, logRRstar.M0, logRRstar.M1,</span>
+<span id="cb66-49"><a href="measures.html#cb66-49" aria-hidden="true" tabindex="-1"></a>             logOR.M0, logOR.M1, EYT0.diff, EYT1.diff, </span>
+<span id="cb66-50"><a href="measures.html#cb66-50" aria-hidden="true" tabindex="-1"></a>             RD.diff, logRR.diff, logRRstar.diff, logOR.diff)</span>
+<span id="cb66-51"><a href="measures.html#cb66-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;EYT0.M0&quot;</span>, <span class="st">&quot;EYT0.M1&quot;</span>, <span class="st">&quot;EYT1.M0&quot;</span>, <span class="st">&quot;EYT1.M1&quot;</span>, <span class="st">&quot;RD.M0&quot;</span>, <span class="st">&quot;RD.M1&quot;</span>,</span>
+<span id="cb66-52"><a href="measures.html#cb66-52" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;logRR*.M1&quot;</span>,</span>
+<span id="cb66-53"><a href="measures.html#cb66-53" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;EYT0.diff&quot;</span>, <span class="st">&quot;EYT1.diff&quot;</span>, </span>
+<span id="cb66-54"><a href="measures.html#cb66-54" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;RD.diff&quot;</span>, <span class="st">&quot;logRR.diff&quot;</span>, <span class="st">&quot;logRR*.diff&quot;</span>, <span class="st">&quot;logOR.diff&quot;</span>)</span>
+<span id="cb66-55"><a href="measures.html#cb66-55" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb66-56"><a href="measures.html#cb66-56" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb66-57"><a href="measures.html#cb66-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-58"><a href="measures.html#cb66-58" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
 <span id="cb66-59"><a href="measures.html#cb66-59" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb66-60"><a href="measures.html#cb66-60" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb66-61"><a href="measures.html#cb66-61" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb66-62"><a href="measures.html#cb66-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of variables to exponentiate</span></span>
-<span id="cb66-63"><a href="measures.html#cb66-63" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;RR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;RR.diff&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR.diff&quot;</span>,</span>
-<span id="cb66-64"><a href="measures.html#cb66-64" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*.M0&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;RR*.M1&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M1&quot;</span>, <span class="st">&quot;RR*.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR*.diff&quot;</span>,</span>
-<span id="cb66-65"><a href="measures.html#cb66-65" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;OR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;OR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;OR.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.diff&quot;</span>)</span>
-<span id="cb66-66"><a href="measures.html#cb66-66" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">exp_effects</span>(<span class="at">data =</span> out, <span class="at">vars =</span> vars)</span>
-<span id="cb66-67"><a href="measures.html#cb66-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-68"><a href="measures.html#cb66-68" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb66-69"><a href="measures.html#cb66-69" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb66-60"><a href="measures.html#cb66-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of variables to exponentiate</span></span>
+<span id="cb66-61"><a href="measures.html#cb66-61" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;RR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;RR.diff&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR.diff&quot;</span>,</span>
+<span id="cb66-62"><a href="measures.html#cb66-62" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*.M0&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;RR*.M1&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M1&quot;</span>, <span class="st">&quot;RR*.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR*.diff&quot;</span>,</span>
+<span id="cb66-63"><a href="measures.html#cb66-63" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;OR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;OR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;OR.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.diff&quot;</span>)</span>
+<span id="cb66-64"><a href="measures.html#cb66-64" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">exp_effects</span>(<span class="at">data =</span> out, <span class="at">vars =</span> vars)</span>
+<span id="cb66-65"><a href="measures.html#cb66-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-66"><a href="measures.html#cb66-66" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb66-67"><a href="measures.html#cb66-67" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>run <code>boot()</code> with the RECOVERY data set</p>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="measures.html#cb67-1" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> <span class="fu">boot</span>(recovery, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M)</span></code></pre></div>
 <p>verify the results with the author’s on p. 65.</p>

@@ -17,6 +17,8 @@ library(geepack)
 # the directory of documentation for chapter 1
 dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
+dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 3")
 dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
@@ -55,6 +57,7 @@ source(file = file.path(dir_lib, "fci_06-H_simdr.R"),
        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
+load(file.path(dir_docs03, "brfss.RData"))
 load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
@@ -100,7 +103,7 @@ and for the What-If? study this gives
 
 
 ```{r}
-whatif.out <- stand(whatifdat, formula = Y ~ A + H + A*H)
+whatif.out <- stand(whatifdat, formula = Y ~ A + H + A:H)
 whatif.out
 ```
 
@@ -253,6 +256,7 @@ comp <- data.frame(
   auth = c(0.360, 0.300, -0.061, 0.831),
   est = whatif2.out$est[whatif2.out$name %in% c("EY0", "EY1", "RD", "RR")]
 )
+# comp
 stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 ```
 
@@ -722,4 +726,31 @@ rbind(
          sprintf("The mean with 5%% and 95%% quantiles. Sample size = %d.", nrep),
        x = NULL, y = NULL)
 ```
+
+## Exercises
+
+### Exercise 1
+
+```{r}
+dataBRFSS <- brfss %>%
+  filter(gt65 == 0)
+```
+
+```{r}
+# message("This took ? min, so we load a saved file.")
+# startTime <- Sys.time()
+# brfss.out <- stand(dataBRFSS, formula = flushot ~ insured + female + whitenh + blacknh +
+#                hisp + multinh + gthsedu + rural, R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+# a_file <- file.path(dir_data, "chap06_Ex1.rds")
+# saveRDS(brfss.out, file = a_file)
+# brfss.out <- readRDS(a_file)
+```
+
+
+```{r}
+brfss.out
+```
+
 

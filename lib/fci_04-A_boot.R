@@ -15,20 +15,18 @@
 #' @return Dataframe of summarized results
 boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
   
-  # the name of the response variable
-  y <- all.vars(formula[[2]])
-  # the name of the treatment variable
-  t <- all.vars(formula[[3]])[1]
-  # the name of the modifier variable
-  m <- all.vars(formula[[3]])[2]
+  # extract the variables names from the formula
+  fvars <- formula2vars(formula)
+  # only one H (the modifier)
+  stopifnot(length(fvars$h) == 1)
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
     # estimate the expected potential outcomes
-    EYT0.M0 <- mean(dat[dat[, t] == 0 & dat[, m] == 0, y])
-    EYT0.M1 <- mean(dat[dat[, t] == 0 & dat[, m] == 1, y])
-    EYT1.M0 <- mean(dat[dat[, t] == 1 & dat[, m] == 0, y])
-    EYT1.M1 <- mean(dat[dat[, t] == 1 & dat[, m] == 1, y])
+    EYT0.M0 <- mean(dat[dat[, fvars$t] == 0 & dat[, fvars$h] == 0, fvars$y])
+    EYT0.M1 <- mean(dat[dat[, fvars$t] == 0 & dat[, fvars$h] == 1, fvars$y])
+    EYT1.M0 <- mean(dat[dat[, fvars$t] == 1 & dat[, fvars$h] == 0, fvars$y])
+    EYT1.M1 <- mean(dat[dat[, fvars$t] == 1 & dat[, fvars$h] == 1, fvars$y])
     # estimate the effect measures
     RD.M0 <- EYT1.M0 - EYT0.M0
     RD.M1 <- EYT1.M1 - EYT0.M1

@@ -17,20 +17,14 @@
 #'
 #' @return Dataframe of estimates
 standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
-  # the name of the response variable
-  y <- all.vars(formula[[2]])
-  # the name of the treatment variable
-  t <- all.vars(formula[[3]])[1]
-  # the name of the confounding variables
-  nvars <- length(all.vars(formula[[3]]))
-  h <- all.vars(formula[[3]])[2:nvars]
+  
+  # extract the variables names from the formula
+  fvars <- formula2vars(formula)
   
   # exposure model formula
-  eformula <- formula(paste(t, paste(h, collapse = "+"), sep = "~"))
+  eformula <- formula(paste(fvars$t, paste(fvars$h, collapse = "+"), sep = "~"))
   # weighted linear model formula
-  lformula <- formula(paste(y, t, sep = "~"))
+  lformula <- formula(paste(fvars$y, fvars$t, sep = "~"))
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
@@ -41,7 +35,7 @@ standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
     stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
 
     # compute the weights
-    datT <- dat[, t]
+    datT <- dat[, fvars$t]
     dat$W <- (1 / e) * datT + (1 / (1 - e)) * (1 - datT)
 
     # fit the weighted linear model
@@ -49,7 +43,7 @@ standexpgee <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
                                   id = id, weights = W))
 
     # estimate the expected potential outcome
-    EY0 <- coefs[x0]
+    EY0 <- coefs[fvars$x0]
     EY1 <- sum(coefs)
 
     # estimate the effect measures

@@ -1,3 +1,35 @@
+#' Extract the name of variables and coefficients from a formula
+#'
+#' @param formula Object of class \code{formula}.
+#'
+#' @return List of variable names
+#' @export
+#'
+#' @examples
+#' get_vars(Y ~ A + X1*X2)
+formula2vars <- function(formula) {
+  stopifnot(inherits(formula, "formula"))
+  
+  vars <- all.vars(formula)
+  nvars <- length(vars)
+  stopifnot(nvars >= 3)
+  
+  # the variables
+  y <- vars[1]  # outcome variable
+  t <- vars[2]  # treatment variable
+  h <- vars[3:nvars]  # the condition variables
+  
+  # the condition variables including interaction
+  # with the treatment variable
+  ht <- attr(terms(formula), which = "term.labels")
+  ht <- ht[seq_along(ht)[-1]]
+  
+  # return results in a list
+  # x0 is the coeficient for intercept used by lm, glm, geeglm, etc.
+  list("y" = y, "t" = t, "h" = h, "ht" = ht, "x0" = "(Intercept)")
+}
+
+
 #' Calculate the effect measures
 #' 
 #' Calculate the effect measures.
