@@ -696,29 +696,30 @@ simdr_tbl$tbl
 We will not reiterate the comments from Brumback as the results in the tableau 
 just above confirms them.
 
-A plot can however illustrate well Brumback's main points.
+A plot can however illustrate well Brumback's main points. This ones shows the
+estimates' mean with their 5% and 95% quantiles from the simulaiton.
 
 
 ```{r echo=FALSE}
 rbind(
   data.frame(simulation = "ss=40", mc.stats40),
   data.frame(simulation = "ss=100", mc.stats100)) %>%
-  mutate(lci = mean - 2 * sd,
-         uci = mean + 2 * sd) %>%
-  mutate(across(.cols = c("mean", "lci", "uci"), .fns = round, digits = 2)) %>%
-  ggplot(aes(x = mean, xmin = lci, xmax = uci,
+  # mutate(lci = mean - 2 * sd,
+  #        uci = mean + 2 * sd) %>%
+  mutate(across(.cols = c("mean", "lower", "upper"), .fns = round, digits = 3)) %>%
+  ggplot(aes(x = mean, xmin = lower, xmax = upper,
              y = estimator, color = simulation)) +
   geom_pointrange(position = position_dodge(width = 0.5)) +
   ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = mean), size = 3) +
-  ggrepel::geom_text_repel(aes(x = lci, y = estimator, label = lci), size = 3) +
-  ggrepel::geom_text_repel(aes(x = uci, y = estimator, label = uci), size = 3) +
+  ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = lower), size = 3) +
+  ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = upper), size = 3) +
   theme_minimal() +
   theme(title = element_text(color = "midnightblue"),
         legend.position = "bottom",
         legend.title = element_blank()) +
   labs(title = "Chap 6, section 6.3: Simulation of Standardization Methods",
        subtitle =
-         sprintf("The mean with 95%% CI. Sample size = %d.", nrep),
+         sprintf("The mean with 5%% and 95%% quantiles. Sample size = %d.", nrep),
        x = NULL, y = NULL)
 ```
 
