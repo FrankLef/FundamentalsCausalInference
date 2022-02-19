@@ -3,33 +3,26 @@
 #' Doubly robust standardization simulation.
 #' 
 #' This is the function used in \emph{Fundamentals of Causal Inference} by
-#' B. Brumback in section 6.3 of chapter 6, p.127-128. This is the same except
-#' for the addition of \code{out_choice} which is only to select what output
-#' the function returns. It replaces the numerous \code(return) such as
-#' \code{return(range(sumH))} found in the original script. \code{out_choice} is
-#' useful to prove the algorithm to the reader. Also, \code{standdr_stats} is
+#' B. Brumback in section 6.3 of chapter 6, p.127-128. \code{standdr_stats} is
 #' used in the output to give more statistics. Also the arguments 
 #' \code{beta = 0.13} and \code{gamma = 20} were necessary to analyse the
-#' algorithm, they don'e change anything.
+#' algorithm, they don't change anything.
 #'
 #' @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}
 #' @param alpha coefficient used to compute the distribution of \code{`T`}.
 #' @param beta coefficient used to compute the distribution of \code{`T`}.
-#' @param probH Probability of success on each trial.
 #' @param seed Seed used for random number generation, default is \code{NULL}.
-#' @param out_choice With "sim", output the simulation; with "est", output the
-#' estimates; with "both" (default), output everything.
 #'
-#' @return List of values depending on \code{out_choice}.
+#' @return List of statistics for thesimulated data and estimates using
+#' different merhods.
 #'
 #' @examples
 #' \dontrun{
 #' simdr()
 #' }
 #' @export
-simdr <- function(ss = 100, alpha = 0.13, beta = 20, seed = NULL,
-                  out_choice = c("all", "sim", "est")) {
-  out_choice <- match.arg(out_choice)
+simdr <- function(ss = 100, alpha = 0.13, beta = 20, seed = NULL) {
+  
   set.seed(seed)
   
   # ss is the number of confounders
@@ -58,7 +51,7 @@ simdr <- function(ss = 100, alpha = 0.13, beta = 20, seed = NULL,
   Y <- rbinom(n = 3000, size = 1, prob = probY)
   
   # put the simulated resuts in a list
-  sim <- list("sumH" = simdr_stats(sumH),
+  stats <- list("sumH" = simdr_stats(sumH),
               "probT" = simdr_stats(probT),
               "T" = simdr_stats(`T`),
               "probY" = simdr_stats(probY),
@@ -91,39 +84,31 @@ simdr <- function(ss = 100, alpha = 0.13, beta = 20, seed = NULL,
   preds1 <- predict(mod.out, newdata = dat1)
   
   # calculate the estimates
-  EY0out <- mean(preds0)
-  EY1out <- mean(preds1)
+  EYT0 <- mean(Y * (1 - `T`))
+  EYT1 <- mean(Y * `T`)
   EY0exp <- weighted.mean(Y, w = w0)
   EY1exp <- weighted.mean(Y, w = w1)
   EY0exp2 <- weighted.mean(Y, w = w02)
   EY1exp2 <- weighted.mean(Y, w = w12)
+  EY0out <- mean(preds0)
+  EY1out <- mean(preds1)
   EY0dr <- mean(w0 * Y + preds0 * (`T` - e) / (1 - e))
   EY1dr <- mean(w1 * Y - preds1 * (`T` - e) / e)
-  EYT0 <- mean(Y * (1 - `T`))
-  EYT1 <- mean(Y * `T`)
   
   est <- list(
-    "EY0out" = EY0out,
-    "EY1out" = EY1out,
+    "EYT0" = EYT0,
+    "EYT1" = EYT1,
     "EY0exp" = EY0exp,
     "EY1exp" = EY1exp,
     "EY0exp2" = EY0exp2,
     "EY1exp2" = EY1exp2,
+    "EY0out" = EY0out,
+    "EY1out" = EY1out,
     "EY0dr" = EY0dr,
-    "EY1dr" = EY1dr,
-    "EYT0" = EYT0,
-    "EYT1" = EYT1)
+    "EY1dr" = EY1dr
+    )
   
-  if (out_choice == "all") {
-    out <- append(sim, est)
-  } else if(out_choice == "sim") {
-    out <- sim
-  } else if(out_choice == "est") {
-    out <- est
-  } else {
-    stop(sprintf("%s is an invalid out_choice", out_choice))
-  }
-  out
+  list("stats" = stats, "est" = est)
 }
 
 #' Compute statistics from \code{simdr}. Sames as \code{standdr_est}

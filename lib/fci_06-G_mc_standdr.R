@@ -1,7 +1,58 @@
-mc_standdr <- function() {
+#' Monte Carlo Simulation of Doubly Robust Standardization
+#'
+#' @param ss Number of covariates.
+#' @param nrep Number of Monte Carlo repetitions.
+#' @param conf Confidence interval. Default is 90%.
+#' 
+#' @seealso standdr_sim standdr_est
+#'
+#' @return Dataframe of results.
+#' @export
+mc_standdr <- function(ss = c(100), nrep = 1000, conf = 0.90) {
   
+  # We use alpha = 0.15 to match results with the books
+  ms_standdr_func <- function(n = 3000, ss = 100, alpha = 0.13, beta = 20, 
+                              probH = 0.05, seed = NULL) {
+    
+    # first we simulate the data
+    dat <- standdr_sim(n = n, ss = ss, alpha = alpha, beta = beta, 
+                       probH = probH, seed = seed)$data
+    # then output the estimates in a list
+    standdr_est(Y = dat$Y, `T` = dat$`T`, H = dat$H)
+  }
+  
+  params <- list("ss" = ss)
+  mc.out <- MonteCarlo::MonteCarlo(func = ms_standdr_func,
+                                   nrep = nrep, param_list = params)
+  
+  # output results in a dataframe
+  out <- suppressWarnings(MonteCarlo::MakeFrame(mc.out))
+  out <- lapply(out[, names(out) != "ss"], FUN =  function(x) {
+    mean = mean(x)
+    sd = sd(x)
+    lower = unname(quantile(x, probs = (1 - conf) / 2))
+    upper = unname(quantile(x, probs = 1 - (1 - conf) / 2))
+    c("mean" = mean, "sd" = sd, "lower" = lower, "upper" = upper)
+  })
+  as.data.frame(do.call(rbind, out))
 }
 
+#' Data Simulation for Doubly Robust Standardization
+#'
+#' @param n Number of individuals/observations.
+#' @param ss Number of covariates.
+#' @param alpha coefficient used to compute the distribution of \code{`T`}.
+#' @param beta coefficient used to compute the distribution of \code{`T`}.
+#' @param probH probability of H.
+#' @param seed Seed value. default is \code{NULL}.
+#'
+#' @return List with a dataframe of Y, T and H and summary statitics.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' standdr_sim()
+#' }
 standdr_sim <- function(n = 3000, ss = 100, alpha = 0.13, beta = 20, 
                         probH = 0.05, seed = NULL) {
   set.seed(seed)
@@ -32,15 +83,29 @@ standdr_sim <- function(n = 3000, ss = 100, alpha = 0.13, beta = 20,
   
   Y <- rbinom(n = n, size = 1, prob = probY)
   
+  # put the data in a data.frame
+  df <- data.frame("Y" = Y, "T" = `T`, "H" = H)
+  
   # output results in a list
-  list("sumH" = standdr_stats(sumH),
-       "probT" = standdr_stats(probT),
-       "T" = standdr_stats(`T`),
-       "probY" = standdr_stats(probY),
-       "Y" = standdr_stats(Y))
+  list(
+    "stats" = list("sumH" = standdr_stats(sumH),
+                 "probT" = standdr_stats(probT),
+                 "T" = standdr_stats(`T`),
+                 "probY" = standdr_stats(probY),
+                 "Y" = standdr_stats(Y)),
+    "data" = list("Y" = Y, "T" = `T`, "H" = H)
+    )
 }
 
 
+#' Estimates from Doubly Robust Standardization Simulation
+#'
+#' @param Y Vector of outcomes
+#' @param `T` Vector of treatments
+#' @param H Matrix of covariates
+#'
+#' @return List of estimates
+#' @export
 standdr_est <- function(Y, `T`, H) {
   
   # fit the exposure model
@@ -70,30 +135,30 @@ standdr_est <- function(Y, `T`, H) {
   preds1 <- predict(mod.out, newdata = dat1)
   
   # calculate the estimates
-  EY0out <- mean(preds0)
-  EY1out <- mean(preds1)
+  EYT0 <- mean(Y * (1 - `T`))
+  EYT1 <- mean(Y * `T`)
   EY0exp <- weighted.mean(Y, w = w0)
   EY1exp <- weighted.mean(Y, w = w1)
   EY0exp2 <- weighted.mean(Y, w = w02)
   EY1exp2 <- weighted.mean(Y, w = w12)
+  EY0out <- mean(preds0)
+  EY1out <- mean(preds1)
   EY0dr <- mean(w0 * Y + preds0 * (`T` - e) / (1 - e))
   EY1dr <- mean(w1 * Y - preds1 * (`T` - e) / e)
-  EYT0 <- mean(Y * (1 - `T`))
-  EYT1 <- mean(Y * `T`)
   
-  list("EY0out" = EY0out,
-       "EY1out" = EY1out,
+  list("EYT0" = EYT0,
+       "EYT1" = EYT1,
        "EY0exp" = EY0exp,
        "EY1exp" = EY1exp,
        "EY0exp2" = EY0exp2,
        "EY1exp2" = EY1exp2,
+       "EY0out" = EY0out,
+       "EY1out" = EY1out,
        "EY0dr" = EY0dr,
-       "EY1dr" = EY1dr,
-       "EYT0" = EYT0,
-       "EYT1" = EYT1)
+       "EY1dr" = EY1dr)
 }
 
-#' Compute statistics from \code{standdr_sim}.
+#' Compute Statistics from \code{standdr_sim}.
 #'
 #' @param x Vector of numeric values.
 #'

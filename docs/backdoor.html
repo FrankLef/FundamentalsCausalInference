@@ -361,14 +361,13 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="D" data-path="mc_standdr.html"><a href="mc_standdr.html"><i class="fa fa-check"></i><b>D</b> Doubly Robust Simulation</a>
 <ul>
-<li class="chapter" data-level="D.1" data-path="mc_standdr.html"><a href="mc_standdr.html#functions-1"><i class="fa fa-check"></i><b>D.1</b> Functions</a></li>
-<li class="chapter" data-level="D.2" data-path="mc_standdr.html"><a href="mc_standdr.html#errata6a"><i class="fa fa-check"></i><b>D.2</b> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span> (Errata)</a></li>
-<li class="chapter" data-level="D.3" data-path="mc_standdr.html"><a href="mc_standdr.html#analyse-y-sum_i1i-y_i"><i class="fa fa-check"></i><b>D.3</b> Analyse <span class="math inline">\(Y = \sum_{i=1}^I Y_i\)</span></a></li>
-<li class="chapter" data-level="D.4" data-path="mc_standdr.html"><a href="mc_standdr.html#simulation"><i class="fa fa-check"></i><b>D.4</b> Simulation</a></li>
-<li class="chapter" data-level="D.5" data-path="mc_standdr.html"><a href="mc_standdr.html#scripts"><i class="fa fa-check"></i><b>D.5</b> Scripts</a>
+<li class="chapter" data-level="D.1" data-path="mc_standdr.html"><a href="mc_standdr.html#errata6a"><i class="fa fa-check"></i><b>D.1</b> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span> (Errata)</a></li>
+<li class="chapter" data-level="D.2" data-path="mc_standdr.html"><a href="mc_standdr.html#analyse-y-sum_i1i-y_i"><i class="fa fa-check"></i><b>D.2</b> Analyse <span class="math inline">\(Y = \sum_{i=1}^I Y_i\)</span></a></li>
+<li class="chapter" data-level="D.3" data-path="mc_standdr.html"><a href="mc_standdr.html#functions-1"><i class="fa fa-check"></i><b>D.3</b> Functions</a></li>
+<li class="chapter" data-level="D.4" data-path="mc_standdr.html"><a href="mc_standdr.html#scripts"><i class="fa fa-check"></i><b>D.4</b> Scripts</a>
 <ul>
-<li class="chapter" data-level="D.5.1" data-path="mc_standdr.html"><a href="mc_standdr.html#simdr"><i class="fa fa-check"></i><b>D.5.1</b> <code>simdr</code></a></li>
-<li class="chapter" data-level="D.5.2" data-path="mc_standdr.html"><a href="mc_standdr.html#mc_standdr-1"><i class="fa fa-check"></i><b>D.5.2</b> <code>mc_standdr</code></a></li>
+<li class="chapter" data-level="D.4.1" data-path="mc_standdr.html"><a href="mc_standdr.html#simdr"><i class="fa fa-check"></i><b>D.4.1</b> <code>simdr</code></a></li>
+<li class="chapter" data-level="D.4.2" data-path="mc_standdr.html"><a href="mc_standdr.html#mc_standdr-1"><i class="fa fa-check"></i><b>D.4.2</b> <code>mc_standdr</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -5748,6 +5747,89 @@ as follows</p>
 <p>The simulation of doubly robust standardization discussed at the end of
 section 6.3 in p. 126 to 130 is analyzed in an appendix at
 <a href="mc_standdr.html#mc_standdr">Doubly Robust Simulation</a>.</p>
+<p>The simulaiton with 40 covariates</p>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 1 min. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 1 min. Load from file.</code></pre>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="backdoor.html#cb273-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb273-2"><a href="backdoor.html#cb273-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
+<span id="cb273-3"><a href="backdoor.html#cb273-3" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr (!)</span></span>
+<span id="cb273-4"><a href="backdoor.html#cb273-4" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out40 &lt;- mc_standdr(ss = c(40), nrep = 500)</span></span>
+<span id="cb273-5"><a href="backdoor.html#cb273-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out40.rds&quot;</span>)</span>
+<span id="cb273-6"><a href="backdoor.html#cb273-6" aria-hidden="true" tabindex="-1"></a>mc.out40 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb273-7"><a href="backdoor.html#cb273-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out40, file = a_file)</span></span>
+<span id="cb273-8"><a href="backdoor.html#cb273-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb273-9"><a href="backdoor.html#cb273-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a>mc.stats40 <span class="ot">&lt;-</span> mc.out40 <span class="sc">%&gt;%</span></span>
+<span id="cb274-2"><a href="backdoor.html#cb274-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
+<span id="cb274-3"><a href="backdoor.html#cb274-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimate =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb274-4"><a href="backdoor.html#cb274-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimate)</span>
+<span id="cb274-5"><a href="backdoor.html#cb274-5" aria-hidden="true" tabindex="-1"></a>mc.stats40</span></code></pre></div>
+<pre><code>##         estimate   mean     sd  lower  upper
+## EYT0        EYT0 0.0076 0.0017 0.0050 0.0103
+## EYT1        EYT1 0.0042 0.0012 0.0023 0.0063
+## EY0exp    EY0exp 0.0101 0.0022 0.0067 0.0139
+## EY1exp    EY1exp 0.0199 0.0065 0.0100 0.0306
+## EY0exp2  EY0exp2 0.0101 0.0023 0.0066 0.0140
+## EY1exp2  EY1exp2 0.0203 0.0063 0.0107 0.0307
+## EY0out    EY0out 0.0101 0.0022 0.0067 0.0139
+## EY1out    EY1out 0.0200 0.0065 0.0101 0.0314
+## EY0dr      EY0dr 0.0101 0.0022 0.0067 0.0140
+## EY1dr      EY1dr 0.0200 0.0065 0.0104 0.0315</code></pre>
+<p>and the simulation with 100 covariates</p>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="backdoor.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 3 min. Load from file.</code></pre>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="backdoor.html#cb278-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb278-2"><a href="backdoor.html#cb278-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
+<span id="cb278-3"><a href="backdoor.html#cb278-3" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr</span></span>
+<span id="cb278-4"><a href="backdoor.html#cb278-4" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out100 &lt;- mc_standdr(ss = c(100), nrep = 500)</span></span>
+<span id="cb278-5"><a href="backdoor.html#cb278-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out100.rds&quot;</span>)</span>
+<span id="cb278-6"><a href="backdoor.html#cb278-6" aria-hidden="true" tabindex="-1"></a>mc.out100 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb278-7"><a href="backdoor.html#cb278-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out100, file = a_file)</span></span>
+<span id="cb278-8"><a href="backdoor.html#cb278-8" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb278-9"><a href="backdoor.html#cb278-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="backdoor.html#cb279-1" aria-hidden="true" tabindex="-1"></a>mc.stats100 <span class="ot">&lt;-</span> mc.out100 <span class="sc">%&gt;%</span></span>
+<span id="cb279-2"><a href="backdoor.html#cb279-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
+<span id="cb279-3"><a href="backdoor.html#cb279-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimate =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb279-4"><a href="backdoor.html#cb279-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimate)</span>
+<span id="cb279-5"><a href="backdoor.html#cb279-5" aria-hidden="true" tabindex="-1"></a>mc.stats100</span></code></pre></div>
+<pre><code>##         estimate   mean     sd  lower  upper
+## EYT0        EYT0 0.0080 0.0016 0.0057 0.0107
+## EYT1        EYT1 0.0039 0.0011 0.0023 0.0060
+## EY0exp    EY0exp 0.0101 0.0020 0.0071 0.0136
+## EY1exp    EY1exp 0.0193 0.0289 0.0081 0.0372
+## EY0exp2  EY0exp2 0.0101 0.0020 0.0071 0.0136
+## EY1exp2  EY1exp2 0.0203 0.0066 0.0103 0.0317
+## EY0out    EY0out 0.0101 0.0020 0.0072 0.0136
+## EY1out    EY1out 0.0202 0.0066 0.0100 0.0309
+## EY0dr      EY0dr 0.0101 0.0020 0.0071 0.0136
+## EY1dr      EY1dr 0.0200 0.0352 0.0019 0.0400</code></pre>
+<p>and we can plot the results to facilitate the discussion</p>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="backdoor.html#cb281-1" aria-hidden="true" tabindex="-1"></a>mc.plot <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb281-2"><a href="backdoor.html#cb281-2" aria-hidden="true" tabindex="-1"></a>mc.plot <span class="ot">&lt;-</span> <span class="fu">within</span>(mc.plot, {</span>
+<span id="cb281-3"><a href="backdoor.html#cb281-3" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb281-4"><a href="backdoor.html#cb281-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">model =</span> <span class="st">&quot;ss=40&quot;</span>, mc.stats40),</span>
+<span id="cb281-5"><a href="backdoor.html#cb281-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">model =</span> <span class="st">&quot;ss=100&quot;</span>, mc.stats100)) <span class="sc">%&gt;%</span></span>
+<span id="cb281-6"><a href="backdoor.html#cb281-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model))</span>
+<span id="cb281-7"><a href="backdoor.html#cb281-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb281-8"><a href="backdoor.html#cb281-8" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> mean, <span class="at">xmin =</span> lower, <span class="at">xmax =</span> upper,</span>
+<span id="cb281-9"><a href="backdoor.html#cb281-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> estimate, <span class="at">color =</span> model)) <span class="sc">+</span></span>
+<span id="cb281-10"><a href="backdoor.html#cb281-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_pointrange</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb281-11"><a href="backdoor.html#cb281-11" aria-hidden="true" tabindex="-1"></a>    ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean, <span class="at">y =</span> estimate, <span class="at">label =</span> <span class="fu">round</span>(mean, <span class="dv">3</span>)),</span>
+<span id="cb281-12"><a href="backdoor.html#cb281-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb281-13"><a href="backdoor.html#cb281-13" aria-hidden="true" tabindex="-1"></a>    ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> lower, <span class="at">y =</span> estimate, <span class="at">label =</span> <span class="fu">round</span>(lower, <span class="dv">3</span>)),</span>
+<span id="cb281-14"><a href="backdoor.html#cb281-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb281-15"><a href="backdoor.html#cb281-15" aria-hidden="true" tabindex="-1"></a>    ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> upper, <span class="at">y =</span> estimate, <span class="at">label =</span> <span class="fu">round</span>(upper, <span class="dv">3</span>)),</span>
+<span id="cb281-16"><a href="backdoor.html#cb281-16" aria-hidden="true" tabindex="-1"></a>                             <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb281-17"><a href="backdoor.html#cb281-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;ss=40&quot;</span> <span class="ot">=</span> <span class="st">&quot;mediumseagreen&quot;</span>, <span class="st">&quot;ss=100&quot;</span> <span class="ot">=</span> <span class="st">&quot;tomato&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb281-18"><a href="backdoor.html#cb281-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb281-19"><a href="backdoor.html#cb281-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
+<span id="cb281-20"><a href="backdoor.html#cb281-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb281-21"><a href="backdoor.html#cb281-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Chap 6, section 6.3&quot;</span>,</span>
+<span id="cb281-22"><a href="backdoor.html#cb281-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">subtitle =</span> <span class="st">&quot;Simulation of Standardization Methods&quot;</span>,</span>
+<span id="cb281-23"><a href="backdoor.html#cb281-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span>
+<span id="cb281-24"><a href="backdoor.html#cb281-24" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb281-25"><a href="backdoor.html#cb281-25" aria-hidden="true" tabindex="-1"></a>mc.plot<span class="sc">$</span>p</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-212-1.png" width="672" /></p>
 
 </div>
 </div>

@@ -32,29 +32,6 @@ source(file = file.path(dir_lib, "fci_06-H_simdr.R"),
 ```
 
 
-
-## Functions
-
-The function `simdr` is found on p. 127-128. See the script in the last section
-of this appendix. We just added some arguments and and output to facilitate the 
-analysis. See the next section *Analysis*.
-
-
-The Monte Carlo simulation is done with a non-parametric Monte Carlo function 
-`mc_standdr` with the following script. See the section *Simulation* blow.
-
-Note that `simdr` was rewritten as function `mc_standdr` to
-
-* facilitate the analysis of the algorithm
-* perform a Monte Carlo simulation with the `MonteCarlo` package
-* separate the data simulation from the measurement of estimates in 2 sub functions
-  - `standdr_sim`: Simulate the data
-  - `standdr_est`: Calculate the estimates using the simulated data from `standdr_sim`
-
-`mc_standdr` has been validated against `simdr` and gives exactly the same 
-results.
-
-
 ## Analyse $T = \sum_{i=1}^J{T_i}$ (Errata) {#errata6a}
 
 Section 6.3 claims that $T=600$ and $P(T=1 \mid H) \in [0.041, 0.0468]$
@@ -65,14 +42,10 @@ So lets go through `simdr` to explain the differences.
 
 
 ```{r}
-simdr.out <- simdr(seed = 1009, out_choice = "sim")
-new_simdr.out <- standdr_sim(seed = 1009)
-# test the new function new_simdr.out vs simdr
-stopifnot(identical(simdr.out, new_simdr.out))
+simdr.out <- simdr(seed = 1009)$stats
 ```
 
 
-and we continue with our reading
 
 > One might think that standardization with the exposure model would be 
 preferable when the outcome indicates a rare condition. To see this,
@@ -204,7 +177,7 @@ which proves that the expected number of $T$ is not really close to 600 but rath
 540 which is also the result of the simulation. Therefore we could use 54 
 covariates rather than 60 by the Peduzzi rule.
 
-We observe that this *does not change the conclusions drawn from the simulation
+We note that this *does not change the conclusions drawn from the simulation
 significantly*.
 
 Finally, we note that the formula $\alpha \cdot \beta \cdot p + p$ could be 
@@ -229,7 +202,7 @@ $$
 and we simulate using $\alpha = 0.15$ to validate
 
 ```{r}
-simdr600.out <- simdr(alpha = 0.15, seed = 1009, out_choice = "sim")
+simdr600.out <- simdr(alpha = 0.15, seed = 1009)$stats
 simdr600.out$`T`$sum
 ```
 
@@ -332,10 +305,43 @@ and the results are almost identical
 c("min" = simdr.out$probY$min, "max" = simdr.out$probY$max)
 ```
 
-And with this we are ready to proceed with the simulation with varying $ss$.
 
-## Simulation
+## Functions
 
+The function `simdr` is found on p. 127-128. See the script in the last section
+of this appendix. We just added some arguments and and output to facilitate the 
+analysis. See the next section *Analysis*.
+
+
+The Monte Carlo simulation is done with a non-parametric Monte Carlo function 
+`mc_standdr` with the following script. See the section *Simulation* blow.
+
+Note that `simdr` was rewritten as function `mc_standdr` to
+
+* facilitate the analysis of the algorithm
+* perform a Monte Carlo simulation with the `MonteCarlo` package
+* separate the data simulation from the measurement of estimates in 2 sub functions
+  - `standdr_sim`: Simulate the data
+  - `standdr_est`: Calculate the estimates using the simulated data from `standdr_sim`
+
+`mc_standdr` and `simdr` give exactly the same results for the simulatted data
+
+```{r}
+simdr.out <- simdr(seed = 1009)
+new_simdr.out <- standdr_sim(seed = 1009)
+stopifnot(identical(simdr.out$stats, new_simdr.out$stats))
+```
+
+
+as well as the measurements
+
+
+```{r}
+new_simdr.est <- standdr_est(Y = new_simdr.out$data$Y,
+                             `T` = new_simdr.out$data$`T`,
+                             H = new_simdr.out$data$H)
+stopifnot(identical(simdr.out$est, new_simdr.est))
+```
 
 
 
