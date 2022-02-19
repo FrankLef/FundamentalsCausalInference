@@ -506,17 +506,24 @@ The simulation of doubly robust standardization discussed at the end of
 section 6.3 in p. 126 to 130 is analyzed in an appendix at 
 [Doubly Robust Simulation](#mc_standdr).
 
-The simulaiton with 40 covariates
+We use a sample size of only 500 vs the book's 1000.  We obtain the same 
+estimates with,  actually, a lesser sd. See somments below.
+
+```{r}
+nrep <- 500
+```
+
+
+The simulation with 40 covariates
 
 
 ```{r}
 message("This takes about 1 min. Load from file.")
 # startTime <- Sys.time()
 # We only use 500 rather than the 1000 suggested in the book
-# IMPORTANT: keep it for later use
-nrep40 <- 500
+# IMPORTANT: Will be used again whaen calculating p-value
 # It gives the same results with actually less sd for EY1exp and EY1dr (!)
-# mc.out40 <- mc_standdr(ss = c(40), nrep = 500)
+# mc.out40 <- mc_standdr(ss = c(40), nrep = nrep)
 a_file <- file.path(dir_data, "chap06_mc_out40.rds")
 mc.out40 <- readRDS(file = a_file)
 # saveRDS(mc.out40, file = a_file)
@@ -527,19 +534,17 @@ mc.out40 <- readRDS(file = a_file)
 
 
 ```{r}
-# IMPORTANT: sample size not the same as
-
 mc.stats40 <- mc.out40 %>%
   mutate(across(.cols = where(is.numeric), .fns = round, digits = 4),
          estimator = row.names(.)) %>%
   mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
          h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = nrep40,
-         sdm = sd / sqrt(n),
-         z = abs((mean - h0) / sdm),
+         n = nrep,  # sample size not the same as the book's
+         sdp = sd / sqrt(n),
+         z = abs((mean - h0) / sdp),
          pval = 2 * (1 - pnorm(z)),
          pval = round(pval, 3)) %>%
-  select(-sdm, -z) %>%
+  select(-sdp, -z) %>%
   relocate(estimator, `T`)
 mc.stats40
 ```
@@ -558,18 +563,19 @@ bb40 <- data.frame(
 bb40
 ```
 
-and we verify the p-values. Differences are caused by rounded numbers.
 
-```{r}
+
+```{r include=FALSE}
+# verify the p values
 bb40 %>%
   mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
          h0 = ifelse(`T` == 0, 0.01, 0.02),
          n = 1000,
-         sdm = sd / sqrt(n),
-         z = abs(mean - h0) / sdm,  # how many sd from the mean
-         pval = 2 * (1 - pnorm(q = z)),
-         pval = round(pval, 3)) %>%
-  select(-sdm, -z) %>%
+         sdp = sd / sqrt(n),
+         z = abs(mean - h0) / sdp,  # how many sd from the mean
+         Pvalcheck = 2 * (1 - pnorm(q = z)),
+         Pvalcheck = round(Pvalcheck, 3)) %>%
+  select(-sdp, -z) %>%
   relocate(estimator, `T`, h0)
 ```
 
@@ -581,8 +587,7 @@ and the simulation with 100 covariates
 message("This takes about 3 min. Load from file.")
 # startTime <- Sys.time()
 # We only use 500 rather than the 1000 suggested in the book
-# IMPORTANT: keep it for later use
-nrep100 <- 500
+# IMPORTANT: Will be used again whaen calculating p-value
 # It gives the same results with actually less sd for EY1exp and EY1dr
 # mc.out100 <- mc_standdr(ss = c(100), nrep = 500)
 a_file <- file.path(dir_data, "chap06_mc_out100.rds")
@@ -600,12 +605,12 @@ mc.stats100 <- mc.out100 %>%
          estimator = row.names(.)) %>%
   mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
          h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = nrep100,
-         sdm = sd / sqrt(n),
-         z = abs((mean - h0) / sdm),
+         n = nrep,
+         sdp = sd / sqrt(n),
+         z = abs((mean - h0) / sdp),
          pval = 2 * (1 - pnorm(z)),
          pval = round(pval, 3)) %>%
-  select(-sdm, -z) %>%
+  select(-sdp, -z) %>%
   relocate(estimator, `T`)
 mc.stats100
 ```
@@ -621,47 +626,99 @@ bb100 <- data.frame(
 bb100
 ```
 
-and we verify the p-values. The differences are caused by rounded numbers.
 
-```{r}
+```{r include=FALSE}
+# verify the p values
 bb100 %>%
   mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
          h0 = ifelse(`T` == 0, 0.01, 0.02),
          n = 1000,
-         sdm = sd / sqrt(n),
-         z = abs(mean - h0) / sdm,  # how many sd from the mean
-         pval = 2 * (1 - pnorm(q = z)),
-         pval = round(pval, 3)) %>%
-  select(-sdm, -z) %>%
+         sdp = sd / sqrt(n),
+         z = abs(mean - h0) / sdp,  # how many sd from the mean
+         Pvalcheck = 2 * (1 - pnorm(q = z)),
+         Pvalcheck = round(Pvalcheck, 3)) %>%
+  select(-sdp, -z) %>%
   relocate(estimator, `T`, h0)
 ```
 
+and we make a general tableau with the results from both simulations
+
+```{r echo=FALSE}
+simdr_tbl <- list()
+simdr_tbl <- within(simdr_tbl, {
+  df40 <- mc.stats40 %>%
+    select(estimator, mean, sd, pval) %>%
+    mutate(simulation = "ss=40")
+  df100 <- mc.stats100 %>%
+    select(estimator, mean, sd, pval) %>%
+    mutate(simulation = "ss=100")
+  
+  title <- "Table 6.13 and 6.14"
+  subtitle <- "Sampling Distribution from Simulation"
+  subtitle <- paste0(subtitle, "<br>", "Investigating Small-Sample Robustness")
+  subtitle <- paste0(subtitle, "<br>", "True E(Y(0))=0.01, True E(Y(1))=0.02")
+  df <- rbind(df40, df100) %>%
+    mutate(mean = round(mean, 4),
+           sd = round(sd, 4),
+           pval = round(pval, 2))
+  dft <- df %>%
+    pivot_longer(cols = c("mean", "sd", "pval")) %>%
+    unite(col = "name", simulation, name, sep = "_") %>%
+    pivot_wider(id_cols = "estimator", names_from = "name", values_from = "value") %>%
+    mutate(`model description` = c("Unadjusted", "Unadjusted",
+                           "Linear Exposure", "Linear Exposure",
+                           "Logistic Exposure", "Logistic Exposure",
+                           "Overspecified Outcome", "Overspecified Outcome",
+                           "Doubly Robust", "Doubly Robust")) %>%
+    relocate(`model description`, .after = estimator)
+  tbl <- gt::gt(dft) %>%
+    gt_basic(title = title, subtitle = subtitle) %>%
+    tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
+    cols_align(
+      align = "left",
+      columns = c("estimator", "model description")
+    ) %>%
+    tab_style(
+      style = cell_borders(sides = "left", color = "grey60", 
+                           weight = px(1.5), style = "solid"),
+      locations = cells_body(columns = c("ss=100_mean"))
+    ) %>%
+    tab_style(
+      style = cell_borders(sides = "left", color = "grey60", 
+                           weight = px(1.5), style = "solid"),
+      locations = cells_column_labels(columns = c("ss=100_mean"))
+    )
+})
+# str(simdr_tbl$dft)
+simdr_tbl$tbl
+```
+
+We will not reiterate the comments from Brumback as the results in the tableau 
+just above confirms them.
+
+A plot can however illustrate well Brumback's main points.
 
 
-
-and we can plot the results to facilitate the discussion
-
-```{r}
+```{r echo=FALSE}
 rbind(
-  data.frame(model = "ss=40", mc.stats40),
-  data.frame(model = "ss=100", mc.stats100)) %>%
-  mutate(across(.cols = c(mean, lower, upper), .fns = round, digits = 3)) %>%
-  ggplot(aes(x = mean, xmin = lower, xmax = upper,
-             y = estimator, color = model)) +
+  data.frame(simulation = "ss=40", mc.stats40),
+  data.frame(simulation = "ss=100", mc.stats100)) %>%
+  mutate(lci = mean - 2 * sd,
+         uci = mean + 2 * sd) %>%
+  mutate(across(.cols = c("mean", "lci", "uci"), .fns = round, digits = 2)) %>%
+  ggplot(aes(x = mean, xmin = lci, xmax = uci,
+             y = estimator, color = simulation)) +
   geom_pointrange(position = position_dodge(width = 0.5)) +
-  ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = mean), 
-                           size = 3) +
-  ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = lower),
-                           size = 3) +
-  ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = upper),
-                           size = 3) +
-  scale_color_manual(values = c("ss=40" = "mediumseagreen", "ss=100" = "tomato")) +
+  ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = mean), size = 3) +
+  ggrepel::geom_text_repel(aes(x = lci, y = estimator, label = lci), size = 3) +
+  ggrepel::geom_text_repel(aes(x = uci, y = estimator, label = uci), size = 3) +
   theme_minimal() +
   theme(title = element_text(color = "midnightblue"),
         legend.position = "bottom",
         legend.title = element_blank()) +
   labs(title = "Chap 6, section 6.3: Simulation of Standardization Methods",
-       subtitle = "The mean with the 5% and 95% quantiles.",
+       subtitle =
+         sprintf("The mean with 95%% CI. Sample size = %d.", nrep),
        x = NULL, y = NULL)
 ```
 

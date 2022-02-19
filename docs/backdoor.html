@@ -317,7 +317,7 @@ div.csl-indent {
 <li class="chapter" data-level="A.7" data-path="errata.html"><a href="errata.html#chapter-6"><i class="fa fa-check"></i><b>A.7</b> Chapter 6</a>
 <ul>
 <li class="chapter" data-level="A.7.1" data-path="errata.html"><a href="errata.html#section-6.1-p.-100-first-paragraph"><i class="fa fa-check"></i><b>A.7.1</b> Section 6.1 p. 100, first paragraph</a></li>
-<li class="chapter" data-level="A.7.2" data-path="errata.html"><a href="errata.html#section-6.3-p.-127-the-script-of-simdr"><i class="fa fa-check"></i><b>A.7.2</b> Section 6.3 p. 127, the script of <code>simdr</code></a></li>
+<li class="chapter" data-level="A.7.2" data-path="errata.html"><a href="errata.html#section-6.3-p.-126-the-script-of-simdr"><i class="fa fa-check"></i><b>A.7.2</b> Section 6.3 p. 126, the script of <code>simdr</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="notes.html"><a href="notes.html"><i class="fa fa-check"></i><b>B</b> Notes</a>
@@ -335,6 +335,7 @@ div.csl-indent {
 <li class="chapter" data-level="B.3" data-path="notes.html"><a href="notes.html#chapter-6-1"><i class="fa fa-check"></i><b>B.3</b> Chapter 6</a>
 <ul>
 <li class="chapter" data-level="B.3.1" data-path="notes.html"><a href="notes.html#section-6.1.1-att"><i class="fa fa-check"></i><b>B.3.1</b> Section 6.1.1 ATT</a></li>
+<li class="chapter" data-level="B.3.2" data-path="notes.html"><a href="notes.html#section-6.3"><i class="fa fa-check"></i><b>B.3.2</b> Section 6.3</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="C" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>C</b> Functions</a>
@@ -5747,35 +5748,35 @@ as follows</p>
 <p>The simulation of doubly robust standardization discussed at the end of
 section 6.3 in p. 126 to 130 is analyzed in an appendix at
 <a href="mc_standdr.html#mc_standdr">Doubly Robust Simulation</a>.</p>
-<p>The simulaiton with 40 covariates</p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 1 min. Load from file.&quot;</span>)</span></code></pre></div>
+<p>We use a sample size of only 500 vs the book’s 1000. We obtain the same
+estimates with, actually, a lesser sd. See somments below.</p>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a>nrep <span class="ot">&lt;-</span> <span class="dv">500</span></span></code></pre></div>
+<p>The simulation with 40 covariates</p>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="backdoor.html#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 1 min. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 1 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="backdoor.html#cb273-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb273-2"><a href="backdoor.html#cb273-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
-<span id="cb273-3"><a href="backdoor.html#cb273-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: keep it for later use</span></span>
-<span id="cb273-4"><a href="backdoor.html#cb273-4" aria-hidden="true" tabindex="-1"></a>nrep40 <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb273-5"><a href="backdoor.html#cb273-5" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr (!)</span></span>
-<span id="cb273-6"><a href="backdoor.html#cb273-6" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out40 &lt;- mc_standdr(ss = c(40), nrep = 500)</span></span>
-<span id="cb273-7"><a href="backdoor.html#cb273-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out40.rds&quot;</span>)</span>
-<span id="cb273-8"><a href="backdoor.html#cb273-8" aria-hidden="true" tabindex="-1"></a>mc.out40 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb273-9"><a href="backdoor.html#cb273-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out40, file = a_file)</span></span>
-<span id="cb273-10"><a href="backdoor.html#cb273-10" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb273-11"><a href="backdoor.html#cb273-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: sample size not the same as</span></span>
-<span id="cb274-2"><a href="backdoor.html#cb274-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb274-3"><a href="backdoor.html#cb274-3" aria-hidden="true" tabindex="-1"></a>mc.stats40 <span class="ot">&lt;-</span> mc.out40 <span class="sc">%&gt;%</span></span>
-<span id="cb274-4"><a href="backdoor.html#cb274-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
-<span id="cb274-5"><a href="backdoor.html#cb274-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb274-6"><a href="backdoor.html#cb274-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb274-7"><a href="backdoor.html#cb274-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb274-8"><a href="backdoor.html#cb274-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep40,</span>
-<span id="cb274-9"><a href="backdoor.html#cb274-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdm =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb274-10"><a href="backdoor.html#cb274-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdm),</span>
-<span id="cb274-11"><a href="backdoor.html#cb274-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
-<span id="cb274-12"><a href="backdoor.html#cb274-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb274-13"><a href="backdoor.html#cb274-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdm, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb274-14"><a href="backdoor.html#cb274-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb274-15"><a href="backdoor.html#cb274-15" aria-hidden="true" tabindex="-1"></a>mc.stats40</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb274-2"><a href="backdoor.html#cb274-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
+<span id="cb274-3"><a href="backdoor.html#cb274-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: Will be used again whaen calculating p-value</span></span>
+<span id="cb274-4"><a href="backdoor.html#cb274-4" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr (!)</span></span>
+<span id="cb274-5"><a href="backdoor.html#cb274-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out40 &lt;- mc_standdr(ss = c(40), nrep = nrep)</span></span>
+<span id="cb274-6"><a href="backdoor.html#cb274-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out40.rds&quot;</span>)</span>
+<span id="cb274-7"><a href="backdoor.html#cb274-7" aria-hidden="true" tabindex="-1"></a>mc.out40 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb274-8"><a href="backdoor.html#cb274-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out40, file = a_file)</span></span>
+<span id="cb274-9"><a href="backdoor.html#cb274-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb274-10"><a href="backdoor.html#cb274-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="backdoor.html#cb275-1" aria-hidden="true" tabindex="-1"></a>mc.stats40 <span class="ot">&lt;-</span> mc.out40 <span class="sc">%&gt;%</span></span>
+<span id="cb275-2"><a href="backdoor.html#cb275-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
+<span id="cb275-3"><a href="backdoor.html#cb275-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb275-4"><a href="backdoor.html#cb275-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb275-5"><a href="backdoor.html#cb275-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
+<span id="cb275-6"><a href="backdoor.html#cb275-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep,  <span class="co"># sample size not the same as the book&#39;s</span></span>
+<span id="cb275-7"><a href="backdoor.html#cb275-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
+<span id="cb275-8"><a href="backdoor.html#cb275-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
+<span id="cb275-9"><a href="backdoor.html#cb275-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
+<span id="cb275-10"><a href="backdoor.html#cb275-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb275-11"><a href="backdoor.html#cb275-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
+<span id="cb275-12"><a href="backdoor.html#cb275-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb275-13"><a href="backdoor.html#cb275-13" aria-hidden="true" tabindex="-1"></a>mc.stats40</span></code></pre></div>
 <pre><code>##         estimator T   mean     sd  lower  upper   h0   n  pval
 ## EYT0         EYT0 0 0.0076 0.0017 0.0050 0.0103 0.01 500 0.000
 ## EYT1         EYT1 1 0.0042 0.0012 0.0023 0.0063 0.02 500 0.000
@@ -5788,16 +5789,16 @@ section 6.3 in p. 126 to 130 is analyzed in an appendix at
 ## EY0dr       EY0dr 0 0.0101 0.0022 0.0067 0.0140 0.01 500 0.309
 ## EY1dr       EY1dr 1 0.0200 0.0065 0.0104 0.0315 0.02 500 1.000</code></pre>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="backdoor.html#cb276-1" aria-hidden="true" tabindex="-1"></a>bb40 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb276-2"><a href="backdoor.html#cb276-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
-<span id="cb276-3"><a href="backdoor.html#cb276-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
-<span id="cb276-4"><a href="backdoor.html#cb276-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0076</span>, <span class="fl">0.0042</span>, <span class="fl">0.01</span>, <span class="fl">0.0195</span>, <span class="fl">0.0101</span>, <span class="fl">0.0204</span>, </span>
-<span id="cb276-5"><a href="backdoor.html#cb276-5" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.0197</span>),</span>
-<span id="cb276-6"><a href="backdoor.html#cb276-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0015</span>, <span class="fl">0.0012</span>, <span class="fl">0.0021</span>, <span class="fl">0.0127</span>, <span class="fl">0.0021</span>, <span class="fl">0.0064</span>,</span>
-<span id="cb276-7"><a href="backdoor.html#cb276-7" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.0021</span>, <span class="fl">0.0066</span>, <span class="fl">0.0021</span>, <span class="fl">0.0106</span>),</span>
-<span id="cb276-8"><a href="backdoor.html#cb276-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.92</span>, <span class="fl">0.19</span>, <span class="fl">0.42</span>, <span class="fl">0.07</span>, <span class="fl">0.79</span>, <span class="fl">0.84</span>, <span class="fl">0.82</span>, <span class="fl">0.37</span>)</span>
-<span id="cb276-9"><a href="backdoor.html#cb276-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb276-10"><a href="backdoor.html#cb276-10" aria-hidden="true" tabindex="-1"></a>bb40</span></code></pre></div>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="backdoor.html#cb277-1" aria-hidden="true" tabindex="-1"></a>bb40 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb277-2"><a href="backdoor.html#cb277-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
+<span id="cb277-3"><a href="backdoor.html#cb277-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
+<span id="cb277-4"><a href="backdoor.html#cb277-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0076</span>, <span class="fl">0.0042</span>, <span class="fl">0.01</span>, <span class="fl">0.0195</span>, <span class="fl">0.0101</span>, <span class="fl">0.0204</span>, </span>
+<span id="cb277-5"><a href="backdoor.html#cb277-5" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.0197</span>),</span>
+<span id="cb277-6"><a href="backdoor.html#cb277-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0015</span>, <span class="fl">0.0012</span>, <span class="fl">0.0021</span>, <span class="fl">0.0127</span>, <span class="fl">0.0021</span>, <span class="fl">0.0064</span>,</span>
+<span id="cb277-7"><a href="backdoor.html#cb277-7" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.0021</span>, <span class="fl">0.0066</span>, <span class="fl">0.0021</span>, <span class="fl">0.0106</span>),</span>
+<span id="cb277-8"><a href="backdoor.html#cb277-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.92</span>, <span class="fl">0.19</span>, <span class="fl">0.42</span>, <span class="fl">0.07</span>, <span class="fl">0.79</span>, <span class="fl">0.84</span>, <span class="fl">0.82</span>, <span class="fl">0.37</span>)</span>
+<span id="cb277-9"><a href="backdoor.html#cb277-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb277-10"><a href="backdoor.html#cb277-10" aria-hidden="true" tabindex="-1"></a>bb40</span></code></pre></div>
 <pre><code>##    estimator   mean     sd Pval
 ## 1       EYT0 0.0076 0.0015 0.00
 ## 2       EYT1 0.0042 0.0012 0.00
@@ -5809,55 +5810,32 @@ section 6.3 in p. 126 to 130 is analyzed in an appendix at
 ## 8     EY1out 0.0200 0.0066 0.84
 ## 9      EY0dr 0.0100 0.0021 0.82
 ## 10     EY1dr 0.0197 0.0106 0.37</code></pre>
-<p>and we verify the p-values. Differences are caused by rounded numbers.</p>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="backdoor.html#cb278-1" aria-hidden="true" tabindex="-1"></a>bb40 <span class="sc">%&gt;%</span></span>
-<span id="cb278-2"><a href="backdoor.html#cb278-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb278-3"><a href="backdoor.html#cb278-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb278-4"><a href="backdoor.html#cb278-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">1000</span>,</span>
-<span id="cb278-5"><a href="backdoor.html#cb278-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdm =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb278-6"><a href="backdoor.html#cb278-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>(mean <span class="sc">-</span> h0) <span class="sc">/</span> sdm,  <span class="co"># how many sd from the mean</span></span>
-<span id="cb278-7"><a href="backdoor.html#cb278-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="at">q =</span> z)),</span>
-<span id="cb278-8"><a href="backdoor.html#cb278-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb278-9"><a href="backdoor.html#cb278-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdm, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb278-10"><a href="backdoor.html#cb278-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, h0)</span></code></pre></div>
-<pre><code>##    estimator T   h0   mean     sd Pval    n  pval
-## 1       EYT0 0 0.01 0.0076 0.0015 0.00 1000 0.000
-## 2       EYT1 1 0.02 0.0042 0.0012 0.00 1000 0.000
-## 3     EY0exp 0 0.01 0.0100 0.0021 0.92 1000 1.000
-## 4     EY1exp 1 0.02 0.0195 0.0127 0.19 1000 0.213
-## 5    EY0exp2 0 0.01 0.0101 0.0021 0.42 1000 0.132
-## 6    EY1exp2 1 0.02 0.0204 0.0064 0.07 1000 0.048
-## 7     EY0out 0 0.01 0.0100 0.0021 0.79 1000 1.000
-## 8     EY1out 1 0.02 0.0200 0.0066 0.84 1000 1.000
-## 9      EY0dr 0 0.01 0.0100 0.0021 0.82 1000 1.000
-## 10     EY1dr 1 0.02 0.0197 0.0106 0.37 1000 0.371</code></pre>
 <p>and the simulation with 100 covariates</p>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="backdoor.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="backdoor.html#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 3 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="backdoor.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb282-2"><a href="backdoor.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
-<span id="cb282-3"><a href="backdoor.html#cb282-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: keep it for later use</span></span>
-<span id="cb282-4"><a href="backdoor.html#cb282-4" aria-hidden="true" tabindex="-1"></a>nrep100 <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb282-5"><a href="backdoor.html#cb282-5" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr</span></span>
-<span id="cb282-6"><a href="backdoor.html#cb282-6" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out100 &lt;- mc_standdr(ss = c(100), nrep = 500)</span></span>
-<span id="cb282-7"><a href="backdoor.html#cb282-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out100.rds&quot;</span>)</span>
-<span id="cb282-8"><a href="backdoor.html#cb282-8" aria-hidden="true" tabindex="-1"></a>mc.out100 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb282-9"><a href="backdoor.html#cb282-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out100, file = a_file)</span></span>
-<span id="cb282-10"><a href="backdoor.html#cb282-10" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb282-11"><a href="backdoor.html#cb282-11" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="backdoor.html#cb283-1" aria-hidden="true" tabindex="-1"></a>mc.stats100 <span class="ot">&lt;-</span> mc.out100 <span class="sc">%&gt;%</span></span>
-<span id="cb283-2"><a href="backdoor.html#cb283-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
-<span id="cb283-3"><a href="backdoor.html#cb283-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb283-4"><a href="backdoor.html#cb283-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb283-5"><a href="backdoor.html#cb283-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb283-6"><a href="backdoor.html#cb283-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep100,</span>
-<span id="cb283-7"><a href="backdoor.html#cb283-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdm =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb283-8"><a href="backdoor.html#cb283-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdm),</span>
-<span id="cb283-9"><a href="backdoor.html#cb283-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
-<span id="cb283-10"><a href="backdoor.html#cb283-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb283-11"><a href="backdoor.html#cb283-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdm, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb283-12"><a href="backdoor.html#cb283-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb283-13"><a href="backdoor.html#cb283-13" aria-hidden="true" tabindex="-1"></a>mc.stats100</span></code></pre></div>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="backdoor.html#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb281-2"><a href="backdoor.html#cb281-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
+<span id="cb281-3"><a href="backdoor.html#cb281-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: Will be used again whaen calculating p-value</span></span>
+<span id="cb281-4"><a href="backdoor.html#cb281-4" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr</span></span>
+<span id="cb281-5"><a href="backdoor.html#cb281-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out100 &lt;- mc_standdr(ss = c(100), nrep = 500)</span></span>
+<span id="cb281-6"><a href="backdoor.html#cb281-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out100.rds&quot;</span>)</span>
+<span id="cb281-7"><a href="backdoor.html#cb281-7" aria-hidden="true" tabindex="-1"></a>mc.out100 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb281-8"><a href="backdoor.html#cb281-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out100, file = a_file)</span></span>
+<span id="cb281-9"><a href="backdoor.html#cb281-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb281-10"><a href="backdoor.html#cb281-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="backdoor.html#cb282-1" aria-hidden="true" tabindex="-1"></a>mc.stats100 <span class="ot">&lt;-</span> mc.out100 <span class="sc">%&gt;%</span></span>
+<span id="cb282-2"><a href="backdoor.html#cb282-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
+<span id="cb282-3"><a href="backdoor.html#cb282-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb282-4"><a href="backdoor.html#cb282-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb282-5"><a href="backdoor.html#cb282-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
+<span id="cb282-6"><a href="backdoor.html#cb282-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep,</span>
+<span id="cb282-7"><a href="backdoor.html#cb282-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
+<span id="cb282-8"><a href="backdoor.html#cb282-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
+<span id="cb282-9"><a href="backdoor.html#cb282-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
+<span id="cb282-10"><a href="backdoor.html#cb282-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb282-11"><a href="backdoor.html#cb282-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
+<span id="cb282-12"><a href="backdoor.html#cb282-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb282-13"><a href="backdoor.html#cb282-13" aria-hidden="true" tabindex="-1"></a>mc.stats100</span></code></pre></div>
 <pre><code>##         estimator T   mean     sd  lower  upper   h0   n  pval
 ## EYT0         EYT0 0 0.0080 0.0016 0.0057 0.0107 0.01 500 0.000
 ## EYT1         EYT1 1 0.0039 0.0011 0.0023 0.0060 0.02 500 0.000
@@ -5869,15 +5847,15 @@ section 6.3 in p. 126 to 130 is analyzed in an appendix at
 ## EY1out     EY1out 1 0.0202 0.0066 0.0100 0.0309 0.02 500 0.498
 ## EY0dr       EY0dr 0 0.0101 0.0020 0.0071 0.0136 0.01 500 0.264
 ## EY1dr       EY1dr 1 0.0200 0.0352 0.0019 0.0400 0.02 500 1.000</code></pre>
-<div class="sourceCode" id="cb285"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb285-1"><a href="backdoor.html#cb285-1" aria-hidden="true" tabindex="-1"></a>bb100 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb285-2"><a href="backdoor.html#cb285-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
-<span id="cb285-3"><a href="backdoor.html#cb285-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
-<span id="cb285-4"><a href="backdoor.html#cb285-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0079</span>, <span class="fl">0.0038</span>, <span class="fl">0.01</span>, <span class="fl">0.0196</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.029</span>),</span>
-<span id="cb285-5"><a href="backdoor.html#cb285-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0016</span>, <span class="fl">0.0012</span>, <span class="fl">0.002</span>, <span class="fl">0.0562</span>, <span class="fl">0.002</span>, <span class="fl">0.0068</span>, </span>
-<span id="cb285-6"><a href="backdoor.html#cb285-6" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.002</span>, <span class="fl">0.0069</span>, <span class="fl">0.002</span>, <span class="fl">0.1891</span>),</span>
-<span id="cb285-7"><a href="backdoor.html#cb285-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.61</span>, <span class="fl">0.81</span>, <span class="fl">0.73</span>, <span class="fl">0.96</span>, <span class="fl">0.74</span>, <span class="fl">0.74</span>, <span class="fl">0.72</span>, <span class="fl">0.14</span>)</span>
-<span id="cb285-8"><a href="backdoor.html#cb285-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb285-9"><a href="backdoor.html#cb285-9" aria-hidden="true" tabindex="-1"></a>bb100</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="backdoor.html#cb284-1" aria-hidden="true" tabindex="-1"></a>bb100 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb284-2"><a href="backdoor.html#cb284-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
+<span id="cb284-3"><a href="backdoor.html#cb284-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
+<span id="cb284-4"><a href="backdoor.html#cb284-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0079</span>, <span class="fl">0.0038</span>, <span class="fl">0.01</span>, <span class="fl">0.0196</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.029</span>),</span>
+<span id="cb284-5"><a href="backdoor.html#cb284-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0016</span>, <span class="fl">0.0012</span>, <span class="fl">0.002</span>, <span class="fl">0.0562</span>, <span class="fl">0.002</span>, <span class="fl">0.0068</span>, </span>
+<span id="cb284-6"><a href="backdoor.html#cb284-6" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.002</span>, <span class="fl">0.0069</span>, <span class="fl">0.002</span>, <span class="fl">0.1891</span>),</span>
+<span id="cb284-7"><a href="backdoor.html#cb284-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.61</span>, <span class="fl">0.81</span>, <span class="fl">0.73</span>, <span class="fl">0.96</span>, <span class="fl">0.74</span>, <span class="fl">0.74</span>, <span class="fl">0.72</span>, <span class="fl">0.14</span>)</span>
+<span id="cb284-8"><a href="backdoor.html#cb284-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb284-9"><a href="backdoor.html#cb284-9" aria-hidden="true" tabindex="-1"></a>bb100</span></code></pre></div>
 <pre><code>##    estimator   mean     sd Pval
 ## 1       EYT0 0.0079 0.0016 0.00
 ## 2       EYT1 0.0038 0.0012 0.00
@@ -5889,50 +5867,468 @@ section 6.3 in p. 126 to 130 is analyzed in an appendix at
 ## 8     EY1out 0.0200 0.0069 0.74
 ## 9      EY0dr 0.0100 0.0020 0.72
 ## 10     EY1dr 0.0290 0.1891 0.14</code></pre>
-<p>and we verify the p-values. The differences are caused by rounded numbers.</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="backdoor.html#cb287-1" aria-hidden="true" tabindex="-1"></a>bb100 <span class="sc">%&gt;%</span></span>
-<span id="cb287-2"><a href="backdoor.html#cb287-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb287-3"><a href="backdoor.html#cb287-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb287-4"><a href="backdoor.html#cb287-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">1000</span>,</span>
-<span id="cb287-5"><a href="backdoor.html#cb287-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdm =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb287-6"><a href="backdoor.html#cb287-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>(mean <span class="sc">-</span> h0) <span class="sc">/</span> sdm,  <span class="co"># how many sd from the mean</span></span>
-<span id="cb287-7"><a href="backdoor.html#cb287-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="at">q =</span> z)),</span>
-<span id="cb287-8"><a href="backdoor.html#cb287-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb287-9"><a href="backdoor.html#cb287-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdm, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb287-10"><a href="backdoor.html#cb287-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, h0)</span></code></pre></div>
-<pre><code>##    estimator T   h0   mean     sd Pval    n  pval
-## 1       EYT0 0 0.01 0.0079 0.0016 0.00 1000 0.000
-## 2       EYT1 1 0.02 0.0038 0.0012 0.00 1000 0.000
-## 3     EY0exp 0 0.01 0.0100 0.0020 0.61 1000 1.000
-## 4     EY1exp 1 0.02 0.0196 0.0562 0.81 1000 0.822
-## 5    EY0exp2 0 0.01 0.0100 0.0020 0.73 1000 1.000
-## 6    EY1exp2 1 0.02 0.0200 0.0068 0.96 1000 1.000
-## 7     EY0out 0 0.01 0.0100 0.0020 0.74 1000 1.000
-## 8     EY1out 1 0.02 0.0200 0.0069 0.74 1000 1.000
-## 9      EY0dr 0 0.01 0.0100 0.0020 0.72 1000 1.000
-## 10     EY1dr 1 0.02 0.0290 0.1891 0.14 1000 0.132</code></pre>
-<p>and we can plot the results to facilitate the discussion</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="backdoor.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb289-2"><a href="backdoor.html#cb289-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">model =</span> <span class="st">&quot;ss=40&quot;</span>, mc.stats40),</span>
-<span id="cb289-3"><a href="backdoor.html#cb289-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">model =</span> <span class="st">&quot;ss=100&quot;</span>, mc.stats100)) <span class="sc">%&gt;%</span></span>
-<span id="cb289-4"><a href="backdoor.html#cb289-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">c</span>(mean, lower, upper), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb289-5"><a href="backdoor.html#cb289-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean, <span class="at">xmin =</span> lower, <span class="at">xmax =</span> upper,</span>
-<span id="cb289-6"><a href="backdoor.html#cb289-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> estimator, <span class="at">color =</span> model)) <span class="sc">+</span></span>
-<span id="cb289-7"><a href="backdoor.html#cb289-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb289-8"><a href="backdoor.html#cb289-8" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean, <span class="at">y =</span> estimator, <span class="at">label =</span> mean), </span>
-<span id="cb289-9"><a href="backdoor.html#cb289-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb289-10"><a href="backdoor.html#cb289-10" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> lower, <span class="at">y =</span> estimator, <span class="at">label =</span> lower),</span>
-<span id="cb289-11"><a href="backdoor.html#cb289-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb289-12"><a href="backdoor.html#cb289-12" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> upper, <span class="at">y =</span> estimator, <span class="at">label =</span> upper),</span>
-<span id="cb289-13"><a href="backdoor.html#cb289-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb289-14"><a href="backdoor.html#cb289-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;ss=40&quot;</span> <span class="ot">=</span> <span class="st">&quot;mediumseagreen&quot;</span>, <span class="st">&quot;ss=100&quot;</span> <span class="ot">=</span> <span class="st">&quot;tomato&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb289-15"><a href="backdoor.html#cb289-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb289-16"><a href="backdoor.html#cb289-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>,</span>
-<span id="cb289-17"><a href="backdoor.html#cb289-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb289-18"><a href="backdoor.html#cb289-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Chap 6, section 6.3: Simulation of Standardization Methods&quot;</span>,</span>
-<span id="cb289-19"><a href="backdoor.html#cb289-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;The mean with the 5% and 95% quantiles.&quot;</span>,</span>
-<span id="cb289-20"><a href="backdoor.html#cb289-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-216-1.png" width="672" /></p>
+<p>and we make a general tableau with the results from both simulations</p>
+<div id="mfdgghdcqi" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#mfdgghdcqi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mfdgghdcqi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mfdgghdcqi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mfdgghdcqi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mfdgghdcqi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mfdgghdcqi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mfdgghdcqi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mfdgghdcqi .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mfdgghdcqi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mfdgghdcqi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mfdgghdcqi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mfdgghdcqi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mfdgghdcqi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#mfdgghdcqi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mfdgghdcqi .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mfdgghdcqi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mfdgghdcqi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mfdgghdcqi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mfdgghdcqi .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#mfdgghdcqi .gt_left {
+  text-align: left;
+}
+
+#mfdgghdcqi .gt_center {
+  text-align: center;
+}
+
+#mfdgghdcqi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mfdgghdcqi .gt_font_normal {
+  font-weight: normal;
+}
+
+#mfdgghdcqi .gt_font_bold {
+  font-weight: bold;
+}
+
+#mfdgghdcqi .gt_font_italic {
+  font-style: italic;
+}
+
+#mfdgghdcqi .gt_super {
+  font-size: 65%;
+}
+
+#mfdgghdcqi .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="8" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 6.13 and 6.14</strong></th>
+    </tr>
+    <tr>
+      <th colspan="8" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Sampling Distribution from Simulation<br>Investigating Small-Sample Robustness<br>True E(Y(0))=0.01, True E(Y(1))=0.02</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">model description</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner">ss=40</span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner">ss=100</span>
+      </th>
+    </tr>
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">pval</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">pval</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">EYT0</td>
+<td class="gt_row gt_left">Unadjusted</td>
+<td class="gt_row gt_center">0.0076</td>
+<td class="gt_row gt_center">0.0017</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0080</td>
+<td class="gt_row gt_center">0.0016</td>
+<td class="gt_row gt_center">0.00</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EYT1</td>
+<td class="gt_row gt_left gt_striped">Unadjusted</td>
+<td class="gt_row gt_center gt_striped">0.0042</td>
+<td class="gt_row gt_center gt_striped">0.0012</td>
+<td class="gt_row gt_center gt_striped">0.00</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0039</td>
+<td class="gt_row gt_center gt_striped">0.0011</td>
+<td class="gt_row gt_center gt_striped">0.00</td></tr>
+    <tr><td class="gt_row gt_left">EY0exp</td>
+<td class="gt_row gt_left">Linear Exposure</td>
+<td class="gt_row gt_center">0.0101</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.31</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.26</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1exp</td>
+<td class="gt_row gt_left gt_striped">Linear Exposure</td>
+<td class="gt_row gt_center gt_striped">0.0199</td>
+<td class="gt_row gt_center gt_striped">0.0065</td>
+<td class="gt_row gt_center gt_striped">0.73</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0193</td>
+<td class="gt_row gt_center gt_striped">0.0289</td>
+<td class="gt_row gt_center gt_striped">0.59</td></tr>
+    <tr><td class="gt_row gt_left">EY0exp2</td>
+<td class="gt_row gt_left">Logistic Exposure</td>
+<td class="gt_row gt_center">0.0101</td>
+<td class="gt_row gt_center">0.0023</td>
+<td class="gt_row gt_center">0.33</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.26</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1exp2</td>
+<td class="gt_row gt_left gt_striped">Logistic Exposure</td>
+<td class="gt_row gt_center gt_striped">0.0203</td>
+<td class="gt_row gt_center gt_striped">0.0063</td>
+<td class="gt_row gt_center gt_striped">0.29</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0203</td>
+<td class="gt_row gt_center gt_striped">0.0066</td>
+<td class="gt_row gt_center gt_striped">0.31</td></tr>
+    <tr><td class="gt_row gt_left">EY0out</td>
+<td class="gt_row gt_left">Overspecified Outcome</td>
+<td class="gt_row gt_center">0.0101</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.31</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.26</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1out</td>
+<td class="gt_row gt_left gt_striped">Overspecified Outcome</td>
+<td class="gt_row gt_center gt_striped">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0065</td>
+<td class="gt_row gt_center gt_striped">1.00</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0202</td>
+<td class="gt_row gt_center gt_striped">0.0066</td>
+<td class="gt_row gt_center gt_striped">0.50</td></tr>
+    <tr><td class="gt_row gt_left">EY0dr</td>
+<td class="gt_row gt_left">Doubly Robust</td>
+<td class="gt_row gt_center">0.0101</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.31</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.26</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1dr</td>
+<td class="gt_row gt_left gt_striped">Doubly Robust</td>
+<td class="gt_row gt_center gt_striped">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0065</td>
+<td class="gt_row gt_center gt_striped">1.00</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0352</td>
+<td class="gt_row gt_center gt_striped">1.00</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="8">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+<p>We will not reiterate the comments from Brumback as the results in the tableau
+just above confirms them.</p>
+<p>A plot can however illustrate well Brumback’s main points.</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-218-1.png" width="672" /></p>
 
 </div>
 </div>
