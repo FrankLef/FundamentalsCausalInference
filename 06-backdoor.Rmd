@@ -513,6 +513,8 @@ The simulaiton with 40 covariates
 message("This takes about 1 min. Load from file.")
 # startTime <- Sys.time()
 # We only use 500 rather than the 1000 suggested in the book
+# IMPORTANT: keep it for later use
+nrep40 <- 500
 # It gives the same results with actually less sd for EY1exp and EY1dr (!)
 # mc.out40 <- mc_standdr(ss = c(40), nrep = 500)
 a_file <- file.path(dir_data, "chap06_mc_out40.rds")
@@ -525,11 +527,50 @@ mc.out40 <- readRDS(file = a_file)
 
 
 ```{r}
+# IMPORTANT: sample size not the same as
+
 mc.stats40 <- mc.out40 %>%
   mutate(across(.cols = where(is.numeric), .fns = round, digits = 4),
-         estimate = row.names(.)) %>%
-  relocate(estimate)
+         estimator = row.names(.)) %>%
+  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
+         h0 = ifelse(`T` == 0, 0.01, 0.02),
+         n = nrep40,
+         sdm = sd / sqrt(n),
+         z = abs((mean - h0) / sdm),
+         pval = 2 * (1 - pnorm(z)),
+         pval = round(pval, 3)) %>%
+  select(-sdm, -z) %>%
+  relocate(estimator, `T`)
 mc.stats40
+```
+and we compare with the author's
+
+```{r}
+bb40 <- data.frame(
+  estimator = c("EYT0", "EYT1", "EY0exp", "EY1exp", "EY0exp2", "EY1exp2",
+                "EY0out", "EY1out", "EY0dr", "EY1dr"),
+  mean = c(0.0076, 0.0042, 0.01, 0.0195, 0.0101, 0.0204, 
+           0.01, 0.02, 0.01, 0.0197),
+  sd = c(0.0015, 0.0012, 0.0021, 0.0127, 0.0021, 0.0064,
+         0.0021, 0.0066, 0.0021, 0.0106),
+  Pval = c(0, 0, 0.92, 0.19, 0.42, 0.07, 0.79, 0.84, 0.82, 0.37)
+)
+bb40
+```
+
+and we verify the p-values. Differences are caused by rounded numbers.
+
+```{r}
+bb40 %>%
+  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
+         h0 = ifelse(`T` == 0, 0.01, 0.02),
+         n = 1000,
+         sdm = sd / sqrt(n),
+         z = abs(mean - h0) / sdm,  # how many sd from the mean
+         pval = 2 * (1 - pnorm(q = z)),
+         pval = round(pval, 3)) %>%
+  select(-sdm, -z) %>%
+  relocate(estimator, `T`, h0)
 ```
 
 
@@ -540,6 +581,8 @@ and the simulation with 100 covariates
 message("This takes about 3 min. Load from file.")
 # startTime <- Sys.time()
 # We only use 500 rather than the 1000 suggested in the book
+# IMPORTANT: keep it for later use
+nrep100 <- 500
 # It gives the same results with actually less sd for EY1exp and EY1dr
 # mc.out100 <- mc_standdr(ss = c(100), nrep = 500)
 a_file <- file.path(dir_data, "chap06_mc_out100.rds")
@@ -554,37 +597,71 @@ mc.out100 <- readRDS(file = a_file)
 ```{r}
 mc.stats100 <- mc.out100 %>%
   mutate(across(.cols = where(is.numeric), .fns = round, digits = 4),
-         estimate = row.names(.)) %>%
-  relocate(estimate)
+         estimator = row.names(.)) %>%
+  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
+         h0 = ifelse(`T` == 0, 0.01, 0.02),
+         n = nrep100,
+         sdm = sd / sqrt(n),
+         z = abs((mean - h0) / sdm),
+         pval = 2 * (1 - pnorm(z)),
+         pval = round(pval, 3)) %>%
+  select(-sdm, -z) %>%
+  relocate(estimator, `T`)
 mc.stats100
 ```
+```{r}
+bb100 <- data.frame(
+  estimator = c("EYT0", "EYT1", "EY0exp", "EY1exp", "EY0exp2", "EY1exp2",
+                "EY0out", "EY1out", "EY0dr", "EY1dr"),
+  mean = c(0.0079, 0.0038, 0.01, 0.0196, 0.01, 0.02, 0.01, 0.02, 0.01, 0.029),
+  sd = c(0.0016, 0.0012, 0.002, 0.0562, 0.002, 0.0068, 
+         0.002, 0.0069, 0.002, 0.1891),
+  Pval = c(0, 0, 0.61, 0.81, 0.73, 0.96, 0.74, 0.74, 0.72, 0.14)
+)
+bb100
+```
+
+and we verify the p-values. The differences are caused by rounded numbers.
+
+```{r}
+bb100 %>%
+  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
+         h0 = ifelse(`T` == 0, 0.01, 0.02),
+         n = 1000,
+         sdm = sd / sqrt(n),
+         z = abs(mean - h0) / sdm,  # how many sd from the mean
+         pval = 2 * (1 - pnorm(q = z)),
+         pval = round(pval, 3)) %>%
+  select(-sdm, -z) %>%
+  relocate(estimator, `T`, h0)
+```
+
+
+
+
 and we can plot the results to facilitate the discussion
 
 ```{r}
-mc.plot <- list()
-mc.plot <- within(mc.plot, {
-  df <- rbind(
-    data.frame(model = "ss=40", mc.stats40),
-    data.frame(model = "ss=100", mc.stats100)) %>%
-    mutate(model = factor(model))
-    
-  p <- ggplot(df, aes(x = mean, xmin = lower, xmax = upper,
-                         y = estimate, color = model)) +
-    geom_pointrange(position = position_dodge(width = 0.5)) +
-    ggrepel::geom_text_repel(aes(x = mean, y = estimate, label = round(mean, 3)),
-                             size = 3) +
-    ggrepel::geom_text_repel(aes(x = lower, y = estimate, label = round(lower, 3)),
-                             size = 3) +
-    ggrepel::geom_text_repel(aes(x = upper, y = estimate, label = round(upper, 3)),
-                             size = 3) +
-    scale_color_manual(values = c("ss=40" = "mediumseagreen", "ss=100" = "tomato")) +
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          legend.title = element_blank()) +
-    labs(title = "Chap 6, section 6.3",
-         subtitle = "Simulation of Standardization Methods",
-         x = NULL, y = NULL)
-})
-mc.plot$p
+rbind(
+  data.frame(model = "ss=40", mc.stats40),
+  data.frame(model = "ss=100", mc.stats100)) %>%
+  mutate(across(.cols = c(mean, lower, upper), .fns = round, digits = 3)) %>%
+  ggplot(aes(x = mean, xmin = lower, xmax = upper,
+             y = estimator, color = model)) +
+  geom_pointrange(position = position_dodge(width = 0.5)) +
+  ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = mean), 
+                           size = 3) +
+  ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = lower),
+                           size = 3) +
+  ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = upper),
+                           size = 3) +
+  scale_color_manual(values = c("ss=40" = "mediumseagreen", "ss=100" = "tomato")) +
+  theme_minimal() +
+  theme(title = element_text(color = "midnightblue"),
+        legend.position = "bottom",
+        legend.title = element_blank()) +
+  labs(title = "Chap 6, section 6.3: Simulation of Standardization Methods",
+       subtitle = "The mean with the 5% and 95% quantiles.",
+       x = NULL, y = NULL)
 ```
 
