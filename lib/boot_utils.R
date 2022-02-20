@@ -10,23 +10,30 @@
 formula2vars <- function(formula) {
   stopifnot(inherits(formula, "formula"))
   
+  # x0 is the coefficient for intercept, used by lm, glm, geeglm, etc.
+  x0 <- "(Intercept)"
+  
   vars <- all.vars(formula)
   nvars <- length(vars)
-  stopifnot(nvars >= 3)
+  stopifnot(nvars >= 2)
   
-  # the variables
+  # outcome and treatmaent variables
   y <- vars[1]  # outcome variable
   t <- vars[2]  # treatment variable
-  h <- vars[3:nvars]  # the condition variables
   
-  # all independent variables inclding interactions
+  # if only 2 variables, jt is the independent variable
+  if (nvars == 2) return(list("y" = y, "ind" = t, "x0" = x0))
+  
+  # the condition variables
+  h <- vars[3:nvars]
+  
+  # all independent variables including interactions
   ind <- attr(terms(formula), which = "term.labels")
   # the condition variables including interaction with the treatment var
   ht <- ind[seq_along(ind)[-1]]
   
   # return results in a list
-  # x0 is the coeficient for intercept used by lm, glm, geeglm, etc.
-  list("y" = y, "t" = t, "h" = h, "ht" = ht, "ind" = ind, "x0" = "(Intercept)")
+  list("y" = y, "t" = t, "h" = h, "ht" = ht, "ind" = ind, "x0" = x0)
 }
 
 

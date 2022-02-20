@@ -419,194 +419,201 @@ functions.</p>
 <span id="cb291-10"><a href="functions.html#cb291-10" aria-hidden="true" tabindex="-1"></a>formula2vars <span class="ot">&lt;-</span> <span class="cf">function</span>(formula) {</span>
 <span id="cb291-11"><a href="functions.html#cb291-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">inherits</span>(formula, <span class="st">&quot;formula&quot;</span>))</span>
 <span id="cb291-12"><a href="functions.html#cb291-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-13"><a href="functions.html#cb291-13" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula)</span>
-<span id="cb291-14"><a href="functions.html#cb291-14" aria-hidden="true" tabindex="-1"></a>  nvars <span class="ot">&lt;-</span> <span class="fu">length</span>(vars)</span>
-<span id="cb291-15"><a href="functions.html#cb291-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(nvars <span class="sc">&gt;=</span> <span class="dv">3</span>)</span>
-<span id="cb291-16"><a href="functions.html#cb291-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-17"><a href="functions.html#cb291-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the variables</span></span>
-<span id="cb291-18"><a href="functions.html#cb291-18" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> vars[<span class="dv">1</span>]  <span class="co"># outcome variable</span></span>
-<span id="cb291-19"><a href="functions.html#cb291-19" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> vars[<span class="dv">2</span>]  <span class="co"># treatment variable</span></span>
-<span id="cb291-20"><a href="functions.html#cb291-20" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> vars[<span class="dv">3</span><span class="sc">:</span>nvars]  <span class="co"># the condition variables</span></span>
-<span id="cb291-21"><a href="functions.html#cb291-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-22"><a href="functions.html#cb291-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all independent variables inclding interactions</span></span>
-<span id="cb291-23"><a href="functions.html#cb291-23" aria-hidden="true" tabindex="-1"></a>  ind <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">terms</span>(formula), <span class="at">which =</span> <span class="st">&quot;term.labels&quot;</span>)</span>
-<span id="cb291-24"><a href="functions.html#cb291-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the condition variables including interaction with the treatment var</span></span>
-<span id="cb291-25"><a href="functions.html#cb291-25" aria-hidden="true" tabindex="-1"></a>  ht <span class="ot">&lt;-</span> ind[<span class="fu">seq_along</span>(ind)[<span class="sc">-</span><span class="dv">1</span>]]</span>
+<span id="cb291-13"><a href="functions.html#cb291-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># x0 is the coefficient for intercept, used by lm, glm, geeglm, etc.</span></span>
+<span id="cb291-14"><a href="functions.html#cb291-14" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
+<span id="cb291-15"><a href="functions.html#cb291-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-16"><a href="functions.html#cb291-16" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(formula)</span>
+<span id="cb291-17"><a href="functions.html#cb291-17" aria-hidden="true" tabindex="-1"></a>  nvars <span class="ot">&lt;-</span> <span class="fu">length</span>(vars)</span>
+<span id="cb291-18"><a href="functions.html#cb291-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(nvars <span class="sc">&gt;=</span> <span class="dv">2</span>)</span>
+<span id="cb291-19"><a href="functions.html#cb291-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-20"><a href="functions.html#cb291-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># outcome and treatmaent variables</span></span>
+<span id="cb291-21"><a href="functions.html#cb291-21" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> vars[<span class="dv">1</span>]  <span class="co"># outcome variable</span></span>
+<span id="cb291-22"><a href="functions.html#cb291-22" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> vars[<span class="dv">2</span>]  <span class="co"># treatment variable</span></span>
+<span id="cb291-23"><a href="functions.html#cb291-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-24"><a href="functions.html#cb291-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># if only 2 variables, jt is the independent variable</span></span>
+<span id="cb291-25"><a href="functions.html#cb291-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (nvars <span class="sc">==</span> <span class="dv">2</span>) <span class="fu">return</span>(<span class="fu">list</span>(<span class="st">&quot;y&quot;</span> <span class="ot">=</span> y, <span class="st">&quot;ind&quot;</span> <span class="ot">=</span> t, <span class="st">&quot;x0&quot;</span> <span class="ot">=</span> x0))</span>
 <span id="cb291-26"><a href="functions.html#cb291-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-27"><a href="functions.html#cb291-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return results in a list</span></span>
-<span id="cb291-28"><a href="functions.html#cb291-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># x0 is the coeficient for intercept used by lm, glm, geeglm, etc.</span></span>
-<span id="cb291-29"><a href="functions.html#cb291-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;y&quot;</span> <span class="ot">=</span> y, <span class="st">&quot;t&quot;</span> <span class="ot">=</span> t, <span class="st">&quot;h&quot;</span> <span class="ot">=</span> h, <span class="st">&quot;ht&quot;</span> <span class="ot">=</span> ht, <span class="st">&quot;ind&quot;</span> <span class="ot">=</span> ind, <span class="st">&quot;x0&quot;</span> <span class="ot">=</span> <span class="st">&quot;(Intercept)&quot;</span>)</span>
-<span id="cb291-30"><a href="functions.html#cb291-30" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb291-31"><a href="functions.html#cb291-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-32"><a href="functions.html#cb291-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-33"><a href="functions.html#cb291-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures</span></span>
-<span id="cb291-34"><a href="functions.html#cb291-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-35"><a href="functions.html#cb291-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures.</span></span>
-<span id="cb291-36"><a href="functions.html#cb291-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-37"><a href="functions.html#cb291-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures and put them in a named numeric() vector.</span></span>
-<span id="cb291-38"><a href="functions.html#cb291-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-39"><a href="functions.html#cb291-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param val0 Numeric, base value</span></span>
-<span id="cb291-40"><a href="functions.html#cb291-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param val1 Numeric, treated value</span></span>
-<span id="cb291-41"><a href="functions.html#cb291-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param log If TRUE (default) compute the effect measures on the log scale. </span></span>
-<span id="cb291-42"><a href="functions.html#cb291-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; If FALSE compute the effect measures on the natural scale.</span></span>
-<span id="cb291-43"><a href="functions.html#cb291-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The risk difference measure (RD) is always on the natural scale.</span></span>
-<span id="cb291-44"><a href="functions.html#cb291-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-45"><a href="functions.html#cb291-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Named numeric vector.</span></span>
-<span id="cb291-46"><a href="functions.html#cb291-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb291-47"><a href="functions.html#cb291-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-48"><a href="functions.html#cb291-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb291-49"><a href="functions.html#cb291-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; val0 &lt;- 0.25</span></span>
-<span id="cb291-50"><a href="functions.html#cb291-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; val1 &lt;- 0.5</span></span>
-<span id="cb291-51"><a href="functions.html#cb291-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; when log is required, we use default value</span></span>
-<span id="cb291-52"><a href="functions.html#cb291-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; out &lt;- calc_effect_measures(val0, val1)</span></span>
-<span id="cb291-53"><a href="functions.html#cb291-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; stopifnot(all(is.finite(out)))</span></span>
-<span id="cb291-54"><a href="functions.html#cb291-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; when natural scale is required, we use log = FALSE</span></span>
-<span id="cb291-55"><a href="functions.html#cb291-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; out &lt;- calc_effect_measures(val0, val1, log = FALSE)</span></span>
-<span id="cb291-56"><a href="functions.html#cb291-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; stopifnot(all(is.finite(out)))</span></span>
-<span id="cb291-57"><a href="functions.html#cb291-57" aria-hidden="true" tabindex="-1"></a>calc_effect_measures <span class="ot">&lt;-</span> <span class="cf">function</span>(val0, val1, <span class="at">log =</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb291-58"><a href="functions.html#cb291-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># both values must be finite</span></span>
-<span id="cb291-59"><a href="functions.html#cb291-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">is.finite</span>(val0), <span class="fu">is.finite</span>(val1))</span>
-<span id="cb291-60"><a href="functions.html#cb291-60" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-61"><a href="functions.html#cb291-61" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a vector of names used later when creating output</span></span>
-<span id="cb291-62"><a href="functions.html#cb291-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this trick does not work on unamed variables (next step)</span></span>
-<span id="cb291-63"><a href="functions.html#cb291-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># so it must be done now.</span></span>
-<span id="cb291-64"><a href="functions.html#cb291-64" aria-hidden="true" tabindex="-1"></a>  nms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">deparse1</span>(<span class="fu">substitute</span>(val0)), <span class="fu">deparse1</span>(<span class="fu">substitute</span>(val1)))</span>
-<span id="cb291-65"><a href="functions.html#cb291-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make sure the values are unnamed</span></span>
-<span id="cb291-66"><a href="functions.html#cb291-66" aria-hidden="true" tabindex="-1"></a>  <span class="co"># otherwise their names get combined with the new ones</span></span>
-<span id="cb291-67"><a href="functions.html#cb291-67" aria-hidden="true" tabindex="-1"></a>  val0 <span class="ot">&lt;-</span> <span class="fu">unname</span>(val0)</span>
-<span id="cb291-68"><a href="functions.html#cb291-68" aria-hidden="true" tabindex="-1"></a>  val1 <span class="ot">&lt;-</span> <span class="fu">unname</span>(val1)</span>
-<span id="cb291-69"><a href="functions.html#cb291-69" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-70"><a href="functions.html#cb291-70" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only val0 required not to be zero</span></span>
-<span id="cb291-71"><a href="functions.html#cb291-71" aria-hidden="true" tabindex="-1"></a>  va0_not_zero <span class="ot">&lt;-</span> <span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(val0, <span class="dv">0</span>)</span>
-<span id="cb291-72"><a href="functions.html#cb291-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># either values cannot be zero</span></span>
-<span id="cb291-73"><a href="functions.html#cb291-73" aria-hidden="true" tabindex="-1"></a>  both_not_zero <span class="ot">&lt;-</span> va0_not_zero <span class="sc">&amp;</span> <span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(val1, <span class="dv">0</span>)</span>
-<span id="cb291-74"><a href="functions.html#cb291-74" aria-hidden="true" tabindex="-1"></a>  <span class="co"># almost positivity assumtion: both values must be &gt;= zero but &lt; 1</span></span>
-<span id="cb291-75"><a href="functions.html#cb291-75" aria-hidden="true" tabindex="-1"></a>  both_gte_zero_lt_1 <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">&lt;=</span> val0 <span class="sc">&amp;</span> val0 <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;=</span> val1 <span class="sc">&amp;</span> val1 <span class="sc">&lt;</span> <span class="dv">1</span></span>
-<span id="cb291-76"><a href="functions.html#cb291-76" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the positivity assumption is required for both values</span></span>
-<span id="cb291-77"><a href="functions.html#cb291-77" aria-hidden="true" tabindex="-1"></a>  is_positivity <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">&lt;</span> val0 <span class="sc">&amp;</span> val0 <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;</span> val1 <span class="sc">&amp;</span> val1 <span class="sc">&lt;</span> <span class="dv">1</span></span>
-<span id="cb291-78"><a href="functions.html#cb291-78" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-79"><a href="functions.html#cb291-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Risk Difference</span></span>
-<span id="cb291-80"><a href="functions.html#cb291-80" aria-hidden="true" tabindex="-1"></a>  RD <span class="ot">&lt;-</span> val1 <span class="sc">-</span> val0</span>
-<span id="cb291-81"><a href="functions.html#cb291-81" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-82"><a href="functions.html#cb291-82" aria-hidden="true" tabindex="-1"></a>  RR <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Risk Ratio</span></span>
-<span id="cb291-83"><a href="functions.html#cb291-83" aria-hidden="true" tabindex="-1"></a>  RRstar <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Other Risk Ratio</span></span>
-<span id="cb291-84"><a href="functions.html#cb291-84" aria-hidden="true" tabindex="-1"></a>  OR <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Odds Ratio</span></span>
-<span id="cb291-85"><a href="functions.html#cb291-85" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (log) {</span>
-<span id="cb291-86"><a href="functions.html#cb291-86" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_not_zero) RR <span class="ot">&lt;-</span> <span class="fu">log</span>(val1) <span class="sc">-</span> <span class="fu">log</span>(val0)</span>
-<span id="cb291-87"><a href="functions.html#cb291-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_gte_zero_lt_1) RRstar <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> val0) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> val1)</span>
-<span id="cb291-88"><a href="functions.html#cb291-88" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (is_positivity) OR <span class="ot">&lt;-</span> <span class="fu">log</span>(val1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)) <span class="sc">-</span> <span class="fu">log</span>(val0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val0))</span>
-<span id="cb291-89"><a href="functions.html#cb291-89" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span> <span class="ot">=</span> RD, <span class="st">&quot;logRR&quot;</span> <span class="ot">=</span> RR, <span class="st">&quot;logRR*&quot;</span> <span class="ot">=</span> RRstar, <span class="st">&quot;logOR&quot;</span> <span class="ot">=</span> OR)</span>
-<span id="cb291-90"><a href="functions.html#cb291-90" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb291-91"><a href="functions.html#cb291-91" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (va0_not_zero) RR <span class="ot">&lt;-</span> val1 <span class="sc">/</span> val0</span>
-<span id="cb291-92"><a href="functions.html#cb291-92" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_gte_zero_lt_1) RRstar <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> val0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)</span>
-<span id="cb291-93"><a href="functions.html#cb291-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (is_positivity) OR <span class="ot">&lt;-</span> (val1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)) <span class="sc">/</span> (val0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val0))</span>
-<span id="cb291-94"><a href="functions.html#cb291-94" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span> <span class="ot">=</span> RD, <span class="st">&quot;RR&quot;</span> <span class="ot">=</span> RR, <span class="st">&quot;RR*&quot;</span> <span class="ot">=</span> RRstar, <span class="st">&quot;OR&quot;</span> <span class="ot">=</span> OR)</span>
-<span id="cb291-95"><a href="functions.html#cb291-95" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb291-96"><a href="functions.html#cb291-96" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-97"><a href="functions.html#cb291-97" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output only the measures that were calculated</span></span>
-<span id="cb291-98"><a href="functions.html#cb291-98" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> out[<span class="sc">!</span><span class="fu">is.na</span>(out)]</span>
-<span id="cb291-99"><a href="functions.html#cb291-99" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-100"><a href="functions.html#cb291-100" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of named input values</span></span>
-<span id="cb291-101"><a href="functions.html#cb291-101" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">c</span>(val0, val1)</span>
-<span id="cb291-102"><a href="functions.html#cb291-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(vals) <span class="ot">&lt;-</span> nms</span>
+<span id="cb291-27"><a href="functions.html#cb291-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the condition variables</span></span>
+<span id="cb291-28"><a href="functions.html#cb291-28" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> vars[<span class="dv">3</span><span class="sc">:</span>nvars]</span>
+<span id="cb291-29"><a href="functions.html#cb291-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-30"><a href="functions.html#cb291-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all independent variables including interactions</span></span>
+<span id="cb291-31"><a href="functions.html#cb291-31" aria-hidden="true" tabindex="-1"></a>  ind <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">terms</span>(formula), <span class="at">which =</span> <span class="st">&quot;term.labels&quot;</span>)</span>
+<span id="cb291-32"><a href="functions.html#cb291-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the condition variables including interaction with the treatment var</span></span>
+<span id="cb291-33"><a href="functions.html#cb291-33" aria-hidden="true" tabindex="-1"></a>  ht <span class="ot">&lt;-</span> ind[<span class="fu">seq_along</span>(ind)[<span class="sc">-</span><span class="dv">1</span>]]</span>
+<span id="cb291-34"><a href="functions.html#cb291-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-35"><a href="functions.html#cb291-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return results in a list</span></span>
+<span id="cb291-36"><a href="functions.html#cb291-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;y&quot;</span> <span class="ot">=</span> y, <span class="st">&quot;t&quot;</span> <span class="ot">=</span> t, <span class="st">&quot;h&quot;</span> <span class="ot">=</span> h, <span class="st">&quot;ht&quot;</span> <span class="ot">=</span> ht, <span class="st">&quot;ind&quot;</span> <span class="ot">=</span> ind, <span class="st">&quot;x0&quot;</span> <span class="ot">=</span> x0)</span>
+<span id="cb291-37"><a href="functions.html#cb291-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb291-38"><a href="functions.html#cb291-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-39"><a href="functions.html#cb291-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-40"><a href="functions.html#cb291-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures</span></span>
+<span id="cb291-41"><a href="functions.html#cb291-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-42"><a href="functions.html#cb291-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures.</span></span>
+<span id="cb291-43"><a href="functions.html#cb291-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-44"><a href="functions.html#cb291-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Calculate the effect measures and put them in a named numeric() vector.</span></span>
+<span id="cb291-45"><a href="functions.html#cb291-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-46"><a href="functions.html#cb291-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param val0 Numeric, base value</span></span>
+<span id="cb291-47"><a href="functions.html#cb291-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param val1 Numeric, treated value</span></span>
+<span id="cb291-48"><a href="functions.html#cb291-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param log If TRUE (default) compute the effect measures on the log scale. </span></span>
+<span id="cb291-49"><a href="functions.html#cb291-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; If FALSE compute the effect measures on the natural scale.</span></span>
+<span id="cb291-50"><a href="functions.html#cb291-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The risk difference measure (RD) is always on the natural scale.</span></span>
+<span id="cb291-51"><a href="functions.html#cb291-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-52"><a href="functions.html#cb291-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Named numeric vector.</span></span>
+<span id="cb291-53"><a href="functions.html#cb291-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb291-54"><a href="functions.html#cb291-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-55"><a href="functions.html#cb291-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb291-56"><a href="functions.html#cb291-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; val0 &lt;- 0.25</span></span>
+<span id="cb291-57"><a href="functions.html#cb291-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; val1 &lt;- 0.5</span></span>
+<span id="cb291-58"><a href="functions.html#cb291-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; when log is required, we use default value</span></span>
+<span id="cb291-59"><a href="functions.html#cb291-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; out &lt;- calc_effect_measures(val0, val1)</span></span>
+<span id="cb291-60"><a href="functions.html#cb291-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; stopifnot(all(is.finite(out)))</span></span>
+<span id="cb291-61"><a href="functions.html#cb291-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; when natural scale is required, we use log = FALSE</span></span>
+<span id="cb291-62"><a href="functions.html#cb291-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; out &lt;- calc_effect_measures(val0, val1, log = FALSE)</span></span>
+<span id="cb291-63"><a href="functions.html#cb291-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; stopifnot(all(is.finite(out)))</span></span>
+<span id="cb291-64"><a href="functions.html#cb291-64" aria-hidden="true" tabindex="-1"></a>calc_effect_measures <span class="ot">&lt;-</span> <span class="cf">function</span>(val0, val1, <span class="at">log =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb291-65"><a href="functions.html#cb291-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># both values must be finite</span></span>
+<span id="cb291-66"><a href="functions.html#cb291-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">is.finite</span>(val0), <span class="fu">is.finite</span>(val1))</span>
+<span id="cb291-67"><a href="functions.html#cb291-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-68"><a href="functions.html#cb291-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a vector of names used later when creating output</span></span>
+<span id="cb291-69"><a href="functions.html#cb291-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this trick does not work on unamed variables (next step)</span></span>
+<span id="cb291-70"><a href="functions.html#cb291-70" aria-hidden="true" tabindex="-1"></a>  <span class="co"># so it must be done now.</span></span>
+<span id="cb291-71"><a href="functions.html#cb291-71" aria-hidden="true" tabindex="-1"></a>  nms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">deparse1</span>(<span class="fu">substitute</span>(val0)), <span class="fu">deparse1</span>(<span class="fu">substitute</span>(val1)))</span>
+<span id="cb291-72"><a href="functions.html#cb291-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make sure the values are unnamed</span></span>
+<span id="cb291-73"><a href="functions.html#cb291-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># otherwise their names get combined with the new ones</span></span>
+<span id="cb291-74"><a href="functions.html#cb291-74" aria-hidden="true" tabindex="-1"></a>  val0 <span class="ot">&lt;-</span> <span class="fu">unname</span>(val0)</span>
+<span id="cb291-75"><a href="functions.html#cb291-75" aria-hidden="true" tabindex="-1"></a>  val1 <span class="ot">&lt;-</span> <span class="fu">unname</span>(val1)</span>
+<span id="cb291-76"><a href="functions.html#cb291-76" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-77"><a href="functions.html#cb291-77" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only val0 required not to be zero</span></span>
+<span id="cb291-78"><a href="functions.html#cb291-78" aria-hidden="true" tabindex="-1"></a>  va0_not_zero <span class="ot">&lt;-</span> <span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(val0, <span class="dv">0</span>)</span>
+<span id="cb291-79"><a href="functions.html#cb291-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># either values cannot be zero</span></span>
+<span id="cb291-80"><a href="functions.html#cb291-80" aria-hidden="true" tabindex="-1"></a>  both_not_zero <span class="ot">&lt;-</span> va0_not_zero <span class="sc">&amp;</span> <span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(val1, <span class="dv">0</span>)</span>
+<span id="cb291-81"><a href="functions.html#cb291-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># almost positivity assumtion: both values must be &gt;= zero but &lt; 1</span></span>
+<span id="cb291-82"><a href="functions.html#cb291-82" aria-hidden="true" tabindex="-1"></a>  both_gte_zero_lt_1 <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">&lt;=</span> val0 <span class="sc">&amp;</span> val0 <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;=</span> val1 <span class="sc">&amp;</span> val1 <span class="sc">&lt;</span> <span class="dv">1</span></span>
+<span id="cb291-83"><a href="functions.html#cb291-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the positivity assumption is required for both values</span></span>
+<span id="cb291-84"><a href="functions.html#cb291-84" aria-hidden="true" tabindex="-1"></a>  is_positivity <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">&lt;</span> val0 <span class="sc">&amp;</span> val0 <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="dv">0</span> <span class="sc">&lt;</span> val1 <span class="sc">&amp;</span> val1 <span class="sc">&lt;</span> <span class="dv">1</span></span>
+<span id="cb291-85"><a href="functions.html#cb291-85" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-86"><a href="functions.html#cb291-86" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Risk Difference</span></span>
+<span id="cb291-87"><a href="functions.html#cb291-87" aria-hidden="true" tabindex="-1"></a>  RD <span class="ot">&lt;-</span> val1 <span class="sc">-</span> val0</span>
+<span id="cb291-88"><a href="functions.html#cb291-88" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-89"><a href="functions.html#cb291-89" aria-hidden="true" tabindex="-1"></a>  RR <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Risk Ratio</span></span>
+<span id="cb291-90"><a href="functions.html#cb291-90" aria-hidden="true" tabindex="-1"></a>  RRstar <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Other Risk Ratio</span></span>
+<span id="cb291-91"><a href="functions.html#cb291-91" aria-hidden="true" tabindex="-1"></a>  OR <span class="ot">&lt;-</span> <span class="cn">NA_real_</span>  <span class="co"># Odds Ratio</span></span>
+<span id="cb291-92"><a href="functions.html#cb291-92" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (log) {</span>
+<span id="cb291-93"><a href="functions.html#cb291-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_not_zero) RR <span class="ot">&lt;-</span> <span class="fu">log</span>(val1) <span class="sc">-</span> <span class="fu">log</span>(val0)</span>
+<span id="cb291-94"><a href="functions.html#cb291-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_gte_zero_lt_1) RRstar <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> val0) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> val1)</span>
+<span id="cb291-95"><a href="functions.html#cb291-95" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (is_positivity) OR <span class="ot">&lt;-</span> <span class="fu">log</span>(val1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)) <span class="sc">-</span> <span class="fu">log</span>(val0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val0))</span>
+<span id="cb291-96"><a href="functions.html#cb291-96" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span> <span class="ot">=</span> RD, <span class="st">&quot;logRR&quot;</span> <span class="ot">=</span> RR, <span class="st">&quot;logRR*&quot;</span> <span class="ot">=</span> RRstar, <span class="st">&quot;logOR&quot;</span> <span class="ot">=</span> OR)</span>
+<span id="cb291-97"><a href="functions.html#cb291-97" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb291-98"><a href="functions.html#cb291-98" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (va0_not_zero) RR <span class="ot">&lt;-</span> val1 <span class="sc">/</span> val0</span>
+<span id="cb291-99"><a href="functions.html#cb291-99" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (both_gte_zero_lt_1) RRstar <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> val0) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)</span>
+<span id="cb291-100"><a href="functions.html#cb291-100" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (is_positivity) OR <span class="ot">&lt;-</span> (val1 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val1)) <span class="sc">/</span> (val0 <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> val0))</span>
+<span id="cb291-101"><a href="functions.html#cb291-101" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span> <span class="ot">=</span> RD, <span class="st">&quot;RR&quot;</span> <span class="ot">=</span> RR, <span class="st">&quot;RR*&quot;</span> <span class="ot">=</span> RRstar, <span class="st">&quot;OR&quot;</span> <span class="ot">=</span> OR)</span>
+<span id="cb291-102"><a href="functions.html#cb291-102" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb291-103"><a href="functions.html#cb291-103" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-104"><a href="functions.html#cb291-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(vals, out)</span>
-<span id="cb291-105"><a href="functions.html#cb291-105" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb291-106"><a href="functions.html#cb291-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-107"><a href="functions.html#cb291-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-108"><a href="functions.html#cb291-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap and generate a dataframe of estimates with CI</span></span>
-<span id="cb291-109"><a href="functions.html#cb291-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-110"><a href="functions.html#cb291-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap and generate a dataframe of estimates with CI.</span></span>
-<span id="cb291-111"><a href="functions.html#cb291-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-112"><a href="functions.html#cb291-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Generate a dataframe of estimates with the columns </span></span>
-<span id="cb291-113"><a href="functions.html#cb291-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{c(&quot;est&quot;, &quot;conf&quot;, &quot;lci&quot;, &quot;uci&quot;)}.</span></span>
-<span id="cb291-114"><a href="functions.html#cb291-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-115"><a href="functions.html#cb291-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe of raw data.</span></span>
-<span id="cb291-116"><a href="functions.html#cb291-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param statistic Function applied to data by bootstrapping.</span></span>
-<span id="cb291-117"><a href="functions.html#cb291-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param R Number of bootstrap replicates. Default is 1000.</span></span>
-<span id="cb291-118"><a href="functions.html#cb291-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param conf Confidence interval width. Default is 0.95.</span></span>
-<span id="cb291-119"><a href="functions.html#cb291-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-120"><a href="functions.html#cb291-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates with CI.</span></span>
-<span id="cb291-121"><a href="functions.html#cb291-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb291-122"><a href="functions.html#cb291-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-123"><a href="functions.html#cb291-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb291-124"><a href="functions.html#cb291-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb291-125"><a href="functions.html#cb291-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb291-126"><a href="functions.html#cb291-126" aria-hidden="true" tabindex="-1"></a>run_boot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, statistic, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb291-127"><a href="functions.html#cb291-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(R <span class="sc">&gt;=</span> <span class="dv">1</span>, conf <span class="sc">&gt;</span> <span class="dv">0</span>, conf <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
-<span id="cb291-128"><a href="functions.html#cb291-128" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-129"><a href="functions.html#cb291-129" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
-<span id="cb291-130"><a href="functions.html#cb291-130" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> statistic, <span class="at">R =</span> R)</span>
-<span id="cb291-131"><a href="functions.html#cb291-131" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-132"><a href="functions.html#cb291-132" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the estimated values and confidence intervals from the boot object</span></span>
-<span id="cb291-133"><a href="functions.html#cb291-133" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(boot.out<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
-<span id="cb291-134"><a href="functions.html#cb291-134" aria-hidden="true" tabindex="-1"></a>    est <span class="ot">&lt;-</span> boot.out<span class="sc">$</span>t0[i]</span>
-<span id="cb291-135"><a href="functions.html#cb291-135" aria-hidden="true" tabindex="-1"></a>    ci <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(boot.out, <span class="at">conf =</span> conf, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>, <span class="at">index =</span> i)<span class="sc">$</span>normal</span>
-<span id="cb291-136"><a href="functions.html#cb291-136" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(est, ci)</span>
-<span id="cb291-137"><a href="functions.html#cb291-137" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)</span>
-<span id="cb291-138"><a href="functions.html#cb291-138" aria-hidden="true" tabindex="-1"></a>    out</span>
-<span id="cb291-139"><a href="functions.html#cb291-139" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb291-140"><a href="functions.html#cb291-140" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-141"><a href="functions.html#cb291-141" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the dataframe to hold the results</span></span>
-<span id="cb291-142"><a href="functions.html#cb291-142" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(out))</span>
-<span id="cb291-143"><a href="functions.html#cb291-143" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the first column as the names of the results</span></span>
-<span id="cb291-144"><a href="functions.html#cb291-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">names</span>(boot.out<span class="sc">$</span>t0), out)</span>
-<span id="cb291-145"><a href="functions.html#cb291-145" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb291-146"><a href="functions.html#cb291-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-147"><a href="functions.html#cb291-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-148"><a href="functions.html#cb291-148" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate the effect measures</span></span>
-<span id="cb291-149"><a href="functions.html#cb291-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-150"><a href="functions.html#cb291-150" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate the effect measures.</span></span>
-<span id="cb291-151"><a href="functions.html#cb291-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-152"><a href="functions.html#cb291-152" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate each selected measure in the dataframe and replace its name</span></span>
-<span id="cb291-153"><a href="functions.html#cb291-153" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; accordingly.</span></span>
-<span id="cb291-154"><a href="functions.html#cb291-154" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-155"><a href="functions.html#cb291-155" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe.</span></span>
-<span id="cb291-156"><a href="functions.html#cb291-156" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param vars Character() of measure names.</span></span>
-<span id="cb291-157"><a href="functions.html#cb291-157" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-158"><a href="functions.html#cb291-158" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of converted effects measures.</span></span>
-<span id="cb291-159"><a href="functions.html#cb291-159" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb291-160"><a href="functions.html#cb291-160" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-161"><a href="functions.html#cb291-161" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb291-162"><a href="functions.html#cb291-162" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb291-163"><a href="functions.html#cb291-163" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb291-164"><a href="functions.html#cb291-164" aria-hidden="true" tabindex="-1"></a>exp_effects <span class="ot">&lt;-</span> <span class="cf">function</span>(data, </span>
-<span id="cb291-165"><a href="functions.html#cb291-165" aria-hidden="true" tabindex="-1"></a>                        <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;RR&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR&quot;</span>,<span class="st">&quot;RR*&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*&quot;</span>, </span>
-<span id="cb291-166"><a href="functions.html#cb291-166" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;OR&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR&quot;</span>)) {</span>
-<span id="cb291-167"><a href="functions.html#cb291-167" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> <span class="fu">match</span>(vars, data<span class="sc">$</span>name)</span>
-<span id="cb291-168"><a href="functions.html#cb291-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">within</span>(data, {</span>
-<span id="cb291-169"><a href="functions.html#cb291-169" aria-hidden="true" tabindex="-1"></a>    est[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(est[pos])</span>
-<span id="cb291-170"><a href="functions.html#cb291-170" aria-hidden="true" tabindex="-1"></a>    lci[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(lci[pos])</span>
-<span id="cb291-171"><a href="functions.html#cb291-171" aria-hidden="true" tabindex="-1"></a>    uci[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(uci[pos])</span>
-<span id="cb291-172"><a href="functions.html#cb291-172" aria-hidden="true" tabindex="-1"></a>    name[pos] <span class="ot">&lt;-</span> <span class="fu">names</span>(vars)</span>
-<span id="cb291-173"><a href="functions.html#cb291-173" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb291-174"><a href="functions.html#cb291-174" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb291-175"><a href="functions.html#cb291-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb291-176"><a href="functions.html#cb291-176" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit the effect measures</span></span>
-<span id="cb291-177"><a href="functions.html#cb291-177" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-178"><a href="functions.html#cb291-178" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit the effect measures.</span></span>
-<span id="cb291-179"><a href="functions.html#cb291-179" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb291-180"><a href="functions.html#cb291-180" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit each selected measure in the dataframe and replace its name</span></span>
-<span id="cb291-181"><a href="functions.html#cb291-181" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; accordingly.</span></span>
-<span id="cb291-182"><a href="functions.html#cb291-182" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-183"><a href="functions.html#cb291-183" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe.</span></span>
-<span id="cb291-184"><a href="functions.html#cb291-184" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param vars Character() of measure names.</span></span>
-<span id="cb291-185"><a href="functions.html#cb291-185" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-186"><a href="functions.html#cb291-186" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of converted effects measures.</span></span>
-<span id="cb291-187"><a href="functions.html#cb291-187" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb291-188"><a href="functions.html#cb291-188" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb291-189"><a href="functions.html#cb291-189" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb291-190"><a href="functions.html#cb291-190" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb291-191"><a href="functions.html#cb291-191" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb291-192"><a href="functions.html#cb291-192" aria-hidden="true" tabindex="-1"></a>invlogit_effects <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;P&quot;</span> <span class="ot">=</span> <span class="st">&quot;logitP&quot;</span>)) {</span>
-<span id="cb291-193"><a href="functions.html#cb291-193" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> <span class="fu">match</span>(vars, data<span class="sc">$</span>name)</span>
-<span id="cb291-194"><a href="functions.html#cb291-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">within</span>(data, {</span>
-<span id="cb291-195"><a href="functions.html#cb291-195" aria-hidden="true" tabindex="-1"></a>    est[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(est[pos])</span>
-<span id="cb291-196"><a href="functions.html#cb291-196" aria-hidden="true" tabindex="-1"></a>    lci[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(lci[pos])</span>
-<span id="cb291-197"><a href="functions.html#cb291-197" aria-hidden="true" tabindex="-1"></a>    uci[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(uci[pos])</span>
-<span id="cb291-198"><a href="functions.html#cb291-198" aria-hidden="true" tabindex="-1"></a>    name[pos] <span class="ot">&lt;-</span> <span class="fu">names</span>(vars)</span>
-<span id="cb291-199"><a href="functions.html#cb291-199" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb291-200"><a href="functions.html#cb291-200" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb291-104"><a href="functions.html#cb291-104" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output only the measures that were calculated</span></span>
+<span id="cb291-105"><a href="functions.html#cb291-105" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> out[<span class="sc">!</span><span class="fu">is.na</span>(out)]</span>
+<span id="cb291-106"><a href="functions.html#cb291-106" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-107"><a href="functions.html#cb291-107" aria-hidden="true" tabindex="-1"></a>  <span class="co"># vector of named input values</span></span>
+<span id="cb291-108"><a href="functions.html#cb291-108" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">c</span>(val0, val1)</span>
+<span id="cb291-109"><a href="functions.html#cb291-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(vals) <span class="ot">&lt;-</span> nms</span>
+<span id="cb291-110"><a href="functions.html#cb291-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-111"><a href="functions.html#cb291-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(vals, out)</span>
+<span id="cb291-112"><a href="functions.html#cb291-112" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb291-113"><a href="functions.html#cb291-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-114"><a href="functions.html#cb291-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-115"><a href="functions.html#cb291-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap and generate a dataframe of estimates with CI</span></span>
+<span id="cb291-116"><a href="functions.html#cb291-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-117"><a href="functions.html#cb291-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap and generate a dataframe of estimates with CI.</span></span>
+<span id="cb291-118"><a href="functions.html#cb291-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-119"><a href="functions.html#cb291-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Generate a dataframe of estimates with the columns </span></span>
+<span id="cb291-120"><a href="functions.html#cb291-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{c(&quot;est&quot;, &quot;conf&quot;, &quot;lci&quot;, &quot;uci&quot;)}.</span></span>
+<span id="cb291-121"><a href="functions.html#cb291-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-122"><a href="functions.html#cb291-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe of raw data.</span></span>
+<span id="cb291-123"><a href="functions.html#cb291-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param statistic Function applied to data by bootstrapping.</span></span>
+<span id="cb291-124"><a href="functions.html#cb291-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param R Number of bootstrap replicates. Default is 1000.</span></span>
+<span id="cb291-125"><a href="functions.html#cb291-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param conf Confidence interval width. Default is 0.95.</span></span>
+<span id="cb291-126"><a href="functions.html#cb291-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-127"><a href="functions.html#cb291-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates with CI.</span></span>
+<span id="cb291-128"><a href="functions.html#cb291-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb291-129"><a href="functions.html#cb291-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-130"><a href="functions.html#cb291-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb291-131"><a href="functions.html#cb291-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb291-132"><a href="functions.html#cb291-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb291-133"><a href="functions.html#cb291-133" aria-hidden="true" tabindex="-1"></a>run_boot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, statistic, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb291-134"><a href="functions.html#cb291-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(R <span class="sc">&gt;=</span> <span class="dv">1</span>, conf <span class="sc">&gt;</span> <span class="dv">0</span>, conf <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb291-135"><a href="functions.html#cb291-135" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-136"><a href="functions.html#cb291-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb291-137"><a href="functions.html#cb291-137" aria-hidden="true" tabindex="-1"></a>  boot.out <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> statistic, <span class="at">R =</span> R)</span>
+<span id="cb291-138"><a href="functions.html#cb291-138" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-139"><a href="functions.html#cb291-139" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the estimated values and confidence intervals from the boot object</span></span>
+<span id="cb291-140"><a href="functions.html#cb291-140" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(boot.out<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb291-141"><a href="functions.html#cb291-141" aria-hidden="true" tabindex="-1"></a>    est <span class="ot">&lt;-</span> boot.out<span class="sc">$</span>t0[i]</span>
+<span id="cb291-142"><a href="functions.html#cb291-142" aria-hidden="true" tabindex="-1"></a>    ci <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(boot.out, <span class="at">conf =</span> conf, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>, <span class="at">index =</span> i)<span class="sc">$</span>normal</span>
+<span id="cb291-143"><a href="functions.html#cb291-143" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(est, ci)</span>
+<span id="cb291-144"><a href="functions.html#cb291-144" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)</span>
+<span id="cb291-145"><a href="functions.html#cb291-145" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb291-146"><a href="functions.html#cb291-146" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb291-147"><a href="functions.html#cb291-147" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb291-148"><a href="functions.html#cb291-148" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the dataframe to hold the results</span></span>
+<span id="cb291-149"><a href="functions.html#cb291-149" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(out))</span>
+<span id="cb291-150"><a href="functions.html#cb291-150" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add the first column as the names of the results</span></span>
+<span id="cb291-151"><a href="functions.html#cb291-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">names</span>(boot.out<span class="sc">$</span>t0), out)</span>
+<span id="cb291-152"><a href="functions.html#cb291-152" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb291-153"><a href="functions.html#cb291-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-154"><a href="functions.html#cb291-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-155"><a href="functions.html#cb291-155" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate the effect measures</span></span>
+<span id="cb291-156"><a href="functions.html#cb291-156" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-157"><a href="functions.html#cb291-157" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate the effect measures.</span></span>
+<span id="cb291-158"><a href="functions.html#cb291-158" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-159"><a href="functions.html#cb291-159" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Exponentiate each selected measure in the dataframe and replace its name</span></span>
+<span id="cb291-160"><a href="functions.html#cb291-160" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; accordingly.</span></span>
+<span id="cb291-161"><a href="functions.html#cb291-161" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-162"><a href="functions.html#cb291-162" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe.</span></span>
+<span id="cb291-163"><a href="functions.html#cb291-163" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param vars Character() of measure names.</span></span>
+<span id="cb291-164"><a href="functions.html#cb291-164" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-165"><a href="functions.html#cb291-165" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of converted effects measures.</span></span>
+<span id="cb291-166"><a href="functions.html#cb291-166" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb291-167"><a href="functions.html#cb291-167" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-168"><a href="functions.html#cb291-168" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb291-169"><a href="functions.html#cb291-169" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb291-170"><a href="functions.html#cb291-170" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb291-171"><a href="functions.html#cb291-171" aria-hidden="true" tabindex="-1"></a>exp_effects <span class="ot">&lt;-</span> <span class="cf">function</span>(data, </span>
+<span id="cb291-172"><a href="functions.html#cb291-172" aria-hidden="true" tabindex="-1"></a>                        <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;RR&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR&quot;</span>,<span class="st">&quot;RR*&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*&quot;</span>, </span>
+<span id="cb291-173"><a href="functions.html#cb291-173" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">&quot;OR&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR&quot;</span>)) {</span>
+<span id="cb291-174"><a href="functions.html#cb291-174" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> <span class="fu">match</span>(vars, data<span class="sc">$</span>name)</span>
+<span id="cb291-175"><a href="functions.html#cb291-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">within</span>(data, {</span>
+<span id="cb291-176"><a href="functions.html#cb291-176" aria-hidden="true" tabindex="-1"></a>    est[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(est[pos])</span>
+<span id="cb291-177"><a href="functions.html#cb291-177" aria-hidden="true" tabindex="-1"></a>    lci[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(lci[pos])</span>
+<span id="cb291-178"><a href="functions.html#cb291-178" aria-hidden="true" tabindex="-1"></a>    uci[pos] <span class="ot">&lt;-</span> <span class="fu">exp</span>(uci[pos])</span>
+<span id="cb291-179"><a href="functions.html#cb291-179" aria-hidden="true" tabindex="-1"></a>    name[pos] <span class="ot">&lt;-</span> <span class="fu">names</span>(vars)</span>
+<span id="cb291-180"><a href="functions.html#cb291-180" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb291-181"><a href="functions.html#cb291-181" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb291-182"><a href="functions.html#cb291-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb291-183"><a href="functions.html#cb291-183" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit the effect measures</span></span>
+<span id="cb291-184"><a href="functions.html#cb291-184" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-185"><a href="functions.html#cb291-185" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit the effect measures.</span></span>
+<span id="cb291-186"><a href="functions.html#cb291-186" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb291-187"><a href="functions.html#cb291-187" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Inverse logit each selected measure in the dataframe and replace its name</span></span>
+<span id="cb291-188"><a href="functions.html#cb291-188" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; accordingly.</span></span>
+<span id="cb291-189"><a href="functions.html#cb291-189" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-190"><a href="functions.html#cb291-190" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe.</span></span>
+<span id="cb291-191"><a href="functions.html#cb291-191" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param vars Character() of measure names.</span></span>
+<span id="cb291-192"><a href="functions.html#cb291-192" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-193"><a href="functions.html#cb291-193" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of converted effects measures.</span></span>
+<span id="cb291-194"><a href="functions.html#cb291-194" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb291-195"><a href="functions.html#cb291-195" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb291-196"><a href="functions.html#cb291-196" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb291-197"><a href="functions.html#cb291-197" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb291-198"><a href="functions.html#cb291-198" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb291-199"><a href="functions.html#cb291-199" aria-hidden="true" tabindex="-1"></a>invlogit_effects <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;P&quot;</span> <span class="ot">=</span> <span class="st">&quot;logitP&quot;</span>)) {</span>
+<span id="cb291-200"><a href="functions.html#cb291-200" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> <span class="fu">match</span>(vars, data<span class="sc">$</span>name)</span>
+<span id="cb291-201"><a href="functions.html#cb291-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">within</span>(data, {</span>
+<span id="cb291-202"><a href="functions.html#cb291-202" aria-hidden="true" tabindex="-1"></a>    est[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(est[pos])</span>
+<span id="cb291-203"><a href="functions.html#cb291-203" aria-hidden="true" tabindex="-1"></a>    lci[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(lci[pos])</span>
+<span id="cb291-204"><a href="functions.html#cb291-204" aria-hidden="true" tabindex="-1"></a>    uci[pos] <span class="ot">&lt;-</span> <span class="fu">plogis</span>(uci[pos])</span>
+<span id="cb291-205"><a href="functions.html#cb291-205" aria-hidden="true" tabindex="-1"></a>    name[pos] <span class="ot">&lt;-</span> <span class="fu">names</span>(vars)</span>
+<span id="cb291-206"><a href="functions.html#cb291-206" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb291-207"><a href="functions.html#cb291-207" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>The file <code>gt_utils</code> includes utility functions to format tables.</p>
 <div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="functions.html#cb292-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Basic format of table created with \code{gt}</span></span>
 <span id="cb292-2"><a href="functions.html#cb292-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>

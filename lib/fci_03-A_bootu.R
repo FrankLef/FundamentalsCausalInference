@@ -18,13 +18,8 @@
 #' @return Dataframe of summarized results
 bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
   
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
-  # get the name of dependent variable from the formula
-  y <- all.vars(formula[[2]])
-  # get the name of independent variables from the formula
-  x <- all.vars(formula[[3]])
-  
+  # Extract variable names from the formula
+  fvars <- formula2vars(formula)
   
   # estimate the conditional probabilities 
   # and the four association measures
@@ -32,18 +27,18 @@ bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
     dat <- data[ids, ]
     # estimate the conditional probabilities
     coefs <- coef(glm(formula = formula, family = gaussian, data = dat))
-    p0 <- coefs[x0]
+    p0 <- coefs[fvars$x0]
     p1 <- sum(coefs)
     # estimate the risk difference
     rd <- p1 - p0
     
     # use loglinear model to estimate the log relative risk
     coefs <- coef(glm(formula = formula, family = poisson, data = dat))
-    logrr <- coefs[x]
+    logrr <- coefs[fvars$ind]
     
     # prepare data to estimate the log other relative risk
-    ystar <- 1 - dat[, y]
-    xstar <- 1 - dat[, x]
+    ystar <- 1 - dat[, fvars$y]
+    xstar <- 1 - dat[, fvars$ind]
     
     # use loglinear model to estimate the log other relative risk
     coefs <- coef(glm(ystar ~ xstar, family = poisson))
@@ -51,7 +46,7 @@ bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
     
     # use logistic model to estimate the log of other risk
     coefs <- coef(glm(formula = formula, family = binomial, data = dat))
-    logor <- coefs[x]
+    logor <- coefs[fvars$ind]
     
     # return the results
     out <- c(p0, p1, rd, logrr, logrrstar, logor)
