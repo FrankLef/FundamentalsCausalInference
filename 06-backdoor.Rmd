@@ -282,8 +282,8 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 ```{r}
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
-gssrcc.out <- standout(gssrcc, 
-                        formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# gssrcc.out <- standout(gssrcc, 
+#                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_gssrcc_out.rds")
@@ -673,19 +673,23 @@ mc.out %>%
   mutate(ss = paste("ss", ss, sep = "=")) %>%
   ggplot(aes(x = mean, xmin = lower, xmax = upper, y = estimator, color = ss)) +
   geom_pointrange(position = position_dodge(width = 0.5)) +
+  geom_vline(xintercept = c(0.01, 0.02), color = c("darkgreen", "darkorange"),
+             linetype = "dashed", size = 1) + 
   ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = round(mean, 2)), 
                            size = 3) +
   ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = round(lower, 2)), 
                            size = 3) +
   ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = round(upper, 2)), 
                            size = 3) +
+  scale_x_continuous(breaks = seq(from = -0.1, to = 0.1, by = 0.01)) +
   theme_minimal() +
   theme(title = element_text(color = "midnightblue"),
         legend.position = "bottom",
         legend.title = element_blank()) +
   labs(title = "Chap 6, section 6.3: Simulation of Standardization Methods",
        subtitle =
-         sprintf("The mean with 2.5%% and 97.5%% quantiles. Sample size = %d.", nrep),
+         sprintf("The mean with 2.5%% and 97.5%% quantiles. True E(Y(0)) = %.2f, True E(Y(1)) = %.2f.", 
+                 0.01, 0.02),
        x = NULL, y = NULL)
 ```
 
