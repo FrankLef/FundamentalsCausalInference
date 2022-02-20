@@ -11,15 +11,13 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-badstanddr <- function(dat, formula = Y ~ `T` + H, R = 10, conf = 0.95) {
+standdr <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
   
   # exposure model formula
   eformula <- formula(paste(fvars$t, paste(fvars$h, collapse = "+"), sep = "~"))
-  # weighted linear model formula
-  lformula <- formula(paste(fvars$y, fvars$t, sep = "~"))
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
@@ -28,9 +26,8 @@ badstanddr <- function(dat, formula = Y ~ `T` + H, R = 10, conf = 0.95) {
     e <- fitted(glm(formula = eformula, family = "binomial", data = dat))
     stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
     
-    # fit a nonparametric outcome model that we do not believe
-    # i.e. a bad outcome model
-    lmod <- glm(formula = lformula, family = "binomial", data = dat)
+    # Fit the parametric outcome model
+    lmod <- glm(formula = formula, family = "binomial", data = dat)
     
     # predict potential outcome for each participant
     dat0 <- dat

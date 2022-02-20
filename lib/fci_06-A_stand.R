@@ -20,12 +20,10 @@ stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
   
-  
   estimator <- function(data, ids) {
     dat <- data[ids, ]
     # marginal expected value of H
     if (!att) {
-      # EH <- mean(dat[, h])
       EH <- mean(dat[, fvars$h])
     } else {
       # condition on treatment when ATT is requested

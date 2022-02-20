@@ -13,7 +13,7 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-standexp <- function(dat, formula = Y ~ `T` + H, R = 5, conf = 0.95) {
+standexp <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
 
   # extract the variables names from the formula
   fvars <- formula2vars(formula)

@@ -49,11 +49,13 @@ source(file = file.path(dir_lib, "fci_06-D_standexp.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-F_badstanddr.R"), 
+source(file = file.path(dir_lib, "fci_06-F_standdr.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-G_mc_standdr.R"), 
+source(file = file.path(dir_lib, "fci_06-G_badstanddr.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-H_simdr.R"), 
+source(file = file.path(dir_lib, "fci_06-H_mc_standdr.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_06-I_simdr.R"), 
        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
@@ -444,8 +446,15 @@ to run it as follows
 
 
 ```{r}
-gssrcc.exp <- standexp(gssrcc, 
-                        formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+message("This takes about 10 sec. Load from file.")
+# startTime <- Sys.time()
+# gssrcc.exp <- standexp(gssrcc, 
+#                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_gssrcc_exp.rds")
+# saveRDS(gssrcc.exp, file = a_file)
+gssrcc.exp <- readRDS(file = a_file)
 # gssrcc.exp
 ```
 
@@ -474,10 +483,19 @@ gt_measures(gssrcc.exp,
 
 ## Doubly Robust Standardization
 
-The function `badstanddr` used for doubly robust standardization is defined
-as follows
+The function `standdr` does a doubly robust standardization. It is not in the
+text but is actually used for the exercise.  We show it here. It is very similar
+to `badstanddr`.
 
-```{r file="lib\\fci_06-F_badstanddr.R"}
+
+```{r file="lib\\fci_06-F_standdr.R"}
+
+```
+
+The function `badstanddr` used for doubly robust standardization with a
+misspecified outcome model is defined as follows
+
+```{r file="lib\\fci_06-G_badstanddr.R"}
 
 ```
 
@@ -704,20 +722,128 @@ dataBRFSS <- brfss %>%
 ```
 
 ```{r}
-# message("This took ? min, so we load a saved file.")
+message("This took about 3 min, so we load a saved file.")
 # startTime <- Sys.time()
-# brfss.out <- stand(dataBRFSS, formula = flushot ~ insured + female + whitenh + blacknh +
-#                hisp + multinh + gthsedu + rural, R = 500)
+# brfss.out <- standout(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+#                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
 # print(endTime - startTime)
-# a_file <- file.path(dir_data, "chap06_Ex1.rds")
+a_file <- file.path(dir_data, "chap06_Ex1.rds")
 # saveRDS(brfss.out, file = a_file)
-# brfss.out <- readRDS(a_file)
+brfss.out <- readRDS(a_file)
 ```
+
+the table is
+
+```{r}
+gt_measures(brfss.out, 
+            title = "Exercise 6.1", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Outcome-model Standardized Estimates", 
+                              "<br>",
+                              "Effect of <em>insured</em> on <em>flushot</em>"))
+```
+
+
+verify the results
+
+```{r}
+comp <- data.frame(
+  sim = brfss.out[brfss.out$name %in% c("EY0", "EY1","RD", "RR", "OR"), "est"],
+  bb = c(0.215, 0.225, 0.44, 2.04, 2.86))
+stopifnot(sum(abs(comp$sim - comp$bb)) < 0.5)
+```
+
+**Assumptions**
+
+* Outcome consistence: Seems ok here, getting a flu shot is well defined.
+This could change overtime however and the survey is from 2019.
+* Positivity assumption of *insured*. Maybe some indiviuals have a zero
+probability ans some other 1 but they would not be part of the study.
+
+**Interpretation**
+
+The effect of being insured on flushot is very clear.
+
+
+### Exercise 2
 
 
 ```{r}
-# brfss.out
+message("This took 3 min, so we load a saved file.")
+# startTime <- Sys.time()
+# brfss.exp <- standexp(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+#                hisp + multinh + gthsedu + rural, R = 100)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_Ex2.rds")
+# saveRDS(brfss.exp, file = a_file)
+brfss.exp <- readRDS(a_file)
 ```
+
+the table is
+
+```{r}
+gt_measures(brfss.exp, 
+            title = "Exercise 6.2", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Exposure-model Standardized Estimates", 
+                              "<br>",
+                              "Effect of <em>insured</em> on <em>flushot</em>"))
+```
+
+
+verify the results
+
+```{r}
+comp <- data.frame(
+  sim = brfss.exp[brfss.exp$name %in% c("EY0", "EY1","RD", "RR","RR*", "OR"), "est"],
+  target = c(0.199, 0.440, 0.240, 2.208, 1.429, 3.155))
+stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
+```
+
+
+
+### Exercise 3
+
+
+```{r}
+message("This took 5 min, so we load a saved file.")
+# startTime <- Sys.time()
+# brfss.dr <- standdr(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+#                hisp + multinh + gthsedu + rural, R = 100)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_Ex3.rds")
+# saveRDS(brfss.dr, file = a_file)
+brfss.dr <- readRDS(a_file)
+```
+
+the table is
+
+```{r}
+gt_measures(brfss.dr, 
+            title = "Exercise 6.3", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Doubly-Robust Standardized Estimates", 
+                              "<br>",
+                              "Effect of <em>insured</em> on <em>flushot</em>"))
+```
+
+
+verify the results
+
+```{r}
+comp <- data.frame(
+  sim = brfss.dr[brfss.dr$name %in% c("EY0", "EY1","RD", "RR", "OR"), "est"],
+  target = c(0.202, 0.440, 0.238, 2.18, 3.1))
+stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
+```
+
+
+### Exercise 4
 
 
