@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-19" />
+<meta name="date" content="2022-02-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -3396,23 +3396,31 @@ addition of the argument <code>att</code>.</p>
 <h4>General Social Survey</h4>
 <div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="backdoor.html#cb245-1" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
 <span id="cb245-2"><a href="backdoor.html#cb245-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gssrcc[<span class="fu">complete.cases</span>(gssrcc), ]</span></code></pre></div>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="backdoor.html#cb246-1" aria-hidden="true" tabindex="-1"></a>gssrcc.out <span class="ot">&lt;-</span> <span class="fu">standout</span>(gssrcc, </span>
-<span id="cb246-2"><a href="backdoor.html#cb246-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">formula =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65)</span>
-<span id="cb246-3"><a href="backdoor.html#cb246-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="backdoor.html#cb246-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 15 sec.. Load from file.</code></pre>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="backdoor.html#cb248-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb248-2"><a href="backdoor.html#cb248-2" aria-hidden="true" tabindex="-1"></a>gssrcc.out <span class="ot">&lt;-</span> <span class="fu">standout</span>(gssrcc, </span>
+<span id="cb248-3"><a href="backdoor.html#cb248-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">formula =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65)</span>
+<span id="cb248-4"><a href="backdoor.html#cb248-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb248-5"><a href="backdoor.html#cb248-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb248-6"><a href="backdoor.html#cb248-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_gssrcc_out.rds&quot;</span>)</span>
+<span id="cb248-7"><a href="backdoor.html#cb248-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gssrcc.out, file = a_file)</span></span>
+<span id="cb248-8"><a href="backdoor.html#cb248-8" aria-hidden="true" tabindex="-1"></a>gssrcc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb248-9"><a href="backdoor.html#cb248-9" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out</span></span></code></pre></div>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="backdoor.html#cb247-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb247-2"><a href="backdoor.html#cb247-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb247-3"><a href="backdoor.html#cb247-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.233</span>, <span class="fl">0.271</span>, <span class="fl">0.038</span>, <span class="fl">1.164</span>),</span>
-<span id="cb247-4"><a href="backdoor.html#cb247-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.out<span class="sc">$</span>est[gssrcc.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
-<span id="cb247-5"><a href="backdoor.html#cb247-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb247-6"><a href="backdoor.html#cb247-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="backdoor.html#cb249-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb249-2"><a href="backdoor.html#cb249-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb249-3"><a href="backdoor.html#cb249-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.233</span>, <span class="fl">0.271</span>, <span class="fl">0.038</span>, <span class="fl">1.164</span>),</span>
+<span id="cb249-4"><a href="backdoor.html#cb249-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.out<span class="sc">$</span>est[gssrcc.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
+<span id="cb249-5"><a href="backdoor.html#cb249-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb249-6"><a href="backdoor.html#cb249-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.8</p>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="backdoor.html#cb248-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.out, </span>
-<span id="cb248-2"><a href="backdoor.html#cb248-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.8&quot;</span>, </span>
-<span id="cb248-3"><a href="backdoor.html#cb248-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;General Social Survey&lt;br&gt;</span></span>
-<span id="cb248-4"><a href="backdoor.html#cb248-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Outcome-model Standardization&lt;br&gt;</span></span>
-<span id="cb248-5"><a href="backdoor.html#cb248-5" aria-hidden="true" tabindex="-1"></a><span class="st">            Effect of &lt;em&gt;More than High School Education&lt;/em&gt; on &lt;em&gt;</span></span>
-<span id="cb248-6"><a href="backdoor.html#cb248-6" aria-hidden="true" tabindex="-1"></a><span class="st">            Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="backdoor.html#cb250-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.out, </span>
+<span id="cb250-2"><a href="backdoor.html#cb250-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.8&quot;</span>, </span>
+<span id="cb250-3"><a href="backdoor.html#cb250-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;General Social Survey&lt;br&gt;</span></span>
+<span id="cb250-4"><a href="backdoor.html#cb250-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Outcome-model Standardization&lt;br&gt;</span></span>
+<span id="cb250-5"><a href="backdoor.html#cb250-5" aria-hidden="true" tabindex="-1"></a><span class="st">            Effect of &lt;em&gt;More than High School Education&lt;/em&gt; on &lt;em&gt;</span></span>
+<span id="cb250-6"><a href="backdoor.html#cb250-6" aria-hidden="true" tabindex="-1"></a><span class="st">            Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="pyeyrjkzey" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -3821,221 +3829,221 @@ addition of the argument <code>att</code>.</p>
 <div id="mortality-rates-by-country-1" class="section level4 unnumbered">
 <h4>Mortality Rates by Country</h4>
 <p>See section 1.2.1 in chapter 1 for details on <code>data_mortability_exp</code>.</p>
-<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="backdoor.html#cb249-1" aria-hidden="true" tabindex="-1"></a>mortdat <span class="ot">&lt;-</span> <span class="fu">data_mortability_exp</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="backdoor.html#cb251-1" aria-hidden="true" tabindex="-1"></a>mortdat <span class="ot">&lt;-</span> <span class="fu">data_mortability_exp</span>()</span></code></pre></div>
 <p>Compute the standardized estimates using exposure modeling with <code>calc_exposure</code>.
 The author puts the function it with the data itself. A better idea is to
 put the logic in a function separate from the data.</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="backdoor.html#cb250-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling</span></span>
-<span id="cb250-2"><a href="backdoor.html#cb250-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb250-3"><a href="backdoor.html#cb250-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling.</span></span>
-<span id="cb250-4"><a href="backdoor.html#cb250-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb250-5"><a href="backdoor.html#cb250-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling as described in</span></span>
-<span id="cb250-6"><a href="backdoor.html#cb250-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; section 6.1.2</span></span>
-<span id="cb250-7"><a href="backdoor.html#cb250-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb250-8"><a href="backdoor.html#cb250-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe</span></span>
-<span id="cb250-9"><a href="backdoor.html#cb250-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula, must be in the format \code{Y ~ `T` + H}, i.e.</span></span>
-<span id="cb250-10"><a href="backdoor.html#cb250-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; only 1 covariate H.</span></span>
-<span id="cb250-11"><a href="backdoor.html#cb250-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param weights String. Name of the columns with the weights that will</span></span>
-<span id="cb250-12"><a href="backdoor.html#cb250-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; be used to create probabilities summing up to 1.</span></span>
-<span id="cb250-13"><a href="backdoor.html#cb250-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb250-14"><a href="backdoor.html#cb250-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List with 3 elements: EY1, EY0, EY0T1. See section 6.1.2</span></span>
-<span id="cb250-15"><a href="backdoor.html#cb250-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; for more details.</span></span>
-<span id="cb250-16"><a href="backdoor.html#cb250-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb250-17"><a href="backdoor.html#cb250-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb250-18"><a href="backdoor.html#cb250-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb250-19"><a href="backdoor.html#cb250-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb250-20"><a href="backdoor.html#cb250-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb250-21"><a href="backdoor.html#cb250-21" aria-hidden="true" tabindex="-1"></a>calc_exposure <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>) {</span>
-<span id="cb250-22"><a href="backdoor.html#cb250-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb250-23"><a href="backdoor.html#cb250-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
-<span id="cb250-24"><a href="backdoor.html#cb250-24" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
-<span id="cb250-25"><a href="backdoor.html#cb250-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># there can be only one H</span></span>
-<span id="cb250-26"><a href="backdoor.html#cb250-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(fvars<span class="sc">$</span>h) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb250-27"><a href="backdoor.html#cb250-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb250-28"><a href="backdoor.html#cb250-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=0)</span></span>
-<span id="cb250-29"><a href="backdoor.html#cb250-29" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[data[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">0</span>, ]</span>
-<span id="cb250-30"><a href="backdoor.html#cb250-30" aria-hidden="true" tabindex="-1"></a>  eH0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat0[dat0[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat0[, weights])</span>
-<span id="cb250-31"><a href="backdoor.html#cb250-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=1)</span></span>
-<span id="cb250-32"><a href="backdoor.html#cb250-32" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[data[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">1</span>, ]</span>
-<span id="cb250-33"><a href="backdoor.html#cb250-33" aria-hidden="true" tabindex="-1"></a>  eH1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat1[dat1[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat1[, weights])</span>
-<span id="cb250-34"><a href="backdoor.html#cb250-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H) for all participants</span></span>
-<span id="cb250-35"><a href="backdoor.html#cb250-35" aria-hidden="true" tabindex="-1"></a>  eH <span class="ot">&lt;-</span> eH0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>h]) <span class="sc">+</span> eH1 <span class="sc">*</span> data[, fvars<span class="sc">$</span>h]</span>
-<span id="cb250-36"><a href="backdoor.html#cb250-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equations</span></span>
-<span id="cb250-37"><a href="backdoor.html#cb250-37" aria-hidden="true" tabindex="-1"></a>  s1 <span class="ot">&lt;-</span> data[, fvars<span class="sc">$</span>t] <span class="sc">*</span> data[, fvars<span class="sc">$</span>y] <span class="sc">/</span> eH</span>
-<span id="cb250-38"><a href="backdoor.html#cb250-38" aria-hidden="true" tabindex="-1"></a>  s0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>t]) <span class="sc">*</span> data[, fvars<span class="sc">$</span>y] <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> eH)</span>
-<span id="cb250-39"><a href="backdoor.html#cb250-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb250-40"><a href="backdoor.html#cb250-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the expected values of the potential outcomes</span></span>
-<span id="cb250-41"><a href="backdoor.html#cb250-41" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> data[, weights] <span class="sc">/</span> <span class="fu">sum</span>(data[, weights])  <span class="co"># the probabilities</span></span>
-<span id="cb250-42"><a href="backdoor.html#cb250-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(probs) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb250-43"><a href="backdoor.html#cb250-43" aria-hidden="true" tabindex="-1"></a>  EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s1 <span class="sc">*</span> probs)</span>
-<span id="cb250-44"><a href="backdoor.html#cb250-44" aria-hidden="true" tabindex="-1"></a>  EY0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s0 <span class="sc">*</span> probs)</span>
-<span id="cb250-45"><a href="backdoor.html#cb250-45" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb250-46"><a href="backdoor.html#cb250-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ATT calculations</span></span>
-<span id="cb250-47"><a href="backdoor.html#cb250-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate P(T = 1)</span></span>
-<span id="cb250-48"><a href="backdoor.html#cb250-48" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(data[, fvars<span class="sc">$</span>t] <span class="sc">*</span> probs)</span>
-<span id="cb250-49"><a href="backdoor.html#cb250-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equation</span></span>
-<span id="cb250-50"><a href="backdoor.html#cb250-50" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[, fvars<span class="sc">$</span>y] <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>t]) <span class="sc">*</span> eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> eH))</span>
-<span id="cb250-51"><a href="backdoor.html#cb250-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate E(Y0|T=1)</span></span>
-<span id="cb250-52"><a href="backdoor.html#cb250-52" aria-hidden="true" tabindex="-1"></a>  EY0T1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s <span class="sc">*</span> probs)</span>
-<span id="cb250-53"><a href="backdoor.html#cb250-53" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb250-54"><a href="backdoor.html#cb250-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> EY1, <span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> EY0, <span class="st">&quot;EY0T1&quot;</span> <span class="ot">=</span> EY0T1)</span>
-<span id="cb250-55"><a href="backdoor.html#cb250-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="backdoor.html#cb251-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> <span class="fu">calc_exposure</span>(mortdat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>)</span>
-<span id="cb251-2"><a href="backdoor.html#cb251-2" aria-hidden="true" tabindex="-1"></a>mortdat.out[<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="backdoor.html#cb252-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling</span></span>
+<span id="cb252-2"><a href="backdoor.html#cb252-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb252-3"><a href="backdoor.html#cb252-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling.</span></span>
+<span id="cb252-4"><a href="backdoor.html#cb252-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb252-5"><a href="backdoor.html#cb252-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized averages using exposure modeling as described in</span></span>
+<span id="cb252-6"><a href="backdoor.html#cb252-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; section 6.1.2</span></span>
+<span id="cb252-7"><a href="backdoor.html#cb252-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb252-8"><a href="backdoor.html#cb252-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe</span></span>
+<span id="cb252-9"><a href="backdoor.html#cb252-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula, must be in the format \code{Y ~ `T` + H}, i.e.</span></span>
+<span id="cb252-10"><a href="backdoor.html#cb252-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; only 1 covariate H.</span></span>
+<span id="cb252-11"><a href="backdoor.html#cb252-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param weights String. Name of the columns with the weights that will</span></span>
+<span id="cb252-12"><a href="backdoor.html#cb252-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; be used to create probabilities summing up to 1.</span></span>
+<span id="cb252-13"><a href="backdoor.html#cb252-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb252-14"><a href="backdoor.html#cb252-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List with 3 elements: EY1, EY0, EY0T1. See section 6.1.2</span></span>
+<span id="cb252-15"><a href="backdoor.html#cb252-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; for more details.</span></span>
+<span id="cb252-16"><a href="backdoor.html#cb252-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb252-17"><a href="backdoor.html#cb252-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb252-18"><a href="backdoor.html#cb252-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb252-19"><a href="backdoor.html#cb252-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb252-20"><a href="backdoor.html#cb252-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb252-21"><a href="backdoor.html#cb252-21" aria-hidden="true" tabindex="-1"></a>calc_exposure <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>) {</span>
+<span id="cb252-22"><a href="backdoor.html#cb252-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb252-23"><a href="backdoor.html#cb252-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
+<span id="cb252-24"><a href="backdoor.html#cb252-24" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
+<span id="cb252-25"><a href="backdoor.html#cb252-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># there can be only one H</span></span>
+<span id="cb252-26"><a href="backdoor.html#cb252-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(fvars<span class="sc">$</span>h) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb252-27"><a href="backdoor.html#cb252-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb252-28"><a href="backdoor.html#cb252-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=0)</span></span>
+<span id="cb252-29"><a href="backdoor.html#cb252-29" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[data[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">0</span>, ]</span>
+<span id="cb252-30"><a href="backdoor.html#cb252-30" aria-hidden="true" tabindex="-1"></a>  eH0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat0[dat0[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat0[, weights])</span>
+<span id="cb252-31"><a href="backdoor.html#cb252-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H=1)</span></span>
+<span id="cb252-32"><a href="backdoor.html#cb252-32" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[data[, fvars<span class="sc">$</span>h] <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb252-33"><a href="backdoor.html#cb252-33" aria-hidden="true" tabindex="-1"></a>  eH1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat1[dat1[, fvars<span class="sc">$</span>t] <span class="sc">==</span> <span class="dv">1</span>, weights]) <span class="sc">/</span> <span class="fu">sum</span>(dat1[, weights])</span>
+<span id="cb252-34"><a href="backdoor.html#cb252-34" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute e(H) for all participants</span></span>
+<span id="cb252-35"><a href="backdoor.html#cb252-35" aria-hidden="true" tabindex="-1"></a>  eH <span class="ot">&lt;-</span> eH0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>h]) <span class="sc">+</span> eH1 <span class="sc">*</span> data[, fvars<span class="sc">$</span>h]</span>
+<span id="cb252-36"><a href="backdoor.html#cb252-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equations</span></span>
+<span id="cb252-37"><a href="backdoor.html#cb252-37" aria-hidden="true" tabindex="-1"></a>  s1 <span class="ot">&lt;-</span> data[, fvars<span class="sc">$</span>t] <span class="sc">*</span> data[, fvars<span class="sc">$</span>y] <span class="sc">/</span> eH</span>
+<span id="cb252-38"><a href="backdoor.html#cb252-38" aria-hidden="true" tabindex="-1"></a>  s0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>t]) <span class="sc">*</span> data[, fvars<span class="sc">$</span>y] <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> eH)</span>
+<span id="cb252-39"><a href="backdoor.html#cb252-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb252-40"><a href="backdoor.html#cb252-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the expected values of the potential outcomes</span></span>
+<span id="cb252-41"><a href="backdoor.html#cb252-41" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> data[, weights] <span class="sc">/</span> <span class="fu">sum</span>(data[, weights])  <span class="co"># the probabilities</span></span>
+<span id="cb252-42"><a href="backdoor.html#cb252-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(probs) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb252-43"><a href="backdoor.html#cb252-43" aria-hidden="true" tabindex="-1"></a>  EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s1 <span class="sc">*</span> probs)</span>
+<span id="cb252-44"><a href="backdoor.html#cb252-44" aria-hidden="true" tabindex="-1"></a>  EY0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s0 <span class="sc">*</span> probs)</span>
+<span id="cb252-45"><a href="backdoor.html#cb252-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb252-46"><a href="backdoor.html#cb252-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ATT calculations</span></span>
+<span id="cb252-47"><a href="backdoor.html#cb252-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate P(T = 1)</span></span>
+<span id="cb252-48"><a href="backdoor.html#cb252-48" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(data[, fvars<span class="sc">$</span>t] <span class="sc">*</span> probs)</span>
+<span id="cb252-49"><a href="backdoor.html#cb252-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the summands of the estimating equation</span></span>
+<span id="cb252-50"><a href="backdoor.html#cb252-50" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> data[, fvars<span class="sc">$</span>y] <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> data[, fvars<span class="sc">$</span>t]) <span class="sc">*</span> eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> eH))</span>
+<span id="cb252-51"><a href="backdoor.html#cb252-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate E(Y0|T=1)</span></span>
+<span id="cb252-52"><a href="backdoor.html#cb252-52" aria-hidden="true" tabindex="-1"></a>  EY0T1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(s <span class="sc">*</span> probs)</span>
+<span id="cb252-53"><a href="backdoor.html#cb252-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb252-54"><a href="backdoor.html#cb252-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EY1&quot;</span> <span class="ot">=</span> EY1, <span class="st">&quot;EY0&quot;</span> <span class="ot">=</span> EY0, <span class="st">&quot;EY0T1&quot;</span> <span class="ot">=</span> EY0T1)</span>
+<span id="cb252-55"><a href="backdoor.html#cb252-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="backdoor.html#cb253-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> <span class="fu">calc_exposure</span>(mortdat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb253-2"><a href="backdoor.html#cb253-2" aria-hidden="true" tabindex="-1"></a>mortdat.out[<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>)]</span></code></pre></div>
 <pre><code>## $EY0
 ## [1] 0.007839904
 ## 
 ## $EY1
 ## [1] 0.006995183</code></pre>
-<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="backdoor.html#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify with the author&#39;s</span></span>
-<span id="cb253-2"><a href="backdoor.html#cb253-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0 <span class="sc">-</span> <span class="fl">0.0078399</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>,</span>
-<span id="cb253-3"><a href="backdoor.html#cb253-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY1 <span class="sc">-</span> <span class="fl">0.0069952</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="backdoor.html#cb255-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify with the author&#39;s</span></span>
+<span id="cb255-2"><a href="backdoor.html#cb255-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0 <span class="sc">-</span> <span class="fl">0.0078399</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>,</span>
+<span id="cb255-3"><a href="backdoor.html#cb255-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY1 <span class="sc">-</span> <span class="fl">0.0069952</span>) <span class="sc">&lt;</span> <span class="fl">1e-7</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="average-effect-of-treatment-on-the-treated-1" class="section level3" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Average Effect of Treatment on the Treated</h3>
 <p>See previous section for calculation with mortality data for the function
 <code>calc_exposure</code>.</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="backdoor.html#cb254-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="backdoor.html#cb256-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
 <pre><code>## [1] 0.01017592</code></pre>
-<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="backdoor.html#cb256-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0T1 <span class="sc">-</span> <span class="fl">0.010176</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="backdoor.html#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0T1 <span class="sc">-</span> <span class="fl">0.010176</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
 </div>
 <div id="standardization-with-a-parametric-exposure-model" class="section level3" number="6.2.2">
 <h3><span class="header-section-number">6.2.2</span> Standardization with a Parametric Exposure Model</h3>
 <p>The function <code>standexp</code> is used to standardized with a parametric exposure
 model and the <code>glm</code> fit. It is the main function used in the chapter.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="backdoor.html#cb257-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model</span></span>
-<span id="cb257-2"><a href="backdoor.html#cb257-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb257-3"><a href="backdoor.html#cb257-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model.</span></span>
-<span id="cb257-4"><a href="backdoor.html#cb257-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb257-5"><a href="backdoor.html#cb257-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The standardized estimates are computed using the exposure model.</span></span>
-<span id="cb257-6"><a href="backdoor.html#cb257-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This method requires 2 different formulas which are created from the</span></span>
-<span id="cb257-7"><a href="backdoor.html#cb257-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; arguments \code{formula}. The 2 formulas created are for the exposure model</span></span>
-<span id="cb257-8"><a href="backdoor.html#cb257-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; and another one for the weighted linear model.</span></span>
-<span id="cb257-9"><a href="backdoor.html#cb257-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb257-10"><a href="backdoor.html#cb257-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
-<span id="cb257-11"><a href="backdoor.html#cb257-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula must be in the form \code{Y ~ `T` + ...}</span></span>
-<span id="cb257-12"><a href="backdoor.html#cb257-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
-<span id="cb257-13"><a href="backdoor.html#cb257-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
-<span id="cb257-14"><a href="backdoor.html#cb257-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb257-15"><a href="backdoor.html#cb257-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
-<span id="cb257-16"><a href="backdoor.html#cb257-16" aria-hidden="true" tabindex="-1"></a>standexp <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">5</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb257-17"><a href="backdoor.html#cb257-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-18"><a href="backdoor.html#cb257-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
-<span id="cb257-19"><a href="backdoor.html#cb257-19" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
-<span id="cb257-20"><a href="backdoor.html#cb257-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb257-21"><a href="backdoor.html#cb257-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
-<span id="cb257-22"><a href="backdoor.html#cb257-22" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb257-23"><a href="backdoor.html#cb257-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
-<span id="cb257-24"><a href="backdoor.html#cb257-24" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb257-25"><a href="backdoor.html#cb257-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb257-26"><a href="backdoor.html#cb257-26" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb257-27"><a href="backdoor.html#cb257-27" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb257-28"><a href="backdoor.html#cb257-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-29"><a href="backdoor.html#cb257-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
-<span id="cb257-30"><a href="backdoor.html#cb257-30" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
-<span id="cb257-31"><a href="backdoor.html#cb257-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
-<span id="cb257-32"><a href="backdoor.html#cb257-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-33"><a href="backdoor.html#cb257-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
-<span id="cb257-34"><a href="backdoor.html#cb257-34" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
-<span id="cb257-35"><a href="backdoor.html#cb257-35" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
-<span id="cb257-36"><a href="backdoor.html#cb257-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-37"><a href="backdoor.html#cb257-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
-<span id="cb257-38"><a href="backdoor.html#cb257-38" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat, <span class="at">weights =</span> W))</span>
-<span id="cb257-39"><a href="backdoor.html#cb257-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-40"><a href="backdoor.html#cb257-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
-<span id="cb257-41"><a href="backdoor.html#cb257-41" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[fvars<span class="sc">$</span>x0]</span>
-<span id="cb257-42"><a href="backdoor.html#cb257-42" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
-<span id="cb257-43"><a href="backdoor.html#cb257-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-44"><a href="backdoor.html#cb257-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
-<span id="cb257-45"><a href="backdoor.html#cb257-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
-<span id="cb257-46"><a href="backdoor.html#cb257-46" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb257-47"><a href="backdoor.html#cb257-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-48"><a href="backdoor.html#cb257-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
-<span id="cb257-49"><a href="backdoor.html#cb257-49" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb257-50"><a href="backdoor.html#cb257-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-51"><a href="backdoor.html#cb257-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
-<span id="cb257-52"><a href="backdoor.html#cb257-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
-<span id="cb257-53"><a href="backdoor.html#cb257-53" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="backdoor.html#cb259-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model</span></span>
+<span id="cb259-2"><a href="backdoor.html#cb259-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb259-3"><a href="backdoor.html#cb259-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model.</span></span>
+<span id="cb259-4"><a href="backdoor.html#cb259-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb259-5"><a href="backdoor.html#cb259-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The standardized estimates are computed using the exposure model.</span></span>
+<span id="cb259-6"><a href="backdoor.html#cb259-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This method requires 2 different formulas which are created from the</span></span>
+<span id="cb259-7"><a href="backdoor.html#cb259-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; arguments \code{formula}. The 2 formulas created are for the exposure model</span></span>
+<span id="cb259-8"><a href="backdoor.html#cb259-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; and another one for the weighted linear model.</span></span>
+<span id="cb259-9"><a href="backdoor.html#cb259-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb259-10"><a href="backdoor.html#cb259-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
+<span id="cb259-11"><a href="backdoor.html#cb259-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula must be in the form \code{Y ~ `T` + ...}</span></span>
+<span id="cb259-12"><a href="backdoor.html#cb259-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
+<span id="cb259-13"><a href="backdoor.html#cb259-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
+<span id="cb259-14"><a href="backdoor.html#cb259-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb259-15"><a href="backdoor.html#cb259-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
+<span id="cb259-16"><a href="backdoor.html#cb259-16" aria-hidden="true" tabindex="-1"></a>standexp <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">5</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb259-17"><a href="backdoor.html#cb259-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-18"><a href="backdoor.html#cb259-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
+<span id="cb259-19"><a href="backdoor.html#cb259-19" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
+<span id="cb259-20"><a href="backdoor.html#cb259-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb259-21"><a href="backdoor.html#cb259-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
+<span id="cb259-22"><a href="backdoor.html#cb259-22" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb259-23"><a href="backdoor.html#cb259-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
+<span id="cb259-24"><a href="backdoor.html#cb259-24" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb259-25"><a href="backdoor.html#cb259-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb259-26"><a href="backdoor.html#cb259-26" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb259-27"><a href="backdoor.html#cb259-27" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb259-28"><a href="backdoor.html#cb259-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-29"><a href="backdoor.html#cb259-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
+<span id="cb259-30"><a href="backdoor.html#cb259-30" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
+<span id="cb259-31"><a href="backdoor.html#cb259-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
+<span id="cb259-32"><a href="backdoor.html#cb259-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-33"><a href="backdoor.html#cb259-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
+<span id="cb259-34"><a href="backdoor.html#cb259-34" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
+<span id="cb259-35"><a href="backdoor.html#cb259-35" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
+<span id="cb259-36"><a href="backdoor.html#cb259-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-37"><a href="backdoor.html#cb259-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
+<span id="cb259-38"><a href="backdoor.html#cb259-38" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat, <span class="at">weights =</span> W))</span>
+<span id="cb259-39"><a href="backdoor.html#cb259-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-40"><a href="backdoor.html#cb259-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
+<span id="cb259-41"><a href="backdoor.html#cb259-41" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[fvars<span class="sc">$</span>x0]</span>
+<span id="cb259-42"><a href="backdoor.html#cb259-42" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
+<span id="cb259-43"><a href="backdoor.html#cb259-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-44"><a href="backdoor.html#cb259-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
+<span id="cb259-45"><a href="backdoor.html#cb259-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
+<span id="cb259-46"><a href="backdoor.html#cb259-46" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb259-47"><a href="backdoor.html#cb259-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-48"><a href="backdoor.html#cb259-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb259-49"><a href="backdoor.html#cb259-49" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
+<span id="cb259-50"><a href="backdoor.html#cb259-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb259-51"><a href="backdoor.html#cb259-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
+<span id="cb259-52"><a href="backdoor.html#cb259-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
+<span id="cb259-53"><a href="backdoor.html#cb259-53" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Alternatively the standardization could be done with <code>geeglm</code> from the <code>geepack</code>
 package. For <em>those focused primarily on the risk difference</em>. See the
 explanation on section 6.2.2 on why <code>geeglm</code> is not really good for the
 risk ratio.</p>
 <p>The function is called <code>exp</code> in the book. We rename it <code>standexpgee</code> to be
 more informative and avoid mix up with the much-used base R function <code>exp.</code></p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="backdoor.html#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model</span></span>
-<span id="cb258-2"><a href="backdoor.html#cb258-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb258-3"><a href="backdoor.html#cb258-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model.</span></span>
-<span id="cb258-4"><a href="backdoor.html#cb258-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb258-5"><a href="backdoor.html#cb258-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The standardized estimates are computed using the exposure model and the</span></span>
-<span id="cb258-6"><a href="backdoor.html#cb258-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{geeglm} from the \code{gee} package.</span></span>
-<span id="cb258-7"><a href="backdoor.html#cb258-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This method requires 2 different formulas which are created from the</span></span>
-<span id="cb258-8"><a href="backdoor.html#cb258-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; arguments \code{formula}. The 2 formulas created are for the exposure model</span></span>
-<span id="cb258-9"><a href="backdoor.html#cb258-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; and another one for the weighted linear model.</span></span>
-<span id="cb258-10"><a href="backdoor.html#cb258-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb258-11"><a href="backdoor.html#cb258-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
-<span id="cb258-12"><a href="backdoor.html#cb258-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula must be in the form \code{Y ~ `T` + H}</span></span>
-<span id="cb258-13"><a href="backdoor.html#cb258-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
-<span id="cb258-14"><a href="backdoor.html#cb258-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
-<span id="cb258-15"><a href="backdoor.html#cb258-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb258-16"><a href="backdoor.html#cb258-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standexp</span></span>
-<span id="cb258-17"><a href="backdoor.html#cb258-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb258-18"><a href="backdoor.html#cb258-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
-<span id="cb258-19"><a href="backdoor.html#cb258-19" aria-hidden="true" tabindex="-1"></a>standexpgee <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">5</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb258-20"><a href="backdoor.html#cb258-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-21"><a href="backdoor.html#cb258-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
-<span id="cb258-22"><a href="backdoor.html#cb258-22" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
-<span id="cb258-23"><a href="backdoor.html#cb258-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-24"><a href="backdoor.html#cb258-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
-<span id="cb258-25"><a href="backdoor.html#cb258-25" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb258-26"><a href="backdoor.html#cb258-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
-<span id="cb258-27"><a href="backdoor.html#cb258-27" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb258-28"><a href="backdoor.html#cb258-28" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb258-29"><a href="backdoor.html#cb258-29" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb258-30"><a href="backdoor.html#cb258-30" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb258-31"><a href="backdoor.html#cb258-31" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dat))  <span class="co"># id column used by geeglm</span></span>
-<span id="cb258-32"><a href="backdoor.html#cb258-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-33"><a href="backdoor.html#cb258-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
-<span id="cb258-34"><a href="backdoor.html#cb258-34" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
-<span id="cb258-35"><a href="backdoor.html#cb258-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
-<span id="cb258-36"><a href="backdoor.html#cb258-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-37"><a href="backdoor.html#cb258-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
-<span id="cb258-38"><a href="backdoor.html#cb258-38" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
-<span id="cb258-39"><a href="backdoor.html#cb258-39" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
-<span id="cb258-40"><a href="backdoor.html#cb258-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-41"><a href="backdoor.html#cb258-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
-<span id="cb258-42"><a href="backdoor.html#cb258-42" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(geepack<span class="sc">::</span><span class="fu">geeglm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat,</span>
-<span id="cb258-43"><a href="backdoor.html#cb258-43" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">id =</span> id, <span class="at">weights =</span> W))</span>
-<span id="cb258-44"><a href="backdoor.html#cb258-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-45"><a href="backdoor.html#cb258-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
-<span id="cb258-46"><a href="backdoor.html#cb258-46" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[fvars<span class="sc">$</span>x0]</span>
-<span id="cb258-47"><a href="backdoor.html#cb258-47" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
-<span id="cb258-48"><a href="backdoor.html#cb258-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-49"><a href="backdoor.html#cb258-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
-<span id="cb258-50"><a href="backdoor.html#cb258-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
-<span id="cb258-51"><a href="backdoor.html#cb258-51" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb258-52"><a href="backdoor.html#cb258-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-53"><a href="backdoor.html#cb258-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
-<span id="cb258-54"><a href="backdoor.html#cb258-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb258-55"><a href="backdoor.html#cb258-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb258-56"><a href="backdoor.html#cb258-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
-<span id="cb258-57"><a href="backdoor.html#cb258-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
-<span id="cb258-58"><a href="backdoor.html#cb258-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="backdoor.html#cb260-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model</span></span>
+<span id="cb260-2"><a href="backdoor.html#cb260-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb260-3"><a href="backdoor.html#cb260-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute standardized estimates with parametric exposure model.</span></span>
+<span id="cb260-4"><a href="backdoor.html#cb260-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb260-5"><a href="backdoor.html#cb260-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; The standardized estimates are computed using the exposure model and the</span></span>
+<span id="cb260-6"><a href="backdoor.html#cb260-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{geeglm} from the \code{gee} package.</span></span>
+<span id="cb260-7"><a href="backdoor.html#cb260-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This method requires 2 different formulas which are created from the</span></span>
+<span id="cb260-8"><a href="backdoor.html#cb260-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; arguments \code{formula}. The 2 formulas created are for the exposure model</span></span>
+<span id="cb260-9"><a href="backdoor.html#cb260-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; and another one for the weighted linear model.</span></span>
+<span id="cb260-10"><a href="backdoor.html#cb260-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb260-11"><a href="backdoor.html#cb260-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
+<span id="cb260-12"><a href="backdoor.html#cb260-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula must be in the form \code{Y ~ `T` + H}</span></span>
+<span id="cb260-13"><a href="backdoor.html#cb260-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
+<span id="cb260-14"><a href="backdoor.html#cb260-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
+<span id="cb260-15"><a href="backdoor.html#cb260-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb260-16"><a href="backdoor.html#cb260-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standexp</span></span>
+<span id="cb260-17"><a href="backdoor.html#cb260-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb260-18"><a href="backdoor.html#cb260-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
+<span id="cb260-19"><a href="backdoor.html#cb260-19" aria-hidden="true" tabindex="-1"></a>standexpgee <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">5</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb260-20"><a href="backdoor.html#cb260-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb260-21"><a href="backdoor.html#cb260-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
+<span id="cb260-22"><a href="backdoor.html#cb260-22" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
+<span id="cb260-23"><a href="backdoor.html#cb260-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb260-24"><a href="backdoor.html#cb260-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
+<span id="cb260-25"><a href="backdoor.html#cb260-25" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb260-26"><a href="backdoor.html#cb260-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
+<span id="cb260-27"><a href="backdoor.html#cb260-27" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb260-28"><a href="backdoor.html#cb260-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb260-29"><a href="backdoor.html#cb260-29" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb260-30"><a href="backdoor.html#cb260-30" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb260-31"><a href="backdoor.html#cb260-31" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(dat))  <span class="co"># id column used by geeglm</span></span>
+<span id="cb260-32"><a href="backdoor.html#cb260-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-33"><a href="backdoor.html#cb260-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
+<span id="cb260-34"><a href="backdoor.html#cb260-34" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
+<span id="cb260-35"><a href="backdoor.html#cb260-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
+<span id="cb260-36"><a href="backdoor.html#cb260-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-37"><a href="backdoor.html#cb260-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># compute the weights</span></span>
+<span id="cb260-38"><a href="backdoor.html#cb260-38" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
+<span id="cb260-39"><a href="backdoor.html#cb260-39" aria-hidden="true" tabindex="-1"></a>    dat<span class="sc">$</span>W <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">/</span> e) <span class="sc">*</span> datT <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT)</span>
+<span id="cb260-40"><a href="backdoor.html#cb260-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-41"><a href="backdoor.html#cb260-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit the weighted linear model</span></span>
+<span id="cb260-42"><a href="backdoor.html#cb260-42" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(geepack<span class="sc">::</span><span class="fu">geeglm</span>(<span class="at">formula =</span> lformula, <span class="at">data =</span> dat,</span>
+<span id="cb260-43"><a href="backdoor.html#cb260-43" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">id =</span> id, <span class="at">weights =</span> W))</span>
+<span id="cb260-44"><a href="backdoor.html#cb260-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-45"><a href="backdoor.html#cb260-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the expected potential outcome</span></span>
+<span id="cb260-46"><a href="backdoor.html#cb260-46" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> coefs[fvars<span class="sc">$</span>x0]</span>
+<span id="cb260-47"><a href="backdoor.html#cb260-47" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
+<span id="cb260-48"><a href="backdoor.html#cb260-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-49"><a href="backdoor.html#cb260-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
+<span id="cb260-50"><a href="backdoor.html#cb260-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
+<span id="cb260-51"><a href="backdoor.html#cb260-51" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb260-52"><a href="backdoor.html#cb260-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-53"><a href="backdoor.html#cb260-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run the bootstrapping</span></span>
+<span id="cb260-54"><a href="backdoor.html#cb260-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
+<span id="cb260-55"><a href="backdoor.html#cb260-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-56"><a href="backdoor.html#cb260-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
+<span id="cb260-57"><a href="backdoor.html#cb260-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
+<span id="cb260-58"><a href="backdoor.html#cb260-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <div id="what-if-study-3" class="section level4 unnumbered">
 <h4>What-if? Study</h4>
 <p>First we do it using the <code>glm</code> fit</p>
-<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="backdoor.html#cb259-1" aria-hidden="true" tabindex="-1"></a>whatif2.exp <span class="ot">&lt;-</span> <span class="fu">standexp</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
-<span id="cb259-2"><a href="backdoor.html#cb259-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.exp</span></span></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="backdoor.html#cb261-1" aria-hidden="true" tabindex="-1"></a>whatif2.exp <span class="ot">&lt;-</span> <span class="fu">standexp</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
+<span id="cb261-2"><a href="backdoor.html#cb261-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.exp</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="backdoor.html#cb260-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb260-2"><a href="backdoor.html#cb260-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb260-3"><a href="backdoor.html#cb260-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="fl">0.834</span>),</span>
-<span id="cb260-4"><a href="backdoor.html#cb260-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.exp<span class="sc">$</span>est[whatif2.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb260-5"><a href="backdoor.html#cb260-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="backdoor.html#cb262-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb262-2"><a href="backdoor.html#cb262-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb262-3"><a href="backdoor.html#cb262-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="fl">0.834</span>),</span>
+<span id="cb262-4"><a href="backdoor.html#cb262-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.exp<span class="sc">$</span>est[whatif2.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb262-5"><a href="backdoor.html#cb262-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="backdoor.html#cb261-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.exp, </span>
-<span id="cb261-2"><a href="backdoor.html#cb261-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.9&quot;</span>, </span>
-<span id="cb261-3"><a href="backdoor.html#cb261-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Exposure-model Standardization with &lt;em&gt;H = lvlcont0&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="backdoor.html#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.exp, </span>
+<span id="cb263-2"><a href="backdoor.html#cb263-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.9&quot;</span>, </span>
+<span id="cb263-3"><a href="backdoor.html#cb263-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Exposure-model Standardization with &lt;em&gt;H = lvlcont0&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="irdfaviyah" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -4432,14 +4440,14 @@ more informative and avoid mix up with the much-used base R function <code>exp.<
 </table>
 </div>
 <p>then we use the <code>geeglm</code> from the <code>geepack</code> package fit for risk difference</p>
-<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="backdoor.html#cb262-1" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> <span class="fu">standexpgee</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
-<span id="cb262-2"><a href="backdoor.html#cb262-2" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t use the risk ratio measures with this function</span></span>
-<span id="cb262-3"><a href="backdoor.html#cb262-3" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> whatif2.expgee[<span class="sc">!</span>(whatif2.expgee<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>)), ]</span>
-<span id="cb262-4"><a href="backdoor.html#cb262-4" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee</span></span></code></pre></div>
+<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="backdoor.html#cb264-1" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> <span class="fu">standexpgee</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
+<span id="cb264-2"><a href="backdoor.html#cb264-2" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t use the risk ratio measures with this function</span></span>
+<span id="cb264-3"><a href="backdoor.html#cb264-3" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> whatif2.expgee[<span class="sc">!</span>(whatif2.expgee<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>)), ]</span>
+<span id="cb264-4"><a href="backdoor.html#cb264-4" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee</span></span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="backdoor.html#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.expgee, </span>
-<span id="cb263-2"><a href="backdoor.html#cb263-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.9 geeglm&quot;</span>, </span>
-<span id="cb263-3"><a href="backdoor.html#cb263-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Exposure-model Standardization using &lt;em&gt;geeglm&lt;/em&gt; wtih &lt;em&gt;H = lvlcont0&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="backdoor.html#cb265-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.expgee, </span>
+<span id="cb265-2"><a href="backdoor.html#cb265-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.9 geeglm&quot;</span>, </span>
+<span id="cb265-3"><a href="backdoor.html#cb265-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Exposure-model Standardization using &lt;em&gt;geeglm&lt;/em&gt; wtih &lt;em&gt;H = lvlcont0&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="omnwzwnkhq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -4834,21 +4842,21 @@ complete cases only.</p>
 <p>The <code>standexp</code> function on page 119-120 of section 6.2.2 is not needed anymore
 as <code>standexp</code> was created with parameters in the previous section. We just need
 to run it as follows</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="backdoor.html#cb264-1" aria-hidden="true" tabindex="-1"></a>gssrcc.exp <span class="ot">&lt;-</span> <span class="fu">standexp</span>(gssrcc, </span>
-<span id="cb264-2"><a href="backdoor.html#cb264-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">formula =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65)</span>
-<span id="cb264-3"><a href="backdoor.html#cb264-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp</span></span></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="backdoor.html#cb266-1" aria-hidden="true" tabindex="-1"></a>gssrcc.exp <span class="ot">&lt;-</span> <span class="fu">standexp</span>(gssrcc, </span>
+<span id="cb266-2"><a href="backdoor.html#cb266-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">formula =</span> trump <span class="sc">~</span> gthsedu <span class="sc">+</span> magthsedu <span class="sc">+</span> white <span class="sc">+</span> female <span class="sc">+</span> gt65)</span>
+<span id="cb266-3"><a href="backdoor.html#cb266-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="backdoor.html#cb265-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb265-2"><a href="backdoor.html#cb265-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb265-3"><a href="backdoor.html#cb265-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.231</span>, <span class="fl">0.272</span>, <span class="fl">0.041</span>, <span class="fl">1.176</span>),</span>
-<span id="cb265-4"><a href="backdoor.html#cb265-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.exp<span class="sc">$</span>est[gssrcc.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb265-5"><a href="backdoor.html#cb265-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="backdoor.html#cb267-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb267-2"><a href="backdoor.html#cb267-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb267-3"><a href="backdoor.html#cb267-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.231</span>, <span class="fl">0.272</span>, <span class="fl">0.041</span>, <span class="fl">1.176</span>),</span>
+<span id="cb267-4"><a href="backdoor.html#cb267-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.exp<span class="sc">$</span>est[gssrcc.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb267-5"><a href="backdoor.html#cb267-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="backdoor.html#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(gssrcc.exp, </span>
-<span id="cb266-2"><a href="backdoor.html#cb266-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.10&quot;</span>, </span>
-<span id="cb266-3"><a href="backdoor.html#cb266-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;General Social Survey&lt;br&gt;Exposure-model Standardization&lt;br&gt;</span></span>
-<span id="cb266-4"><a href="backdoor.html#cb266-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Effect of &lt;em&gt;More than High School Education&lt;/em&gt; on &lt;em&gt;</span></span>
-<span id="cb266-5"><a href="backdoor.html#cb266-5" aria-hidden="true" tabindex="-1"></a><span class="st">            Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="backdoor.html#cb268-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(gssrcc.exp, </span>
+<span id="cb268-2"><a href="backdoor.html#cb268-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.10&quot;</span>, </span>
+<span id="cb268-3"><a href="backdoor.html#cb268-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;General Social Survey&lt;br&gt;Exposure-model Standardization&lt;br&gt;</span></span>
+<span id="cb268-4"><a href="backdoor.html#cb268-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Effect of &lt;em&gt;More than High School Education&lt;/em&gt; on &lt;em&gt;</span></span>
+<span id="cb268-5"><a href="backdoor.html#cb268-5" aria-hidden="true" tabindex="-1"></a><span class="st">            Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
 <div id="zuhtzevlis" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -5253,79 +5261,79 @@ to run it as follows</p>
 <h2><span class="header-section-number">6.3</span> Doubly Robust Standardization</h2>
 <p>The function <code>badstanddr</code> used for doubly robust standardization is defined
 as follows</p>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="backdoor.html#cb267-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates</span></span>
-<span id="cb267-2"><a href="backdoor.html#cb267-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb267-3"><a href="backdoor.html#cb267-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates.</span></span>
-<span id="cb267-4"><a href="backdoor.html#cb267-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb267-5"><a href="backdoor.html#cb267-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates using the code from section</span></span>
-<span id="cb267-6"><a href="backdoor.html#cb267-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; 6.3</span></span>
-<span id="cb267-7"><a href="backdoor.html#cb267-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb267-8"><a href="backdoor.html#cb267-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
-<span id="cb267-9"><a href="backdoor.html#cb267-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula in format \code{Y ~ T + ...} see details above.</span></span>
-<span id="cb267-10"><a href="backdoor.html#cb267-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
-<span id="cb267-11"><a href="backdoor.html#cb267-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
-<span id="cb267-12"><a href="backdoor.html#cb267-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb267-13"><a href="backdoor.html#cb267-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
-<span id="cb267-14"><a href="backdoor.html#cb267-14" aria-hidden="true" tabindex="-1"></a>badstanddr <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">10</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb267-15"><a href="backdoor.html#cb267-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb267-16"><a href="backdoor.html#cb267-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
-<span id="cb267-17"><a href="backdoor.html#cb267-17" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
-<span id="cb267-18"><a href="backdoor.html#cb267-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb267-19"><a href="backdoor.html#cb267-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
-<span id="cb267-20"><a href="backdoor.html#cb267-20" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb267-21"><a href="backdoor.html#cb267-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
-<span id="cb267-22"><a href="backdoor.html#cb267-22" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
-<span id="cb267-23"><a href="backdoor.html#cb267-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb267-24"><a href="backdoor.html#cb267-24" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb267-25"><a href="backdoor.html#cb267-25" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb267-26"><a href="backdoor.html#cb267-26" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb267-27"><a href="backdoor.html#cb267-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
-<span id="cb267-28"><a href="backdoor.html#cb267-28" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
-<span id="cb267-29"><a href="backdoor.html#cb267-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
-<span id="cb267-30"><a href="backdoor.html#cb267-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb267-31"><a href="backdoor.html#cb267-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit a nonparametric outcome model that we do not believe</span></span>
-<span id="cb267-32"><a href="backdoor.html#cb267-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. a bad outcome model</span></span>
-<span id="cb267-33"><a href="backdoor.html#cb267-33" aria-hidden="true" tabindex="-1"></a>    lmod <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat)</span>
-<span id="cb267-34"><a href="backdoor.html#cb267-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb267-35"><a href="backdoor.html#cb267-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># predict potential outcome for each participant</span></span>
-<span id="cb267-36"><a href="backdoor.html#cb267-36" aria-hidden="true" tabindex="-1"></a>    dat0 <span class="ot">&lt;-</span> dat</span>
-<span id="cb267-37"><a href="backdoor.html#cb267-37" aria-hidden="true" tabindex="-1"></a>    dat0[, fvars<span class="sc">$</span>t] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb267-38"><a href="backdoor.html#cb267-38" aria-hidden="true" tabindex="-1"></a>    EYhat0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(lmod, <span class="at">newdata =</span> dat0, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb267-39"><a href="backdoor.html#cb267-39" aria-hidden="true" tabindex="-1"></a>    dat1 <span class="ot">&lt;-</span> dat</span>
-<span id="cb267-40"><a href="backdoor.html#cb267-40" aria-hidden="true" tabindex="-1"></a>    dat1[, fvars<span class="sc">$</span>t] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb267-41"><a href="backdoor.html#cb267-41" aria-hidden="true" tabindex="-1"></a>    EYhat1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(lmod, <span class="at">newdata =</span> dat1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb267-42"><a href="backdoor.html#cb267-42" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb267-43"><a href="backdoor.html#cb267-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use the DR estimating equation to estimate the expected</span></span>
-<span id="cb267-44"><a href="backdoor.html#cb267-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># potential outcome</span></span>
-<span id="cb267-45"><a href="backdoor.html#cb267-45" aria-hidden="true" tabindex="-1"></a>    datY <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>y]</span>
-<span id="cb267-46"><a href="backdoor.html#cb267-46" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
-<span id="cb267-47"><a href="backdoor.html#cb267-47" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(datY <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e) <span class="sc">+</span> EYhat0 <span class="sc">*</span> (e <span class="sc">-</span> datT) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
-<span id="cb267-48"><a href="backdoor.html#cb267-48" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(datY <span class="sc">*</span> (datT <span class="sc">/</span> e) <span class="sc">-</span> EYhat1 <span class="sc">*</span> (datT <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
-<span id="cb267-49"><a href="backdoor.html#cb267-49" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb267-50"><a href="backdoor.html#cb267-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
-<span id="cb267-51"><a href="backdoor.html#cb267-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
-<span id="cb267-52"><a href="backdoor.html#cb267-52" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb267-53"><a href="backdoor.html#cb267-53" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb267-54"><a href="backdoor.html#cb267-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb267-55"><a href="backdoor.html#cb267-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb267-56"><a href="backdoor.html#cb267-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
-<span id="cb267-57"><a href="backdoor.html#cb267-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
-<span id="cb267-58"><a href="backdoor.html#cb267-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="backdoor.html#cb269-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates</span></span>
+<span id="cb269-2"><a href="backdoor.html#cb269-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb269-3"><a href="backdoor.html#cb269-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates.</span></span>
+<span id="cb269-4"><a href="backdoor.html#cb269-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb269-5"><a href="backdoor.html#cb269-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute the doubly robust standardized estimates using the code from section</span></span>
+<span id="cb269-6"><a href="backdoor.html#cb269-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; 6.3</span></span>
+<span id="cb269-7"><a href="backdoor.html#cb269-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb269-8"><a href="backdoor.html#cb269-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
+<span id="cb269-9"><a href="backdoor.html#cb269-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula in format \code{Y ~ T + ...} see details above.</span></span>
+<span id="cb269-10"><a href="backdoor.html#cb269-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
+<span id="cb269-11"><a href="backdoor.html#cb269-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval.</span></span>
+<span id="cb269-12"><a href="backdoor.html#cb269-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb269-13"><a href="backdoor.html#cb269-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of estimates</span></span>
+<span id="cb269-14"><a href="backdoor.html#cb269-14" aria-hidden="true" tabindex="-1"></a>badstanddr <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">R =</span> <span class="dv">10</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb269-15"><a href="backdoor.html#cb269-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb269-16"><a href="backdoor.html#cb269-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract the variables names from the formula</span></span>
+<span id="cb269-17"><a href="backdoor.html#cb269-17" aria-hidden="true" tabindex="-1"></a>  fvars <span class="ot">&lt;-</span> <span class="fu">formula2vars</span>(formula)</span>
+<span id="cb269-18"><a href="backdoor.html#cb269-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb269-19"><a href="backdoor.html#cb269-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exposure model formula</span></span>
+<span id="cb269-20"><a href="backdoor.html#cb269-20" aria-hidden="true" tabindex="-1"></a>  eformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>t, <span class="fu">paste</span>(fvars<span class="sc">$</span>h, <span class="at">collapse =</span> <span class="st">&quot;+&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb269-21"><a href="backdoor.html#cb269-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># weighted linear model formula</span></span>
+<span id="cb269-22"><a href="backdoor.html#cb269-22" aria-hidden="true" tabindex="-1"></a>  lformula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(fvars<span class="sc">$</span>y, fvars<span class="sc">$</span>t, <span class="at">sep =</span> <span class="st">&quot;~&quot;</span>))</span>
+<span id="cb269-23"><a href="backdoor.html#cb269-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb269-24"><a href="backdoor.html#cb269-24" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb269-25"><a href="backdoor.html#cb269-25" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb269-26"><a href="backdoor.html#cb269-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb269-27"><a href="backdoor.html#cb269-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the parametric exposure model</span></span>
+<span id="cb269-28"><a href="backdoor.html#cb269-28" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(<span class="at">formula =</span> eformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat))</span>
+<span id="cb269-29"><a href="backdoor.html#cb269-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="sc">!</span>dplyr<span class="sc">::</span><span class="fu">near</span>(e, <span class="dv">0</span>)))  <span class="co"># e must not equal zero</span></span>
+<span id="cb269-30"><a href="backdoor.html#cb269-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb269-31"><a href="backdoor.html#cb269-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># fit a nonparametric outcome model that we do not believe</span></span>
+<span id="cb269-32"><a href="backdoor.html#cb269-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. a bad outcome model</span></span>
+<span id="cb269-33"><a href="backdoor.html#cb269-33" aria-hidden="true" tabindex="-1"></a>    lmod <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> lformula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> dat)</span>
+<span id="cb269-34"><a href="backdoor.html#cb269-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb269-35"><a href="backdoor.html#cb269-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># predict potential outcome for each participant</span></span>
+<span id="cb269-36"><a href="backdoor.html#cb269-36" aria-hidden="true" tabindex="-1"></a>    dat0 <span class="ot">&lt;-</span> dat</span>
+<span id="cb269-37"><a href="backdoor.html#cb269-37" aria-hidden="true" tabindex="-1"></a>    dat0[, fvars<span class="sc">$</span>t] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb269-38"><a href="backdoor.html#cb269-38" aria-hidden="true" tabindex="-1"></a>    EYhat0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(lmod, <span class="at">newdata =</span> dat0, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb269-39"><a href="backdoor.html#cb269-39" aria-hidden="true" tabindex="-1"></a>    dat1 <span class="ot">&lt;-</span> dat</span>
+<span id="cb269-40"><a href="backdoor.html#cb269-40" aria-hidden="true" tabindex="-1"></a>    dat1[, fvars<span class="sc">$</span>t] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb269-41"><a href="backdoor.html#cb269-41" aria-hidden="true" tabindex="-1"></a>    EYhat1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(lmod, <span class="at">newdata =</span> dat1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb269-42"><a href="backdoor.html#cb269-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb269-43"><a href="backdoor.html#cb269-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use the DR estimating equation to estimate the expected</span></span>
+<span id="cb269-44"><a href="backdoor.html#cb269-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># potential outcome</span></span>
+<span id="cb269-45"><a href="backdoor.html#cb269-45" aria-hidden="true" tabindex="-1"></a>    datY <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>y]</span>
+<span id="cb269-46"><a href="backdoor.html#cb269-46" aria-hidden="true" tabindex="-1"></a>    datT <span class="ot">&lt;-</span> dat[, fvars<span class="sc">$</span>t]</span>
+<span id="cb269-47"><a href="backdoor.html#cb269-47" aria-hidden="true" tabindex="-1"></a>    EY0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(datY <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> datT) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e) <span class="sc">+</span> EYhat0 <span class="sc">*</span> (e <span class="sc">-</span> datT) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
+<span id="cb269-48"><a href="backdoor.html#cb269-48" aria-hidden="true" tabindex="-1"></a>    EY1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(datY <span class="sc">*</span> (datT <span class="sc">/</span> e) <span class="sc">-</span> EYhat1 <span class="sc">*</span> (datT <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
+<span id="cb269-49"><a href="backdoor.html#cb269-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb269-50"><a href="backdoor.html#cb269-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># estimate the effect measures</span></span>
+<span id="cb269-51"><a href="backdoor.html#cb269-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calc_effect_measures</span>(EY0, EY1)</span>
+<span id="cb269-52"><a href="backdoor.html#cb269-52" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb269-53"><a href="backdoor.html#cb269-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb269-54"><a href="backdoor.html#cb269-54" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
+<span id="cb269-55"><a href="backdoor.html#cb269-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb269-56"><a href="backdoor.html#cb269-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># exponentiate the log values</span></span>
+<span id="cb269-57"><a href="backdoor.html#cb269-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp_effects</span>(<span class="at">data =</span> out)</span>
+<span id="cb269-58"><a href="backdoor.html#cb269-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>and using the What-if Study we obtain</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="backdoor.html#cb268-1" aria-hidden="true" tabindex="-1"></a>whatif2.dr <span class="ot">&lt;-</span> <span class="fu">badstanddr</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
-<span id="cb268-2"><a href="backdoor.html#cb268-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.dr</span></span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="backdoor.html#cb270-1" aria-hidden="true" tabindex="-1"></a>whatif2.dr <span class="ot">&lt;-</span> <span class="fu">badstanddr</span>(whatif2dat, <span class="at">formula =</span> vl4 <span class="sc">~</span> A <span class="sc">+</span> lvlcont0)</span>
+<span id="cb270-2"><a href="backdoor.html#cb270-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.dr</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="backdoor.html#cb269-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb269-2"><a href="backdoor.html#cb269-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb269-3"><a href="backdoor.html#cb269-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.362</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.062</span>, <span class="fl">0.830</span>),</span>
-<span id="cb269-4"><a href="backdoor.html#cb269-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.dr<span class="sc">$</span>est[whatif2.dr<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb269-5"><a href="backdoor.html#cb269-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb271-2"><a href="backdoor.html#cb271-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb271-3"><a href="backdoor.html#cb271-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.362</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.062</span>, <span class="fl">0.830</span>),</span>
+<span id="cb271-4"><a href="backdoor.html#cb271-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.dr<span class="sc">$</span>est[whatif2.dr<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb271-5"><a href="backdoor.html#cb271-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="backdoor.html#cb270-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.dr, </span>
-<span id="cb270-2"><a href="backdoor.html#cb270-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.12&quot;</span>, </span>
-<span id="cb270-3"><a href="backdoor.html#cb270-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Doubly Robust Standardizaion&lt;br&gt;</span></span>
-<span id="cb270-4"><a href="backdoor.html#cb270-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Combining the Misspecified Outome Model of Table 6.11&lt;br&gt;</span></span>
-<span id="cb270-5"><a href="backdoor.html#cb270-5" aria-hidden="true" tabindex="-1"></a><span class="st">            and the Exposure Model of Table 6.9&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="backdoor.html#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(whatif2.dr, </span>
+<span id="cb272-2"><a href="backdoor.html#cb272-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.12&quot;</span>, </span>
+<span id="cb272-3"><a href="backdoor.html#cb272-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;What-If Study&lt;br&gt;Doubly Robust Standardizaion&lt;br&gt;</span></span>
+<span id="cb272-4"><a href="backdoor.html#cb272-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Combining the Misspecified Outome Model of Table 6.11&lt;br&gt;</span></span>
+<span id="cb272-5"><a href="backdoor.html#cb272-5" aria-hidden="true" tabindex="-1"></a><span class="st">            and the Exposure Model of Table 6.9&quot;</span>)</span></code></pre></div>
 <div id="eyyfacidac" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -5728,126 +5736,8 @@ as follows</p>
 <p>The simulation of doubly robust standardization discussed at the end of
 section 6.3 in p. 126 to 130 is analyzed in an appendix at
 <a href="mc_standdr.html#mc_standdr">Doubly Robust Simulation</a>.</p>
-<p>We use a sample size of only 500 vs the book’s 1000. We obtain the same
-estimates with, actually, a lesser sd. See somments below.</p>
-<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="backdoor.html#cb271-1" aria-hidden="true" tabindex="-1"></a>nrep <span class="ot">&lt;-</span> <span class="dv">500</span></span></code></pre></div>
-<p>The simulation with 40 covariates</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="backdoor.html#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 1 min. Load from file.&quot;</span>)</span></code></pre></div>
-<pre><code>## This takes about 1 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb274-2"><a href="backdoor.html#cb274-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
-<span id="cb274-3"><a href="backdoor.html#cb274-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: Will be used again whaen calculating p-value</span></span>
-<span id="cb274-4"><a href="backdoor.html#cb274-4" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr (!)</span></span>
-<span id="cb274-5"><a href="backdoor.html#cb274-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out40 &lt;- mc_standdr(ss = c(40), nrep = nrep)</span></span>
-<span id="cb274-6"><a href="backdoor.html#cb274-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out40.rds&quot;</span>)</span>
-<span id="cb274-7"><a href="backdoor.html#cb274-7" aria-hidden="true" tabindex="-1"></a>mc.out40 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb274-8"><a href="backdoor.html#cb274-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out40, file = a_file)</span></span>
-<span id="cb274-9"><a href="backdoor.html#cb274-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb274-10"><a href="backdoor.html#cb274-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="backdoor.html#cb275-1" aria-hidden="true" tabindex="-1"></a>mc.stats40 <span class="ot">&lt;-</span> mc.out40 <span class="sc">%&gt;%</span></span>
-<span id="cb275-2"><a href="backdoor.html#cb275-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
-<span id="cb275-3"><a href="backdoor.html#cb275-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb275-4"><a href="backdoor.html#cb275-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb275-5"><a href="backdoor.html#cb275-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb275-6"><a href="backdoor.html#cb275-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep,  <span class="co"># sample size not the same as the book&#39;s</span></span>
-<span id="cb275-7"><a href="backdoor.html#cb275-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb275-8"><a href="backdoor.html#cb275-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
-<span id="cb275-9"><a href="backdoor.html#cb275-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
-<span id="cb275-10"><a href="backdoor.html#cb275-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb275-11"><a href="backdoor.html#cb275-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb275-12"><a href="backdoor.html#cb275-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb275-13"><a href="backdoor.html#cb275-13" aria-hidden="true" tabindex="-1"></a>mc.stats40</span></code></pre></div>
-<pre><code>##         estimator T   mean     sd  lower  upper   h0   n  pval
-## EYT0         EYT0 0 0.0076 0.0017 0.0050 0.0103 0.01 500 0.000
-## EYT1         EYT1 1 0.0042 0.0012 0.0023 0.0063 0.02 500 0.000
-## EY0exp     EY0exp 0 0.0101 0.0022 0.0067 0.0139 0.01 500 0.309
-## EY1exp     EY1exp 1 0.0199 0.0065 0.0100 0.0306 0.02 500 0.731
-## EY0exp2   EY0exp2 0 0.0101 0.0023 0.0066 0.0140 0.01 500 0.331
-## EY1exp2   EY1exp2 1 0.0203 0.0063 0.0107 0.0307 0.02 500 0.287
-## EY0out     EY0out 0 0.0101 0.0022 0.0067 0.0139 0.01 500 0.309
-## EY1out     EY1out 1 0.0200 0.0065 0.0101 0.0314 0.02 500 1.000
-## EY0dr       EY0dr 0 0.0101 0.0022 0.0067 0.0140 0.01 500 0.309
-## EY1dr       EY1dr 1 0.0200 0.0065 0.0104 0.0315 0.02 500 1.000</code></pre>
-<p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="backdoor.html#cb277-1" aria-hidden="true" tabindex="-1"></a>bb40 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb277-2"><a href="backdoor.html#cb277-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
-<span id="cb277-3"><a href="backdoor.html#cb277-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
-<span id="cb277-4"><a href="backdoor.html#cb277-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0076</span>, <span class="fl">0.0042</span>, <span class="fl">0.01</span>, <span class="fl">0.0195</span>, <span class="fl">0.0101</span>, <span class="fl">0.0204</span>, </span>
-<span id="cb277-5"><a href="backdoor.html#cb277-5" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.0197</span>),</span>
-<span id="cb277-6"><a href="backdoor.html#cb277-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0015</span>, <span class="fl">0.0012</span>, <span class="fl">0.0021</span>, <span class="fl">0.0127</span>, <span class="fl">0.0021</span>, <span class="fl">0.0064</span>,</span>
-<span id="cb277-7"><a href="backdoor.html#cb277-7" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.0021</span>, <span class="fl">0.0066</span>, <span class="fl">0.0021</span>, <span class="fl">0.0106</span>),</span>
-<span id="cb277-8"><a href="backdoor.html#cb277-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.92</span>, <span class="fl">0.19</span>, <span class="fl">0.42</span>, <span class="fl">0.07</span>, <span class="fl">0.79</span>, <span class="fl">0.84</span>, <span class="fl">0.82</span>, <span class="fl">0.37</span>)</span>
-<span id="cb277-9"><a href="backdoor.html#cb277-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb277-10"><a href="backdoor.html#cb277-10" aria-hidden="true" tabindex="-1"></a>bb40</span></code></pre></div>
-<pre><code>##    estimator   mean     sd Pval
-## 1       EYT0 0.0076 0.0015 0.00
-## 2       EYT1 0.0042 0.0012 0.00
-## 3     EY0exp 0.0100 0.0021 0.92
-## 4     EY1exp 0.0195 0.0127 0.19
-## 5    EY0exp2 0.0101 0.0021 0.42
-## 6    EY1exp2 0.0204 0.0064 0.07
-## 7     EY0out 0.0100 0.0021 0.79
-## 8     EY1out 0.0200 0.0066 0.84
-## 9      EY0dr 0.0100 0.0021 0.82
-## 10     EY1dr 0.0197 0.0106 0.37</code></pre>
-<p>and the simulation with 100 covariates</p>
-<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="backdoor.html#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
-<pre><code>## This takes about 3 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="backdoor.html#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb281-2"><a href="backdoor.html#cb281-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We only use 500 rather than the 1000 suggested in the book</span></span>
-<span id="cb281-3"><a href="backdoor.html#cb281-3" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: Will be used again whaen calculating p-value</span></span>
-<span id="cb281-4"><a href="backdoor.html#cb281-4" aria-hidden="true" tabindex="-1"></a><span class="co"># It gives the same results with actually less sd for EY1exp and EY1dr</span></span>
-<span id="cb281-5"><a href="backdoor.html#cb281-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out100 &lt;- mc_standdr(ss = c(100), nrep = 500)</span></span>
-<span id="cb281-6"><a href="backdoor.html#cb281-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out100.rds&quot;</span>)</span>
-<span id="cb281-7"><a href="backdoor.html#cb281-7" aria-hidden="true" tabindex="-1"></a>mc.out100 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb281-8"><a href="backdoor.html#cb281-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out100, file = a_file)</span></span>
-<span id="cb281-9"><a href="backdoor.html#cb281-9" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb281-10"><a href="backdoor.html#cb281-10" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span></code></pre></div>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="backdoor.html#cb282-1" aria-hidden="true" tabindex="-1"></a>mc.stats100 <span class="ot">&lt;-</span> mc.out100 <span class="sc">%&gt;%</span></span>
-<span id="cb282-2"><a href="backdoor.html#cb282-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>),</span>
-<span id="cb282-3"><a href="backdoor.html#cb282-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">estimator =</span> <span class="fu">row.names</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb282-4"><a href="backdoor.html#cb282-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb282-5"><a href="backdoor.html#cb282-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb282-6"><a href="backdoor.html#cb282-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> nrep,</span>
-<span id="cb282-7"><a href="backdoor.html#cb282-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb282-8"><a href="backdoor.html#cb282-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
-<span id="cb282-9"><a href="backdoor.html#cb282-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z)),</span>
-<span id="cb282-10"><a href="backdoor.html#cb282-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="fu">round</span>(pval, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb282-11"><a href="backdoor.html#cb282-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z) <span class="sc">%&gt;%</span></span>
-<span id="cb282-12"><a href="backdoor.html#cb282-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(estimator, <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb282-13"><a href="backdoor.html#cb282-13" aria-hidden="true" tabindex="-1"></a>mc.stats100</span></code></pre></div>
-<pre><code>##         estimator T   mean     sd  lower  upper   h0   n  pval
-## EYT0         EYT0 0 0.0080 0.0016 0.0057 0.0107 0.01 500 0.000
-## EYT1         EYT1 1 0.0039 0.0011 0.0023 0.0060 0.02 500 0.000
-## EY0exp     EY0exp 0 0.0101 0.0020 0.0071 0.0136 0.01 500 0.264
-## EY1exp     EY1exp 1 0.0193 0.0289 0.0081 0.0372 0.02 500 0.588
-## EY0exp2   EY0exp2 0 0.0101 0.0020 0.0071 0.0136 0.01 500 0.264
-## EY1exp2   EY1exp2 1 0.0203 0.0066 0.0103 0.0317 0.02 500 0.309
-## EY0out     EY0out 0 0.0101 0.0020 0.0072 0.0136 0.01 500 0.264
-## EY1out     EY1out 1 0.0202 0.0066 0.0100 0.0309 0.02 500 0.498
-## EY0dr       EY0dr 0 0.0101 0.0020 0.0071 0.0136 0.01 500 0.264
-## EY1dr       EY1dr 1 0.0200 0.0352 0.0019 0.0400 0.02 500 1.000</code></pre>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="backdoor.html#cb284-1" aria-hidden="true" tabindex="-1"></a>bb100 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb284-2"><a href="backdoor.html#cb284-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EY0exp&quot;</span>, <span class="st">&quot;EY1exp&quot;</span>, <span class="st">&quot;EY0exp2&quot;</span>, <span class="st">&quot;EY1exp2&quot;</span>,</span>
-<span id="cb284-3"><a href="backdoor.html#cb284-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;EY0out&quot;</span>, <span class="st">&quot;EY1out&quot;</span>, <span class="st">&quot;EY0dr&quot;</span>, <span class="st">&quot;EY1dr&quot;</span>),</span>
-<span id="cb284-4"><a href="backdoor.html#cb284-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.0079</span>, <span class="fl">0.0038</span>, <span class="fl">0.01</span>, <span class="fl">0.0196</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span>, <span class="fl">0.029</span>),</span>
-<span id="cb284-5"><a href="backdoor.html#cb284-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.0016</span>, <span class="fl">0.0012</span>, <span class="fl">0.002</span>, <span class="fl">0.0562</span>, <span class="fl">0.002</span>, <span class="fl">0.0068</span>, </span>
-<span id="cb284-6"><a href="backdoor.html#cb284-6" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.002</span>, <span class="fl">0.0069</span>, <span class="fl">0.002</span>, <span class="fl">0.1891</span>),</span>
-<span id="cb284-7"><a href="backdoor.html#cb284-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pval =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.61</span>, <span class="fl">0.81</span>, <span class="fl">0.73</span>, <span class="fl">0.96</span>, <span class="fl">0.74</span>, <span class="fl">0.74</span>, <span class="fl">0.72</span>, <span class="fl">0.14</span>)</span>
-<span id="cb284-8"><a href="backdoor.html#cb284-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb284-9"><a href="backdoor.html#cb284-9" aria-hidden="true" tabindex="-1"></a>bb100</span></code></pre></div>
-<pre><code>##    estimator   mean     sd Pval
-## 1       EYT0 0.0079 0.0016 0.00
-## 2       EYT1 0.0038 0.0012 0.00
-## 3     EY0exp 0.0100 0.0020 0.61
-## 4     EY1exp 0.0196 0.0562 0.81
-## 5    EY0exp2 0.0100 0.0020 0.73
-## 6    EY1exp2 0.0200 0.0068 0.96
-## 7     EY0out 0.0100 0.0020 0.74
-## 8     EY1out 0.0200 0.0069 0.74
-## 9      EY0dr 0.0100 0.0020 0.72
-## 10     EY1dr 0.0290 0.1891 0.14</code></pre>
-<p>and we make a general tableau with the results from both simulations</p>
+<p>The results obtained by Brumback are close enough to what we have. Here is a
+tableau of her results</p>
 <div id="mfdgghdcqi" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -6198,7 +6088,7 @@ estimates with, actually, a lesser sd. See somments below.</p>
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">estimator</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">model description</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">description</th>
       <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
         <span class="gt_column_spanner">ss=40</span>
       </th>
@@ -6219,10 +6109,489 @@ estimates with, actually, a lesser sd. See somments below.</p>
     <tr><td class="gt_row gt_left">EYT0</td>
 <td class="gt_row gt_left">Unadjusted</td>
 <td class="gt_row gt_center">0.0076</td>
-<td class="gt_row gt_center">0.0017</td>
+<td class="gt_row gt_center">0.0015</td>
 <td class="gt_row gt_center">0.00</td>
-<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0080</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0079</td>
 <td class="gt_row gt_center">0.0016</td>
+<td class="gt_row gt_center">0.00</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EYT1</td>
+<td class="gt_row gt_left gt_striped">Unadjusted</td>
+<td class="gt_row gt_center gt_striped">0.0042</td>
+<td class="gt_row gt_center gt_striped">0.0012</td>
+<td class="gt_row gt_center gt_striped">0.00</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0038</td>
+<td class="gt_row gt_center gt_striped">0.0012</td>
+<td class="gt_row gt_center gt_striped">0.00</td></tr>
+    <tr><td class="gt_row gt_left">EY0exp</td>
+<td class="gt_row gt_left">Linear Exposure</td>
+<td class="gt_row gt_center">0.0100</td>
+<td class="gt_row gt_center">0.0021</td>
+<td class="gt_row gt_center">0.92</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0100</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.61</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1exp</td>
+<td class="gt_row gt_left gt_striped">Linear Exposure</td>
+<td class="gt_row gt_center gt_striped">0.0195</td>
+<td class="gt_row gt_center gt_striped">0.0127</td>
+<td class="gt_row gt_center gt_striped">0.19</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0196</td>
+<td class="gt_row gt_center gt_striped">0.0562</td>
+<td class="gt_row gt_center gt_striped">0.81</td></tr>
+    <tr><td class="gt_row gt_left">EY0exp2</td>
+<td class="gt_row gt_left">Logistic Exposure</td>
+<td class="gt_row gt_center">0.0101</td>
+<td class="gt_row gt_center">0.0021</td>
+<td class="gt_row gt_center">0.42</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0100</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.73</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1exp2</td>
+<td class="gt_row gt_left gt_striped">Logistic Exposure</td>
+<td class="gt_row gt_center gt_striped">0.0204</td>
+<td class="gt_row gt_center gt_striped">0.0064</td>
+<td class="gt_row gt_center gt_striped">0.07</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0068</td>
+<td class="gt_row gt_center gt_striped">0.96</td></tr>
+    <tr><td class="gt_row gt_left">EY0out</td>
+<td class="gt_row gt_left">Overspecified Outcome</td>
+<td class="gt_row gt_center">0.0100</td>
+<td class="gt_row gt_center">0.0021</td>
+<td class="gt_row gt_center">0.79</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0100</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.74</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1out</td>
+<td class="gt_row gt_left gt_striped">Overspecified Outcome</td>
+<td class="gt_row gt_center gt_striped">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0066</td>
+<td class="gt_row gt_center gt_striped">0.84</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0200</td>
+<td class="gt_row gt_center gt_striped">0.0069</td>
+<td class="gt_row gt_center gt_striped">0.74</td></tr>
+    <tr><td class="gt_row gt_left">EY0dr</td>
+<td class="gt_row gt_left">Doubly Robust</td>
+<td class="gt_row gt_center">0.0100</td>
+<td class="gt_row gt_center">0.0021</td>
+<td class="gt_row gt_center">0.82</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0100</td>
+<td class="gt_row gt_center">0.0020</td>
+<td class="gt_row gt_center">0.72</td></tr>
+    <tr><td class="gt_row gt_left gt_striped">EY1dr</td>
+<td class="gt_row gt_left gt_striped">Doubly Robust</td>
+<td class="gt_row gt_center gt_striped">0.0197</td>
+<td class="gt_row gt_center gt_striped">0.0106</td>
+<td class="gt_row gt_center gt_striped">0.37</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0290</td>
+<td class="gt_row gt_center gt_striped">0.1891</td>
+<td class="gt_row gt_center gt_striped">0.14</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="8">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+<p>We use a sample size of only 1000 as in the book.</p>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="backdoor.html#cb273-1" aria-hidden="true" tabindex="-1"></a>nrep <span class="ot">&lt;-</span> <span class="dv">1000</span></span></code></pre></div>
+<p>So here the simulation with <span class="math inline">\(ss \in \{40, 100\}\)</span></p>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="backdoor.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 min. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 8 min. Load from file.</code></pre>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="backdoor.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb276-2"><a href="backdoor.html#cb276-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out &lt;- mc_standdr(ss = c(40, 100), nrep = nrep)</span></span>
+<span id="cb276-3"><a href="backdoor.html#cb276-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb276-4"><a href="backdoor.html#cb276-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb276-5"><a href="backdoor.html#cb276-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out.rds&quot;</span>)</span>
+<span id="cb276-6"><a href="backdoor.html#cb276-6" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb276-7"><a href="backdoor.html#cb276-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out, file = a_file)</span></span></code></pre></div>
+<p>and we compute the p-values</p>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="backdoor.html#cb277-1" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> mc.out <span class="sc">%&gt;%</span></span>
+<span id="cb277-2"><a href="backdoor.html#cb277-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb277-3"><a href="backdoor.html#cb277-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
+<span id="cb277-4"><a href="backdoor.html#cb277-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
+<span id="cb277-5"><a href="backdoor.html#cb277-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
+<span id="cb277-6"><a href="backdoor.html#cb277-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))) <span class="sc">%&gt;%</span></span>
+<span id="cb277-7"><a href="backdoor.html#cb277-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z)</span>
+<span id="cb277-8"><a href="backdoor.html#cb277-8" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out</span></span></code></pre></div>
+<p>and show the results in a table</p>
+<div id="lvsqbsukas" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#lvsqbsukas .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lvsqbsukas .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lvsqbsukas .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lvsqbsukas .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lvsqbsukas .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lvsqbsukas .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lvsqbsukas .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lvsqbsukas .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lvsqbsukas .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lvsqbsukas .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#lvsqbsukas .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#lvsqbsukas .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lvsqbsukas .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#lvsqbsukas .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lvsqbsukas .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lvsqbsukas .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#lvsqbsukas .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#lvsqbsukas .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lvsqbsukas .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#lvsqbsukas .gt_left {
+  text-align: left;
+}
+
+#lvsqbsukas .gt_center {
+  text-align: center;
+}
+
+#lvsqbsukas .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lvsqbsukas .gt_font_normal {
+  font-weight: normal;
+}
+
+#lvsqbsukas .gt_font_bold {
+  font-weight: bold;
+}
+
+#lvsqbsukas .gt_font_italic {
+  font-style: italic;
+}
+
+#lvsqbsukas .gt_super {
+  font-size: 65%;
+}
+
+#lvsqbsukas .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="8" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 6.13 and 6.14 <em>(by FL)</em></strong></th>
+    </tr>
+    <tr>
+      <th colspan="8" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Sampling Distribution from Simulation<br>Investigating Small-Sample Robustness<br>True E(Y(0))=0.01, True E(Y(1))=0.02</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">estimator</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">description</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner">ss=40</span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+        <span class="gt_column_spanner">ss=100</span>
+      </th>
+    </tr>
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">pval</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sd</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">pval</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">EYT0</td>
+<td class="gt_row gt_left">Unadjusted</td>
+<td class="gt_row gt_center">0.0077</td>
+<td class="gt_row gt_center">0.0016</td>
+<td class="gt_row gt_center">0.00</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0078</td>
+<td class="gt_row gt_center">0.0017</td>
 <td class="gt_row gt_center">0.00</td></tr>
     <tr><td class="gt_row gt_left gt_striped">EYT1</td>
 <td class="gt_row gt_left gt_striped">Unadjusted</td>
@@ -6236,66 +6605,66 @@ estimates with, actually, a lesser sd. See somments below.</p>
 <td class="gt_row gt_left">Linear Exposure</td>
 <td class="gt_row gt_center">0.0101</td>
 <td class="gt_row gt_center">0.0022</td>
-<td class="gt_row gt_center">0.31</td>
-<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
-<td class="gt_row gt_center">0.0020</td>
-<td class="gt_row gt_center">0.26</td></tr>
+<td class="gt_row gt_center">0.25</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0098</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.02</td></tr>
     <tr><td class="gt_row gt_left gt_striped">EY1exp</td>
 <td class="gt_row gt_left gt_striped">Linear Exposure</td>
 <td class="gt_row gt_center gt_striped">0.0199</td>
-<td class="gt_row gt_center gt_striped">0.0065</td>
-<td class="gt_row gt_center gt_striped">0.73</td>
-<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0193</td>
-<td class="gt_row gt_center gt_striped">0.0289</td>
-<td class="gt_row gt_center gt_striped">0.59</td></tr>
+<td class="gt_row gt_center gt_striped">0.0071</td>
+<td class="gt_row gt_center gt_striped">0.56</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0201</td>
+<td class="gt_row gt_center gt_striped">0.0803</td>
+<td class="gt_row gt_center gt_striped">0.96</td></tr>
     <tr><td class="gt_row gt_left">EY0exp2</td>
 <td class="gt_row gt_left">Logistic Exposure</td>
 <td class="gt_row gt_center">0.0101</td>
-<td class="gt_row gt_center">0.0023</td>
-<td class="gt_row gt_center">0.33</td>
-<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
-<td class="gt_row gt_center">0.0020</td>
-<td class="gt_row gt_center">0.26</td></tr>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.08</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0098</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.03</td></tr>
     <tr><td class="gt_row gt_left gt_striped">EY1exp2</td>
 <td class="gt_row gt_left gt_striped">Logistic Exposure</td>
-<td class="gt_row gt_center gt_striped">0.0203</td>
+<td class="gt_row gt_center gt_striped">0.0202</td>
 <td class="gt_row gt_center gt_striped">0.0063</td>
-<td class="gt_row gt_center gt_striped">0.29</td>
+<td class="gt_row gt_center gt_striped">0.27</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0203</td>
-<td class="gt_row gt_center gt_striped">0.0066</td>
-<td class="gt_row gt_center gt_striped">0.31</td></tr>
+<td class="gt_row gt_center gt_striped">0.0065</td>
+<td class="gt_row gt_center gt_striped">0.11</td></tr>
     <tr><td class="gt_row gt_left">EY0out</td>
 <td class="gt_row gt_left">Overspecified Outcome</td>
 <td class="gt_row gt_center">0.0101</td>
 <td class="gt_row gt_center">0.0022</td>
-<td class="gt_row gt_center">0.31</td>
-<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
-<td class="gt_row gt_center">0.0020</td>
-<td class="gt_row gt_center">0.26</td></tr>
+<td class="gt_row gt_center">0.19</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0099</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.03</td></tr>
     <tr><td class="gt_row gt_left gt_striped">EY1out</td>
 <td class="gt_row gt_left gt_striped">Overspecified Outcome</td>
-<td class="gt_row gt_center gt_striped">0.0200</td>
-<td class="gt_row gt_center gt_striped">0.0065</td>
-<td class="gt_row gt_center gt_striped">1.00</td>
-<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0202</td>
+<td class="gt_row gt_center gt_striped">0.0198</td>
 <td class="gt_row gt_center gt_striped">0.0066</td>
-<td class="gt_row gt_center gt_striped">0.50</td></tr>
+<td class="gt_row gt_center gt_striped">0.27</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0202</td>
+<td class="gt_row gt_center gt_striped">0.0065</td>
+<td class="gt_row gt_center gt_striped">0.32</td></tr>
     <tr><td class="gt_row gt_left">EY0dr</td>
 <td class="gt_row gt_left">Doubly Robust</td>
 <td class="gt_row gt_center">0.0101</td>
 <td class="gt_row gt_center">0.0022</td>
-<td class="gt_row gt_center">0.31</td>
-<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0101</td>
-<td class="gt_row gt_center">0.0020</td>
-<td class="gt_row gt_center">0.26</td></tr>
+<td class="gt_row gt_center">0.20</td>
+<td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0099</td>
+<td class="gt_row gt_center">0.0022</td>
+<td class="gt_row gt_center">0.03</td></tr>
     <tr><td class="gt_row gt_left gt_striped">EY1dr</td>
 <td class="gt_row gt_left gt_striped">Doubly Robust</td>
 <td class="gt_row gt_center gt_striped">0.0200</td>
-<td class="gt_row gt_center gt_striped">0.0065</td>
-<td class="gt_row gt_center gt_striped">1.00</td>
-<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0200</td>
-<td class="gt_row gt_center gt_striped">0.0352</td>
-<td class="gt_row gt_center gt_striped">1.00</td></tr>
+<td class="gt_row gt_center gt_striped">0.0076</td>
+<td class="gt_row gt_center gt_striped">0.87</td>
+<td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.0206</td>
+<td class="gt_row gt_center gt_striped">0.0555</td>
+<td class="gt_row gt_center gt_striped">0.74</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -6307,46 +6676,27 @@ estimates with, actually, a lesser sd. See somments below.</p>
 </div>
 <p>We will not reiterate the comments from Brumback as the results in the tableau
 just above confirms them.</p>
-<p>A plot can however illustrate well Brumback’s main points. This ones shows the
-estimates’ mean with their 5% and 95% quantiles from the simulaiton.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-216-1.png" width="672" /></p>
+<p>A plot can however illustrate Brumback’s main points. This ones shows the
+estimates’ mean with their 5% and 95% quantiles from the simulation.</p>
+<p><img src="_main_files/figure-html/unnamed-chunk-211-1.png" width="672" /></p>
 </div>
 </div>
 <div id="exercises-5" class="section level2" number="6.4">
 <h2><span class="header-section-number">6.4</span> Exercises</h2>
 <div id="exercise-1-5" class="section level3" number="6.4.1">
 <h3><span class="header-section-number">6.4.1</span> Exercise 1</h3>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="backdoor.html#cb286-1" aria-hidden="true" tabindex="-1"></a>dataBRFSS <span class="ot">&lt;-</span> brfss <span class="sc">%&gt;%</span></span>
-<span id="cb286-2"><a href="backdoor.html#cb286-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gt65 <span class="sc">==</span> <span class="dv">0</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="backdoor.html#cb287-1" aria-hidden="true" tabindex="-1"></a><span class="co"># message(&quot;This took ? min, so we load a saved file.&quot;)</span></span>
-<span id="cb287-2"><a href="backdoor.html#cb287-2" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb287-3"><a href="backdoor.html#cb287-3" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out &lt;- stand(dataBRFSS, formula = flushot ~ insured + female + whitenh + blacknh +</span></span>
-<span id="cb287-4"><a href="backdoor.html#cb287-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gthsedu + rural, R = 500)</span></span>
-<span id="cb287-5"><a href="backdoor.html#cb287-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb287-6"><a href="backdoor.html#cb287-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb287-7"><a href="backdoor.html#cb287-7" aria-hidden="true" tabindex="-1"></a><span class="co"># a_file &lt;- file.path(dir_data, &quot;chap06_Ex1.rds&quot;)</span></span>
-<span id="cb287-8"><a href="backdoor.html#cb287-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(brfss.out, file = a_file)</span></span>
-<span id="cb287-9"><a href="backdoor.html#cb287-9" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out &lt;- readRDS(a_file)</span></span></code></pre></div>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="backdoor.html#cb288-1" aria-hidden="true" tabindex="-1"></a>brfss.out</span></code></pre></div>
-<pre><code>##         name         est conf         lci         uci
-## 1    EYT0.M0  0.69697225 0.95  0.69088154  0.70285646
-## 2    EYT0.M1  0.84473585 0.95  0.84141010  0.84810385
-## 3    EYT1.M0  0.88125173 0.95  0.87784811  0.88486847
-## 4    EYT1.M1  0.93311780 0.95  0.93164587  0.93450471
-## 5      RD.M0  0.18427948 0.95  0.17772300  0.19125558
-## 6      RD.M1  0.08838195 0.95  0.08461943  0.09201720
-## 7      RR.M0  1.26440003 0.95  1.25307561  1.27649430
-## 8      RR.M1  1.10462673 0.95  1.09979324  1.10932105
-## 9     RR*.M0  2.55184983 0.95  2.46794099  2.64482021
-## 10    RR*.M1  2.32145697 0.95  2.24877257  2.39279844
-## 11     OR.M0  3.22655900 0.95  3.09622438  3.37205504
-## 12     OR.M1  2.56434341 0.95  2.47391310  2.65360031
-## 13 EYT0.diff  0.14776361 0.95  0.14119775  0.15457820
-## 14 EYT1.diff  0.05186607 0.95  0.04791356  0.05552045
-## 15   RD.diff -0.09589754 0.95 -0.10381743 -0.08852451
-## 16   RR.diff  0.87363706 0.95  0.86455441  0.88222591
-## 17  RR*.diff  0.90971535 0.95  0.86646731  0.95141183
-## 18   OR.diff  0.79476105 0.95  0.75018326  0.83815724</code></pre>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="backdoor.html#cb278-1" aria-hidden="true" tabindex="-1"></a>dataBRFSS <span class="ot">&lt;-</span> brfss <span class="sc">%&gt;%</span></span>
+<span id="cb278-2"><a href="backdoor.html#cb278-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gt65 <span class="sc">==</span> <span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="backdoor.html#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="co"># message(&quot;This took ? min, so we load a saved file.&quot;)</span></span>
+<span id="cb279-2"><a href="backdoor.html#cb279-2" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb279-3"><a href="backdoor.html#cb279-3" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out &lt;- stand(dataBRFSS, formula = flushot ~ insured + female + whitenh + blacknh +</span></span>
+<span id="cb279-4"><a href="backdoor.html#cb279-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                hisp + multinh + gthsedu + rural, R = 500)</span></span>
+<span id="cb279-5"><a href="backdoor.html#cb279-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb279-6"><a href="backdoor.html#cb279-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb279-7"><a href="backdoor.html#cb279-7" aria-hidden="true" tabindex="-1"></a><span class="co"># a_file &lt;- file.path(dir_data, &quot;chap06_Ex1.rds&quot;)</span></span>
+<span id="cb279-8"><a href="backdoor.html#cb279-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(brfss.out, file = a_file)</span></span>
+<span id="cb279-9"><a href="backdoor.html#cb279-9" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out &lt;- readRDS(a_file)</span></span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="backdoor.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="co"># brfss.out</span></span></code></pre></div>
 
 </div>
 </div>

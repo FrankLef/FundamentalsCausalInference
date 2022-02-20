@@ -1,14 +1,16 @@
 #' Monte Carlo Simulation of Doubly Robust Standardization
 #'
-#' @param ss Number of covariates.
+#' @param ss Integer(). Number of covariates.
 #' @param nrep Number of Monte Carlo repetitions.
-#' @param conf Confidence interval. Default is 90%.
+#' @param width Width of interval. e.g. 0.95 will give interval c(0.025, 0.975).
+#' Default is 0.95.
 #' 
 #' @seealso standdr_sim standdr_est
 #'
 #' @return Dataframe of results.
 #' @export
-mc_standdr <- function(ss = c(100), nrep = 1000, conf = 0.90) {
+mc_standdr <- function(ss = c(40, 100), nrep = 1000, width = 0.95) {
+  stopifnot(all(ss >= 1), nrep >= 1, width > 0, width < 1)
   
   # We use alpha = 0.15 to match results with the books
   ms_standdr_func <- function(n = 3000, ss = 100, alpha = 0.13, beta = 20, 
@@ -27,14 +29,15 @@ mc_standdr <- function(ss = c(100), nrep = 1000, conf = 0.90) {
   
   # output results in a dataframe
   out <- suppressWarnings(MonteCarlo::MakeFrame(mc.out))
-  out <- lapply(out[, names(out) != "ss"], FUN =  function(x) {
-    mean = mean(x)
-    sd = sd(x)
-    lower = unname(quantile(x, probs = (1 - conf) / 2))
-    upper = unname(quantile(x, probs = 1 - (1 - conf) / 2))
-    c("mean" = mean, "sd" = sd, "lower" = lower, "upper" = upper)
-  })
-  as.data.frame(do.call(rbind, out))
+  out %>%
+    pivot_longer(cols = -ss, names_to = "estimator", values_to = "value") %>%
+    group_by(ss, estimator) %>%
+    summarize(n = n(), 
+              mean = mean(value),
+              sd = sd(value),
+              lower = quantile(value, probs = (1 - width) / 2),
+              upper = quantile(value, probs = 1 - (1 - width) / 2)) %>%
+    ungroup()
 }
 
 #' Data Simulation for Doubly Robust Standardization

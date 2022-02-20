@@ -277,9 +277,18 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 
 
 
+
+
 ```{r}
+message("This takes about 15 sec.. Load from file.")
+# startTime <- Sys.time()
 gssrcc.out <- standout(gssrcc, 
                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_gssrcc_out.rds")
+# saveRDS(gssrcc.out, file = a_file)
+gssrcc.out <- readRDS(file = a_file)
 # gssrcc.out
 ```
 
@@ -510,191 +519,146 @@ The simulation of doubly robust standardization discussed at the end of
 section 6.3 in p. 126 to 130 is analyzed in an appendix at 
 [Doubly Robust Simulation](#mc_standdr).
 
-We use a sample size of only 500 vs the book's 1000.  We obtain the same 
-estimates with,  actually, a lesser sd. See somments below.
-
-```{r}
-nrep <- 500
-```
-
-
-The simulation with 40 covariates
-
-
-```{r}
-message("This takes about 1 min. Load from file.")
-# startTime <- Sys.time()
-# We only use 500 rather than the 1000 suggested in the book
-# IMPORTANT: Will be used again whaen calculating p-value
-# It gives the same results with actually less sd for EY1exp and EY1dr (!)
-# mc.out40 <- mc_standdr(ss = c(40), nrep = nrep)
-a_file <- file.path(dir_data, "chap06_mc_out40.rds")
-mc.out40 <- readRDS(file = a_file)
-# saveRDS(mc.out40, file = a_file)
-# endTime <- Sys.time()
-# print(endTime - startTime)
-```
+The results obtained by Brumback are close enough to what we have.  Here is a 
+tableau of her results
 
 
 
-```{r}
-mc.stats40 <- mc.out40 %>%
-  mutate(across(.cols = where(is.numeric), .fns = round, digits = 4),
-         estimator = row.names(.)) %>%
-  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
-         h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = nrep,  # sample size not the same as the book's
-         sdp = sd / sqrt(n),
-         z = abs((mean - h0) / sdp),
-         pval = 2 * (1 - pnorm(z)),
-         pval = round(pval, 3)) %>%
-  select(-sdp, -z) %>%
-  relocate(estimator, `T`)
-mc.stats40
-```
-and we compare with the author's
-
-```{r}
+```{r echo=FALSE}
+the_estimators <- c("EYT0" = "Unadjusted", "EYT1" = "Unadjusted",
+                    "EY0exp" = "Linear Exposure", "EY1exp" = "Linear Exposure",
+                    "EY0exp2" = "Logistic Exposure", "EY1exp2" = "Logistic Exposure",
+                    "EY0out" = "Overspecified Outcome", "EY1out" = "Overspecified Outcome",
+                    "EY0dr" = "Doubly Robust", "EY1dr" = "Doubly Robust")
 bb40 <- data.frame(
-  estimator = c("EYT0", "EYT1", "EY0exp", "EY1exp", "EY0exp2", "EY1exp2",
-                "EY0out", "EY1out", "EY0dr", "EY1dr"),
+  ss = 40,
+  estimator = names(the_estimators),
+  description = the_estimators,
   mean = c(0.0076, 0.0042, 0.01, 0.0195, 0.0101, 0.0204, 
            0.01, 0.02, 0.01, 0.0197),
   sd = c(0.0015, 0.0012, 0.0021, 0.0127, 0.0021, 0.0064,
          0.0021, 0.0066, 0.0021, 0.0106),
-  Pval = c(0, 0, 0.92, 0.19, 0.42, 0.07, 0.79, 0.84, 0.82, 0.37)
+  pval = c(0, 0, 0.92, 0.19, 0.42, 0.07, 0.79, 0.84, 0.82, 0.37)
 )
-bb40
-```
 
-
-
-```{r include=FALSE}
-# verify the p values
-bb40 %>%
-  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
-         h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = 1000,
-         sdp = sd / sqrt(n),
-         z = abs(mean - h0) / sdp,  # how many sd from the mean
-         Pvalcheck = 2 * (1 - pnorm(q = z)),
-         Pvalcheck = round(Pvalcheck, 3)) %>%
-  select(-sdp, -z) %>%
-  relocate(estimator, `T`, h0)
-```
-
-
-and the simulation with 100 covariates
-
-
-```{r}
-message("This takes about 3 min. Load from file.")
-# startTime <- Sys.time()
-# We only use 500 rather than the 1000 suggested in the book
-# IMPORTANT: Will be used again whaen calculating p-value
-# It gives the same results with actually less sd for EY1exp and EY1dr
-# mc.out100 <- mc_standdr(ss = c(100), nrep = 500)
-a_file <- file.path(dir_data, "chap06_mc_out100.rds")
-mc.out100 <- readRDS(file = a_file)
-# saveRDS(mc.out100, file = a_file)
-# endTime <- Sys.time()
-# print(endTime - startTime)
-```
-
-
-
-```{r}
-mc.stats100 <- mc.out100 %>%
-  mutate(across(.cols = where(is.numeric), .fns = round, digits = 4),
-         estimator = row.names(.)) %>%
-  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
-         h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = nrep,
-         sdp = sd / sqrt(n),
-         z = abs((mean - h0) / sdp),
-         pval = 2 * (1 - pnorm(z)),
-         pval = round(pval, 3)) %>%
-  select(-sdp, -z) %>%
-  relocate(estimator, `T`)
-mc.stats100
-```
-```{r}
 bb100 <- data.frame(
-  estimator = c("EYT0", "EYT1", "EY0exp", "EY1exp", "EY0exp2", "EY1exp2",
-                "EY0out", "EY1out", "EY0dr", "EY1dr"),
+  ss = 100,
+  estimator = names(the_estimators),
+  description = the_estimators,
   mean = c(0.0079, 0.0038, 0.01, 0.0196, 0.01, 0.02, 0.01, 0.02, 0.01, 0.029),
   sd = c(0.0016, 0.0012, 0.002, 0.0562, 0.002, 0.0068, 
          0.002, 0.0069, 0.002, 0.1891),
-  Pval = c(0, 0, 0.61, 0.81, 0.73, 0.96, 0.74, 0.74, 0.72, 0.14)
+  pval = c(0, 0, 0.61, 0.81, 0.73, 0.96, 0.74, 0.74, 0.72, 0.14)
 )
-bb100
+
+dft <- rbind(bb40, bb100) %>%
+  select(ss, estimator, description, mean, sd, pval) %>%
+  mutate(ss = paste("ss", ss, sep = "=")) %>%
+  pivot_longer(cols = c("mean", "sd", "pval"), names_to = "stats", 
+               values_to = "value") %>%
+  mutate(value = ifelse(stats == "pval", round(value, 2), round(value, 4))) %>%
+  unite(col = "heading", ss, stats, sep = "_") %>%
+  pivot_wider(id_cols = c("estimator", "description"), names_from = "heading", 
+              values_from = "value")
+
+title <- "Table 6.13 and 6.14"
+subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
+                   "Investigating Small-Sample Robustness", "<br>", 
+                   "True E(Y(0))=0.01, True E(Y(1))=0.02")
+tbl <- gt::gt(dft) %>%
+  gt_basic(title = title, subtitle = subtitle) %>%
+  tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
+  cols_align(
+    align = "left",
+    columns = c("estimator", "description")
+    ) %>%
+  tab_style(
+    style = cell_borders(sides = "left", color = "grey60",
+                           weight = px(1.5), style = "solid"),
+    locations = cells_body(columns = c("ss=100_mean"))
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "left", color = "grey60",
+                           weight = px(1.5), style = "solid"),
+    locations = cells_column_labels(columns = c("ss=100_mean"))
+  )
+tbl
 ```
 
 
-```{r include=FALSE}
-# verify the p values
-bb100 %>%
-  mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
+
+
+We use a sample size of only 1000 as in the book.
+
+```{r}
+nrep <- 1000
+```
+
+So here the simulation with $ss \in \{40, 100\}$
+
+```{r}
+message("This takes about 8 min. Load from file.")
+# startTime <- Sys.time()
+# mc.out <- mc_standdr(ss = c(40, 100), nrep = nrep)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_mc_out.rds")
+mc.out <- readRDS(file = a_file)
+# saveRDS(mc.out, file = a_file)
+```
+
+and we compute the p-values
+
+```{r}
+mc.out <- mc.out %>%
+    mutate(`T` = ifelse(grepl(pattern = "0", estimator), 0, 1),
          h0 = ifelse(`T` == 0, 0.01, 0.02),
-         n = 1000,
          sdp = sd / sqrt(n),
-         z = abs(mean - h0) / sdp,  # how many sd from the mean
-         Pvalcheck = 2 * (1 - pnorm(q = z)),
-         Pvalcheck = round(Pvalcheck, 3)) %>%
-  select(-sdp, -z) %>%
-  relocate(estimator, `T`, h0)
+         z = abs((mean - h0) / sdp),
+         pval = 2 * (1 - pnorm(z))) %>%
+  select(-sdp, -z)
+# mc.out
 ```
 
-and we make a general tableau with the results from both simulations
+and show the results in a table
 
 ```{r echo=FALSE}
-simdr_tbl <- list()
-simdr_tbl <- within(simdr_tbl, {
-  df40 <- mc.stats40 %>%
-    select(estimator, mean, sd, pval) %>%
-    mutate(simulation = "ss=40")
-  df100 <- mc.stats100 %>%
-    select(estimator, mean, sd, pval) %>%
-    mutate(simulation = "ss=100")
-  
-  title <- "Table 6.13 and 6.14"
-  subtitle <- "Sampling Distribution from Simulation"
-  subtitle <- paste0(subtitle, "<br>", "Investigating Small-Sample Robustness")
-  subtitle <- paste0(subtitle, "<br>", "True E(Y(0))=0.01, True E(Y(1))=0.02")
-  df <- rbind(df40, df100) %>%
-    mutate(mean = round(mean, 4),
-           sd = round(sd, 4),
-           pval = round(pval, 2))
-  dft <- df %>%
-    pivot_longer(cols = c("mean", "sd", "pval")) %>%
-    unite(col = "name", simulation, name, sep = "_") %>%
-    pivot_wider(id_cols = "estimator", names_from = "name", values_from = "value") %>%
-    mutate(`model description` = c("Unadjusted", "Unadjusted",
-                           "Linear Exposure", "Linear Exposure",
-                           "Logistic Exposure", "Logistic Exposure",
-                           "Overspecified Outcome", "Overspecified Outcome",
-                           "Doubly Robust", "Doubly Robust")) %>%
-    relocate(`model description`, .after = estimator)
-  tbl <- gt::gt(dft) %>%
-    gt_basic(title = title, subtitle = subtitle) %>%
-    tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
-    cols_align(
-      align = "left",
-      columns = c("estimator", "model description")
+dft <- mc.out %>%
+  select(ss, estimator, mean, sd, pval) %>%
+  mutate(ss = paste("ss", ss, sep = "=")) %>%
+  pivot_longer(cols = c("mean", "sd", "pval"), names_to = "stats", 
+               values_to = "value") %>%
+  mutate(value = ifelse(stats == "pval", round(value, 2), round(value, 4))) %>%
+  unite(col = "heading", ss, stats, sep = "_") %>%
+  pivot_wider(id_cols = "estimator", names_from = "heading", 
+              values_from = "value") %>%
+  mutate(description = the_estimators[match(estimator, names(the_estimators))]) %>%
+  relocate(description, .after = estimator)
+# reorder the rows to match book's
+dft <- dft[match(names(the_estimators), dft$estimator), ]
+
+title <- "Table 6.13 and 6.14 <em>(by FL)</em>"
+subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
+                   "Investigating Small-Sample Robustness", "<br>", 
+                   "True E(Y(0))=0.01, True E(Y(1))=0.02")
+tbl <- gt::gt(dft) %>%
+  gt_basic(title = title, subtitle = subtitle) %>%
+  tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
+  cols_align(
+    align = "left",
+    columns = c("estimator", "description")
     ) %>%
-    tab_style(
-      style = cell_borders(sides = "left", color = "grey60", 
+  tab_style(
+    style = cell_borders(sides = "left", color = "grey60",
                            weight = px(1.5), style = "solid"),
-      locations = cells_body(columns = c("ss=100_mean"))
-    ) %>%
-    tab_style(
-      style = cell_borders(sides = "left", color = "grey60", 
+    locations = cells_body(columns = c("ss=100_mean"))
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "left", color = "grey60",
                            weight = px(1.5), style = "solid"),
-      locations = cells_column_labels(columns = c("ss=100_mean"))
-    )
-})
-# str(simdr_tbl$dft)
-simdr_tbl$tbl
+    locations = cells_column_labels(columns = c("ss=100_mean"))
+  )
+tbl
 ```
 
 We will not reiterate the comments from Brumback as the results in the tableau 
@@ -703,29 +667,28 @@ just above confirms them.
 A plot can however illustrate Brumback's main points. This ones shows the
 estimates' mean with their 5% and 95% quantiles from the simulation.
 
-
 ```{r echo=FALSE}
-rbind(
-  data.frame(simulation = "ss=40", mc.stats40),
-  data.frame(simulation = "ss=100", mc.stats100)) %>%
-  # mutate(lci = mean - 2 * sd,
-  #        uci = mean + 2 * sd) %>%
-  mutate(across(.cols = c("mean", "lower", "upper"), .fns = round, digits = 3)) %>%
-  ggplot(aes(x = mean, xmin = lower, xmax = upper,
-             y = estimator, color = simulation)) +
+mc.out %>%
+  select(ss, estimator, mean, lower, upper) %>%
+  mutate(ss = paste("ss", ss, sep = "=")) %>%
+  ggplot(aes(x = mean, xmin = lower, xmax = upper, y = estimator, color = ss)) +
   geom_pointrange(position = position_dodge(width = 0.5)) +
-  ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = mean), size = 3) +
-  ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = lower), size = 3) +
-  ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = upper), size = 3) +
+  ggrepel::geom_text_repel(aes(x = mean, y = estimator, label = round(mean, 2)), 
+                           size = 3) +
+  ggrepel::geom_text_repel(aes(x = lower, y = estimator, label = round(lower, 2)), 
+                           size = 3) +
+  ggrepel::geom_text_repel(aes(x = upper, y = estimator, label = round(upper, 2)), 
+                           size = 3) +
   theme_minimal() +
   theme(title = element_text(color = "midnightblue"),
         legend.position = "bottom",
         legend.title = element_blank()) +
   labs(title = "Chap 6, section 6.3: Simulation of Standardization Methods",
        subtitle =
-         sprintf("The mean with 5%% and 95%% quantiles. Sample size = %d.", nrep),
+         sprintf("The mean with 2.5%% and 97.5%% quantiles. Sample size = %d.", nrep),
        x = NULL, y = NULL)
 ```
+
 
 ## Exercises
 
@@ -750,7 +713,7 @@ dataBRFSS <- brfss %>%
 
 
 ```{r}
-brfss.out
+# brfss.out
 ```
 
 
