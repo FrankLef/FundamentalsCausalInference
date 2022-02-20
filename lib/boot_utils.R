@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-#' get_vars(Y ~ A + X1*X2)
+#' formula2vars(Y ~ A + X1*X2)
 formula2vars <- function(formula) {
   stopifnot(inherits(formula, "formula"))
   
@@ -19,14 +19,14 @@ formula2vars <- function(formula) {
   t <- vars[2]  # treatment variable
   h <- vars[3:nvars]  # the condition variables
   
-  # the condition variables including interaction
-  # with the treatment variable
-  ht <- attr(terms(formula), which = "term.labels")
-  ht <- ht[seq_along(ht)[-1]]
+  # all independent variables inclding interactions
+  ind <- attr(terms(formula), which = "term.labels")
+  # the condition variables including interaction with the treatment var
+  ht <- ind[seq_along(ind)[-1]]
   
   # return results in a list
   # x0 is the coeficient for intercept used by lm, glm, geeglm, etc.
-  list("y" = y, "t" = t, "h" = h, "ht" = ht, "x0" = "(Intercept)")
+  list("y" = y, "t" = t, "h" = h, "ht" = ht, "ind" = ind, "x0" = "(Intercept)")
 }
 
 

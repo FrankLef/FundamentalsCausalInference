@@ -415,7 +415,7 @@ functions.</p>
 <span id="cb291-6"><a href="functions.html#cb291-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
 <span id="cb291-7"><a href="functions.html#cb291-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
 <span id="cb291-8"><a href="functions.html#cb291-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb291-9"><a href="functions.html#cb291-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; get_vars(Y ~ A + X1*X2)</span></span>
+<span id="cb291-9"><a href="functions.html#cb291-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; formula2vars(Y ~ A + X1*X2)</span></span>
 <span id="cb291-10"><a href="functions.html#cb291-10" aria-hidden="true" tabindex="-1"></a>formula2vars <span class="ot">&lt;-</span> <span class="cf">function</span>(formula) {</span>
 <span id="cb291-11"><a href="functions.html#cb291-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">inherits</span>(formula, <span class="st">&quot;formula&quot;</span>))</span>
 <span id="cb291-12"><a href="functions.html#cb291-12" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -428,14 +428,14 @@ functions.</p>
 <span id="cb291-19"><a href="functions.html#cb291-19" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> vars[<span class="dv">2</span>]  <span class="co"># treatment variable</span></span>
 <span id="cb291-20"><a href="functions.html#cb291-20" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> vars[<span class="dv">3</span><span class="sc">:</span>nvars]  <span class="co"># the condition variables</span></span>
 <span id="cb291-21"><a href="functions.html#cb291-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb291-22"><a href="functions.html#cb291-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the condition variables including interaction</span></span>
-<span id="cb291-23"><a href="functions.html#cb291-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># with the treatment variable</span></span>
-<span id="cb291-24"><a href="functions.html#cb291-24" aria-hidden="true" tabindex="-1"></a>  ht <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">terms</span>(formula), <span class="at">which =</span> <span class="st">&quot;term.labels&quot;</span>)</span>
-<span id="cb291-25"><a href="functions.html#cb291-25" aria-hidden="true" tabindex="-1"></a>  ht <span class="ot">&lt;-</span> ht[<span class="fu">seq_along</span>(ht)[<span class="sc">-</span><span class="dv">1</span>]]</span>
+<span id="cb291-22"><a href="functions.html#cb291-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all independent variables inclding interactions</span></span>
+<span id="cb291-23"><a href="functions.html#cb291-23" aria-hidden="true" tabindex="-1"></a>  ind <span class="ot">&lt;-</span> <span class="fu">attr</span>(<span class="fu">terms</span>(formula), <span class="at">which =</span> <span class="st">&quot;term.labels&quot;</span>)</span>
+<span id="cb291-24"><a href="functions.html#cb291-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the condition variables including interaction with the treatment var</span></span>
+<span id="cb291-25"><a href="functions.html#cb291-25" aria-hidden="true" tabindex="-1"></a>  ht <span class="ot">&lt;-</span> ind[<span class="fu">seq_along</span>(ind)[<span class="sc">-</span><span class="dv">1</span>]]</span>
 <span id="cb291-26"><a href="functions.html#cb291-26" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb291-27"><a href="functions.html#cb291-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return results in a list</span></span>
 <span id="cb291-28"><a href="functions.html#cb291-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># x0 is the coeficient for intercept used by lm, glm, geeglm, etc.</span></span>
-<span id="cb291-29"><a href="functions.html#cb291-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;y&quot;</span> <span class="ot">=</span> y, <span class="st">&quot;t&quot;</span> <span class="ot">=</span> t, <span class="st">&quot;h&quot;</span> <span class="ot">=</span> h, <span class="st">&quot;ht&quot;</span> <span class="ot">=</span> ht, <span class="st">&quot;x0&quot;</span> <span class="ot">=</span> <span class="st">&quot;(Intercept)&quot;</span>)</span>
+<span id="cb291-29"><a href="functions.html#cb291-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;y&quot;</span> <span class="ot">=</span> y, <span class="st">&quot;t&quot;</span> <span class="ot">=</span> t, <span class="st">&quot;h&quot;</span> <span class="ot">=</span> h, <span class="st">&quot;ht&quot;</span> <span class="ot">=</span> ht, <span class="st">&quot;ind&quot;</span> <span class="ot">=</span> ind, <span class="st">&quot;x0&quot;</span> <span class="ot">=</span> <span class="st">&quot;(Intercept)&quot;</span>)</span>
 <span id="cb291-30"><a href="functions.html#cb291-30" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb291-31"><a href="functions.html#cb291-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb291-32"><a href="functions.html#cb291-32" aria-hidden="true" tabindex="-1"></a></span>

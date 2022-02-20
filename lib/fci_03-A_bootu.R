@@ -18,12 +18,13 @@
 #' @return Dataframe of summarized results
 bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
   
+  # the name of the intercept variable used by glm
+  x0 <- "(Intercept)"
   # get the name of dependent variable from the formula
   y <- all.vars(formula[[2]])
   # get the name of independent variables from the formula
   x <- all.vars(formula[[3]])
-  # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
+  
   
   # estimate the conditional probabilities 
   # and the four association measures
@@ -43,6 +44,7 @@ bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
     # prepare data to estimate the log other relative risk
     ystar <- 1 - dat[, y]
     xstar <- 1 - dat[, x]
+    
     # use loglinear model to estimate the log other relative risk
     coefs <- coef(glm(ystar ~ xstar, family = poisson))
     logrrstar <- coefs[2]
