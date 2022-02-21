@@ -730,6 +730,7 @@ dataBRFSS <- brfss %>%
 ```{r}
 message("This took about 3 min, so we load a saved file.")
 # startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
 # brfss.out <- standout(dataBRFSS, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
@@ -779,6 +780,7 @@ The effect of being insured on flushot is very clear.
 ```{r}
 message("This took 3 min, so we load a saved file.")
 # startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
 # brfss.exp <- standexp(dataBRFSS, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
@@ -818,6 +820,7 @@ stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
 ```{r}
 message("This took 5 min, so we load a saved file.")
 # startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
 # brfss.dr <- standdr(dataBRFSS, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
@@ -852,4 +855,169 @@ stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
 
 ### Exercise 4
 
+
+#### 2-parts model (???)
+
+```{r}
+rm(dataBRFSS)  # make sure to reset dataBRFSS
+dataBRFSS <- brfss
+```
+
+We have reduced $E(Y \mid R, H)$ to
+
+$$
+\begin{align*}
+E(Y \mid R = r, H) &= E(Y \mid Z = 0, R = r, H) [1 - P(Z=1 \mid R = r, H)]
+\end{align*}
+$$
+
+Now, since *The logistic parametric model is a model for $P(Z = 1 \mid R, H)$*
+then
+
+```{r}
+mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
+                   hisp + multinh + gthsedu, 
+                 family = "binomial", data = dataBRFSS)
+coefs <- coef(mod.logit)
+PZ1R1 <- plogis(sum(coefs))
+PZ1R1
+```
+
+and since *the loglinear parametric model is a model for 
+$E(Y \mid Z = 0, R, H)$* then
+
+```{r}
+mod.log <- glm(formula = maxdrinks ~ rural + gt65 + female + whitenh + blacknh +
+                 hisp + multinh + gthsedu + zerodrinks, 
+               family = "poisson", data = dataBRFSS)
+dataBRFSS_Z0 <- dataBRFSS
+dataBRFSS_Z0$zerodrinks <- 0
+dataBRFSS_Z0R1 <- dataBRFSS_Z0
+dataBRFSS_Z0R1$rural <- 1
+mod.log.predictZ0 <- predict(mod.log, newdata = dataBRFSS_Z0R1, type = "response")
+EYZ0R1 <- mean(mod.log.predictZ0)
+EYZ0R1
+```
+
+and so with the 2-part model we estimate $E(Y \mid R, H)$ as follows
+
+```{r}
+maxdrinks.twoparts <- EYZ0R1 * (1 - PZ1R1)
+maxdrinks.twoparts
+```
+ . . . and it is not the correct result ...
+
+
+#### Outcome model
+
+
+Now using the outcome-model standardization. Note that we use the argument
+`family = poisson` since the outcome is a count.  However we obtained the
+same results using `family = gaussian`, actually, when using `family = gaussian`,
+the results matched *exactly* with the exposure model of exercise 5 below.
+
+```{r}
+message("This took 3 min, so we load a saved file.")
+startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
+# maxdrinks.out <- standout(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +
+#                             blacknh + hisp + multinh + gthsedu, 
+#                           family = "poisson", R = 50, conf = 0.95)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_Ex4.rds")
+# saveRDS(maxdrinks.out, file = a_file)
+maxdrinks.out <- readRDS(a_file)
+```
+
+```{r}
+# maxdrinks.out
+```
+
+
+```{r}
+gt_measures(maxdrinks.out, 
+            title = "Exercise 6.4", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Outcome-model Standardization", 
+                              "<br>",
+                              "Effect of <em>rural</em> on <em>maxdrinks</em>"))
+```
+
+
+
+### Exercise 5
+
+With the exposure model we have
+
+```{r}
+message("This took 3 min, so we load a saved file.")
+# startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
+# maxdrinks.exp <- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +
+#                             blacknh + hisp + multinh + gthsedu,
+#                           R = 50, conf = 0.95)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_Ex5.rds")
+# saveRDS(maxdrinks.exp, file = a_file)
+maxdrinks.exp <- readRDS(a_file)
+```
+
+
+```{r}
+gt_measures(maxdrinks.exp, 
+            title = "Exercise 6.5", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Exposure-model Standardization", 
+                              "<br>",
+                              "Effect of <em>rural</em> on <em>maxdrinks</em>"))
+```
+
+
+
+### Exercise 6
+
+With the doubly-robust model we have
+
+```{r}
+message("This took 5 min, so we load a saved file.")
+startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
+# maxdrinks.dr <- standdr(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +
+#                             blacknh + hisp + multinh + gthsedu,
+#                         family = "poisson", R = 50, conf = 0.95)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_Ex6.rds")
+# saveRDS(maxdrinks.dr, file = a_file)
+maxdrinks.dr <- readRDS(a_file)
+```
+
+
+```{r}
+gt_measures(maxdrinks.dr, 
+            title = "Exercise 6.7", 
+            subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+                              "<br>", 
+                              "Doubly-Robust Standardization", 
+                              "<br>",
+                              "Effect of <em>rural</em> on <em>maxdrinks</em>"))
+```
+
+
+### Exercise 7
+
+```{r echo=FALSE}
+message("TODO")
+```
+
+
+### Exercise 8
+
+```{r echo=FALSE}
+message("TODO")
+```
 

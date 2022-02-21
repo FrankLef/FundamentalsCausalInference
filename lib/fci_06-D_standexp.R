@@ -5,7 +5,10 @@
 #' The standardized estimates are computed using the exposure model.
 #' This method requires 2 different formulas which are created from the
 #' arguments \code{formula}. The 2 formulas created are for the exposure model
-#' and another one for the weighted linear model.
+#' and another one for the weighted linear model. lso \code{T} must always be
+#' binary, if not it can be made binary "one can first recode the data so that
+#' T = 1 when it is previously equaled, and T = 0 when it previously equaled
+#' any value other than t", p. 113.
 #'
 #' @param dat Dataframe of raw data.
 #' @param formula Formula must be in the form \code{Y ~ `T` + ...}
@@ -27,6 +30,8 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     dat <- data[ids, ]
 
     # estimate the parametric exposure model
+    # NOTE: fitted() is the same as using predict(..., type = "response")
+    #       BUT fitted only use the ORIGINAL data, there is no newdata.
     e <- fitted(glm(formula = eformula, family = "binomial", data = dat))
     stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
 

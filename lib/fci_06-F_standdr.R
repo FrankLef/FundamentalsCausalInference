@@ -7,11 +7,15 @@
 #'
 #' @param dat Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...} see details above.
+#' @param family Character. Name of the distribution. Default is "binomial".
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-standdr <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+standdr <- function(dat, formula = Y ~ `T` + H, 
+                    family = c("binomial", "poisson", "gaussian"), 
+                    R = 1000, conf = 0.95) {
+  family <- match.arg(family)
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -27,7 +31,7 @@ standdr <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     stopifnot(all(!dplyr::near(e, 0)))  # e must not equal zero
     
     # Fit the parametric outcome model
-    lmod <- glm(formula = formula, family = "binomial", data = dat)
+    lmod <- glm(formula = formula, family = family, data = dat)
     
     # predict potential outcome for each participant
     dat0 <- dat

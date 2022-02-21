@@ -9,11 +9,15 @@
 #'
 #' @param dat Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...} see details above.
+#' @param family Character. Name of the distribution. Default is "binomial".
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
 #'
-#' @return Dataframe of estimates
-standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+#' @return Estimate using outcome-model standardization
+standout <- function(dat, formula = Y ~ `T` + H, 
+                     family = c("binomial", "poisson", "gaussian"), 
+                     R = 1000, conf = 0.95) {
+  family <- match.arg(family)
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -22,7 +26,7 @@ standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   estimator <- function(data, ids) {
     dat <- data[ids, ]
     
-    lmod.out <- glm(formula = formula, family = "binomial", data = dat)
+    lmod.out <- glm(formula = formula, family = family, data = dat)
     
     # dataset with everyone untreated
     dat0 <- dat
@@ -34,9 +38,13 @@ standout <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     
     # compute the expected potential outcome for
     # each participant if untreated
+    # NOTE: fitted() is the same as using predict(..., type = "response")
+    #       BUT fitted only use the ORIGINAL data, there is no newdata.
     EYhat0 <- predict(lmod.out, newdata = dat0, type = "response")
     # compute the expected potential outcome for
     # each participant if treated
+    # NOTE: fitted() is the same as using predict(..., type = "response")
+    #       BUT fitted only use the ORIGINAL data, there is no newdata.
     EYhat1 <- predict(lmod.out, newdata = dat1, type = "response")
     
     # estimate the average potential outcomes

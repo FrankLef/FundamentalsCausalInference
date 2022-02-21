@@ -126,10 +126,6 @@ calc_effect_measures <- function(val0, val1, log = TRUE) {
 #'
 #' @return Dataframe of estimates with CI.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' }
 run_boot <- function(data, statistic, R = 1000, conf = 0.95) {
   stopifnot(R >= 1, conf > 0, conf < 1)
   
@@ -164,20 +160,20 @@ run_boot <- function(data, statistic, R = 1000, conf = 0.95) {
 #'
 #' @return Dataframe of converted effects measures.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' }
 exp_effects <- function(data, 
                         vars = c("RR" = "logRR","RR*"  = "logRR*", 
                                  "OR" = "logOR")) {
-  pos <- match(vars, data$name)
-  within(data, {
-    est[pos] <- exp(est[pos])
-    lci[pos] <- exp(lci[pos])
-    uci[pos] <- exp(uci[pos])
-    name[pos] <- names(vars)
-  })
+  is_matched <- vars %in% data$name
+  if (any(is_matched)) {
+    # nomatch = 0 to exclude unmatched items
+    pos <- match(vars, data$name, nomatch = 0L)
+    within(data, {
+      est[pos] <- exp(est[pos])
+      lci[pos] <- exp(lci[pos])
+      uci[pos] <- exp(uci[pos])
+      name[pos] <- names(vars)[is_matched]
+    })
+  }
 }
 
 #' Inverse logit the effect measures
@@ -192,16 +188,16 @@ exp_effects <- function(data,
 #'
 #' @return Dataframe of converted effects measures.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' }
 invlogit_effects <- function(data, vars = c("P" = "logitP")) {
-  pos <- match(vars, data$name)
-  within(data, {
-    est[pos] <- plogis(est[pos])
-    lci[pos] <- plogis(lci[pos])
-    uci[pos] <- plogis(uci[pos])
-    name[pos] <- names(vars)
-  })
+  is_matched <- vars %in% data$name
+  if (any(is_matched)) {
+    # nomatch = 0 to exclude unmatched items
+    pos <- match(vars, data$name, nomatch = 0L)
+    within(data, {
+      est[pos] <- plogis(est[pos])
+      lci[pos] <- plogis(lci[pos])
+      uci[pos] <- plogis(uci[pos])
+      name[pos] <- names(vars)[is_matched]
+    })
+  }
 }
