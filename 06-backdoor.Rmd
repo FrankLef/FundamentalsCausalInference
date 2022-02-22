@@ -766,8 +766,10 @@ stopifnot(sum(abs(comp$sim - comp$bb)) < 0.5)
 
 * Outcome consistence: Seems ok here, getting a flu shot is well defined.
 This could change overtime however and the survey is from 2019.
-* Positivity assumption of *insured*. Maybe some indiviuals have a zero
-probability ans some other 1 but they would not be part of the study.
+* Positivity assumption of *insured*. Maybe some individuals have a zero
+probability ans some other 1 but they would not be part of the study
+* Sufficient confounder assumption: $female$ an$ethnicity$ sem to be sufficient 
+confounders as required in (6.1) p. 99.
 
 **Interpretation**
 
@@ -870,42 +872,72 @@ $$
 E(Y \mid R = r, H) &= E(Y \mid Z = 0, R = r, H) [1 - P(Z=1 \mid R = r, H)]
 \end{align*}
 $$
+We will compute $E(Y \mid R = 1, H)$
 
-Now, since *The logistic parametric model is a model for $P(Z = 1 \mid R, H)$*
+
+$$
+\begin{align*}
+E(Y \mid R = 1, H) &= E(Y \mid Z = 0, R = 1, H) [1 - P(Z=1 \mid R = 1, H)]
+\end{align*}
+$$
+
+Now, since *The logistic parametric model is a model for $P(Z = 1 \mid R = r, H)$*
 then
 
 ```{r}
 mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
                    hisp + multinh + gthsedu, 
                  family = "binomial", data = dataBRFSS)
-coefs <- coef(mod.logit)
-PZ1R1 <- plogis(sum(coefs))
+# PZ1R1 <- mean(fitted(mod.logit))
+
+# create the data where the probability assumes each individual is rural
+dataBRFSS_PZ1R1 <- dataBRFSS
+dataBRFSS_PZ1R1$rural <- 1
+mod.logit.predict_PZ1R1 <- predict(mod.logit, newdata = dataBRFSS_PZ1R1, type = "response")
+PZ1R1 <- mean(mod.logit.predict_PZ1R1)
+
 PZ1R1
 ```
 
 and since *the loglinear parametric model is a model for 
-$E(Y \mid Z = 0, R, H)$* then
+$E(Y \mid Z = 0, R = r, H)$* then
 
 ```{r}
 mod.log <- glm(formula = maxdrinks ~ rural + gt65 + female + whitenh + blacknh +
                  hisp + multinh + gthsedu + zerodrinks, 
                family = "poisson", data = dataBRFSS)
-dataBRFSS_Z0 <- dataBRFSS
-dataBRFSS_Z0$zerodrinks <- 0
-dataBRFSS_Z0R1 <- dataBRFSS_Z0
-dataBRFSS_Z0R1$rural <- 1
-mod.log.predictZ0 <- predict(mod.log, newdata = dataBRFSS_Z0R1, type = "response")
-EYZ0R1 <- mean(mod.log.predictZ0)
+
+# create the data for each individual if they consumed drinks and are in rural area
+dataBRFSS_EYZ0 <- dataBRFSS
+dataBRFSS_EYZ0$zerodrinks <- 0
+dataBRFSS_EYZ0R1 <- dataBRFSS_EYZ0
+dataBRFSS_EYZ0R1$rural <- 1
+mod.log.predict_EYZ0R1 <- predict(mod.log, newdata = dataBRFSS_EYZ0R1, type = "response")
+EYZ0R1 <- mean(mod.log.predict_EYZ0R1)
+
+# create data for the individuals assuming they are in rural
+# dataBRFSS_EYR1 <- dataBRFSS
+# dataBRFSS_EYR1$rural <- 1
+# mod.log.predict_EYR1 <- predict(mod.log, newdata = dataBRFSS_EYR1, type = "response")
+# EYZ0R1 <- mean(mod.log.predict_EYR1)
+
 EYZ0R1
 ```
 
-and so with the 2-part model we estimate $E(Y \mid R, H)$ as follows
+and the outer product of $E_H [E(Y \mid Z = 0, R = r, H) (1 - P(Z=1 \mid R = r, H))]$
+is
 
 ```{r}
-maxdrinks.twoparts <- EYZ0R1 * (1 - PZ1R1)
-maxdrinks.twoparts
+# mean(fitted(mod.log)) is the same as mean(dataBRFSS$maxdrinks)
+EH <- mean(fitted(mod.log))
+EH
 ```
- . . . and it is not the correct result ...
+```{r}
+EY <- EH * (EYZ0R1 * (1 - PZ1R1))
+# EY <- 1 * (EYZ0R1 * (1 - PZ1R1))
+EY
+```
+
 
 
 #### Outcome model
@@ -1010,8 +1042,37 @@ gt_measures(maxdrinks.dr,
 
 ### Exercise 7
 
-```{r echo=FALSE}
+```{r}
 message("TODO")
+```
+
+
+Computing the average treatment on the treatment (with `att = TRUE`), 
+i.e. for rural county, with the exposure model 
+
+```{r}
+message("This took 3 min, so we load a saved file.")
+startTime <- Sys.time()
+# whitenh not included in formula since it is the reference dummy variable
+# maxdrinks.expatt <- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + 
+#                                female + blacknh + hisp + multinh + gthsedu, 
+#                              att = TRUE, R = 50, conf = 0.95)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+# a_file <- file.path(dir_data, "chap06_Ex7.rds")
+# saveRDS(maxdrinks.expatt, file = a_file)
+# maxdrinks.expatt <- readRDS(a_file)
+```
+
+
+```{r}
+# gt_measures(maxdrinks.expatt, 
+#             title = "Exercise 6.7", 
+#             subtitle = paste0("2019 Behavioral Risk Factor Surveillance System Survey", 
+#                               "<br>", 
+#                               "Exposure-model Standardization for the ATT", 
+#                               "<br>",
+#                               "Effect of <em>rural</em> on <em>maxdrinks</em>"))
 ```
 
 

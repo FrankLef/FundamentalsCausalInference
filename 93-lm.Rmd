@@ -1,0 +1,112 @@
+# Linear Regression with R {#linreg}
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+```
+
+
+At about every turn in this book one needs to do a linear regression using `R`.
+It is a simple function, easy to use. Using it to translate the various 
+mathematical expressions into values requires to learn its different flavors
+and what they mean in mathematical terms.  It is one of those things we think
+we know well . . . until we actually have to use it.
+
+The goal of this appendix is to explain these subtleties in the context of
+@shanninbrumback2021.
+
+To illustrate we will use the `stats::glm()` function. Everything applies
+equally well to `stats::lm()`, `gee::gee()`, `geepack::geeglm()`, etc.
+
+## Model
+
+We will use the model from @shanninbrumback2021. in chapter 5, section 5.2, on
+page 89. Its DAG is illustrated in figure 5.7.
+
+```{r}
+sim2 <- function(n = 1000, seed = 888) {
+  set.seed(seed)
+  # Generate the observed confounder
+  H <- rbinom(n, size = 1, prob = 0.4)
+  # Let the treatment depend on the confounder
+  probA <- H * 0.8 + (1 - H) * 0.3
+  A <- rbinom(n, size = 1, probA)
+  # Let the outcome depend on the treatment and the confounder
+  probY <- A * (H * 0.5 + (1 - H) * 0.7) + (1 - A) * (H * 0.3 + (1 - H) * 0.5)
+  Y <- rbinom(n, size = 1, prob = probY)
+  data.frame("H" = H, "A" = A, "Y" = Y)
+}
+df <- sim2()
+str(df)
+```
+
+
+## `fitted()` vs `predict()`
+
+### `fitted()`
+
+`fitted()` returns the expected values of the response *after* the link function is
+applied, i.e. $E(Y_I)$. Also `fitted()` uses only the original data.
+
+For example
+
+```{r}
+n <- 5
+x <- rnorm(n)
+y <- rpois(n, lambda = exp(x))
+df <- data.frame("x" = x, "y" = y)
+fit <- glm(y ~ x, data = df, family = "poisson")
+```
+
+and `fitted()` give the $E(Y_i)$
+
+```{r}
+fitted.out <- fitted(fit)
+fitted.out
+```
+
+and if you try to fit with new data, nothing will happen, it doesn't use the
+new data returns the same output, 
+*no warning is given about the fact that `newdata` is not used*.
+
+```{r}
+newdf <- df
+newdf$x <- rnorm(n, mean = 1, sd = 0.5)
+fitted(fit, newdata = newdf)
+```
+
+### `predict()`
+
+On the other hand `predict` gives the result *before* the link funciton is applied
+*and* uses `newdata`
+
+First lets use `predict()` with the existing data
+
+```{r}
+predict.out <- predict(fit)
+predict.out
+```
+which is *before* the link function is applied and so
+
+```{r}
+exp(predict.out) == fitted.out
+```
+
+and there is an option, `type = "response"` that tells predict to applied the link function so
+you don't have to do it
+
+```{r}
+predict(fit, type = "response")
+```
+
+### Conclusion
+
+In the context of @shanninbrumback2021 we use `fitted()` when we use the 
+original data to get $E(E(Y_i))= \hat{Y}$ and `predict()..., type = "response`) 
+when we ave a counterfactual in the data, that is $E(E(Y_i \mid T = t))= \hat{Y} \mid T=t$
+
+```{r}
+mean(fitted.out)
+```
+

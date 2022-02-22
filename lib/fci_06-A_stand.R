@@ -13,7 +13,7 @@
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval
 #'
-#' @return Dataframe of estimates
+#' @return Estimate using outcome-model standardization
 stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
                       R = 1000, conf = 0.95) {
   

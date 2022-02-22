@@ -12,11 +12,15 @@
 #'
 #' @param dat Dataframe of raw data.
 #' @param formula Formula must be in the form \code{Y ~ `T` + ...}
+#' @param att if \code{FALSE} calculate the standardized (unconfounded)
+#' causal effect. If \code{TRUE} calculate the average effect of treatment
+#' on the treated.
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
 #'
-#' @return Dataframe of estimates
-standexp <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+#' @return Dataframe of estimates using exposure-model standardization
+standexp <- function(dat, formula = Y ~ `T` + H, att = FALSE, 
+                     R = 1000, conf = 0.95) {
 
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -45,6 +49,13 @@ standexp <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     # estimate the expected potential outcome
     EY0 <- coefs[fvars$x0]
     EY1 <- sum(coefs)
+    
+    # if (!att) {
+    #   coefs <- coef(glm(formula = lformula, data = dat[dat$t == 1, ], weights = W))
+    #   EY1 <- sum(coefs)
+    # } else {
+    #   
+    # }
 
     # estimate the effect measures
     calc_effect_measures(EY0, EY1)
