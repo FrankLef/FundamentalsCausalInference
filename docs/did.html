@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>References | Study project: Fundamentals of Causal Inferences With R</title>
+  <title>Chapter 7 Difference-in-Differences Estimators | Study project: Fundamentals of Causal Inferences With R</title>
   <meta name="description" content="<p>This is a study project of Fundamentals of Causal Inferences by Babette A.
 Brumback. It goes through a lot of the codes and through many mathematical
 arguments for better learning. All exercises are attempted.</p>" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="References | Study project: Fundamentals of Causal Inferences With R" />
+  <meta property="og:title" content="Chapter 7 Difference-in-Differences Estimators | Study project: Fundamentals of Causal Inferences With R" />
   <meta property="og:type" content="book" />
   
   
@@ -20,7 +20,7 @@ arguments for better learning. All exercises are attempted.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="References | Study project: Fundamentals of Causal Inferences With R" />
+  <meta name="twitter:title" content="Chapter 7 Difference-in-Differences Estimators | Study project: Fundamentals of Causal Inferences With R" />
   
   <meta name="twitter:description" content="<p>This is a study project of Fundamentals of Causal Inferences by Babette A.
 Brumback. It goes through a lot of the codes and through many mathematical
@@ -37,8 +37,8 @@ arguments for better learning. All exercises are attempted.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="mc_standdr.html"/>
-
+<link rel="prev" href="backdoor.html"/>
+<link rel="next" href="errata.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -420,55 +420,78 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="did" class="section level1" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Difference-in-Differences Estimators</h1>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="did.html#cb326-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb326-2"><a href="did.html#cb326-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb326-3"><a href="did.html#cb326-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb326-4"><a href="did.html#cb326-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span></code></pre></div>
+<div id="difference-in-differences-did-estimators" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Difference-in-Differences (DiD) Estimators</h2>
+<div id="did-estimator-with-a-linear-model" class="section level3" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> DiD Estimator with a Linear Model</h3>
+<blockquote>
+<p>The method relies on consistency as well as assumption A1:</p>
+</blockquote>
+<p><span class="math display">\[
+\begin{align*}
+&amp;E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=1) = \\
+&amp;E(Y_0(0) \mid A=1) - E(Y_0(0) \mid A=1)
+\end{align*}
+\]</span></p>
+<p>That assumption is interpreted as : If assume that no treatment was applied in
+“year” 1 (nothing happened in year 1) than we have the same results as in the
+base “year.”</p>
+<blockquote>
+<p>also called <strong>additive equi-confounding</strong> […]. The target of estimation is
+the linear ATT presented in chapter 6 as a risk difference</p>
+</blockquote>
+<p><span class="math display">\[
+\text{Linear ATT:} \: E(Y_1(1) - Y_1(0) \mid A=1)
+\]</span>
+which is interpreted as *what is the the average difference between <span class="math inline">\(Y_1(1)\)</span>
+and <span class="math inline">\(Y_1(0)\)</span> if they all treated. For the example of the bank’s NIM, what is
+the average difference between the banks’ NIM in NIRP ad non-NIRP economy assuming
+they are all subjected to the NIRP policy, that is wihout the impact of the NIRP
+policy.</p>
+<p>and we have</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; E(Y_1(1) - Y_1(0)) \mid A=1) = \\
+&amp; E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=1) = \\
+&amp; [E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=1)] - [E(Y_1(0) \mid A=0) - E(Y_1(0) \mid A=0)] = \\
+&amp; [E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=0)] - [E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=0)] = \\
+&amp;\text{consistency assumption} \\
+&amp; [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=0)] = \\
+&amp;\text{assumption A1, additive equi-confounding} \\
+&amp;\text{i.e. assuming that if nothing happens in year 1, then we can use the results of year 0} \\
+&amp; [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_0 \mid A=1) - E(Y_0 \mid A=0)] \\
+\end{align*}
+\]</span></p>
+<blockquote>
+<p>we can therefore estimate the linear ATT via the difference in differencs of averages</p>
+</blockquote>
+<p><span class="math display">\[
+\begin{align*}
+&amp;[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_1 \mid A=0)] - [\hat{E}(Y_0 \mid A=1) - \hat{E}(Y_0 \mid A=0)]= \\
+&amp;[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_0 \mid A=1)] - [\hat{E}(Y_1 \mid A=0) - \hat{E}(Y_0 \mid A=0)]= \\
+&amp;[\hat{E}(Y_1 - Y_0 \mid A=1)] - [\hat{E}(Y_1 - Y_0 \mid A=0)]
+\end{align*}
+\]</span></p>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div class="csl-entry">
-Barrett, Malcolm. 2021. <em>Ggdag: Analyze and Create Elegant Directed Acyclic Graphs</em>. <a href="https://github.com/malcolmbarrett/ggdag">https://github.com/malcolmbarrett/ggdag</a>.
-</div>
-<div class="csl-entry">
-Brumback, Babette A. 2022. <em>Fundamentals of Causal Inference with r</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://www.crcpress.com">https://www.crcpress.com</a>.
-</div>
-<div class="csl-entry">
-Carey, Vincent J, Thomas Lumley, and Brian Ripley. 2019. <em>Gee: Generalized Estimation Equation Solver</em>. <a href="https://CRAN.R-project.org/package=gee">https://CRAN.R-project.org/package=gee</a>.
-</div>
-<div class="csl-entry">
-Geoffrey R. Grimmet, David R. Stirzacker. 2001. <em>Probability and Random Processes</em>. 3rd ed. Great Clarendon Street, oxford OX2 6DP: Oxford University Press.
-</div>
-<div class="csl-entry">
-Goldfeld, Keith, and Jacob Wujciak-Jens. 2021. <em>Simstudy: Simulation of Study Data</em>. <a href="https://CRAN.R-project.org/package=simstudy">https://CRAN.R-project.org/package=simstudy</a>.
-</div>
-<div class="csl-entry">
-Iannone, Richard, Joe Cheng, and Barret Schloerke. 2021. <em>Gt: Easily Create Presentation-Ready Display Tables</em>. <a href="https://CRAN.R-project.org/package=gt">https://CRAN.R-project.org/package=gt</a>.
-</div>
-<div class="csl-entry">
-Jake Shannin, Babette A. Brumback. 2021. <em>Disagreement Concerning Effect-Measures Modification</em>. <a href="https://arxiv.org/abs/2105.07285v1">https://arxiv.org/abs/2105.07285v1</a>.
-</div>
-<div class="csl-entry">
-Leschinski, Christian Hendrik. 2019. <em>MonteCarlo: Automatic Parallelized Monte Carlo Simulations</em>. <a href="http://github.com/FunWithR/MonteCarlo">http://github.com/FunWithR/MonteCarlo</a>.
-</div>
-<div class="csl-entry">
-Textor, Johannes, Benito van der Zander, and Ankur Ankan. 2021. <em>Dagitty: Graphical Analysis of Structural Causal Models</em>. <a href="https://CRAN.R-project.org/package=dagitty">https://CRAN.R-project.org/package=dagitty</a>.
-</div>
-<div class="csl-entry">
-Wickham, Hadley. 2021. <em>Tidyr: Tidy Messy Data</em>. <a href="https://CRAN.R-project.org/package=tidyr">https://CRAN.R-project.org/package=tidyr</a>.
-</div>
-<div class="csl-entry">
-Wickham, Hadley, Winston Chang, Lionel Henry, Thomas Lin Pedersen, Kohske Takahashi, Claus Wilke, Kara Woo, Hiroaki Yutani, and Dewey Dunnington. 2021. <em>Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics</em>. <a href="https://CRAN.R-project.org/package=ggplot2">https://CRAN.R-project.org/package=ggplot2</a>.
-</div>
-<div class="csl-entry">
-Wickham, Hadley, Romain François, Lionel Henry, and Kirill Müller. 2021. <em>Dplyr: A Grammar of Data Manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a>.
 </div>
 </div>
 </div>
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="mc_standdr.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="backdoor.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="errata.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -499,7 +522,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/99-references.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/07-did.Rmd",
 "text": "Edit"
 },
 "history": {

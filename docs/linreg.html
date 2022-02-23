@@ -30,7 +30,7 @@ arguments for better learning. All exercises are attempted.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-22" />
+<meta name="date" content="2022-02-23" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -304,6 +304,13 @@ div.csl-indent {
 <li class="chapter" data-level="6.4.8" data-path="backdoor.html"><a href="backdoor.html#exercise-8-1"><i class="fa fa-check"></i><b>6.4.8</b> Exercise 8</a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="7" data-path="did.html"><a href="did.html"><i class="fa fa-check"></i><b>7</b> Difference-in-Differences Estimators</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="did.html"><a href="did.html#difference-in-differences-did-estimators"><i class="fa fa-check"></i><b>7.1</b> Difference-in-Differences (DiD) Estimators</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="did.html"><a href="did.html#did-estimator-with-a-linear-model"><i class="fa fa-check"></i><b>7.1.1</b> DiD Estimator with a Linear Model</a></li>
+</ul></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata</a>
 <ul>
@@ -413,10 +420,10 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="linreg" class="section level1" number="9">
+<div id="linreg" class="section level1" number="10">
 <h1><span class="header-section-number">C</span> Linear Regression with R</h1>
-<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="linreg.html#cb327-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb327-2"><a href="linreg.html#cb327-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="linreg.html#cb328-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb328-2"><a href="linreg.html#cb328-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <p>At about every turn in this book one needs to do a linear regression using <code>R</code>.
 It is a simple function, easy to use. Using it to translate the various
 mathematical expressions into values requires to learn its different flavors
@@ -426,80 +433,80 @@ we know well . . . until we actually have to use it.</p>
 <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span>.</p>
 <p>To illustrate we will use the <code>stats::glm()</code> function. Everything applies
 equally well to <code>stats::lm()</code>, <code>gee::gee()</code>, <code>geepack::geeglm()</code>, etc.</p>
-<div id="model" class="section level2" number="9.1">
+<div id="model" class="section level2" number="10.1">
 <h2><span class="header-section-number">C.1</span> Model</h2>
 <p>We will use the model from <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span>. in chapter 5, section 5.2, on
 page 89. Its DAG is illustrated in figure 5.7.</p>
-<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="linreg.html#cb328-1" aria-hidden="true" tabindex="-1"></a>sim2 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">888</span>) {</span>
-<span id="cb328-2"><a href="linreg.html#cb328-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb328-3"><a href="linreg.html#cb328-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the observed confounder</span></span>
-<span id="cb328-4"><a href="linreg.html#cb328-4" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.4</span>)</span>
-<span id="cb328-5"><a href="linreg.html#cb328-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the treatment depend on the confounder</span></span>
-<span id="cb328-6"><a href="linreg.html#cb328-6" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> H <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.3</span></span>
-<span id="cb328-7"><a href="linreg.html#cb328-7" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, probA)</span>
-<span id="cb328-8"><a href="linreg.html#cb328-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the outcome depend on the treatment and the confounder</span></span>
-<span id="cb328-9"><a href="linreg.html#cb328-9" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> A <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.7</span>) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.5</span>)</span>
-<span id="cb328-10"><a href="linreg.html#cb328-10" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
-<span id="cb328-11"><a href="linreg.html#cb328-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="st">&quot;H&quot;</span> <span class="ot">=</span> H, <span class="st">&quot;A&quot;</span> <span class="ot">=</span> A, <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y)</span>
-<span id="cb328-12"><a href="linreg.html#cb328-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb328-13"><a href="linreg.html#cb328-13" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">sim2</span>()</span>
-<span id="cb328-14"><a href="linreg.html#cb328-14" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="linreg.html#cb329-1" aria-hidden="true" tabindex="-1"></a>sim2 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">888</span>) {</span>
+<span id="cb329-2"><a href="linreg.html#cb329-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb329-3"><a href="linreg.html#cb329-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the observed confounder</span></span>
+<span id="cb329-4"><a href="linreg.html#cb329-4" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.4</span>)</span>
+<span id="cb329-5"><a href="linreg.html#cb329-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the treatment depend on the confounder</span></span>
+<span id="cb329-6"><a href="linreg.html#cb329-6" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> H <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.3</span></span>
+<span id="cb329-7"><a href="linreg.html#cb329-7" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, probA)</span>
+<span id="cb329-8"><a href="linreg.html#cb329-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the outcome depend on the treatment and the confounder</span></span>
+<span id="cb329-9"><a href="linreg.html#cb329-9" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> A <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.7</span>) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.5</span>)</span>
+<span id="cb329-10"><a href="linreg.html#cb329-10" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
+<span id="cb329-11"><a href="linreg.html#cb329-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="st">&quot;H&quot;</span> <span class="ot">=</span> H, <span class="st">&quot;A&quot;</span> <span class="ot">=</span> A, <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y)</span>
+<span id="cb329-12"><a href="linreg.html#cb329-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb329-13"><a href="linreg.html#cb329-13" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">sim2</span>()</span>
+<span id="cb329-14"><a href="linreg.html#cb329-14" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    1000 obs. of  3 variables:
 ##  $ H: int  0 0 0 1 1 0 0 0 0 1 ...
 ##  $ A: int  0 0 0 0 1 0 0 0 0 0 ...
 ##  $ Y: int  1 0 0 0 0 1 1 0 1 1 ...</code></pre>
 </div>
-<div id="fitted-vs-predict" class="section level2" number="9.2">
+<div id="fitted-vs-predict" class="section level2" number="10.2">
 <h2><span class="header-section-number">C.2</span> <code>fitted()</code> vs <code>predict()</code></h2>
-<div id="fitted" class="section level3" number="9.2.1">
+<div id="fitted" class="section level3" number="10.2.1">
 <h3><span class="header-section-number">C.2.1</span> <code>fitted()</code></h3>
 <p><code>fitted()</code> returns the expected values of the response <em>after</em> the link function is
 applied, i.e. <span class="math inline">\(E(Y_I)\)</span>. Also <code>fitted()</code> uses only the original data.</p>
 <p>For example</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="linreg.html#cb330-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb330-2"><a href="linreg.html#cb330-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb330-3"><a href="linreg.html#cb330-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, <span class="at">lambda =</span> <span class="fu">exp</span>(x))</span>
-<span id="cb330-4"><a href="linreg.html#cb330-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;x&quot;</span> <span class="ot">=</span> x, <span class="st">&quot;y&quot;</span> <span class="ot">=</span> y)</span>
-<span id="cb330-5"><a href="linreg.html#cb330-5" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> df, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="linreg.html#cb331-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb331-2"><a href="linreg.html#cb331-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb331-3"><a href="linreg.html#cb331-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, <span class="at">lambda =</span> <span class="fu">exp</span>(x))</span>
+<span id="cb331-4"><a href="linreg.html#cb331-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;x&quot;</span> <span class="ot">=</span> x, <span class="st">&quot;y&quot;</span> <span class="ot">=</span> y)</span>
+<span id="cb331-5"><a href="linreg.html#cb331-5" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> df, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
 <p>and <code>fitted()</code> give the <span class="math inline">\(E(Y_i)\)</span></p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="linreg.html#cb331-1" aria-hidden="true" tabindex="-1"></a>fitted.out <span class="ot">&lt;-</span> <span class="fu">fitted</span>(fit)</span>
-<span id="cb331-2"><a href="linreg.html#cb331-2" aria-hidden="true" tabindex="-1"></a>fitted.out</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="linreg.html#cb332-1" aria-hidden="true" tabindex="-1"></a>fitted.out <span class="ot">&lt;-</span> <span class="fu">fitted</span>(fit)</span>
+<span id="cb332-2"><a href="linreg.html#cb332-2" aria-hidden="true" tabindex="-1"></a>fitted.out</span></code></pre></div>
 <pre><code>##          1          2          3          4          5 
 ## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
 <p>and if you try to fit with new data, nothing will happen, it doesn’t use the
 new data returns the same output,
 <em>no warning is given about the fact that <code>newdata</code> is not used</em>.</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="linreg.html#cb333-1" aria-hidden="true" tabindex="-1"></a>newdf <span class="ot">&lt;-</span> df</span>
-<span id="cb333-2"><a href="linreg.html#cb333-2" aria-hidden="true" tabindex="-1"></a>newdf<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
-<span id="cb333-3"><a href="linreg.html#cb333-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fitted</span>(fit, <span class="at">newdata =</span> newdf)</span></code></pre></div>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="linreg.html#cb334-1" aria-hidden="true" tabindex="-1"></a>newdf <span class="ot">&lt;-</span> df</span>
+<span id="cb334-2"><a href="linreg.html#cb334-2" aria-hidden="true" tabindex="-1"></a>newdf<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb334-3"><a href="linreg.html#cb334-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fitted</span>(fit, <span class="at">newdata =</span> newdf)</span></code></pre></div>
 <pre><code>##          1          2          3          4          5 
 ## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
 </div>
-<div id="predict" class="section level3" number="9.2.2">
+<div id="predict" class="section level3" number="10.2.2">
 <h3><span class="header-section-number">C.2.2</span> <code>predict()</code></h3>
 <p>On the other hand <code>predict</code> gives the result <em>before</em> the link funciton is applied
 <em>and</em> uses <code>newdata</code></p>
 <p>First lets use <code>predict()</code> with the existing data</p>
-<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="linreg.html#cb335-1" aria-hidden="true" tabindex="-1"></a>predict.out <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit)</span>
-<span id="cb335-2"><a href="linreg.html#cb335-2" aria-hidden="true" tabindex="-1"></a>predict.out</span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="linreg.html#cb336-1" aria-hidden="true" tabindex="-1"></a>predict.out <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit)</span>
+<span id="cb336-2"><a href="linreg.html#cb336-2" aria-hidden="true" tabindex="-1"></a>predict.out</span></code></pre></div>
 <pre><code>##          1          2          3          4          5 
 ## -0.0600878  1.6274351 -0.4642585 -2.3923702 -1.3963289</code></pre>
 <p>which is <em>before</em> the link function is applied and so</p>
-<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="linreg.html#cb337-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(predict.out) <span class="sc">==</span> fitted.out</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="linreg.html#cb338-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(predict.out) <span class="sc">==</span> fitted.out</span></code></pre></div>
 <pre><code>##    1    2    3    4    5 
 ## TRUE TRUE TRUE TRUE TRUE</code></pre>
 <p>and there is an option, <code>type = "response"</code> that tells predict to applied the link function so
 you don’t have to do it</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="linreg.html#cb339-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="linreg.html#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span></code></pre></div>
 <pre><code>##          1          2          3          4          5 
 ## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
 </div>
-<div id="conclusion" class="section level3" number="9.2.3">
+<div id="conclusion" class="section level3" number="10.2.3">
 <h3><span class="header-section-number">C.2.3</span> Conclusion</h3>
 <p>In the context of <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span> we use <code>fitted()</code> when we use the
 original data to get <span class="math inline">\(E(E(Y_i))= \hat{Y}\)</span> and <code>predict()..., type = "response</code>)
 when we ave a counterfactual in the data, that is <span class="math inline">\(E(E(Y_i \mid T = t))= \hat{Y} \mid T=t\)</span></p>
-<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="linreg.html#cb341-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fitted.out)</span></code></pre></div>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="linreg.html#cb342-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fitted.out)</span></code></pre></div>
 <pre><code>## [1] 1.4</code></pre>
 
 </div>

@@ -1,0 +1,92 @@
+# Difference-in-Differences Estimators {#did}
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(gt)
+```
+
+
+
+```{r include=FALSE}
+# the directory of documentation for chapter 1
+dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                   "Brumback FOCI Website Material", "Chapter 1")
+# directory of data files
+dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+source(file = file.path(dir_lib, "boot_utils.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_utils.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_measures.R"), 
+       local = knitr::knit_global())
+load(file.path(dir_docs01, "whatifdat.RData"))
+```
+
+
+## Difference-in-Differences (DiD) Estimators
+
+
+### DiD Estimator with a Linear Model
+
+> The method relies on consistency as well as assumption A1:
+
+$$
+\begin{align*}
+&E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=1) = \\
+&E(Y_0(0) \mid A=1) - E(Y_0(0) \mid A=1)
+\end{align*}
+$$
+
+That assumption is interpreted as : If assume that no treatment was applied in
+"year" 1 (nothing happened in year 1) than we have the same results as in the 
+base "year".
+
+
+> also called **additive equi-confounding** [...]. The target of estimation is 
+the linear ATT presented in chapter 6 as a risk difference
+
+$$
+\text{Linear ATT:} \: E(Y_1(1) - Y_1(0) \mid A=1)
+$$
+which is interpreted as *what is the the average difference between $Y_1(1)$ 
+and $Y_1(0)$ if they all treated. For the example of the bank's NIM, what is
+the average difference between the banks' NIM in NIRP ad non-NIRP economy assuming
+they are all subjected to the NIRP policy, that is wihout the impact of the NIRP
+policy.
+
+and we have
+
+$$
+\begin{align*}
+& E(Y_1(1) - Y_1(0)) \mid A=1) = \\
+& E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=1) = \\
+& [E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=1)] - [E(Y_1(0) \mid A=0) - E(Y_1(0) \mid A=0)] = \\
+& [E(Y_1(1) \mid A=1) - E(Y_1(0) \mid A=0)] - [E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=0)] = \\
+&\text{consistency assumption} \\
+& [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=0)] = \\
+&\text{assumption A1, additive equi-confounding} \\
+&\text{i.e. assuming that if nothing happens in year 1, then we can use the results of year 0} \\
+& [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_0 \mid A=1) - E(Y_0 \mid A=0)] \\
+\end{align*}
+$$
+
+> we can therefore estimate the linear ATT via the difference in differencs of averages
+
+$$
+\begin{align*}
+&[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_1 \mid A=0)] - [\hat{E}(Y_0 \mid A=1) - \hat{E}(Y_0 \mid A=0)]= \\
+&[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_0 \mid A=1)] - [\hat{E}(Y_1 \mid A=0) - \hat{E}(Y_0 \mid A=0)]= \\
+&[\hat{E}(Y_1 - Y_0 \mid A=1)] - [\hat{E}(Y_1 - Y_0 \mid A=0)]
+\end{align*}
+$$
+
+

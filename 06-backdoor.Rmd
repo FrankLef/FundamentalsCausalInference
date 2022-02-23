@@ -4,9 +4,7 @@
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(tidyr)
 library(dplyr)
-library(dagitty)
 library(ggplot2)
-library(ggdag)
 library(gt)
 library(geepack)
 ```
@@ -895,7 +893,6 @@ dataBRFSS_PZ1R1 <- dataBRFSS
 dataBRFSS_PZ1R1$rural <- 1
 mod.logit.predict_PZ1R1 <- predict(mod.logit, newdata = dataBRFSS_PZ1R1, type = "response")
 PZ1R1 <- mean(mod.logit.predict_PZ1R1)
-
 PZ1R1
 ```
 
@@ -914,6 +911,12 @@ dataBRFSS_EYZ0R1 <- dataBRFSS_EYZ0
 dataBRFSS_EYZ0R1$rural <- 1
 mod.log.predict_EYZ0R1 <- predict(mod.log, newdata = dataBRFSS_EYZ0R1, type = "response")
 EYZ0R1 <- mean(mod.log.predict_EYZ0R1)
+
+# coefs <- coef(mod.log)
+# EYZ0R1 <- sum(coefs[names(coefs) != "zerodrinks"])
+# EYZ0R1 <- exp(EYZ0R1)
+# EYZ0R1
+
 
 # create data for the individuals assuming they are in rural
 # dataBRFSS_EYR1 <- dataBRFSS
