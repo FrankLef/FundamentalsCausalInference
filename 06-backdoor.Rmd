@@ -878,77 +878,86 @@ E(Y \mid R = 1, H) &= E(Y \mid Z = 0, R = 1, H) [1 - P(Z=1 \mid R = 1, H)]
 \end{align*}
 $$
 
+
+We create different data subset to make the calculations
+
+```{r}
+brfss4_do_R1 <- brfss4
+brfss4_do_R1$rural <- 1
+brfss4_cond_R1 <- brfss4[brfss4$rural == 1, ]
+brfss4_cond_Z0 <- brfss4[brfss4$zerodrinks == 0, ]
+brfss4_cond_Z1 <- brfss4[brfss4$zerodrinks == 1, ]
+brfss4_cond_Z0_do_R1 <- brfss4_cond_Z0
+brfss4_cond_Z0_do_R1$rural <- 1
+brfss4_cond_Z1_do_R1 <- brfss4_cond_Z1
+brfss4_cond_Z1_do_R1$rural <- 1
+brfss4_do_Z0_do_R1 <- brfss4
+brfss4_do_Z0_do_R1$zerodrinks <- 0
+brfss4_do_Z0_do_R1$rural <- 1
+```
+
+
 Now, since *The logistic parametric model is a model for $P(Z = 1 \mid R = r, H)$*
 then
 
 ```{r}
-brfss4cond <- brfss4[brfss4$rural == 1, ]
-PZ1R1a <- sum(brfss4cond$maxdrinks == 1) / nrow(brfss4cond)
+prob_Z1 <- sum(brfss4$zerodrinks == 1) / nrow(brfss4)
 
-mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
+prob_Z1_cond_R1 <- sum(brfss4_cond_R1$zerodrinks == 1) / nrow(brfss4_cond_R1)
+# prob_Z1_cond_R1
+
+# logistic model with data conditional on R=1
+mod_logit_cond_R1 <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
                    hisp + multinh + gthsedu, 
-                 family = "binomial", data = brfss4)
-PZ1R1b <- mean(fitted(mod.logit))
+                 family = "binomial", data = brfss4_cond_R1)
+mod_logit_cond_R1_mean <- mean(fitted(mod_logit_cond_R1))
+# mod_logit_cond_R1_mean
 
-# compute probabilities from coefficients
-PZ1R1coefs <- coef(mod.logit)
-PZ1R1c <- sum(PZ1R1coefs)
-PZ1R1c <- plogis(PZ1R1c)
-
-
-# create the data where the probability assumes each individual is rural
-brfss_PZ1R1 <- brfss4
-brfss_PZ1R1$rural <- 1
-mod.logit.predict_PZ1R1 <- predict(mod.logit, newdata = brfss_PZ1R1, type = "response")
-PZ1R1d <- mean(mod.logit.predict_PZ1R1)
-
-# for Z = 1 only
-# mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
-#                    hisp + multinh + gthsedu, 
-#                  family = "binomial", data = brfss4)
+# they should be very close
+stopifnot(abs(prob_Z1_cond_R1 - mod_logit_cond_R1_mean) < 1e-6)
 
 
 # final
-PZ1R1 <- PZ1R1a  # my answer
-the_PZ1R1 <- c("PZ1R1a" = PZ1R1a, "PZ1R1b" = PZ1R1b, "PZ1R1c" = PZ1R1c, "PZ1R1d" = PZ1R1d)
-
-the_PZ1R1
-PZ1R1
+the_PZ1 <- c("prob_Z1" = prob_Z1,
+             "prob_Z1_cond_R1" = prob_Z1_cond_R1)
+the_PZ1
 ```
 
 and since *the loglinear parametric model is a model for 
 $E(Y \mid Z = 0, R = r, H)$* then
 
 ```{r}
+# This is the outcome-model standardization making sure that we predict
+# for everyone in the sample, not just those with Z = 0
+# It should be the right one !!
 mod.log <- glm(formula = maxdrinks ~ rural + gt65 + female + whitenh + blacknh +
                  hisp + multinh + gthsedu + zerodrinks, 
                family = "poisson", data = brfss4)
-
-# create the data for each individual if they consumed drinks and are in rural area
-brfss_EYZ0 <- brfss4
-brfss_EYZ0$zerodrinks <- 0
-brfss_EYZ0R1 <- brfss_EYZ0
-brfss_EYZ0R1$rural <- 1
-mod.log.predict_EYZ0R1 <- predict(mod.log, newdata = brfss_EYZ0R1, type = "response")
-EYZ0R1a <- mean(mod.log.predict_EYZ0R1)
-
-EYZ0R1coefs <- coef(mod.log)
-EYZ0R1b <- sum(EYZ0R1coefs[names(EYZ0R1coefs) != "zerodrinks"])
-EYZ0R1b <- exp(EYZ0R1b)
+mod.log.predict_do_Z0_do_R1 <- predict(mod.log, newdata = brfss4_do_Z0_do_R1, 
+                                       type = "response")
+EY_do_Z0_do_R1 <- mean(mod.log.predict_do_Z0_do_R1)
 
 
-# create data for the individuals assuming they are in rural
-brfss_EYR1 <- brfss
-brfss_EYR1$rural <- 1
-mod.log.predict_EYR1 <- predict(mod.log, newdata = brfss_EYR1, type = "response")
-EYZ0R1c <- mean(mod.log.predict_EYR1)
+# a trial . . .
+mod.log.predict_do_R1 <- predict(mod.log, newdata = brfss4_do_R1, type = "response")
+EY_do_R1 <- mean(mod.log.predict_do_R1)
+EY_do_R1
 
-# final
-EYZ0R1 <- EYZ0R1a  # my answer
-the_EYZ0R1 <- c("EYZ0R1a" = EYZ0R1a, "EYZ0R1b" = EYZ0R1b, "EYZ0R1c" = EYZ0R1c)
 
-the_EYZ0R1
-EYZ0R1
+# Thi is only for the with Z = 0, should not be the correct answer!
+mod.log_cond_Z0 <- glm(formula = maxdrinks ~ rural + gt65 + female + whitenh + blacknh +
+                 hisp + multinh + gthsedu + zerodrinks, 
+               family = "poisson", data = brfss4_cond_Z0)
+mod.log.predict_cond_Z0_do_R1 <- predict(mod.log, newdata = brfss4_cond_Z0_do_R1, 
+                                       type = "response")
+EY_cond_Z0_do_R1 <- mean(mod.log.predict_cond_Z0_do_R1)
+
+
+# output
+the_EYZ0 <- c("EY_do_Z0_do_R1" = EY_do_Z0_do_R1, 
+              "EY_cond_Z0_do_R1" = EY_cond_Z0_do_R1,
+              "EY_do_R1" = EY_do_R1)
+the_EYZ0
 ```
 
 and the outer product of $E_H [E(Y \mid Z = 0, R = r, H) (1 - P(Z=1 \mid R = r, H))]$
@@ -959,21 +968,19 @@ is
 EH <- mean(fitted(mod.log))
 EH
 ```
-```{r}
-# EY <- EH * (EYZ0R1 * (1 - PZ1R1))
-EY <- 1 * (EYZ0R1 * (1 - PZ1R1))
-EY
-```
-*and it is not incorrect*
+
+or using 
+
 
 and trying all variations does not help
 
 
 ```{r}
-df <- expand.grid("PZ1R1" = the_PZ1R1, "EYZ0R1" = the_EYZ0R1, "EH" = c(EH, 1))
+df <- expand.grid("PZ1" = the_PZ1, "EYZ0" = the_EYZ0, "EH" = c(EH, 1))
 df <- df %>%
-  mutate(EY = EH * (EYZ0R1 * (1 - PZ1R1))) %>%
-  arrange(desc(EY))
+  mutate(EY = EYZ0 * (1 - PZ1),
+         EHEY = EH * EY) %>%
+  arrange(desc(EHEY))
 df
 ```
 

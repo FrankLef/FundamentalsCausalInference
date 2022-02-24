@@ -75,17 +75,35 @@ $$
 & [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_1(0) \mid A=1) - E(Y_1(0) \mid A=0)] = \\
 &\text{assumption A1, additive equi-confounding} \\
 &\text{i.e. assuming that if nothing happens in year 1, then we can use the results of year 0} \\
-& [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_0 \mid A=1) - E(Y_0 \mid A=0)] \\
+& [E(Y_1 \mid A=1) - E(Y_1 \mid A=0)] - [E(Y_0 \mid A=1) - E(Y_0 \mid A=0)]
 \end{align*}
 $$
 
-> we can therefore estimate the linear ATT via the difference in differencs of averages
+> we can therefore estimate the linear ATT via the difference in differences 
+of averages
 
 $$
 \begin{align*}
 &[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_1 \mid A=0)] - [\hat{E}(Y_0 \mid A=1) - \hat{E}(Y_0 \mid A=0)]= \\
 &[\hat{E}(Y_1 \mid A=1) - \hat{E}(Y_0 \mid A=1)] - [\hat{E}(Y_1 \mid A=0) - \hat{E}(Y_0 \mid A=0)]= \\
 &[\hat{E}(Y_1 - Y_0 \mid A=1)] - [\hat{E}(Y_1 - Y_0 \mid A=0)]
+\end{align*}
+$$
+
+> We can also compute the DiD via the linear model
+
+$$
+E(Y_t \mid A) = \alpha_0 + \alpha_1 t + \alpha_2 A + \beta A * t
+$$
+and therefore
+
+
+$$
+\begin{align*}
+\beta &= [E(Y_1 \mid A=1) - E(Y_0 \mid A=1)] - [E(Y_1 \mid A=0) - E(Y_0 \mid A=0)] \\
+&= (\alpha_0 + \alpha_1 + \alpha_2 + \beta) - (\alpha_0 + \alpha_2) - 
+((\alpha_0 + \alpha_2) - (\alpha_0))
+
 \end{align*}
 $$
 

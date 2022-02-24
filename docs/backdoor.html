@@ -337,6 +337,10 @@ div.csl-indent {
 <li class="chapter" data-level="A.7.1" data-path="errata.html"><a href="errata.html#section-6.1-p.-100-first-paragraph"><i class="fa fa-check"></i><b>A.7.1</b> Section 6.1 p. 100, first paragraph</a></li>
 <li class="chapter" data-level="A.7.2" data-path="errata.html"><a href="errata.html#section-6.3-p.-126-the-script-of-simdr"><i class="fa fa-check"></i><b>A.7.2</b> Section 6.3 p. 126, the script of <code>simdr</code></a></li>
 </ul></li>
+<li class="chapter" data-level="A.8" data-path="errata.html"><a href="errata.html#chapter-7"><i class="fa fa-check"></i><b>A.8</b> Chapter 7</a>
+<ul>
+<li class="chapter" data-level="A.8.1" data-path="errata.html"><a href="errata.html#section-7.2-equation-7.11-p.-139"><i class="fa fa-check"></i><b>A.8.1</b> Section 7.2, equation (7.11), p. 139</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="notes.html"><a href="notes.html"><i class="fa fa-check"></i><b>B</b> Notes</a>
 <ul>
@@ -8104,119 +8108,104 @@ We will compute <span class="math inline">\(E(Y \mid R = 1, H)\)</span></p>
 E(Y \mid R = 1, H) &amp;= E(Y \mid Z = 0, R = 1, H) [1 - P(Z=1 \mid R = 1, H)]
 \end{align*}
 \]</span></p>
+<p>We create different data subset to make the calculations</p>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="backdoor.html#cb298-1" aria-hidden="true" tabindex="-1"></a>brfss4_do_R1 <span class="ot">&lt;-</span> brfss4</span>
+<span id="cb298-2"><a href="backdoor.html#cb298-2" aria-hidden="true" tabindex="-1"></a>brfss4_do_R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb298-3"><a href="backdoor.html#cb298-3" aria-hidden="true" tabindex="-1"></a>brfss4_cond_R1 <span class="ot">&lt;-</span> brfss4[brfss4<span class="sc">$</span>rural <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb298-4"><a href="backdoor.html#cb298-4" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z0 <span class="ot">&lt;-</span> brfss4[brfss4<span class="sc">$</span>zerodrinks <span class="sc">==</span> <span class="dv">0</span>, ]</span>
+<span id="cb298-5"><a href="backdoor.html#cb298-5" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z1 <span class="ot">&lt;-</span> brfss4[brfss4<span class="sc">$</span>zerodrinks <span class="sc">==</span> <span class="dv">1</span>, ]</span>
+<span id="cb298-6"><a href="backdoor.html#cb298-6" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z0_do_R1 <span class="ot">&lt;-</span> brfss4_cond_Z0</span>
+<span id="cb298-7"><a href="backdoor.html#cb298-7" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z0_do_R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb298-8"><a href="backdoor.html#cb298-8" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z1_do_R1 <span class="ot">&lt;-</span> brfss4_cond_Z1</span>
+<span id="cb298-9"><a href="backdoor.html#cb298-9" aria-hidden="true" tabindex="-1"></a>brfss4_cond_Z1_do_R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb298-10"><a href="backdoor.html#cb298-10" aria-hidden="true" tabindex="-1"></a>brfss4_do_Z0_do_R1 <span class="ot">&lt;-</span> brfss4</span>
+<span id="cb298-11"><a href="backdoor.html#cb298-11" aria-hidden="true" tabindex="-1"></a>brfss4_do_Z0_do_R1<span class="sc">$</span>zerodrinks <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb298-12"><a href="backdoor.html#cb298-12" aria-hidden="true" tabindex="-1"></a>brfss4_do_Z0_do_R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span></code></pre></div>
 <p>Now, since <em>The logistic parametric model is a model for <span class="math inline">\(P(Z = 1 \mid R = r, H)\)</span></em>
 then</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="backdoor.html#cb298-1" aria-hidden="true" tabindex="-1"></a>brfss4cond <span class="ot">&lt;-</span> brfss4[brfss4<span class="sc">$</span>rural <span class="sc">==</span> <span class="dv">1</span>, ]</span>
-<span id="cb298-2"><a href="backdoor.html#cb298-2" aria-hidden="true" tabindex="-1"></a>PZ1R1a <span class="ot">&lt;-</span> <span class="fu">sum</span>(brfss4cond<span class="sc">$</span>maxdrinks <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">/</span> <span class="fu">nrow</span>(brfss4cond)</span>
-<span id="cb298-3"><a href="backdoor.html#cb298-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-4"><a href="backdoor.html#cb298-4" aria-hidden="true" tabindex="-1"></a>mod.logit <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> zerodrinks <span class="sc">~</span> rural <span class="sc">+</span> gt65 <span class="sc">+</span> female <span class="sc">+</span> whitenh <span class="sc">+</span> blacknh <span class="sc">+</span></span>
-<span id="cb298-5"><a href="backdoor.html#cb298-5" aria-hidden="true" tabindex="-1"></a>                   hisp <span class="sc">+</span> multinh <span class="sc">+</span> gthsedu, </span>
-<span id="cb298-6"><a href="backdoor.html#cb298-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> brfss4)</span>
-<span id="cb298-7"><a href="backdoor.html#cb298-7" aria-hidden="true" tabindex="-1"></a>PZ1R1b <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">fitted</span>(mod.logit))</span>
-<span id="cb298-8"><a href="backdoor.html#cb298-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-9"><a href="backdoor.html#cb298-9" aria-hidden="true" tabindex="-1"></a><span class="co"># compute probabilities from coefficients</span></span>
-<span id="cb298-10"><a href="backdoor.html#cb298-10" aria-hidden="true" tabindex="-1"></a>PZ1R1coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(mod.logit)</span>
-<span id="cb298-11"><a href="backdoor.html#cb298-11" aria-hidden="true" tabindex="-1"></a>PZ1R1c <span class="ot">&lt;-</span> <span class="fu">sum</span>(PZ1R1coefs)</span>
-<span id="cb298-12"><a href="backdoor.html#cb298-12" aria-hidden="true" tabindex="-1"></a>PZ1R1c <span class="ot">&lt;-</span> <span class="fu">plogis</span>(PZ1R1c)</span>
-<span id="cb298-13"><a href="backdoor.html#cb298-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-14"><a href="backdoor.html#cb298-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-15"><a href="backdoor.html#cb298-15" aria-hidden="true" tabindex="-1"></a><span class="co"># create the data where the probability assumes each individual is rural</span></span>
-<span id="cb298-16"><a href="backdoor.html#cb298-16" aria-hidden="true" tabindex="-1"></a>brfss_PZ1R1 <span class="ot">&lt;-</span> brfss4</span>
-<span id="cb298-17"><a href="backdoor.html#cb298-17" aria-hidden="true" tabindex="-1"></a>brfss_PZ1R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb298-18"><a href="backdoor.html#cb298-18" aria-hidden="true" tabindex="-1"></a>mod.logit.predict_PZ1R1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.logit, <span class="at">newdata =</span> brfss_PZ1R1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb298-19"><a href="backdoor.html#cb298-19" aria-hidden="true" tabindex="-1"></a>PZ1R1d <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.logit.predict_PZ1R1)</span>
-<span id="cb298-20"><a href="backdoor.html#cb298-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-21"><a href="backdoor.html#cb298-21" aria-hidden="true" tabindex="-1"></a><span class="co"># for Z = 1 only</span></span>
-<span id="cb298-22"><a href="backdoor.html#cb298-22" aria-hidden="true" tabindex="-1"></a><span class="co"># mod.logit &lt;- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +</span></span>
-<span id="cb298-23"><a href="backdoor.html#cb298-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                    hisp + multinh + gthsedu, </span></span>
-<span id="cb298-24"><a href="backdoor.html#cb298-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                  family = &quot;binomial&quot;, data = brfss4)</span></span>
-<span id="cb298-25"><a href="backdoor.html#cb298-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-26"><a href="backdoor.html#cb298-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-27"><a href="backdoor.html#cb298-27" aria-hidden="true" tabindex="-1"></a><span class="co"># final</span></span>
-<span id="cb298-28"><a href="backdoor.html#cb298-28" aria-hidden="true" tabindex="-1"></a>PZ1R1 <span class="ot">&lt;-</span> PZ1R1a  <span class="co"># my answer</span></span>
-<span id="cb298-29"><a href="backdoor.html#cb298-29" aria-hidden="true" tabindex="-1"></a>the_PZ1R1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;PZ1R1a&quot;</span> <span class="ot">=</span> PZ1R1a, <span class="st">&quot;PZ1R1b&quot;</span> <span class="ot">=</span> PZ1R1b, <span class="st">&quot;PZ1R1c&quot;</span> <span class="ot">=</span> PZ1R1c, <span class="st">&quot;PZ1R1d&quot;</span> <span class="ot">=</span> PZ1R1d)</span>
-<span id="cb298-30"><a href="backdoor.html#cb298-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-31"><a href="backdoor.html#cb298-31" aria-hidden="true" tabindex="-1"></a>the_PZ1R1</span></code></pre></div>
-<pre><code>##    PZ1R1a    PZ1R1b    PZ1R1c    PZ1R1d 
-## 0.1281063 0.4988576 0.4268135 0.5498490</code></pre>
-<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="backdoor.html#cb300-1" aria-hidden="true" tabindex="-1"></a>PZ1R1</span></code></pre></div>
-<pre><code>## [1] 0.1281063</code></pre>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="backdoor.html#cb299-1" aria-hidden="true" tabindex="-1"></a>prob_Z1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(brfss4<span class="sc">$</span>zerodrinks <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">/</span> <span class="fu">nrow</span>(brfss4)</span>
+<span id="cb299-2"><a href="backdoor.html#cb299-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb299-3"><a href="backdoor.html#cb299-3" aria-hidden="true" tabindex="-1"></a>prob_Z1_cond_R1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(brfss4_cond_R1<span class="sc">$</span>zerodrinks <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">/</span> <span class="fu">nrow</span>(brfss4_cond_R1)</span>
+<span id="cb299-4"><a href="backdoor.html#cb299-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prob_Z1_cond_R1</span></span>
+<span id="cb299-5"><a href="backdoor.html#cb299-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb299-6"><a href="backdoor.html#cb299-6" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic model with data conditional on R=1</span></span>
+<span id="cb299-7"><a href="backdoor.html#cb299-7" aria-hidden="true" tabindex="-1"></a>mod_logit_cond_R1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> zerodrinks <span class="sc">~</span> rural <span class="sc">+</span> gt65 <span class="sc">+</span> female <span class="sc">+</span> whitenh <span class="sc">+</span> blacknh <span class="sc">+</span></span>
+<span id="cb299-8"><a href="backdoor.html#cb299-8" aria-hidden="true" tabindex="-1"></a>                   hisp <span class="sc">+</span> multinh <span class="sc">+</span> gthsedu, </span>
+<span id="cb299-9"><a href="backdoor.html#cb299-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> brfss4_cond_R1)</span>
+<span id="cb299-10"><a href="backdoor.html#cb299-10" aria-hidden="true" tabindex="-1"></a>mod_logit_cond_R1_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">fitted</span>(mod_logit_cond_R1))</span>
+<span id="cb299-11"><a href="backdoor.html#cb299-11" aria-hidden="true" tabindex="-1"></a><span class="co"># mod_logit_cond_R1_mean</span></span>
+<span id="cb299-12"><a href="backdoor.html#cb299-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb299-13"><a href="backdoor.html#cb299-13" aria-hidden="true" tabindex="-1"></a><span class="co"># they should be very close</span></span>
+<span id="cb299-14"><a href="backdoor.html#cb299-14" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(prob_Z1_cond_R1 <span class="sc">-</span> mod_logit_cond_R1_mean) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span>
+<span id="cb299-15"><a href="backdoor.html#cb299-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb299-16"><a href="backdoor.html#cb299-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb299-17"><a href="backdoor.html#cb299-17" aria-hidden="true" tabindex="-1"></a><span class="co"># final</span></span>
+<span id="cb299-18"><a href="backdoor.html#cb299-18" aria-hidden="true" tabindex="-1"></a>the_PZ1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;prob_Z1&quot;</span> <span class="ot">=</span> prob_Z1,</span>
+<span id="cb299-19"><a href="backdoor.html#cb299-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;prob_Z1_cond_R1&quot;</span> <span class="ot">=</span> prob_Z1_cond_R1)</span>
+<span id="cb299-20"><a href="backdoor.html#cb299-20" aria-hidden="true" tabindex="-1"></a>the_PZ1</span></code></pre></div>
+<pre><code>##         prob_Z1 prob_Z1_cond_R1 
+##       0.4988576       0.5631953</code></pre>
 <p>and since <em>the loglinear parametric model is a model for
 <span class="math inline">\(E(Y \mid Z = 0, R = r, H)\)</span></em> then</p>
-<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="backdoor.html#cb302-1" aria-hidden="true" tabindex="-1"></a>mod.log <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> maxdrinks <span class="sc">~</span> rural <span class="sc">+</span> gt65 <span class="sc">+</span> female <span class="sc">+</span> whitenh <span class="sc">+</span> blacknh <span class="sc">+</span></span>
-<span id="cb302-2"><a href="backdoor.html#cb302-2" aria-hidden="true" tabindex="-1"></a>                 hisp <span class="sc">+</span> multinh <span class="sc">+</span> gthsedu <span class="sc">+</span> zerodrinks, </span>
-<span id="cb302-3"><a href="backdoor.html#cb302-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>, <span class="at">data =</span> brfss4)</span>
-<span id="cb302-4"><a href="backdoor.html#cb302-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-5"><a href="backdoor.html#cb302-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create the data for each individual if they consumed drinks and are in rural area</span></span>
-<span id="cb302-6"><a href="backdoor.html#cb302-6" aria-hidden="true" tabindex="-1"></a>brfss_EYZ0 <span class="ot">&lt;-</span> brfss4</span>
-<span id="cb302-7"><a href="backdoor.html#cb302-7" aria-hidden="true" tabindex="-1"></a>brfss_EYZ0<span class="sc">$</span>zerodrinks <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb302-8"><a href="backdoor.html#cb302-8" aria-hidden="true" tabindex="-1"></a>brfss_EYZ0R1 <span class="ot">&lt;-</span> brfss_EYZ0</span>
-<span id="cb302-9"><a href="backdoor.html#cb302-9" aria-hidden="true" tabindex="-1"></a>brfss_EYZ0R1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb302-10"><a href="backdoor.html#cb302-10" aria-hidden="true" tabindex="-1"></a>mod.log.predict_EYZ0R1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.log, <span class="at">newdata =</span> brfss_EYZ0R1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb302-11"><a href="backdoor.html#cb302-11" aria-hidden="true" tabindex="-1"></a>EYZ0R1a <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.log.predict_EYZ0R1)</span>
-<span id="cb302-12"><a href="backdoor.html#cb302-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-13"><a href="backdoor.html#cb302-13" aria-hidden="true" tabindex="-1"></a>EYZ0R1coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(mod.log)</span>
-<span id="cb302-14"><a href="backdoor.html#cb302-14" aria-hidden="true" tabindex="-1"></a>EYZ0R1b <span class="ot">&lt;-</span> <span class="fu">sum</span>(EYZ0R1coefs[<span class="fu">names</span>(EYZ0R1coefs) <span class="sc">!=</span> <span class="st">&quot;zerodrinks&quot;</span>])</span>
-<span id="cb302-15"><a href="backdoor.html#cb302-15" aria-hidden="true" tabindex="-1"></a>EYZ0R1b <span class="ot">&lt;-</span> <span class="fu">exp</span>(EYZ0R1b)</span>
-<span id="cb302-16"><a href="backdoor.html#cb302-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-17"><a href="backdoor.html#cb302-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-18"><a href="backdoor.html#cb302-18" aria-hidden="true" tabindex="-1"></a><span class="co"># create data for the individuals assuming they are in rural</span></span>
-<span id="cb302-19"><a href="backdoor.html#cb302-19" aria-hidden="true" tabindex="-1"></a>brfss_EYR1 <span class="ot">&lt;-</span> brfss</span>
-<span id="cb302-20"><a href="backdoor.html#cb302-20" aria-hidden="true" tabindex="-1"></a>brfss_EYR1<span class="sc">$</span>rural <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb302-21"><a href="backdoor.html#cb302-21" aria-hidden="true" tabindex="-1"></a>mod.log.predict_EYR1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.log, <span class="at">newdata =</span> brfss_EYR1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb302-22"><a href="backdoor.html#cb302-22" aria-hidden="true" tabindex="-1"></a>EYZ0R1c <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.log.predict_EYR1)</span>
-<span id="cb302-23"><a href="backdoor.html#cb302-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-24"><a href="backdoor.html#cb302-24" aria-hidden="true" tabindex="-1"></a><span class="co"># final</span></span>
-<span id="cb302-25"><a href="backdoor.html#cb302-25" aria-hidden="true" tabindex="-1"></a>EYZ0R1 <span class="ot">&lt;-</span> EYZ0R1a  <span class="co"># my answer</span></span>
-<span id="cb302-26"><a href="backdoor.html#cb302-26" aria-hidden="true" tabindex="-1"></a>the_EYZ0R1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;EYZ0R1a&quot;</span> <span class="ot">=</span> EYZ0R1a, <span class="st">&quot;EYZ0R1b&quot;</span> <span class="ot">=</span> EYZ0R1b, <span class="st">&quot;EYZ0R1c&quot;</span> <span class="ot">=</span> EYZ0R1c)</span>
-<span id="cb302-27"><a href="backdoor.html#cb302-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb302-28"><a href="backdoor.html#cb302-28" aria-hidden="true" tabindex="-1"></a>the_EYZ0R1</span></code></pre></div>
-<pre><code>##  EYZ0R1a  EYZ0R1b  EYZ0R1c 
-## 3.245134 1.560858 1.693979</code></pre>
-<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="backdoor.html#cb304-1" aria-hidden="true" tabindex="-1"></a>EYZ0R1</span></code></pre></div>
-<pre><code>## [1] 3.245134</code></pre>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="backdoor.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the outcome-model standardization making sure that we predict</span></span>
+<span id="cb301-2"><a href="backdoor.html#cb301-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for everyone in the sample, not just those with Z = 0</span></span>
+<span id="cb301-3"><a href="backdoor.html#cb301-3" aria-hidden="true" tabindex="-1"></a><span class="co"># It should be the right one !!</span></span>
+<span id="cb301-4"><a href="backdoor.html#cb301-4" aria-hidden="true" tabindex="-1"></a>mod.log <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> maxdrinks <span class="sc">~</span> rural <span class="sc">+</span> gt65 <span class="sc">+</span> female <span class="sc">+</span> whitenh <span class="sc">+</span> blacknh <span class="sc">+</span></span>
+<span id="cb301-5"><a href="backdoor.html#cb301-5" aria-hidden="true" tabindex="-1"></a>                 hisp <span class="sc">+</span> multinh <span class="sc">+</span> gthsedu <span class="sc">+</span> zerodrinks, </span>
+<span id="cb301-6"><a href="backdoor.html#cb301-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>, <span class="at">data =</span> brfss4)</span>
+<span id="cb301-7"><a href="backdoor.html#cb301-7" aria-hidden="true" tabindex="-1"></a>mod.log.predict_do_Z0_do_R1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.log, <span class="at">newdata =</span> brfss4_do_Z0_do_R1, </span>
+<span id="cb301-8"><a href="backdoor.html#cb301-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb301-9"><a href="backdoor.html#cb301-9" aria-hidden="true" tabindex="-1"></a>EY_do_Z0_do_R1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.log.predict_do_Z0_do_R1)</span>
+<span id="cb301-10"><a href="backdoor.html#cb301-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb301-11"><a href="backdoor.html#cb301-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb301-12"><a href="backdoor.html#cb301-12" aria-hidden="true" tabindex="-1"></a><span class="co"># a trial . . .</span></span>
+<span id="cb301-13"><a href="backdoor.html#cb301-13" aria-hidden="true" tabindex="-1"></a>mod.log.predict_do_R1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.log, <span class="at">newdata =</span> brfss4_do_R1, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb301-14"><a href="backdoor.html#cb301-14" aria-hidden="true" tabindex="-1"></a>EY_do_R1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.log.predict_do_R1)</span>
+<span id="cb301-15"><a href="backdoor.html#cb301-15" aria-hidden="true" tabindex="-1"></a>EY_do_R1</span></code></pre></div>
+<pre><code>## [1] 1.693979</code></pre>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="backdoor.html#cb303-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Thi is only for the with Z = 0, should not be the correct answer!</span></span>
+<span id="cb303-2"><a href="backdoor.html#cb303-2" aria-hidden="true" tabindex="-1"></a>mod.log_cond_Z0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> maxdrinks <span class="sc">~</span> rural <span class="sc">+</span> gt65 <span class="sc">+</span> female <span class="sc">+</span> whitenh <span class="sc">+</span> blacknh <span class="sc">+</span></span>
+<span id="cb303-3"><a href="backdoor.html#cb303-3" aria-hidden="true" tabindex="-1"></a>                 hisp <span class="sc">+</span> multinh <span class="sc">+</span> gthsedu <span class="sc">+</span> zerodrinks, </span>
+<span id="cb303-4"><a href="backdoor.html#cb303-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>, <span class="at">data =</span> brfss4_cond_Z0)</span>
+<span id="cb303-5"><a href="backdoor.html#cb303-5" aria-hidden="true" tabindex="-1"></a>mod.log.predict_cond_Z0_do_R1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.log, <span class="at">newdata =</span> brfss4_cond_Z0_do_R1, </span>
+<span id="cb303-6"><a href="backdoor.html#cb303-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb303-7"><a href="backdoor.html#cb303-7" aria-hidden="true" tabindex="-1"></a>EY_cond_Z0_do_R1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(mod.log.predict_cond_Z0_do_R1)</span>
+<span id="cb303-8"><a href="backdoor.html#cb303-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb303-9"><a href="backdoor.html#cb303-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb303-10"><a href="backdoor.html#cb303-10" aria-hidden="true" tabindex="-1"></a><span class="co"># output</span></span>
+<span id="cb303-11"><a href="backdoor.html#cb303-11" aria-hidden="true" tabindex="-1"></a>the_EYZ0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;EY_do_Z0_do_R1&quot;</span> <span class="ot">=</span> EY_do_Z0_do_R1, </span>
+<span id="cb303-12"><a href="backdoor.html#cb303-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;EY_cond_Z0_do_R1&quot;</span> <span class="ot">=</span> EY_cond_Z0_do_R1,</span>
+<span id="cb303-13"><a href="backdoor.html#cb303-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;EY_do_R1&quot;</span> <span class="ot">=</span> EY_do_R1)</span>
+<span id="cb303-14"><a href="backdoor.html#cb303-14" aria-hidden="true" tabindex="-1"></a>the_EYZ0</span></code></pre></div>
+<pre><code>##   EY_do_Z0_do_R1 EY_cond_Z0_do_R1         EY_do_R1 
+##         3.245134         3.380234         1.693979</code></pre>
 <p>and the outer product of <span class="math inline">\(E_H [E(Y \mid Z = 0, R = r, H) (1 - P(Z=1 \mid R = r, H))]\)</span>
 is</p>
-<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="backdoor.html#cb306-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean(fitted(mod.log)) is the same as mean(brfss$maxdrinks)</span></span>
-<span id="cb306-2"><a href="backdoor.html#cb306-2" aria-hidden="true" tabindex="-1"></a>EH <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">fitted</span>(mod.log))</span>
-<span id="cb306-3"><a href="backdoor.html#cb306-3" aria-hidden="true" tabindex="-1"></a>EH</span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="backdoor.html#cb305-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean(fitted(mod.log)) is the same as mean(brfss$maxdrinks)</span></span>
+<span id="cb305-2"><a href="backdoor.html#cb305-2" aria-hidden="true" tabindex="-1"></a>EH <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">fitted</span>(mod.log))</span>
+<span id="cb305-3"><a href="backdoor.html#cb305-3" aria-hidden="true" tabindex="-1"></a>EH</span></code></pre></div>
 <pre><code>## [1] 1.651066</code></pre>
-<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="backdoor.html#cb308-1" aria-hidden="true" tabindex="-1"></a><span class="co"># EY &lt;- EH * (EYZ0R1 * (1 - PZ1R1))</span></span>
-<span id="cb308-2"><a href="backdoor.html#cb308-2" aria-hidden="true" tabindex="-1"></a>EY <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">*</span> (EYZ0R1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> PZ1R1))</span>
-<span id="cb308-3"><a href="backdoor.html#cb308-3" aria-hidden="true" tabindex="-1"></a>EY</span></code></pre></div>
-<pre><code>## [1] 2.829412</code></pre>
-<p><em>and it is not incorrect</em></p>
+<p>or using</p>
 <p>and trying all variations does not help</p>
-<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="backdoor.html#cb310-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="st">&quot;PZ1R1&quot;</span> <span class="ot">=</span> the_PZ1R1, <span class="st">&quot;EYZ0R1&quot;</span> <span class="ot">=</span> the_EYZ0R1, <span class="st">&quot;EH&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(EH, <span class="dv">1</span>))</span>
-<span id="cb310-2"><a href="backdoor.html#cb310-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb310-3"><a href="backdoor.html#cb310-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EY =</span> EH <span class="sc">*</span> (EYZ0R1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> PZ1R1))) <span class="sc">%&gt;%</span></span>
-<span id="cb310-4"><a href="backdoor.html#cb310-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(EY))</span>
-<span id="cb310-5"><a href="backdoor.html#cb310-5" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
-<pre><code>##        PZ1R1   EYZ0R1       EH        EY
-## 1  0.1281063 3.245134 1.651066 4.6715449
-## 2  0.4268135 3.245134 1.651066 3.0710925
-## 3  0.1281063 3.245134 1.000000 2.8294120
-## 4  0.4988576 3.245134 1.651066 2.6850856
-## 5  0.1281063 1.693979 1.651066 2.4385732
-## 6  0.5498490 3.245134 1.651066 2.4118774
-## 7  0.1281063 1.560858 1.651066 2.2469389
-## 8  0.4268135 3.245134 1.000000 1.8600668
-## 9  0.4988576 3.245134 1.000000 1.6262743
-## 10 0.4268135 1.693979 1.651066 1.6031279
-## 11 0.4268135 1.560858 1.651066 1.4771467
-## 12 0.1281063 1.693979 1.000000 1.4769693
-## 13 0.5498490 3.245134 1.000000 1.4608004
-## 14 0.4988576 1.693979 1.651066 1.4016301
-## 15 0.1281063 1.560858 1.000000 1.3609022
-## 16 0.4988576 1.560858 1.651066 1.2914835
-## 17 0.5498490 1.693979 1.651066 1.2590138
-## 18 0.5498490 1.560858 1.651066 1.1600747
-## 19 0.4268135 1.693979 1.000000 0.9709656
-## 20 0.4268135 1.560858 1.000000 0.8946626
-## 21 0.4988576 1.693979 1.000000 0.8489245
-## 22 0.4988576 1.560858 1.000000 0.7822121
-## 23 0.5498490 1.693979 1.000000 0.7625462
-## 24 0.5498490 1.560858 1.000000 0.7026218</code></pre>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="backdoor.html#cb307-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="st">&quot;PZ1&quot;</span> <span class="ot">=</span> the_PZ1, <span class="st">&quot;EYZ0&quot;</span> <span class="ot">=</span> the_EYZ0, <span class="st">&quot;EH&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(EH, <span class="dv">1</span>))</span>
+<span id="cb307-2"><a href="backdoor.html#cb307-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb307-3"><a href="backdoor.html#cb307-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EY =</span> EYZ0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> PZ1),</span>
+<span id="cb307-4"><a href="backdoor.html#cb307-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">EHEY =</span> EH <span class="sc">*</span> EY) <span class="sc">%&gt;%</span></span>
+<span id="cb307-5"><a href="backdoor.html#cb307-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(EHEY))</span>
+<span id="cb307-6"><a href="backdoor.html#cb307-6" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<pre><code>##          PZ1     EYZ0       EH        EY      EHEY
+## 1  0.4988576 3.380234 1.651066 1.6939785 2.7968698
+## 2  0.4988576 3.245134 1.651066 1.6262743 2.6850856
+## 3  0.5631953 3.380234 1.651066 1.4765021 2.4378019
+## 4  0.5631953 3.245134 1.651066 1.4174899 2.3403688
+## 5  0.4988576 3.380234 1.000000 1.6939785 1.6939785
+## 6  0.4988576 3.245134 1.000000 1.6262743 1.6262743
+## 7  0.5631953 3.380234 1.000000 1.4765021 1.4765021
+## 8  0.5631953 3.245134 1.000000 1.4174899 1.4174899
+## 9  0.4988576 1.693979 1.651066 0.8489245 1.4016301
+## 10 0.5631953 1.693979 1.651066 0.7399378 1.2216859
+## 11 0.4988576 1.693979 1.000000 0.8489245 0.8489245
+## 12 0.5631953 1.693979 1.000000 0.7399378 0.7399378</code></pre>
 </div>
 <div id="outcome-model" class="section level4" number="6.4.4.2">
 <h4><span class="header-section-number">6.4.4.2</span> Outcome model</h4>
@@ -8224,26 +8213,26 @@ is</p>
 <code>family = poisson</code> since the outcome is a count. However we obtained the
 same results using <code>family = gaussian</code>, actually, when using <code>family = gaussian</code>,
 the results matched <em>exactly</em> with the exposure model of exercise 5 below.</p>
-<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="backdoor.html#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="backdoor.html#cb309-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 3 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="backdoor.html#cb314-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb314-2"><a href="backdoor.html#cb314-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
-<span id="cb314-3"><a href="backdoor.html#cb314-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.out &lt;- standout(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
-<span id="cb314-4"><a href="backdoor.html#cb314-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu, </span></span>
-<span id="cb314-5"><a href="backdoor.html#cb314-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                           family = &quot;poisson&quot;, R = 50, conf = 0.95)</span></span>
-<span id="cb314-6"><a href="backdoor.html#cb314-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb314-7"><a href="backdoor.html#cb314-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb314-8"><a href="backdoor.html#cb314-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex4.rds&quot;</span>)</span>
-<span id="cb314-9"><a href="backdoor.html#cb314-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.out, file = a_file)</span></span>
-<span id="cb314-10"><a href="backdoor.html#cb314-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="backdoor.html#cb315-1" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.out</span></span></code></pre></div>
-<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="backdoor.html#cb316-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.out, </span>
-<span id="cb316-2"><a href="backdoor.html#cb316-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.4&quot;</span>, </span>
-<span id="cb316-3"><a href="backdoor.html#cb316-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
-<span id="cb316-4"><a href="backdoor.html#cb316-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
-<span id="cb316-5"><a href="backdoor.html#cb316-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Outcome-model Standardization&quot;</span>, </span>
-<span id="cb316-6"><a href="backdoor.html#cb316-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
-<span id="cb316-7"><a href="backdoor.html#cb316-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="backdoor.html#cb311-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb311-2"><a href="backdoor.html#cb311-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
+<span id="cb311-3"><a href="backdoor.html#cb311-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.out &lt;- standout(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
+<span id="cb311-4"><a href="backdoor.html#cb311-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu, </span></span>
+<span id="cb311-5"><a href="backdoor.html#cb311-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                           family = &quot;poisson&quot;, R = 50, conf = 0.95)</span></span>
+<span id="cb311-6"><a href="backdoor.html#cb311-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb311-7"><a href="backdoor.html#cb311-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb311-8"><a href="backdoor.html#cb311-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex4.rds&quot;</span>)</span>
+<span id="cb311-9"><a href="backdoor.html#cb311-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.out, file = a_file)</span></span>
+<span id="cb311-10"><a href="backdoor.html#cb311-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="backdoor.html#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="backdoor.html#cb313-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.out, </span>
+<span id="cb313-2"><a href="backdoor.html#cb313-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.4&quot;</span>, </span>
+<span id="cb313-3"><a href="backdoor.html#cb313-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
+<span id="cb313-4"><a href="backdoor.html#cb313-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
+<span id="cb313-5"><a href="backdoor.html#cb313-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Outcome-model Standardization&quot;</span>, </span>
+<span id="cb313-6"><a href="backdoor.html#cb313-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
+<span id="cb313-7"><a href="backdoor.html#cb313-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
 <div id="lfotypiuwp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -8638,25 +8627,25 @@ the results matched <em>exactly</em> with the exposure model of exercise 5 below
 <div id="exercise-5-4" class="section level3" number="6.4.5">
 <h3><span class="header-section-number">6.4.5</span> Exercise 5</h3>
 <p>With the exposure model we have</p>
-<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="backdoor.html#cb317-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="backdoor.html#cb314-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 3 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="backdoor.html#cb319-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb319-2"><a href="backdoor.html#cb319-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
-<span id="cb319-3"><a href="backdoor.html#cb319-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.exp &lt;- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
-<span id="cb319-4"><a href="backdoor.html#cb319-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu,</span></span>
-<span id="cb319-5"><a href="backdoor.html#cb319-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                           R = 50, conf = 0.95)</span></span>
-<span id="cb319-6"><a href="backdoor.html#cb319-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb319-7"><a href="backdoor.html#cb319-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb319-8"><a href="backdoor.html#cb319-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex5.rds&quot;</span>)</span>
-<span id="cb319-9"><a href="backdoor.html#cb319-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.exp, file = a_file)</span></span>
-<span id="cb319-10"><a href="backdoor.html#cb319-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="backdoor.html#cb320-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.exp, </span>
-<span id="cb320-2"><a href="backdoor.html#cb320-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.5&quot;</span>, </span>
-<span id="cb320-3"><a href="backdoor.html#cb320-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
-<span id="cb320-4"><a href="backdoor.html#cb320-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
-<span id="cb320-5"><a href="backdoor.html#cb320-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Exposure-model Standardization&quot;</span>, </span>
-<span id="cb320-6"><a href="backdoor.html#cb320-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
-<span id="cb320-7"><a href="backdoor.html#cb320-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="backdoor.html#cb316-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb316-2"><a href="backdoor.html#cb316-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
+<span id="cb316-3"><a href="backdoor.html#cb316-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.exp &lt;- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
+<span id="cb316-4"><a href="backdoor.html#cb316-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu,</span></span>
+<span id="cb316-5"><a href="backdoor.html#cb316-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                           R = 50, conf = 0.95)</span></span>
+<span id="cb316-6"><a href="backdoor.html#cb316-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb316-7"><a href="backdoor.html#cb316-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb316-8"><a href="backdoor.html#cb316-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex5.rds&quot;</span>)</span>
+<span id="cb316-9"><a href="backdoor.html#cb316-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.exp, file = a_file)</span></span>
+<span id="cb316-10"><a href="backdoor.html#cb316-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="backdoor.html#cb317-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.exp, </span>
+<span id="cb317-2"><a href="backdoor.html#cb317-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.5&quot;</span>, </span>
+<span id="cb317-3"><a href="backdoor.html#cb317-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
+<span id="cb317-4"><a href="backdoor.html#cb317-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
+<span id="cb317-5"><a href="backdoor.html#cb317-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Exposure-model Standardization&quot;</span>, </span>
+<span id="cb317-6"><a href="backdoor.html#cb317-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
+<span id="cb317-7"><a href="backdoor.html#cb317-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
 <div id="picxjzhovt" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -9050,25 +9039,25 @@ the results matched <em>exactly</em> with the exposure model of exercise 5 below
 <div id="exercise-6-2" class="section level3" number="6.4.6">
 <h3><span class="header-section-number">6.4.6</span> Exercise 6</h3>
 <p>With the doubly-robust model we have</p>
-<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="backdoor.html#cb321-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 5 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="backdoor.html#cb318-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 5 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 5 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="backdoor.html#cb323-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb323-2"><a href="backdoor.html#cb323-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
-<span id="cb323-3"><a href="backdoor.html#cb323-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.dr &lt;- standdr(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
-<span id="cb323-4"><a href="backdoor.html#cb323-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu,</span></span>
-<span id="cb323-5"><a href="backdoor.html#cb323-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                         family = &quot;poisson&quot;, R = 50, conf = 0.95)</span></span>
-<span id="cb323-6"><a href="backdoor.html#cb323-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb323-7"><a href="backdoor.html#cb323-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb323-8"><a href="backdoor.html#cb323-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex6.rds&quot;</span>)</span>
-<span id="cb323-9"><a href="backdoor.html#cb323-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.dr, file = a_file)</span></span>
-<span id="cb323-10"><a href="backdoor.html#cb323-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.dr <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="backdoor.html#cb324-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.dr, </span>
-<span id="cb324-2"><a href="backdoor.html#cb324-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.7&quot;</span>, </span>
-<span id="cb324-3"><a href="backdoor.html#cb324-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
-<span id="cb324-4"><a href="backdoor.html#cb324-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
-<span id="cb324-5"><a href="backdoor.html#cb324-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Doubly-Robust Standardization&quot;</span>, </span>
-<span id="cb324-6"><a href="backdoor.html#cb324-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
-<span id="cb324-7"><a href="backdoor.html#cb324-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="backdoor.html#cb320-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb320-2"><a href="backdoor.html#cb320-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
+<span id="cb320-3"><a href="backdoor.html#cb320-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.dr &lt;- standdr(dataBRFSS, formula = maxdrinks ~ rural + gt65 + female +</span></span>
+<span id="cb320-4"><a href="backdoor.html#cb320-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                             blacknh + hisp + multinh + gthsedu,</span></span>
+<span id="cb320-5"><a href="backdoor.html#cb320-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                         family = &quot;poisson&quot;, R = 50, conf = 0.95)</span></span>
+<span id="cb320-6"><a href="backdoor.html#cb320-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb320-7"><a href="backdoor.html#cb320-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb320-8"><a href="backdoor.html#cb320-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_Ex6.rds&quot;</span>)</span>
+<span id="cb320-9"><a href="backdoor.html#cb320-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.dr, file = a_file)</span></span>
+<span id="cb320-10"><a href="backdoor.html#cb320-10" aria-hidden="true" tabindex="-1"></a>maxdrinks.dr <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="backdoor.html#cb321-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(maxdrinks.dr, </span>
+<span id="cb321-2"><a href="backdoor.html#cb321-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Exercise 6.7&quot;</span>, </span>
+<span id="cb321-3"><a href="backdoor.html#cb321-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;</span>, </span>
+<span id="cb321-4"><a href="backdoor.html#cb321-4" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>, </span>
+<span id="cb321-5"><a href="backdoor.html#cb321-5" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Doubly-Robust Standardization&quot;</span>, </span>
+<span id="cb321-6"><a href="backdoor.html#cb321-6" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;&lt;br&gt;&quot;</span>,</span>
+<span id="cb321-7"><a href="backdoor.html#cb321-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">&quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;</span>))</span></code></pre></div>
 <div id="xfclaojnpu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -9461,29 +9450,29 @@ the results matched <em>exactly</em> with the exposure model of exercise 5 below
 </div>
 <div id="exercise-7-1" class="section level3" number="6.4.7">
 <h3><span class="header-section-number">6.4.7</span> Exercise 7</h3>
-<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="backdoor.html#cb325-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;TODO&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="backdoor.html#cb322-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;TODO&quot;</span>)</span></code></pre></div>
 <pre><code>## TODO</code></pre>
 <p>Computing the average treatment on the treatment (with <code>att = TRUE</code>),
 i.e. for rural county, with the exposure model</p>
-<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="backdoor.html#cb327-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="backdoor.html#cb324-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This took 3 min, so we load a saved file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This took 3 min, so we load a saved file.</code></pre>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="backdoor.html#cb329-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb329-2"><a href="backdoor.html#cb329-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
-<span id="cb329-3"><a href="backdoor.html#cb329-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.expatt &lt;- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + </span></span>
-<span id="cb329-4"><a href="backdoor.html#cb329-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                female + blacknh + hisp + multinh + gthsedu, </span></span>
-<span id="cb329-5"><a href="backdoor.html#cb329-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                              att = TRUE, R = 50, conf = 0.95)</span></span>
-<span id="cb329-6"><a href="backdoor.html#cb329-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb329-7"><a href="backdoor.html#cb329-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb329-8"><a href="backdoor.html#cb329-8" aria-hidden="true" tabindex="-1"></a><span class="co"># a_file &lt;- file.path(dir_data, &quot;chap06_Ex7.rds&quot;)</span></span>
-<span id="cb329-9"><a href="backdoor.html#cb329-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.expatt, file = a_file)</span></span>
-<span id="cb329-10"><a href="backdoor.html#cb329-10" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.expatt &lt;- readRDS(a_file)</span></span></code></pre></div>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="backdoor.html#cb330-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gt_measures(maxdrinks.expatt, </span></span>
-<span id="cb330-2"><a href="backdoor.html#cb330-2" aria-hidden="true" tabindex="-1"></a><span class="co">#             title = &quot;Exercise 6.7&quot;, </span></span>
-<span id="cb330-3"><a href="backdoor.html#cb330-3" aria-hidden="true" tabindex="-1"></a><span class="co">#             subtitle = paste0(&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;, </span></span>
-<span id="cb330-4"><a href="backdoor.html#cb330-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;&lt;br&gt;&quot;, </span></span>
-<span id="cb330-5"><a href="backdoor.html#cb330-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;Exposure-model Standardization for the ATT&quot;, </span></span>
-<span id="cb330-6"><a href="backdoor.html#cb330-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;&lt;br&gt;&quot;,</span></span>
-<span id="cb330-7"><a href="backdoor.html#cb330-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;))</span></span></code></pre></div>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="backdoor.html#cb326-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb326-2"><a href="backdoor.html#cb326-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whitenh not included in formula since it is the reference dummy variable</span></span>
+<span id="cb326-3"><a href="backdoor.html#cb326-3" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.expatt &lt;- standexp(dataBRFSS, formula = maxdrinks ~ rural + gt65 + </span></span>
+<span id="cb326-4"><a href="backdoor.html#cb326-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                female + blacknh + hisp + multinh + gthsedu, </span></span>
+<span id="cb326-5"><a href="backdoor.html#cb326-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                              att = TRUE, R = 50, conf = 0.95)</span></span>
+<span id="cb326-6"><a href="backdoor.html#cb326-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb326-7"><a href="backdoor.html#cb326-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb326-8"><a href="backdoor.html#cb326-8" aria-hidden="true" tabindex="-1"></a><span class="co"># a_file &lt;- file.path(dir_data, &quot;chap06_Ex7.rds&quot;)</span></span>
+<span id="cb326-9"><a href="backdoor.html#cb326-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(maxdrinks.expatt, file = a_file)</span></span>
+<span id="cb326-10"><a href="backdoor.html#cb326-10" aria-hidden="true" tabindex="-1"></a><span class="co"># maxdrinks.expatt &lt;- readRDS(a_file)</span></span></code></pre></div>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="backdoor.html#cb327-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gt_measures(maxdrinks.expatt, </span></span>
+<span id="cb327-2"><a href="backdoor.html#cb327-2" aria-hidden="true" tabindex="-1"></a><span class="co">#             title = &quot;Exercise 6.7&quot;, </span></span>
+<span id="cb327-3"><a href="backdoor.html#cb327-3" aria-hidden="true" tabindex="-1"></a><span class="co">#             subtitle = paste0(&quot;2019 Behavioral Risk Factor Surveillance System Survey&quot;, </span></span>
+<span id="cb327-4"><a href="backdoor.html#cb327-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;&lt;br&gt;&quot;, </span></span>
+<span id="cb327-5"><a href="backdoor.html#cb327-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;Exposure-model Standardization for the ATT&quot;, </span></span>
+<span id="cb327-6"><a href="backdoor.html#cb327-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;&lt;br&gt;&quot;,</span></span>
+<span id="cb327-7"><a href="backdoor.html#cb327-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                               &quot;Effect of &lt;em&gt;rural&lt;/em&gt; on &lt;em&gt;maxdrinks&lt;/em&gt;&quot;))</span></span></code></pre></div>
 </div>
 <div id="exercise-8-1" class="section level3" number="6.4.8">
 <h3><span class="header-section-number">6.4.8</span> Exercise 8</h3>
