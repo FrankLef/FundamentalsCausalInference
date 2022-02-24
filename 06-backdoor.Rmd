@@ -721,7 +721,7 @@ mc.out %>%
 ### Exercise 1
 
 ```{r}
-dataBRFSS <- brfss %>%
+brfss1 <- brfss %>%
   filter(gt65 == 0)
 ```
 
@@ -729,7 +729,7 @@ dataBRFSS <- brfss %>%
 message("This took about 3 min, so we load a saved file.")
 # startTime <- Sys.time()
 # whitenh not included in formula since it is the reference dummy variable
-# brfss.out <- standout(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+# brfss.out <- standout(brfss1, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -781,7 +781,7 @@ The effect of being insured on flushot is very clear.
 message("This took 3 min, so we load a saved file.")
 # startTime <- Sys.time()
 # whitenh not included in formula since it is the reference dummy variable
-# brfss.exp <- standexp(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+# brfss.exp <- standexp(brfss1, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -821,7 +821,7 @@ stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
 message("This took 5 min, so we load a saved file.")
 # startTime <- Sys.time()
 # whitenh not included in formula since it is the reference dummy variable
-# brfss.dr <- standdr(dataBRFSS, formula = flushot ~ insured + female + blacknh +
+# brfss.dr <- standdr(brfss1, formula = flushot ~ insured + female + blacknh +
 #                hisp + multinh + gthsedu + rural, R = 100)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -859,8 +859,7 @@ stopifnot(sum(abs(comp$sim - comp$bb)) < 0.01)
 #### 2-parts model (???)
 
 ```{r}
-rm(dataBRFSS)  # make sure to reset dataBRFSS
-dataBRFSS <- brfss
+brfss4 <- brfss
 ```
 
 We have reduced $E(Y \mid R, H)$ to
@@ -883,16 +882,37 @@ Now, since *The logistic parametric model is a model for $P(Z = 1 \mid R = r, H)
 then
 
 ```{r}
+brfss4cond <- brfss4[brfss4$rural == 1, ]
+PZ1R1a <- sum(brfss4cond$maxdrinks == 1) / nrow(brfss4cond)
+
 mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
                    hisp + multinh + gthsedu, 
-                 family = "binomial", data = dataBRFSS)
-# PZ1R1 <- mean(fitted(mod.logit))
+                 family = "binomial", data = brfss4)
+PZ1R1b <- mean(fitted(mod.logit))
+
+# compute probabilities from coefficients
+PZ1R1coefs <- coef(mod.logit)
+PZ1R1c <- sum(PZ1R1coefs)
+PZ1R1c <- plogis(PZ1R1c)
+
 
 # create the data where the probability assumes each individual is rural
-dataBRFSS_PZ1R1 <- dataBRFSS
-dataBRFSS_PZ1R1$rural <- 1
-mod.logit.predict_PZ1R1 <- predict(mod.logit, newdata = dataBRFSS_PZ1R1, type = "response")
-PZ1R1 <- mean(mod.logit.predict_PZ1R1)
+brfss_PZ1R1 <- brfss4
+brfss_PZ1R1$rural <- 1
+mod.logit.predict_PZ1R1 <- predict(mod.logit, newdata = brfss_PZ1R1, type = "response")
+PZ1R1d <- mean(mod.logit.predict_PZ1R1)
+
+# for Z = 1 only
+# mod.logit <- glm(formula = zerodrinks ~ rural + gt65 + female + whitenh + blacknh +
+#                    hisp + multinh + gthsedu, 
+#                  family = "binomial", data = brfss4)
+
+
+# final
+PZ1R1 <- PZ1R1a  # my answer
+the_PZ1R1 <- c("PZ1R1a" = PZ1R1a, "PZ1R1b" = PZ1R1b, "PZ1R1c" = PZ1R1c, "PZ1R1d" = PZ1R1d)
+
+the_PZ1R1
 PZ1R1
 ```
 
@@ -902,28 +922,32 @@ $E(Y \mid Z = 0, R = r, H)$* then
 ```{r}
 mod.log <- glm(formula = maxdrinks ~ rural + gt65 + female + whitenh + blacknh +
                  hisp + multinh + gthsedu + zerodrinks, 
-               family = "poisson", data = dataBRFSS)
+               family = "poisson", data = brfss4)
 
 # create the data for each individual if they consumed drinks and are in rural area
-dataBRFSS_EYZ0 <- dataBRFSS
-dataBRFSS_EYZ0$zerodrinks <- 0
-dataBRFSS_EYZ0R1 <- dataBRFSS_EYZ0
-dataBRFSS_EYZ0R1$rural <- 1
-mod.log.predict_EYZ0R1 <- predict(mod.log, newdata = dataBRFSS_EYZ0R1, type = "response")
-EYZ0R1 <- mean(mod.log.predict_EYZ0R1)
+brfss_EYZ0 <- brfss4
+brfss_EYZ0$zerodrinks <- 0
+brfss_EYZ0R1 <- brfss_EYZ0
+brfss_EYZ0R1$rural <- 1
+mod.log.predict_EYZ0R1 <- predict(mod.log, newdata = brfss_EYZ0R1, type = "response")
+EYZ0R1a <- mean(mod.log.predict_EYZ0R1)
 
-# coefs <- coef(mod.log)
-# EYZ0R1 <- sum(coefs[names(coefs) != "zerodrinks"])
-# EYZ0R1 <- exp(EYZ0R1)
-# EYZ0R1
+EYZ0R1coefs <- coef(mod.log)
+EYZ0R1b <- sum(EYZ0R1coefs[names(EYZ0R1coefs) != "zerodrinks"])
+EYZ0R1b <- exp(EYZ0R1b)
 
 
 # create data for the individuals assuming they are in rural
-# dataBRFSS_EYR1 <- dataBRFSS
-# dataBRFSS_EYR1$rural <- 1
-# mod.log.predict_EYR1 <- predict(mod.log, newdata = dataBRFSS_EYR1, type = "response")
-# EYZ0R1 <- mean(mod.log.predict_EYR1)
+brfss_EYR1 <- brfss
+brfss_EYR1$rural <- 1
+mod.log.predict_EYR1 <- predict(mod.log, newdata = brfss_EYR1, type = "response")
+EYZ0R1c <- mean(mod.log.predict_EYR1)
 
+# final
+EYZ0R1 <- EYZ0R1a  # my answer
+the_EYZ0R1 <- c("EYZ0R1a" = EYZ0R1a, "EYZ0R1b" = EYZ0R1b, "EYZ0R1c" = EYZ0R1c)
+
+the_EYZ0R1
 EYZ0R1
 ```
 
@@ -931,14 +955,26 @@ and the outer product of $E_H [E(Y \mid Z = 0, R = r, H) (1 - P(Z=1 \mid R = r, 
 is
 
 ```{r}
-# mean(fitted(mod.log)) is the same as mean(dataBRFSS$maxdrinks)
+# mean(fitted(mod.log)) is the same as mean(brfss$maxdrinks)
 EH <- mean(fitted(mod.log))
 EH
 ```
 ```{r}
-EY <- EH * (EYZ0R1 * (1 - PZ1R1))
-# EY <- 1 * (EYZ0R1 * (1 - PZ1R1))
+# EY <- EH * (EYZ0R1 * (1 - PZ1R1))
+EY <- 1 * (EYZ0R1 * (1 - PZ1R1))
 EY
+```
+*and it is not incorrect*
+
+and trying all variations does not help
+
+
+```{r}
+df <- expand.grid("PZ1R1" = the_PZ1R1, "EYZ0R1" = the_EYZ0R1, "EH" = c(EH, 1))
+df <- df %>%
+  mutate(EY = EH * (EYZ0R1 * (1 - PZ1R1))) %>%
+  arrange(desc(EY))
+df
 ```
 
 
