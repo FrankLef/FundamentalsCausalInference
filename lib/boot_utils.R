@@ -123,14 +123,15 @@ calc_effect_measures <- function(val0, val1, log = TRUE) {
 #' @param statistic Function applied to data by bootstrapping.
 #' @param R Number of bootstrap replicates. Default is 1000.
 #' @param conf Confidence interval width. Default is 0.95.
+#' @param ... Other named arguments for \code{statistics}.
 #'
 #' @return Dataframe of estimates with CI.
 #' @export
-run_boot <- function(data, statistic, R = 1000, conf = 0.95) {
+run_boot <- function(data, statistic, R = 1000, conf = 0.95, ...) {
   stopifnot(R >= 1, conf > 0, conf < 1)
   
   # run the bootstrapping
-  boot.out <- boot::boot(data = data, statistic = statistic, R = R)
+  boot.out <- boot::boot(data = data, statistic = statistic, R = R, ...)
   
   # extract the estimated values and confidence intervals from the boot object
   out <- sapply(X = seq_along(boot.out$t0), FUN = function(i) {

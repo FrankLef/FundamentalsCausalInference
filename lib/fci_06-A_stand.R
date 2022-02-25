@@ -5,7 +5,7 @@
 #' The standardized estimates are computed using the outcome model.
 #' IMPORTANT: The formula must be in the format \code{Y ~ T + ...}.
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...}
 #' @param att if \code{FALSE} calculate the standardized (unconfounded)
 #' causal effect. If \code{TRUE} calculate the average effect of treatment
@@ -14,7 +14,7 @@
 #' @conf Confidence interval
 #'
 #' @return Estimate using outcome-model standardization
-stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
+stand <- function(data, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
                       R = 1000, conf = 0.95) {
   
   # extract the variables names from the formula
@@ -39,7 +39,7 @@ stand <- function(dat, formula = Y ~ `T` + H + `T`*H, att = FALSE,
     calc_effect_measures(val0 = EY0, val1 = EY1)
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)

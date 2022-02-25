@@ -5,13 +5,13 @@
 #' Compute the doubly robust standardized estimates using the code from section
 #' 6.3
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...} see details above.
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-badstanddr <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+badstanddr <- function(data, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -51,7 +51,7 @@ badstanddr <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
     calc_effect_measures(EY0, EY1)
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)

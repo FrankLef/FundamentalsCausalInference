@@ -12,7 +12,7 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates
-standdr <- function(dat, formula = Y ~ `T` + H, 
+standdr <- function(data, formula = Y ~ `T` + H, 
                     family = c("binomial", "poisson", "gaussian"), 
                     R = 1000, conf = 0.95) {
   family <- match.arg(family)
@@ -52,7 +52,7 @@ standdr <- function(dat, formula = Y ~ `T` + H,
     calc_effect_measures(EY0, EY1)
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)

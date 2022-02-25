@@ -8,7 +8,7 @@
 #'            It has been renamed bootc.r to avoid conflict with
 #'            lmodboot.r of chapter 2
 #' 
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula of linear model.
 #' @param cond0 Formula of condition 0.
 #' @param cond1 Formula of condition 1.
@@ -17,7 +17,7 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of effect measures.
-bootc <- function(dat, formula = Y ~ `T` + A + H,
+bootc <- function(data, formula = Y ~ `T` + A + H,
                     cond0 = Y ~ A + H,
                     cond1 = Y ~ `T` + A + H, 
                     family = c("binomial", "poisson", "gaussian"), 
@@ -44,7 +44,7 @@ bootc <- function(dat, formula = Y ~ `T` + A + H,
     calc_effect_measures(val0 = P0, val1 = P1)
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
   
   out <- exp_effects(out)  # exponentiate effect measures
   

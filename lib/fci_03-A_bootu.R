@@ -10,13 +10,13 @@
 #'    bootstrapping
 #' Assumptions: We assume that (3.2) holds but not (3.1)
 #' See p. 45 and 46 for more details.
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula of linear model.
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval
 #'
 #' @return Dataframe of summarized results
-bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
+bootu <- function(data, formula = Y ~ `T`, R = 1000, conf = 0.95) {
   
   # Extract variable names from the formula
   fvars <- formula2vars(formula)
@@ -54,7 +54,7 @@ bootu <- function(dat, formula = Y ~ `T`, R = 1000, conf = 0.95) {
     out
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
   
   out <- exp_effects(out)
   

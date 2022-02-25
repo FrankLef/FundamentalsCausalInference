@@ -8,7 +8,7 @@
 #' arguments \code{formula}. The 2 formulas created are for the exposure model
 #' and another one for the weighted linear model.
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula must be in the form \code{Y ~ `T` + H}
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
@@ -16,7 +16,7 @@
 #' @seealso standexp
 #'
 #' @return Dataframe of estimates
-standexpgee <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
+standexpgee <- function(data, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -51,7 +51,7 @@ standexpgee <- function(dat, formula = Y ~ `T` + H, R = 1000, conf = 0.95) {
   }
 
   # run the bootstrapping
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)

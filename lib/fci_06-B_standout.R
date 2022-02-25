@@ -7,14 +7,14 @@
 #' will be used to create the data to predict the expected potential
 #' outcome for each participant
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...} see details above.
 #' @param family Character. Name of the distribution. Default is "binomial".
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval.
 #'
 #' @return Estimate using outcome-model standardization
-standout <- function(dat, formula = Y ~ `T` + H, 
+standout <- function(data, formula = Y ~ `T` + H, 
                      family = c("binomial", "poisson", "gaussian"), 
                      R = 1000, conf = 0.95) {
   family <- match.arg(family)
@@ -55,7 +55,7 @@ standout <- function(dat, formula = Y ~ `T` + H,
     calc_effect_measures(val0 = EY0, val1 = EY1)
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)

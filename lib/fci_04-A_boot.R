@@ -7,13 +7,13 @@
 #'  2 predictors: T as the treatment variable and M as the modifier
 #'  variable
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ `T` + M}
 #' @R Number of bootstrap replicates.
 #' @conf Confidence interval
 #'
 #' @return Dataframe of summarized results
-boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
+boot <- function(data, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
   
   # extract the variables names from the formula
   fvars <- formula2vars(formula)
@@ -55,7 +55,7 @@ boot <- function(dat, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
     out
   }
   
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
   
   # vector of variables to exponentiate
   vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",

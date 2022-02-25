@@ -10,7 +10,7 @@
 #' T = 1 when it is previously equaled, and T = 0 when it previously equaled
 #' any value other than t", p. 113.
 #'
-#' @param dat Dataframe of raw data.
+#' @param data Dataframe of raw data.
 #' @param formula Formula must be in the form \code{Y ~ `T` + ...}
 #' @param att if \code{FALSE} calculate the standardized (unconfounded)
 #' causal effect. If \code{TRUE} calculate the average effect of treatment
@@ -19,7 +19,7 @@
 #' @conf Confidence interval.
 #'
 #' @return Dataframe of estimates using exposure-model standardization
-standexp <- function(dat, formula = Y ~ `T` + H, att = FALSE, 
+standexp <- function(data, formula = Y ~ `T` + H, att = FALSE, 
                      R = 1000, conf = 0.95) {
 
   # extract the variables names from the formula
@@ -62,7 +62,7 @@ standexp <- function(dat, formula = Y ~ `T` + H, att = FALSE,
   }
 
   # run the bootstrapping
-  out <- run_boot(data = dat, statistic = estimator, R = R, conf = conf)
+  out <- run_boot(data = data, statistic = estimator, R = R, conf = conf)
 
   # exponentiate the log values
   exp_effects(data = out)
