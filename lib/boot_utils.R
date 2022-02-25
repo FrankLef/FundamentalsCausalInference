@@ -21,8 +21,8 @@ formula2vars <- function(formula) {
   y <- vars[1]  # outcome variable
   t <- vars[2]  # treatment variable
   
-  # if only 2 variables, jt is the independent variable
-  if (nvars == 2) return(list("y" = y, "ind" = t, "x0" = x0))
+  # if only 2 variables, t is the independent variable
+  if (nvars == 2) return(list("y" = y, "t" = t, "ind" = t, "x0" = x0))
   
   # the condition variables
   h <- vars[3:nvars]
