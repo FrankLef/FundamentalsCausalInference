@@ -1,7 +1,7 @@
 # Backdoor Method via Standardization {#backdoor}
 
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}
+```{r include=FALSE}
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -26,7 +26,7 @@ dir_lib <- file.path(getwd(), "lib")
 ```
 
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r include=FALSE}
 source(file = file.path(dir_lib, "boot_utils.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_utils.R"), 
@@ -62,6 +62,19 @@ load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
 
+:::: {.center data-latex=""}
+
+::: {.minipage data-latex="{.5\linewidth}"}
+
+Important note on the notation used. When the author uses $E(Y=t) \mid T = t, H = h)$
+it means that we condition the data on $H$ and we set the $T$ column to $T = t$.
+In the notation of causal inference we would write 
+$E(Y=t) \mid T = t, H = h) = E(Y) \mid do(T = t), H = h)$.
+:::
+
+::::
+
+
 ## Standardization via Outome Modeling
 
 > Standardization vis via outcome modelingis one way to estimate $E(Y(t))$
@@ -70,7 +83,7 @@ load(file.path(dir_docs06, "whatif2dat.RData"))
 $$
 \begin{align*}
 &\text{by double expectation theorem} \\
-E(Y(t)) &= E_H E(Y(t) \mid H) \\
+&E(Y(t)) = E_H E(Y(t) \mid H) \\
 &\text{by independence of T given H, (6.1)} \\
 &= E_HE(Y(t) \mid T=t, H) \\
 &\text{by consistency assumption} \\

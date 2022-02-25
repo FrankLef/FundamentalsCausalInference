@@ -189,7 +189,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.1.1" data-path="probability.html"><a href="probability.html#law-of-total-probability"><i class="fa fa-check"></i><b>2.1.1</b> Law of total probability</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-he-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and he Law of Total expectation</a></li>
+<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation</a></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation</a></li>
 <li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap</a></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
@@ -382,15 +382,13 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="probability" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Conditional Probability and Expectation</h1>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-2"><a href="probability.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p>The mortality data was given in chapter 1, secion 1.2.1.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="probability.html#cb8-1" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> <span class="fu">data_mortability</span>()</span></code></pre></div>
+<p>The mortality data was given in chapter 1, section 1.2.1.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> <span class="fu">data_mortability</span>()</span></code></pre></div>
 <div id="conditional-probability" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Conditional Probability</h2>
 <div id="law-of-total-probability" class="section level3" number="2.1.1">
 <h3><span class="header-section-number">2.1.1</span> Law of total probability</h3>
-<p>It is important to note that <span class="math inline">\(\sum_i{H_i} = H\)</span>, that is <span class="math inline">\(H\)</span> can be partioned
+<p>It is important to note that <span class="math inline">\(\sum_i{H_i} = H\)</span>, that is <span class="math inline">\(H\)</span> can be partitioned
 in <span class="math inline">\(i\)</span> non-overlapping partitions.</p>
 <p>Then the law of total probabilities is</p>
 <p><span class="math display">\[
@@ -411,8 +409,8 @@ P(A, B \mid C) &amp;= \frac{P(A, B, C)}{P(C)} \\
 \]</span></p>
 </div>
 </div>
-<div id="conditional-expectation-and-he-law-of-total-expectation" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Conditional Expectation and he Law of Total expectation</h2>
+<div id="conditional-expectation-and-the-law-of-total-expectation" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Conditional Expectation and the Law of Total expectation</h2>
 <p>The function <code>expit()</code> used by the author is actually the same as
 <code>gtools::inv.logit()</code> or <code>stats::plogis()</code>. In this project we use
 <code>stats::plogis()</code> because it is in base R and we want to minimize
@@ -443,64 +441,64 @@ H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
 <div id="sampling-distributions-and-the-bootstrap" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Sampling Distributions and the Bootstrap</h2>
 <p>Run and verify with author’s results on p. 32</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="probability.html#cb9-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>()</span>
-<span id="cb9-2"><a href="probability.html#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d<span class="sc">$</span>bad, <span class="fl">0.8374</span>, <span class="at">tol =</span> <span class="fl">0.01</span>), </span>
-<span id="cb9-3"><a href="probability.html#cb9-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d<span class="sc">$</span>good, <span class="fl">0.948</span>, <span class="at">tol =</span> <span class="fl">0.01</span>))</span>
-<span id="cb9-4"><a href="probability.html#cb9-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="probability.html#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>()</span>
+<span id="cb8-2"><a href="probability.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d<span class="sc">$</span>bad, <span class="fl">0.8374</span>, <span class="at">tol =</span> <span class="fl">0.01</span>), </span>
+<span id="cb8-3"><a href="probability.html#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d<span class="sc">$</span>good, <span class="fl">0.948</span>, <span class="at">tol =</span> <span class="fl">0.01</span>))</span>
+<span id="cb8-4"><a href="probability.html#cb8-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>## $bad
 ## [1] 0.8318
 ## 
 ## $good
 ## [1] 0.9515</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="probability.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap an unconditional sampling distribution</span></span>
-<span id="cb11-2"><a href="probability.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb11-3"><a href="probability.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap an unconditional sampling distribution.</span></span>
-<span id="cb11-4"><a href="probability.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb11-5"><a href="probability.html#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  Estimate the unconditional sampling distribution by bootstrapping.</span></span>
-<span id="cb11-6"><a href="probability.html#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb11-7"><a href="probability.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param dat Dataframe of raw data.</span></span>
-<span id="cb11-8"><a href="probability.html#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula of linear model.</span></span>
-<span id="cb11-9"><a href="probability.html#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param cond Formula of condition.</span></span>
-<span id="cb11-10"><a href="probability.html#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
-<span id="cb11-11"><a href="probability.html#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval</span></span>
-<span id="cb11-12"><a href="probability.html#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb11-13"><a href="probability.html#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Vector of summarized results</span></span>
-<span id="cb11-14"><a href="probability.html#cb11-14" aria-hidden="true" tabindex="-1"></a>lmodboot <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H,</span>
-<span id="cb11-15"><a href="probability.html#cb11-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cond =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
-<span id="cb11-16"><a href="probability.html#cb11-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb11-17"><a href="probability.html#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
-<span id="cb11-18"><a href="probability.html#cb11-18" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
-<span id="cb11-19"><a href="probability.html#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the predictor variables in the condition formula</span></span>
-<span id="cb11-20"><a href="probability.html#cb11-20" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond[[<span class="dv">3</span>]])</span>
-<span id="cb11-21"><a href="probability.html#cb11-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-22"><a href="probability.html#cb11-22" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
-<span id="cb11-23"><a href="probability.html#cb11-23" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
-<span id="cb11-24"><a href="probability.html#cb11-24" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> binomial, <span class="at">data =</span> dat))</span>
-<span id="cb11-25"><a href="probability.html#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use cond to identify conditioned variables.</span></span>
-<span id="cb11-26"><a href="probability.html#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. the user can decide not to use all variables from the formula</span></span>
-<span id="cb11-27"><a href="probability.html#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or, in other words, condition on some variables</span></span>
-<span id="cb11-28"><a href="probability.html#cb11-28" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> coefs[<span class="fu">c</span>(x0, cond)]</span>
-<span id="cb11-29"><a href="probability.html#cb11-29" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
-<span id="cb11-30"><a href="probability.html#cb11-30" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p)</span>
-<span id="cb11-31"><a href="probability.html#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;logitP&quot;</span>)</span>
-<span id="cb11-32"><a href="probability.html#cb11-32" aria-hidden="true" tabindex="-1"></a>    out</span>
-<span id="cb11-33"><a href="probability.html#cb11-33" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-34"><a href="probability.html#cb11-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-35"><a href="probability.html#cb11-35" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> dat, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
-<span id="cb11-36"><a href="probability.html#cb11-36" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-37"><a href="probability.html#cb11-37" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">invlogit_effects</span>(out)</span>
-<span id="cb11-38"><a href="probability.html#cb11-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-39"><a href="probability.html#cb11-39" aria-hidden="true" tabindex="-1"></a>  out</span>
-<span id="cb11-40"><a href="probability.html#cb11-40" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="probability.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap an unconditional sampling distribution</span></span>
+<span id="cb10-2"><a href="probability.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb10-3"><a href="probability.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Bootstrap an unconditional sampling distribution.</span></span>
+<span id="cb10-4"><a href="probability.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb10-5"><a href="probability.html#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  Estimate the unconditional sampling distribution by bootstrapping.</span></span>
+<span id="cb10-6"><a href="probability.html#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb10-7"><a href="probability.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param data Dataframe of raw data.</span></span>
+<span id="cb10-8"><a href="probability.html#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param formula Formula of linear model.</span></span>
+<span id="cb10-9"><a href="probability.html#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param cond Formula of condition.</span></span>
+<span id="cb10-10"><a href="probability.html#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @R Number of bootstrap replicates.</span></span>
+<span id="cb10-11"><a href="probability.html#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @conf Confidence interval</span></span>
+<span id="cb10-12"><a href="probability.html#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb10-13"><a href="probability.html#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Vector of summarized results</span></span>
+<span id="cb10-14"><a href="probability.html#cb10-14" aria-hidden="true" tabindex="-1"></a>lmodboot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H,</span>
+<span id="cb10-15"><a href="probability.html#cb10-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cond =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A <span class="sc">+</span> H, </span>
+<span id="cb10-16"><a href="probability.html#cb10-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb10-17"><a href="probability.html#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the intercept variable used by glm</span></span>
+<span id="cb10-18"><a href="probability.html#cb10-18" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span></span>
+<span id="cb10-19"><a href="probability.html#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the name of the predictor variables in the condition formula</span></span>
+<span id="cb10-20"><a href="probability.html#cb10-20" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> <span class="fu">all.vars</span>(cond[[<span class="dv">3</span>]])</span>
+<span id="cb10-21"><a href="probability.html#cb10-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-22"><a href="probability.html#cb10-22" aria-hidden="true" tabindex="-1"></a>  estimator <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids) {</span>
+<span id="cb10-23"><a href="probability.html#cb10-23" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb10-24"><a href="probability.html#cb10-24" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(<span class="at">formula =</span> formula, <span class="at">family =</span> binomial, <span class="at">data =</span> dat))</span>
+<span id="cb10-25"><a href="probability.html#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use cond to identify conditioned variables.</span></span>
+<span id="cb10-26"><a href="probability.html#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># i.e. the user can decide not to use all variables from the formula</span></span>
+<span id="cb10-27"><a href="probability.html#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or, in other words, condition on some variables</span></span>
+<span id="cb10-28"><a href="probability.html#cb10-28" aria-hidden="true" tabindex="-1"></a>    coefs <span class="ot">&lt;-</span> coefs[<span class="fu">c</span>(x0, cond)]</span>
+<span id="cb10-29"><a href="probability.html#cb10-29" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">sum</span>(coefs)</span>
+<span id="cb10-30"><a href="probability.html#cb10-30" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(p)</span>
+<span id="cb10-31"><a href="probability.html#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;logitP&quot;</span>)</span>
+<span id="cb10-32"><a href="probability.html#cb10-32" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb10-33"><a href="probability.html#cb10-33" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-34"><a href="probability.html#cb10-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-35"><a href="probability.html#cb10-35" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">run_boot</span>(<span class="at">data =</span> data, <span class="at">statistic =</span> estimator, <span class="at">R =</span> R, <span class="at">conf =</span> conf)</span>
+<span id="cb10-36"><a href="probability.html#cb10-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-37"><a href="probability.html#cb10-37" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">invlogit_effects</span>(out)</span>
+<span id="cb10-38"><a href="probability.html#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-39"><a href="probability.html#cb10-39" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb10-40"><a href="probability.html#cb10-40" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Run and verify against the author’s results on p.34</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="probability.html#cb12-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">lmodboot</span>(whatifdat)</span>
-<span id="cb12-2"><a href="probability.html#cb12-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="probability.html#cb11-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">lmodboot</span>(whatifdat)</span>
+<span id="cb11-2"><a href="probability.html#cb11-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>##   name       est conf      lci       uci
 ## 1    P 0.6059581 0.95 0.414774 0.7652328</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="probability.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
-<span id="cb14-2"><a href="probability.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d[<span class="st">&quot;est&quot;</span>], <span class="fl">0.60596</span>, <span class="fl">0.01</span>),</span>
-<span id="cb14-3"><a href="probability.html#cb14-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;lci&quot;</span>], <span class="fl">0.41638</span>, <span class="fl">0.01</span>),</span>
-<span id="cb14-4"><a href="probability.html#cb14-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;uci&quot;</span>], <span class="fl">0.76823</span>, <span class="fl">0.015</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="probability.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
+<span id="cb13-2"><a href="probability.html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(d[<span class="st">&quot;est&quot;</span>], <span class="fl">0.60596</span>, <span class="fl">0.01</span>),</span>
+<span id="cb13-3"><a href="probability.html#cb13-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;lci&quot;</span>], <span class="fl">0.41638</span>, <span class="fl">0.01</span>),</span>
+<span id="cb13-4"><a href="probability.html#cb13-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">near</span>(d[<span class="st">&quot;uci&quot;</span>], <span class="fl">0.76823</span>, <span class="fl">0.015</span>))</span></code></pre></div>
 </div>
 <div id="exercises-1" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Exercises</h2>
