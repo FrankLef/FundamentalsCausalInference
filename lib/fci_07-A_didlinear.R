@@ -5,9 +5,8 @@
 #' the DiD Estimator using the scripts from section 7.2, p. 141-142.
 #'
 #' @param data Dataframe of raw data.
-#' @param formula Formula in format \code{Y ~ A + time + A*time} where \code{T} 
-#' is the exposure and \code{time} is the time variable. The interaction 
-#' \code{A*time} must always be provided.
+#' @param formula Formula in format \code{Y ~ A} where \code{A} 
+#' is the exposure.
 #' @param varsY Names of the outcome variables.
 #' @R Number of bootstrap replicates. Default is 1000.
 #' @conf Confidence interval. Default is 0.95.
@@ -27,6 +26,7 @@ didlinear <- function(data, formula = Y ~ A, varsY = c("VL0", "VL1"),
     dat <- data[ids, ]
     # make long format
     dat <- pivot_longer(dat, cols = all_of(varsY), names_to = nmvar, values_to = outvar)
+    # create time variable
     dat[, timevar] <- ifelse(grepl(pattern = "0", x = dat$var), 0, 1)
     
     # fit the did model
