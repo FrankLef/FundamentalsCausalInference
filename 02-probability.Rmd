@@ -12,21 +12,21 @@ library(fciR)
 dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 1")
 # directory of data files
-dir_data <- file.path(getwd(), "data")
+# dir_data <- file.path(getwd(), "data")
 # directory for functions
-dir_lib <- file.path(getwd(), "lib")
+# dir_lib <- file.path(getwd(), "lib")
 ```
 
 
 ```{r include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_02-A_sim.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_02-B_lmodboot.R"), 
-       local = knitr::knit_global())
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_02-A_sim.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_02-B_lmodboot.R"), 
+#        local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 # load(file.path(dir_docs01, "nces.RData"))
 ```
@@ -109,10 +109,8 @@ $$
 
 ## Sampling Distributions and the Bootstrap
 
-
-```{r echo=FALSE, file="lib\\fci_02-A_sim.R"}
-
-```
+The `sim()` function in section 2.4, p. 31 is coded in `fciR::sim_intervals()`
+and its alias `fciR::sim()`.
 
 
 Run and verify with author's results on p. 32
@@ -125,16 +123,14 @@ stopifnot(abs(d$bad - 0.8374) < 0.03,
 d
 ```
 
+and `lmodboot()` is `fciR::boot_lmod()` with the alias `fciR::lmodboot()`
 
-```{r echo=TRUE, file="lib\\fci_02-B_lmodboot.R"}
-
-```
 
 
 Run and verify against the author's results on p.34
 
 ```{r}
-d <- lmodboot(whatifdat, R = 500)
+d <- fciR::lmodboot(whatifdat, R = 500)
 d
 # check results with book
 stopifnot(abs(d["est"] - 0.60596) < 0.02,
