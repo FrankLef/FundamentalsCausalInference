@@ -15,9 +15,10 @@ lmodboot <- function(data, formula = Y ~ `T` + A + H,
                        cond = Y ~ `T` + A + H, 
                        R = 1000, conf = 0.95) {
   # the name of the intercept variable used by glm
-  x0 <- "(Intercept)"
+  # x0 <- "(Intercept)"
   # the name of the predictor variables in the condition formula
-  cond <- all.vars(cond[[3]])
+  # cond <- all.vars(cond[[3]])
+  fvars <- formula2vars(cond)
   
   estimator <- function(data, ids) {
     dat <- data[ids, ]
@@ -25,9 +26,9 @@ lmodboot <- function(data, formula = Y ~ `T` + A + H,
     # use cond to identify conditioned variables.
     # i.e. the user can decide not to use all variables from the formula
     # or, in other words, condition on some variables
-    coefs <- coefs[c(x0, cond)]
+    coefs <- coefs[c(fvars$x0, fvars$ind)]
     p <- sum(coefs)
-    out <- c(p)
+    out <- c(unname(p))
     names(out) <- c("logitP")
     out
   }

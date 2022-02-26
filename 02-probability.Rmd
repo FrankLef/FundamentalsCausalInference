@@ -74,8 +74,8 @@ $$
 ## Conditional Expectation and the Law of Total expectation
 
 The function `expit()` used by the author is actually the same as
-`gtools::inv.logit()` or `stats::plogis()`. In this project we use
-`stats::plogis()` because it is in base R and we want to minimize
+`gtools::inv.logit()`, `boot::inv.logit()` or `stats::plogis()`. In this project 
+we use `stats::plogis()` because it is in base R and we want to minimize
 dependencies.
 
 ## Estimation
@@ -117,9 +117,9 @@ Run and verify with author's results on p. 32
 
 
 ```{r}
-d <- sim()
-stopifnot(near(d$bad, 0.8374, tol = 0.01), 
-          near(d$good, 0.948, tol = 0.01))
+d <- sim(nsim = 500, n = 500)
+stopifnot(abs(d$bad - 0.8374) < 0.03, 
+          abs(d$good - 0.948) < 0.03)
 d
 ```
 
@@ -132,12 +132,12 @@ d
 Run and verify against the author's results on p.34
 
 ```{r}
-d <- lmodboot(whatifdat)
+d <- lmodboot(whatifdat, R = 500)
 d
 # check results with book
-stopifnot(near(d["est"], 0.60596, 0.01),
-          near(d["lci"], 0.41638, 0.01),
-          near(d["uci"], 0.76823, 0.015))
+stopifnot(abs(d["est"] - 0.60596) < 0.02,
+          abs(d["lci"] - 0.41638) < 0.02,
+          abs(d["uci"] - 0.76823) < 0.02)
 ```
 
 
