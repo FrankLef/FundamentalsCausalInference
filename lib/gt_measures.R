@@ -13,10 +13,6 @@
 #'
 #' @return A gt object create by the \code{gt} package
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' }
 gt_measures <- function(df, conf = df$conf[1], digits = 3, 
                         title = "Title", subtitle = "Subtitle") {
   
@@ -25,22 +21,18 @@ gt_measures <- function(df, conf = df$conf[1], digits = 3,
   
   df <- df %>%
     select(name, est, lci, uci) %>%
-    mutate(est = round(est, digits),
-           lci = round(lci, digits),
-           uci = round(uci, digits),
-           ci = paste0("(", lci, ", ", uci, ")"),
-           lci = NULL,
-           uci = NULL)
+    mutate(across(.cols = where(is.numeric), .fns = round, digits)) %>%
+    unite(col = "CI", lci, uci, sep = ", ") %>%
+    mutate(CI = paste0("(", CI, ")"))
   
   
   gt::gt(df) %>%
     gt_basic(title, subtitle) %>%
     cols_label(
       name = "Measure",
-      est = "Estimate",
-      ci = "CI") %>%
+      est = "Estimate") %>%
     tab_footnote(
       footnote = ci_label,
-      locations = cells_column_labels(columns = "ci")
+      locations = cells_column_labels(columns = matches("CI$"))
     )
 }

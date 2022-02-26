@@ -16,6 +16,7 @@
 #' \dontrun{
 #' }
 gt_basic <- function(tbl, title, subtitle) {
+  
   tbl %>%
     tab_header(
       title = html(paste0("<strong>", title, "</strong>")),

@@ -32,6 +32,14 @@ source(file = file.path(dir_lib, "gt_utils.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "gt_measures.R"), 
        local = knitr::knit_global())
+source(file = file.path(dir_lib, "gt_measures_rowgrp.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_07-A_didlinear.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_07-B_didloglinear.R"), 
+       local = knitr::knit_global())
+source(file = file.path(dir_lib, "fci_07-C_didlogistic.R"), 
+       local = knitr::knit_global())
 load(file.path(dir_docs01, "whatifdat.RData"))
 load(file.path(dir_docs01, "doublewhatifdat.RData"))
 load(file.path(dir_docs01, "gss.RData"))
@@ -190,7 +198,7 @@ The DiD estimator with the logistic model
 ```{r}
 dwhatif.logisticdid <- didlogistic(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
                            R = 100, conf = 0.95)
-dwhatif.logisticdid
+# dwhatif.logisticdid
 ```
 
 
@@ -217,7 +225,7 @@ bb_dwhatif <- data.frame(
           0.309, 0.315, 0.306, 0.142, 0.149, 0.139),
   uci = c(0.664, 0.656, 0.671, -0.270, -0.262, -0.276,
           0.500, 0.508, 0.496, 0.315, 0.325, 0.307))
-bb_dwhatif
+# bb_dwhatif
 ```
 ```{r}
 gt_measures_rowgrp(

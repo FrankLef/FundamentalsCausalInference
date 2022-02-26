@@ -37,7 +37,7 @@ source(file = file.path(dir_lib, "gt_utils.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_04-A_boot.R"), 
        local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures_modif.R"),
+source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "ggp_measures_modif.R"),
        local = knitr::knit_global())
@@ -95,26 +95,35 @@ verify the results with the author's on p. 65.
 
 ```{r}
 bb <- data.frame(
-  name = c("EYT0.M0", "EYT0.M1", "EYT1.M0", "EYT1.M1", "RD.M0", "RD.M1",
-           "EYT0.diff", "EYT1.diff", "RD.diff", "RR.M0", "RR.M1", "RR.diff",
-           "RR*.M0", "RR*.M1", "RR*.diff", "OR.M0", "OR.M1", "OR.diff"),
+  estimator = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
+           "EYT0", "EYT1", "RD", "RR", "RR", "RR",
+           "RR*", "RR*", "RR*", "OR", "OR", "OR"),
+  group = c("M0", "M1", "M0", "M1", "M0", "M1",
+           "diff", "diff", "diff", "M0", "M1", "diff",
+           "M0", "M1", "diff", "M0", "M1", "diff"),
   est = c(0.784, 0.593, 0.793, 0.735, 0.01, 0.142,
           -0.191, -0.059, 0.132, 1.012, 1.239, 1.224,
           1.046, 1.533, 1.466, 1.059, 1.9, 1.794)
   )
 comp <- data.frame(bb = bb,
-                   d = recovery.out[match(bb$name, recovery.out$name), "est"])
+                   d = recovery.out[match(paste(bb$estimator, bb$group), 
+                                          paste(recovery.out$estimator, recovery.out$group)), 
+                                    "est"])
 comp$dev <- abs(comp$bb.est - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
+# comp
 ```
 
 and we communicate the results in a table
 
+
+
+
 ```{r}
-gt_measures_modif(recovery.out, title = "Table 4.2 RECOVERY Trial")
+gt_measures_colgrp(recovery.out, var_grp = "group",
+                   title = "Table 4.2 RECOVERY Trial",
+                   subtitle = "Effect-measure Modification")
 ```
-
-
 
 
 
@@ -196,14 +205,20 @@ verify the results with the author's on p. 70.
 
 ```{r}
 bb <- data.frame(
-  name = c("EYT0.M0", "EYT0.M1", "EYT1.M0", "EYT1.M1", "RD.M0", "RD.M1",
-           "EYT0.diff", "EYT1.diff", "RD.diff", "RR.M0", "RR.M1", "RR.diff",
-           "RR*.M0", "RR*.M1", "RR*.diff", "OR.M0", "OR.M1", "OR.diff"),
+  estimator = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
+           "EYT0", "EYT1", "RD", "RR", "RR", "RR",
+           "RR*", "RR*", "RR*", "OR", "OR", "OR"),
+  group = c("M0", "M1", "M0", "M1", "M0", "M1",
+           "diff", "diff", "diff", "M0", "M1", "diff",
+           "M0", "M1", "diff", "M0", "M1", "diff"),
   est = c(0.167, 0.675, 0.081, 0.345, -0.086, -0.33,
           0.509, 0.264, -0.244, 0.486, 0.511, 1.052,
           0.907, 0.496, 0.547, 0.44, 0.254, 0.576)
   )
-comp <- data.frame(bb = bb, d = nces.out[match(bb$name, nces.out$name), "est"])
+comp <- data.frame(bb = bb,
+                   d = nces.out[match(paste(bb$estimator, bb$group), 
+                                          paste(nces.out$estimator, nces.out$group)), 
+                                    "est"])
 comp$dev <- abs(comp$bb.est - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
 ```
@@ -212,7 +227,9 @@ stopifnot(sum(comp$dev) < 0.01)
 and the table is
 
 ```{r}
-gt_measures_modif(nces.out, title = "Table 4.3 NCES data")
+gt_measures_colgrp(nces.out, var_grp = "group",
+                   title = "Table 4.3 NCES data",
+                   subtitle = "Effect-measure Modification")
 ```
 
 and we plot the results

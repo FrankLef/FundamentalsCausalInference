@@ -6,7 +6,7 @@
 #' confidence interval.
 #'
 #' @param df Dataframe of results.
-#' @param rowgroup Name of column with row groups.
+#' @param rowgroup Name of column with row group names.
 #' @param rowname Name of column with row names.
 #' @param conf Numeric, confidence interval.
 #' @param digits Integer, number of digits to the right of the decimal.
@@ -24,7 +24,7 @@ gt_measures_rowgrp <- function(df, rowgroup = "rowgroup", rowname = "rowname",
   
   df <- df %>%
     select(.data[[rowgroup]], .data[[rowname]], !matches("conf")) %>%
-    mutate(across(.cols = where(is.numeric), .fns = round, 3)) %>%
+    mutate(across(.cols = where(is.numeric), .fns = round, digits)) %>%
     unite(col = "ci", lci, uci, sep = ", ") %>%
     mutate(ci = paste0("(", ci, ")"))
   

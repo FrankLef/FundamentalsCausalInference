@@ -62,6 +62,8 @@ boot <- function(data, formula = Y ~ `T` + M, R = 1000, conf = 0.95) {
            "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
   out <- exp_effects(data = out, vars = vars)
-
-  out
+  
+  # split to estimator and stratum
+  out %>%
+    separate(col = "name", into = c("estimator", "group"), sep = "[.]")
 }

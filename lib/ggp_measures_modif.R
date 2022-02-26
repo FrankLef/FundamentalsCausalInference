@@ -18,18 +18,14 @@
 #' }
 ggp_measures_modif <- function(df, title = "Change in effect measures",
                                subtitle = "Effect-Measure Modification and Statistical Interaction") {
-  # prepare the dataframe used to pcreate the plot
-  df <- df %>%
-    filter(!grepl(pattern = "log.+", name)) %>%
-    select(-conf) %>%
-    tidyr::separate(col = "name", into = c("name", "stratum"), sep = "[.]") %>%
-    filter(stratum != "diff")
   
-  # create the plot
+  df <- df %>%
+    filter(group != "diff")
+  
   ggplot(df, 
-         aes(x = stratum, y = est, color = name, linetype = name, group = name)) +
+         aes(x = group, y = est, color = estimator, linetype = estimator, group = estimator)) +
     geom_line(size = 1) +
-    geom_point(mapping = aes(fill = name), size = 3, shape = 21) +
+    geom_point(mapping = aes(fill = estimator), size = 3, shape = 21) +
     geom_text(mapping = aes(label = round(est, 1)),
               nudge_x = 0.05, nudge_y = 0.05) +
     scale_linetype_manual(values = c("EYT0" = "dashed", "EYT1" = "dashed", 
