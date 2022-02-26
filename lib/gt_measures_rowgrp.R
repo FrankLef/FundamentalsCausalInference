@@ -25,18 +25,17 @@ gt_measures_rowgrp <- function(df, rowgroup = "rowgroup", rowname = "rowname",
   df <- df %>%
     select(.data[[rowgroup]], .data[[rowname]], !matches("conf")) %>%
     mutate(across(.cols = where(is.numeric), .fns = round, digits)) %>%
-    unite(col = "ci", lci, uci, sep = ", ") %>%
-    mutate(ci = paste0("(", ci, ")"))
+    unite(col = "CI", lci, uci, sep = ", ") %>%
+    mutate(CI = paste0("(", CI, ")"))
   
   
   gt::gt(df, rowname_col = rowname, groupname_col = rowgroup) %>%
     gt_basic(title, subtitle) %>%
     cols_label(
-      est = "Estimate",
-      ci = "CI") %>%
+      est = "Estimate") %>%
     tab_footnote(
       footnote = ci_label,
-      locations = cells_column_labels(columns = "ci")
+      locations = cells_column_labels(columns = matches("CI$"))
     ) %>%
     tab_options(
       row_group.font.weight = "bold"
