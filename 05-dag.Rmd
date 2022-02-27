@@ -9,7 +9,8 @@ library(dplyr)
 library(dagitty)
 library(ggplot2)
 library(ggdag)
-library(gt)
+# library(gt)
+library(fciR)
 library(simstudy)
 ```
 
@@ -23,14 +24,14 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "ggp_dag.R"),
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_probs.R"),
-       local = knitr::knit_global())
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "ggp_dag.R"),
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_probs.R"),
+#        local = knitr::knit_global())
 ```
 
 
@@ -64,7 +65,7 @@ scm_5.1 <- within(scm_5.1, {
   
   text_labels <- c(expression(X[1]), expression(X[2]),
                    expression(X[3]), expression(X[4]))
-  plot <- ggp_dag(dag, text_labels = text_labels)
+  plot <- fciR::ggp_dag(dag, text_labels = text_labels)
 })
 ```
 
@@ -168,7 +169,7 @@ scm_5.3 <- within(scm_5.3, {
 
   text_labels <- c("A", expression(W[1]), expression(W[2]),
                    expression(W[3]), expression(W[4], "Y"))
-  plot <- ggp_dag(dag, text_labels = text_labels)
+  plot <- fciR::ggp_dag(dag, text_labels = text_labels)
 })
 ```
 
@@ -211,7 +212,7 @@ scm_5.4 <- within(scm_5.4, {
     M ~ A + H,
     Y ~ A + M + H)
 
-  plot <- ggp_dag(dag)
+  plot <- fciR::ggp_dag(dag)
 })
 ```
 
@@ -237,7 +238,7 @@ scm_5.5 <- within(scm_5.5, {
     exposure = "A",
     outcome = "Y")
   
-  plot <- ggp_dag(dag)
+  plot <- fciR::ggp_dag(dag)
 })
 ```
 
@@ -267,7 +268,7 @@ scm_5.6 <- within(scm_5.6, {
     latent = "U",
     labels = the_nodes)
   
-  plot <- ggp_dag(dag)
+  plot <- fciR::ggp_dag(dag)
 })
 ```
 
@@ -310,7 +311,7 @@ scm_5.6 <- within(scm_5.6, {
   stopifnot(near(sum(tbl$prob), 1))
 
   # format the tableau
-  summ <- gt_probs(tbl, title = "Table 5.1",
+  summ <- fciR::gt_probs(tbl, title = "Table 5.1",
                    subtitle = "Simulation Probabilities for `sim1.r`")
   
 })
@@ -447,7 +448,7 @@ scm_5.7 <- within(scm_5.7, {
     A ~ H,
     Y ~ A + H)
 
-  plot <- ggp_dag(dag)
+  plot <- fciR::ggp_dag(dag)
 })
 ```
 
@@ -488,7 +489,7 @@ scm_5.7 <- within(scm_5.7, {
   stopifnot(near(sum(tbl$prob), 1))
 
   # format the tableau
-  summ <- gt_probs(tbl, title = "Table 5.2",
+  summ <- fciR::gt_probs(tbl, title = "Table 5.2",
                    subtitle = "Simulation Probabilities for `sim2.r`")
 })
 scm_5.7$summ
@@ -668,7 +669,7 @@ scm_5.8 <- within(scm_5.8, {
     latent = "U",
     labels = the_nodes)
   
-  plot <- ggp_dag(dag)
+  plot <- fciR::ggp_dag(dag)
 })
 ```
 
@@ -713,7 +714,7 @@ scm_5.8 <- within(scm_5.8, {
   stopifnot(near(sum(tbl$prob), 1))
 
   # format the tableau
-  tbl <- gt_probs(tbl, title = "Table for `simall.r`",
+  tbl <- fciR::gt_probs(tbl, title = "Table for `simall.r`",
                    subtitle = "Simulation Probabilities for `simall.r`")
 })
 scm_5.8$tbl
@@ -775,7 +776,7 @@ scm_5.9 <- within(scm_5.9, {
   
   text_labels <- c("A", expression(AD[0]), expression(AD[1]),
                    "T", "U", expression(VL[0]), expression(VL[1]))
-  plot <- ggp_dag(dag, text_labels = text_labels, text_size = 5)
+  plot <- fciR::ggp_dag(dag, text_labels = text_labels, text_size = 5)
 })
 ```
 
