@@ -1,5 +1,3 @@
-
-
 #' Create a plot of effect-measures modifications
 #' 
 #' Create a plot of effect-measures modifications

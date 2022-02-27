@@ -1,11 +1,12 @@
 # Potential Outcomes and the Fundamental Problem of Causal Inference {#outcomes}
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(dplyr, quietly = TRUE)
-library(tidyr, quietly = TRUE)
-library(ggplot2, quietly = TRUE)
-library(gt, quietly = TRUE)
-library(boot, quietly = TRUE)
+# library(dplyr, quietly = TRUE)
+# library(tidyr, quietly = TRUE)
+# library(ggplot2, quietly = TRUE)
+# library(gt, quietly = TRUE)
+# library(boot, quietly = TRUE)
+library(fciR)
 ```
 
 
@@ -24,19 +25,19 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_03-A_bootu.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_03-B_bootc.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures.R"), 
-       local = knitr::knit_global())
-load(file.path(dir_docs01, "whatifdat.RData"))
-load(file.path(dir_docs01, "nces.RData"))
-load(file.path(dir_docs01, "gss.RData"))
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_03-A_bootu.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_03-B_bootc.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures.R"), 
+#        local = knitr::knit_global())
+# load(file.path(dir_docs01, "whatifdat.RData"))
+# load(file.path(dir_docs01, "nces.RData"))
+# load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs03, "brfss.RData"))
 ```
 
@@ -49,24 +50,25 @@ load(file.path(dir_docs03, "brfss.RData"))
 
 ## Effect Measures
 
-run the function to get the association measures
+Run the function to get the association measures
 
 ```{r}
-dataGSS <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
-dataGSS <- gss[complete.cases(dataGSS), ]
-stopifnot(nrow(dataGSS) == 2348 - 180)  # see comment on p. 46
+data("gss", package = "fciR")
+gssrcc <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
+gssrcc <- gss[complete.cases(gssrcc), ]
+stopifnot(nrow(gssrcc) == 2348 - 180)  # see comment on p. 46
 ```
 
 
 ```{r}
 message("this takes 30 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# uncond <- bootu(dat = dataGSS, formula = trump ~ gthsedu)
+# uncond <- fciR::meas_effect_uncond(dat = gssrcc, formula = trump ~ gthsedu)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
 # saveRDS(uncond, file = a_file)
 uncond <- readRDS(file = a_file)
-# endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 
@@ -137,15 +139,15 @@ $$
 ```{r}
 message("this takes 10 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# condit <- bootc(dat = dataGSS,
+# condit <- fciR::meas_effect_cond(dat = gssrcc,
 #              formula = trump ~ gthsedu + magthsedu + white + female + gt65,
 #              cond0 = trump ~ magthsedu + white + female + gt65,
 #              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootc.rds")
 # saveRDS(condit, file = a_file)
 condit <- readRDS(file = a_file)
-# endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 

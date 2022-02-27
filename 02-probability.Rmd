@@ -1,8 +1,6 @@
 # Conditional Probability and Expectation {#probability}
 
 ```{r include=FALSE}
-# library(dplyr, quietly = TRUE)
-# library(boot, quietly = TRUE)
 library(fciR)
 ```
 
@@ -16,21 +14,6 @@ dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
 # directory for functions
 # dir_lib <- file.path(getwd(), "lib")
 ```
-
-
-```{r include=FALSE}
-# source(file = file.path(dir_lib, "boot_utils.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_02-A_sim.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_02-B_lmodboot.R"), 
-#        local = knitr::knit_global())
-load(file.path(dir_docs01, "whatifdat.RData"))
-# load(file.path(dir_docs01, "nces.RData"))
-```
-
 
 
 The mortality data was given in chapter 1, section 1.2.1.
@@ -126,10 +109,10 @@ d
 and `lmodboot()` is `fciR::boot_lmod()` with the alias `fciR::lmodboot()`
 
 
-
 Run and verify against the author's results on p.34
 
 ```{r}
+data("whatifdat", package = "fciR")
 d <- fciR::lmodboot(whatifdat, R = 500)
 d
 # check results with book

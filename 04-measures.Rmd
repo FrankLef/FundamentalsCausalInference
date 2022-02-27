@@ -1,13 +1,14 @@
 # Effect-Measure Modification and Causal Interaction {#measures}
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(dplyr, quietly = TRUE)
+# library(dplyr, quietly = TRUE)
 library(tidyr, quietly = TRUE)
-library(gt, quietly = TRUE)
-library(ggplot2, quietly = TRUE)
-library(boot, quietly = TRUE)
-library(gee, quietly = TRUE)
-library(MonteCarlo, quietly = TRUE)
+# library(gt, quietly = TRUE)
+# library(ggplot2, quietly = TRUE)
+# library(boot, quietly = TRUE)
+# library(gee, quietly = TRUE)
+# library(MonteCarlo, quietly = TRUE)
+library(fciR)
 library(ggvenn, quietly = TRUE)
 ```
 
@@ -15,14 +16,14 @@ library(ggvenn, quietly = TRUE)
 
 ```{r include=FALSE}
 # the directory of documentation for chapter 1
-dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 1")
+# dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 1")
 # the directory of documentation for chapter 3
 dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                    "Brumback FOCI Website Material", "Chapter 3")
 # the directory of documentation for chapter 4
-dir_docs04 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 4")
+# dir_docs04 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 4")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -31,26 +32,26 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_04-A_boot.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "ggp_measures_modif.R"),
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_04-B_mc_beta_effect_measures.R"),
-       local = knitr::knit_global())
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_04-A_boot.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "ggp_measures_modif.R"),
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_04-B_mc_beta_effect_measures.R"),
+#        local = knitr::knit_global())
 source(file = file.path(dir_lib, "ggp_venn_sim.R"),
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "ggp_betasim.R"),
        local = knitr::knit_global())
-load(file.path(dir_docs01, "gss.RData"))
+# load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs03, "brfss.RData"))
-load(file.path(dir_docs04, "sepsis.RData"))
-load(file.path(dir_docs01, "nces.RData"))
+# load(file.path(dir_docs04, "sepsis.RData"))
+# load(file.path(dir_docs01, "nces.RData"))
 ```
 
 
@@ -63,31 +64,28 @@ load(file.path(dir_docs01, "nces.RData"))
 Create the data.frame for *RECOVERY* trial
 
 ```{r echo=TRUE}
-recovery <- expand.grid(Y = 0:1, `T` = 0:1, M = 0:1)
-recovery$n <- as.integer(c(787, 2851, 368, 1412, 278, 405, 86, 238))
-recovery <- lapply(X = seq_len(nrow(recovery)), FUN = function(i) {
-  data.frame(
-    M = rep(recovery$M[i], recovery$n[i]),
-    `T` = rep(recovery$`T`[i], recovery$n[i]),
-    Y = rep(recovery$Y[i], recovery$n[i])
-  )
-})
-recovery <- do.call(rbind, recovery)
-# create an id variable for use with gee() later
-recovery$id <- seq_len(nrow(recovery))
+# recovery <- expand.grid(Y = 0:1, `T` = 0:1, M = 0:1)
+# recovery$n <- as.integer(c(787, 2851, 368, 1412, 278, 405, 86, 238))
+# recovery <- lapply(X = seq_len(nrow(recovery)), FUN = function(i) {
+#   data.frame(
+#     M = rep(recovery$M[i], recovery$n[i]),
+#     `T` = rep(recovery$`T`[i], recovery$n[i]),
+#     Y = rep(recovery$Y[i], recovery$n[i])
+#   )
+# })
+# recovery <- do.call(rbind, recovery)
+# # create an id variable for use with gee() later
+# recovery$id <- seq_len(nrow(recovery))
+data("recovery", package = "fciR")
 ```
 
-
-
-```{r eval=TRUE, echo=TRUE, file="lib\\fci_04-A_boot.R"}
-
-```
 
 
 run `boot()` with the RECOVERY data set
 
 ```{r}
-recovery.out <- boot(recovery, formula = Y ~ `T` + M)
+# recovery.out <- boot(recovery, formula = Y ~ `T` + M)
+recovery.out <- fciR::meas_effect_modif(recovery, formula = Y ~ `T` + M)
 ```
 
 
@@ -120,7 +118,7 @@ and we communicate the results in a table
 
 
 ```{r}
-gt_measures_colgrp(recovery.out, var_grp = "group",
+fciR::gt_measures_colgrp(recovery.out, var_grp = "group",
                    title = "Table 4.2 RECOVERY Trial",
                    subtitle = "Effect-measure Modification")
 ```
@@ -137,7 +135,7 @@ vs its use with intrusive mechanical ventilation (M1) which is significant.
 
 
 ```{r}
-ggp_measures_modif(recovery.out, title = "RECOVERY trial")
+fciR::ggp_measures_modif(recovery.out, title = "RECOVERY trial")
 ```
 
 
@@ -198,7 +196,7 @@ Run the bootsrap
 
 
 ```{r}
-nces.out <- boot(nces, formula = highmathsat ~ female + selective)
+nces.out <- fciR::meas_effect_modif(nces, formula = highmathsat ~ female + selective)
 ```
 
 verify the results with the author's on p. 70.
@@ -227,7 +225,7 @@ stopifnot(sum(comp$dev) < 0.01)
 and the table is
 
 ```{r}
-gt_measures_colgrp(nces.out, var_grp = "group",
+fciR::gt_measures_colgrp(nces.out, var_grp = "group",
                    title = "Table 4.3 NCES data",
                    subtitle = "Effect-measure Modification")
 ```
@@ -235,7 +233,7 @@ gt_measures_colgrp(nces.out, var_grp = "group",
 and we plot the results
 
 ```{r}
-ggp_measures_modif(nces.out, title = "NCES data")
+fciR::ggp_measures_modif(nces.out, title = "NCES data")
 ```
 
 
@@ -276,13 +274,13 @@ is equivalent to $Uniform(0,1)$ used by @shanninbrumback2021.
 
 ```{r}
 message("this takes 1 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# gridsim <- mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)
+# startTime <- Sys.time()
+# gridsim <- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap04_gridsim.rds")
 # saveRDS(gridsim, file = a_file)
 gridsim <- readRDS(file = a_file)
-endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 which gives the vector of percentages
@@ -382,14 +380,14 @@ now for **constrained data**
 
 ```{r}
 message("this takes 1 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# gridsim_const <- mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,
+# startTime <- Sys.time()
+# gridsim_const <- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,
 #                                       constrained = TRUE)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap04_gridsim_const.rds")
 # saveRDS(gridsim_const, file = a_file)
 gridsim_const <- readRDS(file = a_file)
-endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 which gives the vector of percentages
@@ -460,15 +458,15 @@ shape2 = c(0.5, 1, 3, 5, 7), nrep = 5000)`
 
 ```{r}
 message("this takes 25 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# priorsim <- mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
+# startTime <- Sys.time()
+# priorsim <- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
 #                                   shape2 = c(0.5, 1, 3, 5, 7),
 #                                   nrep = 5000)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap04_priorsim.rds")
 # saveRDS(priorsim, file = a_file)
 priorsim <- readRDS(file = a_file)
-endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 and we look at the matrix for the event `RD_RR_RRstar_OR` which represents the
@@ -524,15 +522,15 @@ Now we do it with constrained data
 
 ```{r}
 message("this takes 30 sec.: we load a saved file instead")
-startTime <- Sys.time()
-# priorsim_const <- mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
+# startTime <- Sys.time()
+# priorsim_const <- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),
 #                                         shape2 = c(0.5, 1, 3, 5, 7),
 #                                         nrep = 5000, constrained = TRUE)
+# endTime <- Sys.time()
+# print(endTime - startTime)
 a_file <- file.path(dir_data, "chap04_priorsim_const.rds")
 # saveRDS(priorsim_const, file = a_file)
 priorsim_const <- readRDS(file = a_file)
-endTime <- Sys.time()
-# print(endTime - startTime)
 ```
 
 ```{r}

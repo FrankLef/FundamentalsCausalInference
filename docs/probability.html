@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-26" />
+<meta name="date" content="2022-02-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -390,8 +390,8 @@ div.csl-indent {
 <div id="probability" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Conditional Probability and Expectation</h1>
 <p>The mortality data was given in chapter 1, section 1.2.1.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="probability.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb1-2"><a href="probability.html#cb1-2" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> mortality</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb7-2"><a href="probability.html#cb7-2" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> mortality</span></code></pre></div>
 <div id="conditional-probability" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Conditional Probability</h2>
 <div id="law-of-total-probability" class="section level3" number="2.1.1">
@@ -451,25 +451,26 @@ H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
 <p>The <code>sim()</code> function in section 2.4, p. 31 is coded in <code>fciR::sim_intervals()</code>
 and its alias <code>fciR::sim()</code>.</p>
 <p>Run and verify with author’s results on p. 32</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="probability.html#cb2-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
-<span id="cb2-2"><a href="probability.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, </span>
-<span id="cb2-3"><a href="probability.html#cb2-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
-<span id="cb2-4"><a href="probability.html#cb2-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="probability.html#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
+<span id="cb8-2"><a href="probability.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, </span>
+<span id="cb8-3"><a href="probability.html#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
+<span id="cb8-4"><a href="probability.html#cb8-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>## $bad
-## [1] 0.836
+## [1] 0.85
 ## 
 ## $good
-## [1] 0.966</code></pre>
+## [1] 0.954</code></pre>
 <p>and <code>lmodboot()</code> is <code>fciR::boot_lmod()</code> with the alias <code>fciR::lmodboot()</code></p>
 <p>Run and verify against the author’s results on p.34</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="probability.html#cb4-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">lmodboot</span>(whatifdat, <span class="at">R =</span> <span class="dv">500</span>)</span>
-<span id="cb4-2"><a href="probability.html#cb4-2" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
-<pre><code>##   name       est conf       lci      uci
-## 1    P 0.6059581 0.95 0.4109247 0.758819</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="probability.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
-<span id="cb6-2"><a href="probability.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb6-3"><a href="probability.html#cb6-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb6-4"><a href="probability.html#cb6-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="probability.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb10-2"><a href="probability.html#cb10-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">lmodboot</span>(whatifdat, <span class="at">R =</span> <span class="dv">500</span>)</span>
+<span id="cb10-3"><a href="probability.html#cb10-3" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<pre><code>##   name       est conf       lci       uci
+## 1    P 0.6059581 0.95 0.4227022 0.7560675</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="probability.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
+<span id="cb12-2"><a href="probability.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb12-3"><a href="probability.html#cb12-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb12-4"><a href="probability.html#cb12-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
 </div>
 <div id="exercises-1" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Exercises</h2>
