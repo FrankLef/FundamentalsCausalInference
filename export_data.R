@@ -6,6 +6,9 @@ dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
 # the directory of documentation for chapter 3
 dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
                         "Brumback FOCI Website Material", "Chapter 3")
+# the directory of documentation for chapter 6
+dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+                        "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -15,6 +18,7 @@ dir_fciR <- 'C:\\Users\\Public\\MyR\\Packages\\fciR\\data'
 
 
 load(file.path(dir_docs01, "whatifdat.RData"))
+load(file.path(dir_docs06, "whatif2dat.RData"))
 load(file.path(dir_docs01, "nces.RData"))
 load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs03, "brfss.RData"))
@@ -23,13 +27,8 @@ load(file.path(dir_docs01, "doublewhatifdat.RData"))
 
 
 
-# whatifdat <- data.frame(whatifdat)
-# nces <- data.frame(nces)
-# gss <- data.frame(gss)
-# cogdat <- data.frame(cogdat)
-# doublewhatifdat <- data.frame(doublewhatifdat)
-
 save(whatifdat, file = file.path(dir_fciR, "whatifdat.rda"), version = 2)
+save(whatif2dat, file = file.path(dir_fciR, "whatif2dat.rda"), version = 2)
 save(nces, file = file.path(dir_fciR, "nces.rda"), version = 2)
 save(gss, file = file.path(dir_fciR, "gss.rda"), version = 2)
 save(cogdat, file = file.path(dir_fciR, "cogdat.rda"), version = 2)

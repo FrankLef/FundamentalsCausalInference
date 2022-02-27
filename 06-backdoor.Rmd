@@ -27,40 +27,40 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_01-B_doublewhatifsim.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-A_stand.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-B_standout.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-C_exposure.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-D_standexp.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-F_standdr.R"), 
-       local = knitr::knit_global())
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_01-B_doublewhatifsim.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-A_stand.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-B_standout.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-C_exposure.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-D_standexp.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-F_standdr.R"), 
+#        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-G_badstanddr.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-H_mc_standdr.R"), 
        local = knitr::knit_global())
 source(file = file.path(dir_lib, "fci_06-I_simdr.R"), 
        local = knitr::knit_global())
-load(file.path(dir_docs01, "whatifdat.RData"))
-load(file.path(dir_docs01, "gss.RData"))
+# load(file.path(dir_docs01, "whatifdat.RData"))
+# load(file.path(dir_docs01, "gss.RData"))
 load(file.path(dir_docs03, "brfss.RData"))
-load(file.path(dir_docs06, "whatif2dat.RData"))
+# load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
 
@@ -104,10 +104,9 @@ $$
 
 We use `R` to compute the standardized estimates with the following script
 
-
-```{r echo=TRUE, file="lib\\fci_06-A_stand.R"}
-
-```
+To compute the standardized estimate using outcome-model standardization
+in a non-parametric way we use the function `fci::backdr_out_np()` or its alias
+`fciR::stand()`.
 
 
 ### Examples {-}
@@ -118,7 +117,8 @@ and for the What-If? study this gives
 
 
 ```{r}
-whatif.out <- stand(whatifdat, formula = Y ~ A + H + A:H)
+data("whatifdat", package = "fciR")
+whatif.out <- fciR::backdr_out_np(whatifdat, formula = Y ~ A + H + A:H)
 whatif.out
 ```
 
@@ -136,7 +136,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.1
 
 ```{r}
-gt_measures(whatif.out, 
+fciR::gt_measures(whatif.out, 
             title = "Table 6.1", 
             subtitle = "What-If Study<br>Standardized Estimates")
 ```
@@ -150,17 +150,18 @@ statistically significant.
 
 
 ```{r}
-dataDoubleWhatIf <- doublewhatifsim()
+data("doublewhatifdat", package = "fciR")
+# dataDoubleWhatIf <- doublewhatifsim()
 ```
 
 
 ```{r}
-doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0)
+doublewhatif.out <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0)
 ```
 
 
 ```{r}
-gt_measures(doublewhatif.out, 
+fciR::gt_measures(doublewhatif.out, 
             title = "Table 6.2", 
             subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = AD0</em>")
 ```
@@ -172,12 +173,12 @@ gt_measures(doublewhatif.out,
 
 
 ```{r}
-doublewhatif.out <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0)
+doublewhatif.out <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0)
 ```
 
 
 ```{r}
-gt_measures(doublewhatif.out, 
+fciR::gt_measures(doublewhatif.out, 
             title = "Table 6.3", 
             subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = VL0</em>")
 ```
@@ -195,7 +196,7 @@ addition of the argument `att`.
 
 
 ```{r}
-whatif.att <- stand(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
+whatif.att <- fciR::backdr_out_np(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
 ```
 
 and we compare with the author's
@@ -212,7 +213,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.1
 
 ```{r}
-gt_measures(whatif.att, 
+fciR::gt_measures(whatif.att, 
             title = "Table 6.4", 
             subtitle = "What-If Study<br>Standardized ATT estimates")
 ```
@@ -221,13 +222,13 @@ gt_measures(whatif.att,
 
 
 ```{r}
-doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + AD0 + A*AD0,
+doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0,
                               att = TRUE)
 ```
 
 
 ```{r}
-gt_measures(doublewhatif.att, 
+fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.5", 
             subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = AD0</em>")
 ```
@@ -236,30 +237,27 @@ gt_measures(doublewhatif.att,
 
 
 ```{r}
-doublewhatif.att <- stand(dataDoubleWhatIf, formula = VL1 ~ A + VL0 + A*VL0,
+doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0,
                               att = TRUE)
 ```
 
 
 ```{r}
-gt_measures(doublewhatif.att, 
+fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.6", 
             subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = VL0</em>")
 ```
 
 ### Standardization with a Parametric Outcome Model
 
-For a the parametric outcome model `standout` is used
-
-```{r echo=TRUE, file="lib\\fci_06-B_standout.R"}
-
-```
+For a the parametric outcome model `fciR::backdr_out()` is used
 
 
 #### What-if? Study {-}
 
 ```{r}
-whatif2.out <- standout(whatif2dat, formula = vl4 ~ A + lvlcont0)
+data("whatif2dat", package = "fciR")
+whatif2.out <- fciR::backdr_out(whatif2dat, formula = vl4 ~ A + lvlcont0)
 # whatif2.out
 ```
 
@@ -278,7 +276,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.1
 
 ```{r}
-gt_measures(whatif2.out, 
+fciR::gt_measures(whatif2.out, 
             title = "Table 6.7", 
             subtitle = "What-If Study<br>Outome-model Standardization with <em>H = lvlcont0</ems>")
 ```
@@ -286,6 +284,7 @@ gt_measures(whatif2.out,
 #### General Social Survey {-}
 
 ```{r}
+data("gss", package = "fciR")
 gssrcc <- gss[, c("trump", "gthsedu", "magthsedu", "white", "female", "gt65")]
 gssrcc <- gssrcc[complete.cases(gssrcc), ]
 ```
@@ -297,7 +296,7 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 ```{r}
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
-# gssrcc.out <- standout(gssrcc, 
+# gssrcc.out <- fciR::backdr_out(gssrcc,
 #                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -321,7 +320,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.8
 
 ```{r}
-gt_measures(whatif2.out, 
+fciR::gt_measures(gssrcc.out, 
             title = "Table 6.8", 
             subtitle = "General Social Survey<br>
             Outcome-model Standardization<br>
@@ -339,21 +338,16 @@ See section 1.2.1 in chapter 1 for details on `data_mortability_exp`.
 
 
 ```{r}
-mortdat <- data_mortability_exp()
+data("mortality_long", package = "fciR")
+mortdat <- mortality_long
 ```
 
 
-Compute the standardized estimates using exposure modeling with `calc_exposure`. 
-The author puts the function it with the data itself. A better idea is to
-put the logic in a function separate from the data.
-
-```{r echo=TRUE, file="lib\\fci_06-C_exposure.R"}
-
-```
+Compute the standardized estimates using exposure modeling with `fciR::backdr_exp_np`
 
 
 ```{r}
-mortdat.out <- calc_exposure(mortdat, formula = Y ~ `T` + H, weights = "n")
+mortdat.out <- fciR::backdr_exp_np(mortdat, formula = Y ~ `T` + H, weights = "n")
 mortdat.out[c("EY0", "EY1")]
 # verify with the author's
 stopifnot(abs(mortdat.out$EY0 - 0.0078399) < 1e-7,
@@ -376,25 +370,16 @@ stopifnot(abs(mortdat.out$EY0T1 - 0.010176) < 1e-6)
 ### Standardization with a Parametric Exposure Model
 
 
-The function `standexp` is used to standardized with a parametric exposure
+The function `fciR::backdr_exp()` is used to standardized with a parametric exposure
 model and the `glm` fit. It is the main function used in the chapter.
-
-```{r file="lib\\fci_06-D_standexp.R"}
-
-```
 
 Alternatively the standardization could be done with `geeglm` from the `geepack`
 package. For *those focused primarily on the risk difference*. See the 
 explanation on section 6.2.2 on why `geeglm` is not really good for the
 risk ratio.
 
-The function is called `exp` in the book. We rename it `standexpgee` to be
+The function is called `exp` in the book. We rename it `fciR::backdr_exp()` to be
 more informative and avoid mix up with the much-used base R function `exp.`
-
-
-```{r file="lib\\fci_06-E_standexpgee.R"}
-
-```
 
 
 
@@ -403,7 +388,7 @@ more informative and avoid mix up with the much-used base R function `exp.`
 First we do it using the `glm` fit
 
 ```{r}
-whatif2.exp <- standexp(whatif2dat, formula = vl4 ~ A + lvlcont0)
+whatif2.exp <- fciR::backdr_exp(whatif2dat, formula = vl4 ~ A + lvlcont0)
 # whatif2.exp
 ```
 
@@ -423,7 +408,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.9
 
 ```{r}
-gt_measures(whatif2.exp, 
+fciR::gt_measures(whatif2.exp, 
             title = "Table 6.9", 
             subtitle = "What-If Study<br>Exposure-model Standardization with <em>H = lvlcont0</em>")
 ```
@@ -432,16 +417,25 @@ gt_measures(whatif2.exp,
 then we use the `geeglm` from the `geepack` package fit for risk difference
 
 ```{r}
-whatif2.expgee <- standexpgee(whatif2dat, formula = vl4 ~ A + lvlcont0)
+message("This takes about 15 sec.. Load from file.")
+# startTime <- Sys.time()
+# whatif2.expgee <- fciR::backdr_exp_gee(whatif2dat, formula = vl4 ~ A + lvlcont0)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+
+a_file <- file.path(dir_data, "chap06_whatif2gee.rds")
+# saveRDS(whatif2.expgee, file = a_file)
+whatif2.expgee <- readRDS(a_file)
+
 # we don't use the risk ratio measures with this function
-whatif2.expgee <- whatif2.expgee[!(whatif2.expgee$name %in% c("RR", "RR*", "OR")), ]
+whatif2.expgee <- whatif2.expgee[!(whatif2.expgee$name %in% c("RR*", "OR")), ]
 # whatif2.expgee
 ```
 
 and the results are presented in table 6.9
 
 ```{r}
-gt_measures(whatif2.expgee, 
+fciR::gt_measures(whatif2.expgee, 
             title = "Table 6.9 geeglm", 
             subtitle = "What-If Study<br>Exposure-model Standardization using <em>geeglm</em> wtih <em>H = lvlcont0</em>")
 ```
@@ -461,7 +455,7 @@ to run it as follows
 ```{r}
 message("This takes about 10 sec. Load from file.")
 # startTime <- Sys.time()
-# gssrcc.exp <- standexp(gssrcc, 
+# gssrcc.exp <- fciR::backdr_exp(gssrcc,
 #                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -486,7 +480,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.9
 
 ```{r}
-gt_measures(gssrcc.exp, 
+fciR::gt_measures(gssrcc.exp, 
             title = "Table 6.10", 
             subtitle = "General Social Survey<br>Exposure-model Standardization<br>
             Effect of <em>More than High School Education</em> on <em>
@@ -496,28 +490,19 @@ gt_measures(gssrcc.exp,
 
 ## Doubly Robust Standardization
 
-The function `standdr` does a doubly robust standardization. It is not in the
-text but is actually used for the exercise.  We show it here. It is very similar
+The function `backdr_dr()` does a doubly robust standardization. It is not in the
+text but is actually used for the exercise. It is very similar
 to `badstanddr`.
 
-
-```{r file="lib\\fci_06-F_standdr.R"}
-
-```
-
-The function `badstanddr` used for doubly robust standardization with a
-misspecified outcome model is defined as follows
-
-```{r file="lib\\fci_06-G_badstanddr.R"}
-
-```
+The function `badstanddr` is replaced by `backdr_dr_bad`, used for doubly 
+robust standardization with a misspecified outcome model.
 
 
 and using the What-if Study we obtain
 
 
 ```{r}
-whatif2.dr <- badstanddr(whatif2dat, formula = vl4 ~ A + lvlcont0)
+whatif2.dr <- fciR::backdr_dr_bad(whatif2dat, formula = vl4 ~ A + lvlcont0)
 # whatif2.dr
 ```
 
@@ -537,7 +522,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.9
 
 ```{r}
-gt_measures(whatif2.dr, 
+fciR::gt_measures(whatif2.dr, 
             title = "Table 6.12", 
             subtitle = "What-If Study<br>Doubly Robust Standardizaion<br>
             Combining the Misspecified Outome Model of Table 6.11<br>
@@ -599,7 +584,7 @@ subtitle <- paste0("Sampling Distribution from Simulation", "<br>",
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
 tbl <- gt::gt(dft) %>%
-  gt_basic(title = title, subtitle = subtitle) %>%
+  fciR::gt_basic(title = title, subtitle = subtitle) %>%
   tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
   cols_align(
     align = "left",
@@ -634,7 +619,7 @@ So here the simulation with $ss \in \{40, 100\}$
 ```{r}
 message("This takes about 8 min. Load from file.")
 # startTime <- Sys.time()
-# mc.out <- mc_standdr(ss = c(40, 100), nrep = nrep)
+# mc.out <- fciR::mc_standdr(ss = c(40, 100), nrep = nrep)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_mc_out.rds")
@@ -677,7 +662,7 @@ subtitle <- paste0("Sampling Distribution from Simulation", "<br>",
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
 tbl <- gt::gt(dft) %>%
-  gt_basic(title = title, subtitle = subtitle) %>%
+  fciR::gt_basic(title = title, subtitle = subtitle) %>%
   tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
   cols_align(
     align = "left",

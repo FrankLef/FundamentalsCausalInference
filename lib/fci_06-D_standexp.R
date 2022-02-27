@@ -15,8 +15,8 @@
 #' @param att if \code{FALSE} calculate the standardized (unconfounded)
 #' causal effect. If \code{TRUE} calculate the average effect of treatment
 #' on the treated.
-#' @R Number of bootstrap replicates.
-#' @conf Confidence interval.
+#' @param R Number of bootstrap replicates.
+#' @param conf Confidence interval.
 #'
 #' @return Dataframe of estimates using exposure-model standardization
 standexp <- function(data, formula = Y ~ `T` + H, att = FALSE, 

@@ -1,19 +1,21 @@
-#' Compute standardized estimates
+#' Compute standardized estimates via Outcome Modeling, Non-Parametric
 #' 
-#' Compute standardized estimates.
+#' Compute standardized estimates via outcome modeling, non-parametric.
 #' 
-#' The standardized estimates are computed using the outcome model.
-#' IMPORTANT: The formula must be in the format \code{Y ~ T + ...}.
+#' The standardized estimates are computed using the non-parametric outcome 
+#' model. IMPORTANT: The formula must be in the format \code{Y ~ T + ...} where the
+#' exposure is in the first position \code{T}.
 #'
 #' @param data Dataframe of raw data.
-#' @param formula Formula in format \code{Y ~ T + ...}
+#' @param formula Formula in format \code{Y ~ T + ...}, see details.
 #' @param att if \code{FALSE} calculate the standardized (unconfounded)
 #' causal effect. If \code{TRUE} calculate the average effect of treatment
 #' on the treated.
-#' @R Number of bootstrap replicates.
-#' @conf Confidence interval
+#' @param R Number of bootstrap replicates.
+#' @param conf Confidence interval.
 #'
 #' @return Estimate using outcome-model standardization
+#' @export
 stand <- function(data, formula = Y ~ `T` + H + `T`*H, att = FALSE, 
                       R = 1000, conf = 0.95) {
   

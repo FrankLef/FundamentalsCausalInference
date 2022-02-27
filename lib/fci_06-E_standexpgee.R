@@ -10,8 +10,8 @@
 #'
 #' @param data Dataframe of raw data.
 #' @param formula Formula must be in the form \code{Y ~ `T` + H}
-#' @R Number of bootstrap replicates.
-#' @conf Confidence interval.
+#' @param R Number of bootstrap replicates.
+#' @param conf Confidence interval.
 #' 
 #' @seealso standexp
 #'

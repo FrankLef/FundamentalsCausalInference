@@ -1,6 +1,6 @@
-#' Compute standardized estimates with parametric outome model
+#' Compute standardized estimates with parametric outcome model
 #' 
-#' Compute standardized estimates with parametric outome model.
+#' Compute standardized estimates with parametric outcome model.
 #' 
 #' The standardized estimates are computed using the outcome model.
 #' IMPORTANT: The formula must be in the format \code{Y ~ T + ...} where T
@@ -10,10 +10,11 @@
 #' @param data Dataframe of raw data.
 #' @param formula Formula in format \code{Y ~ T + ...} see details above.
 #' @param family Character. Name of the distribution. Default is "binomial".
-#' @R Number of bootstrap replicates.
-#' @conf Confidence interval.
+#' @param R Number of bootstrap replicates.
+#' @param conf Confidence interval.
 #'
 #' @return Estimate using outcome-model standardization
+#' @export
 standout <- function(data, formula = Y ~ `T` + H, 
                      family = c("binomial", "poisson", "gaussian"), 
                      R = 1000, conf = 0.95) {
