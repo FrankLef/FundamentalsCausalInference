@@ -6,19 +6,20 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(gt)
-library(geepack)
+# library(geepack)
+library(fciR)
 ```
 
 
 
 ```{r include=FALSE}
 # the directory of documentation for chapter 1
-dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 1")
-dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 3")
-dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 6")
+# dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 1")
+# dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 3")
+# dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -51,15 +52,15 @@ dir_lib <- file.path(getwd(), "lib")
 #        local = knitr::knit_global())
 # source(file = file.path(dir_lib, "fci_06-F_standdr.R"), 
 #        local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-G_badstanddr.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-H_mc_standdr.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_06-I_simdr.R"), 
-       local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-G_badstanddr.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-H_mc_standdr.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_06-I_simdr.R"), 
+#        local = knitr::knit_global())
 # load(file.path(dir_docs01, "whatifdat.RData"))
 # load(file.path(dir_docs01, "gss.RData"))
-load(file.path(dir_docs03, "brfss.RData"))
+# load(file.path(dir_docs03, "brfss.RData"))
 # load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
@@ -583,24 +584,7 @@ title <- "Table 6.13 and 6.14"
 subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
-tbl <- gt::gt(dft) %>%
-  fciR::gt_basic(title = title, subtitle = subtitle) %>%
-  tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
-  cols_align(
-    align = "left",
-    columns = c("estimator", "description")
-    ) %>%
-  tab_style(
-    style = cell_borders(sides = "left", color = "grey60",
-                           weight = px(1.5), style = "solid"),
-    locations = cells_body(columns = c("ss=100_mean"))
-  ) %>%
-  tab_style(
-    style = cell_borders(sides = "left", color = "grey60",
-                           weight = px(1.5), style = "solid"),
-    locations = cells_column_labels(columns = c("ss=100_mean"))
-  )
-tbl
+fciR::gt_standdr(dft, title = title, subtitle = subtitle)
 ```
 
 #### With `mc_standdr`
@@ -661,24 +645,26 @@ title <- "Table 6.13 and 6.14 <em>(by FL)</em>"
 subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
-tbl <- gt::gt(dft) %>%
-  fciR::gt_basic(title = title, subtitle = subtitle) %>%
-  tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
-  cols_align(
-    align = "left",
-    columns = c("estimator", "description")
-    ) %>%
-  tab_style(
-    style = cell_borders(sides = "left", color = "grey60",
-                           weight = px(1.5), style = "solid"),
-    locations = cells_body(columns = c("ss=100_mean"))
-  ) %>%
-  tab_style(
-    style = cell_borders(sides = "left", color = "grey60",
-                           weight = px(1.5), style = "solid"),
-    locations = cells_column_labels(columns = c("ss=100_mean"))
-  )
-tbl
+fciR::gt_standdr(dft, title = title, subtitle = subtitle)
+
+# tbl <- gt::gt(dft) %>%
+#   fciR::gt_basic(title = title, subtitle = subtitle) %>%
+#   tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
+#   cols_align(
+#     align = "left",
+#     columns = c("estimator", "description")
+#     ) %>%
+#   tab_style(
+#     style = cell_borders(sides = "left", color = "grey60",
+#                            weight = px(1.5), style = "solid"),
+#     locations = cells_body(columns = c("ss=100_mean"))
+#   ) %>%
+#   tab_style(
+#     style = cell_borders(sides = "left", color = "grey60",
+#                            weight = px(1.5), style = "solid"),
+#     locations = cells_column_labels(columns = c("ss=100_mean"))
+#   )
+# tbl
 ```
 
 #### Plotting the Monte Carlo Simulation

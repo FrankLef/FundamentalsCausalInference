@@ -2,22 +2,19 @@
 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(gt)
+library(fciR)
 ```
 
 
 
 ```{r include=FALSE}
 # the directory of documentation for chapter 1
-dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 1")
-dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 3")
-dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 6")
+# dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 1")
+# dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 3")
+# dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
+#                    "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
@@ -26,25 +23,25 @@ dir_lib <- file.path(getwd(), "lib")
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-source(file = file.path(dir_lib, "boot_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_utils.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "gt_measures_rowgrp.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_07-A_didlinear.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_07-B_didloglinear.R"), 
-       local = knitr::knit_global())
-source(file = file.path(dir_lib, "fci_07-C_didlogistic.R"), 
-       local = knitr::knit_global())
-load(file.path(dir_docs01, "whatifdat.RData"))
-load(file.path(dir_docs01, "doublewhatifdat.RData"))
-load(file.path(dir_docs01, "gss.RData"))
-load(file.path(dir_docs03, "brfss.RData"))
-load(file.path(dir_docs06, "whatif2dat.RData"))
+# source(file = file.path(dir_lib, "boot_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_utils.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "gt_measures_rowgrp.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_07-A_didlinear.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_07-B_didloglinear.R"), 
+#        local = knitr::knit_global())
+# source(file = file.path(dir_lib, "fci_07-C_didlogistic.R"), 
+#        local = knitr::knit_global())
+# load(file.path(dir_docs01, "whatifdat.RData"))
+# load(file.path(dir_docs01, "doublewhatifdat.RData"))
+# load(file.path(dir_docs01, "gss.RData"))
+# load(file.path(dir_docs03, "brfss.RData"))
+# load(file.path(dir_docs06, "whatif2dat.RData"))
 ```
 
 
@@ -177,7 +174,7 @@ The scripts of the functions are next
 The DiD estimator with the linear model
 
 ```{r}
-dwhatif.lindid <- didlinear(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
+dwhatif.lindid <- fciR::did_linear(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
                            R = 100, conf = 0.95)
 # dwhatif.lindid
 ```
@@ -187,7 +184,7 @@ dwhatif.lindid <- didlinear(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "
 The DiD estimator with the loglinear model
 
 ```{r}
-dwhatif.loglindid <- didloglinear(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
+dwhatif.loglindid <- fciR::did_loglinear(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
                            R = 100, conf = 0.95)
 # dwhatif.loglindid
 ```
@@ -196,7 +193,7 @@ dwhatif.loglindid <- didloglinear(doublewhatifdat, formula = Y ~ A, varsY = c("V
 The DiD estimator with the logistic model
 
 ```{r}
-dwhatif.logisticdid <- didlogistic(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
+dwhatif.logisticdid <- fciR::did_logistic(doublewhatifdat, formula = Y ~ A, varsY = c("VL0", "VL1"), 
                            R = 100, conf = 0.95)
 # dwhatif.logisticdid
 ```
@@ -227,6 +224,8 @@ bb_dwhatif <- data.frame(
           0.500, 0.508, 0.496, 0.315, 0.325, 0.307))
 # bb_dwhatif
 ```
+
+
 ```{r}
 gt_measures_rowgrp(
     bb_dwhatif, 
