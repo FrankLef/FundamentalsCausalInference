@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-27" />
+<meta name="date" content="2022-03-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -389,15 +389,9 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="measures" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Effect-Measure Modification and Causal Interaction</h1>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="measures.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library(dplyr, quietly = TRUE)</span></span>
-<span id="cb25-2"><a href="measures.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb25-3"><a href="measures.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(gt, quietly = TRUE)</span></span>
-<span id="cb25-4"><a href="measures.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># library(ggplot2, quietly = TRUE)</span></span>
-<span id="cb25-5"><a href="measures.html#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co"># library(boot, quietly = TRUE)</span></span>
-<span id="cb25-6"><a href="measures.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># library(gee, quietly = TRUE)</span></span>
-<span id="cb25-7"><a href="measures.html#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># library(MonteCarlo, quietly = TRUE)</span></span>
-<span id="cb25-8"><a href="measures.html#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb25-9"><a href="measures.html#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="measures.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb25-2"><a href="measures.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb25-3"><a href="measures.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <div id="effect-measure-modification-and-statistical-interaction" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Effect-Measure Modification and Statistical Interaction</h2>
 <div id="recovery-trial" class="section level3" number="4.1.1">
@@ -883,7 +877,7 @@ between the 2 strata.</p>
 lack of effect of dexamethasone without intrusive mechanical ventilation (M0)
 vs its use with intrusive mechanical ventilation (M1) which is significant.</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="measures.html#cb30-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(recovery.out, <span class="at">title =</span> <span class="st">&quot;RECOVERY trial&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <p>The <code>gee::gee()</code> function is used to find information on the coefficients
 and see if they are statistically significant. The same could be done
 withe <code>glm::glm()</code> but <code>gee</code> offers results with robust statistics which
@@ -1420,7 +1414,7 @@ us the 2-sided p-value that is significant</p>
 </div>
 <p>and we plot the results</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="measures.html#cb48-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(nces.out, <span class="at">title =</span> <span class="st">&quot;NCES data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
 <p>We observe that</p>
 <ul>
 <li>RD: Risk difference shows that using selection to accept more women
@@ -1554,7 +1548,7 @@ Venn diagram as follows</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="measures.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim, <span class="at">n =</span> <span class="dv">1000</span>, </span>
 <span id="cb62-2"><a href="measures.html#cb62-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>),</span>
 <span id="cb62-3"><a href="measures.html#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram of effect measure modifications&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 <p>now for <strong>constrained data</strong></p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="measures.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 1 sec.: we load a saved file instead</code></pre>
@@ -1624,7 +1618,7 @@ in the 4-set Venn diagram.</p>
 <span id="cb76-2"><a href="measures.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim_const,</span>
 <span id="cb76-3"><a href="measures.html#cb76-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;cyan&quot;</span>, <span class="st">&quot;gold&quot;</span>, <span class="st">&quot;springgreen&quot;</span>, <span class="st">&quot;hotpink&quot;</span>),</span>
 <span id="cb76-4"><a href="measures.html#cb76-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram for constrained data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 </div>
 <div id="applications" class="section level3" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Applications</h3>
@@ -1674,7 +1668,7 @@ direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
 <p>and to show as a heatmap</p>
 <div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="measures.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>, </span>
 <span id="cb82-2"><a href="measures.html#cb82-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue4&quot;</span>))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
 <p>and comparing with the author</p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="measures.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
 <span id="cb83-2"><a href="measures.html#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
@@ -1698,7 +1692,7 @@ direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
 <div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="measures.html#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim_const, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>,</span>
 <span id="cb90-2"><a href="measures.html#cb90-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon4&quot;</span>),</span>
 <span id="cb90-3"><a href="measures.html#cb90-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">title =</span> <span class="st">&quot;Monte Carlo simulation. Constrained data.&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
 <p>and comparing with the author</p>
 <div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="measures.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
 <span id="cb91-2"><a href="measures.html#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>

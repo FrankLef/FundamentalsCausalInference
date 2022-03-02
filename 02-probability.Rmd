@@ -5,58 +5,6 @@ library(fciR)
 ```
 
 
-```{r}
-s0 <- "Y ~ T + A + A*H"
-f0 <- formula(s0)
-f1 <-  cond(T = 1) | Y ~ T + A + A*H
-f2 <- Y ~ T + A + A*H | cond(T = 1)
-f3 <- Y ~ T + A + A*H | (T = 1) | do(A=1)
-f <- Formula::as.Formula(f3)
-length(f)
-terms(f)
-str(formula(f, lhs = 0, rhs = 2:3))
-grepl(pattern = "~", x = f)
-
-ft <- f[seq_len(length(f)[2])]
-str(ft)
-
-
-length(f)
-f
-x <- formula(f, lhs = 0, rhs = 2)
-x <- as.character(x)
-x
-
-out <- sapply(2:length(f)[2], function(i) {
-  x <- formula(f, lhs = 0, rhs = i)
-  x <- x[2]
-  x <- gsub(" ", replacement = "",x = x)
-  print(x)
-  patrn <- "cond[(][A-Za-z]+=[0-1][)]|do[(].+=[0-1][)]"
-  y <- grep(pattern = patrn, x = x)
-  isTRUE(y != 0)
-})
-out
-
-x <- "do(x=0)"
-patrn <- "cond[(].+=.+[)]|do[(].+=.+[)]"
-y <- grep(pattern = patrn, x)
-isTRUE(y == 1)
-```
-
-
-
-```{r include=FALSE}
-# the directory of documentation for chapter 1
-dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-                   "Brumback FOCI Website Material", "Chapter 1")
-# directory of data files
-# dir_data <- file.path(getwd(), "data")
-# directory for functions
-# dir_lib <- file.path(getwd(), "lib")
-```
-
-
 The mortality data was given in chapter 1, section 1.2.1.
 
 ```{r}

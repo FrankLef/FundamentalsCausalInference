@@ -5,65 +5,17 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
-library(gt)
-# library(geepack)
 library(fciR)
 ```
 
 
 
 ```{r include=FALSE}
-# the directory of documentation for chapter 1
-# dir_docs01 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-#                    "Brumback FOCI Website Material", "Chapter 1")
-# dir_docs03 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-#                    "Brumback FOCI Website Material", "Chapter 3")
-# dir_docs06 <- file.path(dirname(getwd()), "FundamentalsCausalInference_docs",
-#                    "Brumback FOCI Website Material", "Chapter 6")
 # directory of data files
 dir_data <- file.path(getwd(), "data")
 # directory for functions
 dir_lib <- file.path(getwd(), "lib")
 ```
-
-
-```{r include=FALSE}
-# source(file = file.path(dir_lib, "boot_utils.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "gt_utils.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "gt_measures.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "gt_measures_colgrp.R"),
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_01-A_mortability.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_01-B_doublewhatifsim.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-A_stand.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-B_standout.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-C_exposure.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-D_standexp.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-E_standexpgee.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-F_standdr.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-G_badstanddr.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-H_mc_standdr.R"), 
-#        local = knitr::knit_global())
-# source(file = file.path(dir_lib, "fci_06-I_simdr.R"), 
-#        local = knitr::knit_global())
-# load(file.path(dir_docs01, "whatifdat.RData"))
-# load(file.path(dir_docs01, "gss.RData"))
-# load(file.path(dir_docs03, "brfss.RData"))
-# load(file.path(dir_docs06, "whatif2dat.RData"))
-```
-
 
 :::: {.center data-latex=""}
 
@@ -544,47 +496,24 @@ Here is a tableau of her results
 
 
 ```{r echo=FALSE}
-the_estimators <- c("EYT0" = "Unadjusted", "EYT1" = "Unadjusted",
-                    "EY0exp" = "Linear Exposure", "EY1exp" = "Linear Exposure",
-                    "EY0exp2" = "Logistic Exposure", "EY1exp2" = "Logistic Exposure",
-                    "EY0out" = "Overspecified Outcome", "EY1out" = "Overspecified Outcome",
-                    "EY0dr" = "Doubly Robust", "EY1dr" = "Doubly Robust")
-bb40 <- data.frame(
-  ss = 40,
-  estimator = names(the_estimators),
-  description = the_estimators,
-  mean = c(0.0076, 0.0042, 0.01, 0.0195, 0.0101, 0.0204, 
-           0.01, 0.02, 0.01, 0.0197),
-  sd = c(0.0015, 0.0012, 0.0021, 0.0127, 0.0021, 0.0064,
-         0.0021, 0.0066, 0.0021, 0.0106),
-  pval = c(0, 0, 0.92, 0.19, 0.42, 0.07, 0.79, 0.84, 0.82, 0.37)
-)
+data(fciR::fci_tbl_06_13)
+df <- fci_tbl_06_13
 
-bb100 <- data.frame(
-  ss = 100,
-  estimator = names(the_estimators),
-  description = the_estimators,
-  mean = c(0.0079, 0.0038, 0.01, 0.0196, 0.01, 0.02, 0.01, 0.02, 0.01, 0.029),
-  sd = c(0.0016, 0.0012, 0.002, 0.0562, 0.002, 0.0068, 
-         0.002, 0.0069, 0.002, 0.1891),
-  pval = c(0, 0, 0.61, 0.81, 0.73, 0.96, 0.74, 0.74, 0.72, 0.14)
-)
-
-dft <- rbind(bb40, bb100) %>%
-  select(ss, estimator, description, mean, sd, pval) %>%
+df <- df %>% select(ss, estimator, description, mean, sd, pval) %>%
   mutate(ss = paste("ss", ss, sep = "=")) %>%
-  pivot_longer(cols = c("mean", "sd", "pval"), names_to = "stats", 
+  pivot_longer(cols = c("mean", "sd", "pval"), names_to = "stats",
                values_to = "value") %>%
   mutate(value = ifelse(stats == "pval", round(value, 2), round(value, 4))) %>%
   unite(col = "heading", ss, stats, sep = "_") %>%
-  pivot_wider(id_cols = c("estimator", "description"), names_from = "heading", 
+  pivot_wider(id_cols = c("estimator", "description"), names_from = "heading",
               values_from = "value")
+
 
 title <- "Table 6.13 and 6.14"
 subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
-fciR::gt_standdr(dft, title = title, subtitle = subtitle)
+fciR::gt_standdr(df, title = title, subtitle = subtitle)
 ```
 
 #### With `mc_standdr`
@@ -646,25 +575,6 @@ subtitle <- paste0("Sampling Distribution from Simulation", "<br>",
                    "Investigating Small-Sample Robustness", "<br>", 
                    "True E(Y(0))=0.01, True E(Y(1))=0.02")
 fciR::gt_standdr(dft, title = title, subtitle = subtitle)
-
-# tbl <- gt::gt(dft) %>%
-#   fciR::gt_basic(title = title, subtitle = subtitle) %>%
-#   tab_spanner_delim(delim = "_", columns = everything(), split = "first") %>%
-#   cols_align(
-#     align = "left",
-#     columns = c("estimator", "description")
-#     ) %>%
-#   tab_style(
-#     style = cell_borders(sides = "left", color = "grey60",
-#                            weight = px(1.5), style = "solid"),
-#     locations = cells_body(columns = c("ss=100_mean"))
-#   ) %>%
-#   tab_style(
-#     style = cell_borders(sides = "left", color = "grey60",
-#                            weight = px(1.5), style = "solid"),
-#     locations = cells_column_labels(columns = c("ss=100_mean"))
-#   )
-# tbl
 ```
 
 #### Plotting the Monte Carlo Simulation

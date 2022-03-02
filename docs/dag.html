@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-02-27" />
+<meta name="date" content="2022-03-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -389,13 +389,10 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="dag" class="section level1" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Causal Directed Acyclic Graphs</h1>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="dag.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb95-2"><a href="dag.html#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="dag.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb95-2"><a href="dag.html#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
 <span id="cb95-3"><a href="dag.html#cb95-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
-<span id="cb95-4"><a href="dag.html#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb95-5"><a href="dag.html#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb95-6"><a href="dag.html#cb95-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb95-7"><a href="dag.html#cb95-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
+<span id="cb95-4"><a href="dag.html#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
 <p>We use the <code>dagitty</code> and <code>ggdag</code> packages to analyse the DAG and plot them.
 We also sue the <code>simstudy</code> package from now on to perform the simulations.</p>
 <div id="theory" class="section level2" number="5.1">
@@ -421,10 +418,10 @@ represent statistical ans causal dependence.</p>
 <span id="cb96-12"><a href="dag.html#cb96-12" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb96-13"><a href="dag.html#cb96-13" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]),</span>
 <span id="cb96-14"><a href="dag.html#cb96-14" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(X[<span class="dv">3</span>]), <span class="fu">expression</span>(X[<span class="dv">4</span>]))</span>
-<span id="cb96-15"><a href="dag.html#cb96-15" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
+<span id="cb96-15"><a href="dag.html#cb96-15" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
 <span id="cb96-16"><a href="dag.html#cb96-16" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-68"></span>
-<img src="_main_files/figure-html/unnamed-chunk-68-1.png" alt="Example of a Directed Acyclic Graph" width="60%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-65"></span>
+<img src="_main_files/figure-html/unnamed-chunk-65-1.png" alt="Example of a Directed Acyclic Graph" width="60%" />
 <p class="caption">
 Figure 5.1: Example of a Directed Acyclic Graph
 </p>
@@ -495,8 +492,8 @@ in <span class="math inline">\(C\)</span> and such that no descendant of a colli
 <div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="dag.html#cb98-1" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(scm_5<span class="fl">.2</span><span class="sc">$</span>plotChain, scm_5<span class="fl">.2</span><span class="sc">$</span>plotFork, scm_5<span class="fl">.2</span><span class="sc">$</span>plotColl, </span>
 <span id="cb98-2"><a href="dag.html#cb98-2" aria-hidden="true" tabindex="-1"></a>                        scm_5<span class="fl">.2</span><span class="sc">$</span>plotDesc, </span>
 <span id="cb98-3"><a href="dag.html#cb98-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-70"></span>
-<img src="_main_files/figure-html/unnamed-chunk-70-1.png" alt="Graphical structures" width="672" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-67"></span>
+<img src="_main_files/figure-html/unnamed-chunk-67-1.png" alt="Graphical structures" width="672" />
 <p class="caption">
 Figure 5.2: Graphical structures
 </p>
@@ -515,10 +512,10 @@ Figure 5.2: Graphical structures
 <span id="cb99-8"><a href="dag.html#cb99-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb99-9"><a href="dag.html#cb99-9" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="fu">expression</span>(W[<span class="dv">1</span>]), <span class="fu">expression</span>(W[<span class="dv">2</span>]),</span>
 <span id="cb99-10"><a href="dag.html#cb99-10" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(W[<span class="dv">3</span>]), <span class="fu">expression</span>(W[<span class="dv">4</span>], <span class="st">&quot;Y&quot;</span>))</span>
-<span id="cb99-11"><a href="dag.html#cb99-11" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
+<span id="cb99-11"><a href="dag.html#cb99-11" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
 <span id="cb99-12"><a href="dag.html#cb99-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-72"></span>
-<img src="_main_files/figure-html/unnamed-chunk-72-1.png" alt="Causal DAG With Collider" width="60%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-69"></span>
+<img src="_main_files/figure-html/unnamed-chunk-69-1.png" alt="Causal DAG With Collider" width="60%" />
 <p class="caption">
 Figure 5.3: Causal DAG With Collider
 </p>
@@ -559,10 +556,10 @@ conditioning on <span class="math inline">\(M\)</span> would open up the path.</
 <span id="cb104-4"><a href="dag.html#cb104-4" aria-hidden="true" tabindex="-1"></a>    M <span class="sc">~</span> A <span class="sc">+</span> H,</span>
 <span id="cb104-5"><a href="dag.html#cb104-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> H)</span>
 <span id="cb104-6"><a href="dag.html#cb104-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-7"><a href="dag.html#cb104-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb104-7"><a href="dag.html#cb104-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb104-8"><a href="dag.html#cb104-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-76"></span>
-<img src="_main_files/figure-html/unnamed-chunk-76-1.png" alt="Causal DAG With Intermediate Variable" width="60%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-73"></span>
+<img src="_main_files/figure-html/unnamed-chunk-73-1.png" alt="Causal DAG With Intermediate Variable" width="60%" />
 <p class="caption">
 Figure 5.4: Causal DAG With Intermediate Variable
 </p>
@@ -586,10 +583,10 @@ even if <span class="math inline">\(Z\)</span> <em>occur after</em> <span class=
 <span id="cb105-9"><a href="dag.html#cb105-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
 <span id="cb105-10"><a href="dag.html#cb105-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>)</span>
 <span id="cb105-11"><a href="dag.html#cb105-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-12"><a href="dag.html#cb105-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb105-12"><a href="dag.html#cb105-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb105-13"><a href="dag.html#cb105-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-78"></span>
-<img src="_main_files/figure-html/unnamed-chunk-78-1.png" alt="Confounder May Occur After the Exposure" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-75"></span>
+<img src="_main_files/figure-html/unnamed-chunk-75-1.png" alt="Confounder May Occur After the Exposure" width="80%" />
 <p class="caption">
 Figure 5.5: Confounder May Occur After the Exposure
 </p>
@@ -615,10 +612,10 @@ that is <span class="math inline">\(Y = Y(A)\)</span>, or, for binary <span clas
 <span id="cb106-9"><a href="dag.html#cb106-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
 <span id="cb106-10"><a href="dag.html#cb106-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
 <span id="cb106-11"><a href="dag.html#cb106-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb106-12"><a href="dag.html#cb106-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb106-12"><a href="dag.html#cb106-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb106-13"><a href="dag.html#cb106-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-80"></span>
-<img src="_main_files/figure-html/unnamed-chunk-80-1.png" alt="One way to generate confounding" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-77"></span>
+<img src="_main_files/figure-html/unnamed-chunk-77-1.png" alt="One way to generate confounding" width="80%" />
 <p class="caption">
 Figure 5.6: One way to generate confounding
 </p>
@@ -655,7 +652,7 @@ Figure 5.6: One way to generate confounding
 <span id="cb107-29"><a href="dag.html#cb107-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
 <span id="cb107-30"><a href="dag.html#cb107-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb107-31"><a href="dag.html#cb107-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb107-32"><a href="dag.html#cb107-32" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.1&quot;</span>,</span>
+<span id="cb107-32"><a href="dag.html#cb107-32" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.1&quot;</span>,</span>
 <span id="cb107-33"><a href="dag.html#cb107-33" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim1.r`&quot;</span>)</span>
 <span id="cb107-34"><a href="dag.html#cb107-34" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb107-35"><a href="dag.html#cb107-35" aria-hidden="true" tabindex="-1"></a>})</span>
@@ -1187,10 +1184,10 @@ P(Y = 0 \mid A = 0, Y1 = 0, Y0 = 0) P(A = 0 \mid Y1 = 0, Y0 = 0) \cdot P(Y1 = 0 
 <span id="cb115-4"><a href="dag.html#cb115-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> H,</span>
 <span id="cb115-5"><a href="dag.html#cb115-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> H)</span>
 <span id="cb115-6"><a href="dag.html#cb115-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb115-7"><a href="dag.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb115-7"><a href="dag.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb115-8"><a href="dag.html#cb115-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-87"></span>
-<img src="_main_files/figure-html/unnamed-chunk-87-1.png" alt="Another way to generate confounding" width="60%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-84"></span>
+<img src="_main_files/figure-html/unnamed-chunk-84-1.png" alt="Another way to generate confounding" width="60%" />
 <p class="caption">
 Figure 5.7: Another way to generate confounding
 </p>
@@ -1223,7 +1220,7 @@ Figure 5.7: Another way to generate confounding
 <span id="cb116-25"><a href="dag.html#cb116-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
 <span id="cb116-26"><a href="dag.html#cb116-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb116-27"><a href="dag.html#cb116-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb116-28"><a href="dag.html#cb116-28" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> <span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.2&quot;</span>,</span>
+<span id="cb116-28"><a href="dag.html#cb116-28" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.2&quot;</span>,</span>
 <span id="cb116-29"><a href="dag.html#cb116-29" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim2.r`&quot;</span>)</span>
 <span id="cb116-30"><a href="dag.html#cb116-30" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb116-31"><a href="dag.html#cb116-31" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span><span class="sc">$</span>summ</span></code></pre></div>
@@ -1790,10 +1787,10 @@ for <span class="math inline">\(Y(0) = 0\)</span>.</p>
 <span id="cb128-10"><a href="dag.html#cb128-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
 <span id="cb128-11"><a href="dag.html#cb128-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
 <span id="cb128-12"><a href="dag.html#cb128-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb128-13"><a href="dag.html#cb128-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb128-13"><a href="dag.html#cb128-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb128-14"><a href="dag.html#cb128-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-95"></span>
-<img src="_main_files/figure-html/unnamed-chunk-95-1.png" alt="Potential Outcomes Behind the Scenes" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-92"></span>
+<img src="_main_files/figure-html/unnamed-chunk-92-1.png" alt="Potential Outcomes Behind the Scenes" width="80%" />
 <p class="caption">
 Figure 5.8: Potential Outcomes Behind the Scenes
 </p>
@@ -1831,7 +1828,7 @@ Figure 5.8: Potential Outcomes Behind the Scenes
 <span id="cb129-31"><a href="dag.html#cb129-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
 <span id="cb129-32"><a href="dag.html#cb129-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb129-33"><a href="dag.html#cb129-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb129-34"><a href="dag.html#cb129-34" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> <span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table for `simall.r`&quot;</span>,</span>
+<span id="cb129-34"><a href="dag.html#cb129-34" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table for `simall.r`&quot;</span>,</span>
 <span id="cb129-35"><a href="dag.html#cb129-35" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `simall.r`&quot;</span>)</span>
 <span id="cb129-36"><a href="dag.html#cb129-36" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb129-37"><a href="dag.html#cb129-37" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.8</span><span class="sc">$</span>tbl</span></code></pre></div>
@@ -2345,10 +2342,10 @@ Figure 5.8: Potential Outcomes Behind the Scenes
 <span id="cb131-26"><a href="dag.html#cb131-26" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb131-27"><a href="dag.html#cb131-27" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="fu">expression</span>(AD[<span class="dv">0</span>]), <span class="fu">expression</span>(AD[<span class="dv">1</span>]),</span>
 <span id="cb131-28"><a href="dag.html#cb131-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;T&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="fu">expression</span>(VL[<span class="dv">0</span>]), <span class="fu">expression</span>(VL[<span class="dv">1</span>]))</span>
-<span id="cb131-29"><a href="dag.html#cb131-29" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels, <span class="at">text_size =</span> <span class="dv">5</span>)</span>
+<span id="cb131-29"><a href="dag.html#cb131-29" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels, <span class="at">text_size =</span> <span class="dv">5</span>)</span>
 <span id="cb131-30"><a href="dag.html#cb131-30" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-99"></span>
-<img src="_main_files/figure-html/unnamed-chunk-99-1.png" alt="The Double What-If? Study" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-96"></span>
+<img src="_main_files/figure-html/unnamed-chunk-96-1.png" alt="The Double What-If? Study" width="80%" />
 <p class="caption">
 Figure 5.9: The Double What-If? Study
 </p>
