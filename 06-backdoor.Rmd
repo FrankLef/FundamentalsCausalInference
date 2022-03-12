@@ -6,6 +6,7 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(fciR)
+options(dplyr.summarise.inform = FALSE)
 ```
 
 
@@ -21,10 +22,54 @@ dir_lib <- file.path(getwd(), "lib")
 
 ::: {.minipage data-latex="{.5\linewidth}"}
 
-Important note on the notation used. When the author uses $E(Y=t) \mid T = t, H = h)$
-it means that we condition the data on $H$ and we set the $T$ column to $T = t$.
-In the notation of causal inference we would write 
-$E(Y=t) \mid T = t, H = h) = E(Y) \mid do(T = t), H = h)$.
+Important note on the notation used. When the author uses $E(Y=t) \mid T=t, H=h)$
+it means that we condition the data on $H=h$ and we intervene on the $T$ column 
+and set it to $T=t$.
+
+For example for equation (6.2) we have
+
+$$
+\begin{align*}
+E(Y(t)) &= E_H(E(Y(t) \mid H)) \\
+&= E_H(E(Y(t) \mid T = t, H))
+\end{align*}
+$$
+
+which indicates that $T=t$ means that we set $T=t$, i.e. *it is not a condition*
+that doesn't involve a filter on the data. We know that because we have the
+$E(Y(t))$ which tells us that.
+
+But then we continue with proof (6.2) by adding the thrd line
+
+$$
+\begin{align*}
+E(Y(t)) &= E_H(E(Y(t) \mid H)) \\
+&= E_H(E(Y(t) \mid T = t, H)) \\
+&= E_H(E(Y \mid T = t, H))
+\end{align*}
+$$
+
+and, for the unwary beginner,  $E(Y \mid T = t, H)$ could mean that we are
+*conditioning* on $T=t$, that is, we filter the $T$ variable in the data. This
+is confusing.
+
+To facilitate the reading and learning experience in this study project, whenever
+such confusion happens, the notation fro Pearl, using the $do()$ operator 
+will be used.
+
+For example, the proof (6.2) becomes
+
+
+$$
+\begin{align*}
+E(Y(t)) &= E_H(E(Y(t) \mid H)) \\
+&= E_H(E(Y(t) \mid T = t, H)) \\
+&\text{and we use the do() operator to make it clear} \\
+&\text{that T=t is not a condition, it is an intervention} \\
+&\text{whereas H is a condition} \\
+&= E_H(E(Y \mid do(T = t), H))
+\end{align*}
+$$
 :::
 
 ::::
@@ -42,24 +87,195 @@ $$
 &\text{by independence of T given H, (6.1)} \\
 &= E_HE(Y(t) \mid T=t, H) \\
 &\text{by consistency assumption} \\
-&= E_HE(Y \mid T=t, H)
+&= E_HE(Y \mid do(T=t), H)
 \end{align*}
 $$
 
-and with a binary dataset we can write
+and with a binary data set we can write
 
 $$
 \begin{align*}
-E_H E(Y \mid T=t, H) = E(Y \mid T=t, H = 0) P(H = 0) + E(Y \mid T=t, H = 1) P(H = 1)
+E_H E(Y \mid do(T=t), H) = E(Y \mid do(T=t), H = 0) P(H = 0) + E(Y \mid do(T=t), H = 1) P(H = 1)
 \end{align*}
 $$
 
 
-We use `R` to compute the standardized estimates with the following script
+and using the example on p. 100 with the mortality data we first load the
+data set
 
-To compute the standardized estimate using outcome-model standardization
-in a non-parametric way we use the function `fci::backdr_out_np()` or its alias
-`fciR::stand()`.
+```{r}
+data("mortality_long", package = "fciR")
+mortality <- mortality_long
+```
+
+and we begin by calculating $\hat{E}(Y \mid T=0, H=0)$
+
+```{r}
+mortality %>%
+  filter(`T` == 0, H == 0) %>%
+  summarize(EY = weighted.mean(Y, n))
+```
+
+and for all permutations of $T$ and $H$ we have
+
+
+```{r}
+EYcondTH <- mortality %>%
+  group_by(`T`, H) %>%
+  summarize(EYcond = weighted.mean(Y, n))
+EYcondTH
+```
+
+and then we multiply the conditional expectations by the probabilities of $H$.
+
+```{r}
+PH <- mortality %>%
+  group_by(H) %>%
+  summarize(prob = sum(p))
+PH
+```
+
+and the multiplication
+
+```{r}
+EYH <- dplyr::inner_join(EYcondTH, PH, by = c("H")) %>%
+  mutate(EYH = EYcond * prob)
+EYH
+```
+
+and the final results are
+
+```{r}
+EYout <- EYH %>%
+  group_by(`T`) %>%
+  summarize(EYout = sum(EYH))
+EYout
+```
+
+Now, lets do it with raw data. For that we convert the mortality data to have
+1 line per thousands of observations.
+
+
+```{r}
+mort <- mortality %>%
+  select(H, `T`, Y, n) %>%
+  mutate(n = as.integer(n / 1000)) %>%
+  uncount(n)
+str(mort)
+```
+
+and the function used to automate the process described above is as follows
+
+```{r}
+est_out_np <- function(data, outcome, exposure, confound) {
+  # compute the frequencies
+  summ <- data %>%
+    count({{outcome}}, {{exposure}}, {{confound}}) %>%
+    mutate(freq = n / sum(n))
+  
+  # the expected value of the outcome given the exposure and confounds
+  EYcond <- summ %>%
+    group_by({{exposure}}, {{confound}}) %>%
+    summarize(EYcond = weighted.mean(x = {{outcome}}, w = n))
+  
+  # the probabilities of the confound
+  PH <- summ %>%
+    group_by({{confound}}) %>%
+    summarize(prob = sum(freq))
+  
+  # multiply the conditional expectation by the confound probabilities
+  cnf <- enquo(confound)
+  EY <- dplyr::inner_join(EYcond, PH, by = quo_name(cnf)) %>%
+    mutate(EY = EYcond * prob) %>%
+    group_by({{exposure}}) %>%
+    summarize(EY = sum(EY)) %>%
+    arrange({{exposure}}) %>%
+    pull(EY) %>%
+    setNames(c("EY0", "EY1"))
+}
+```
+
+
+
+```{r}
+mort.out.est <- est_out_np(mort, outcome = Y, exposure = `T`, confound = H)
+mort.out.est
+```
+
+and we can see it gives the same results (the function is also found in 
+`fciR::backdr_out_np`)
+
+```{r}
+message("This takes about 22 min. Load from file.")
+# startTime <- Sys.time()
+# mort.out.np <- fciR::backdr_out_np(mort, outcome = Y, exposure = `T`, confound = H,
+#                                      R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_mort_out_np.rds")
+# saveRDS(mort.out.np, file = a_file)
+mort.out.np <- readRDS(file = a_file)
+fciR::gt_measures(mort.out.np,  digits = 6,
+            title = "Mortality", 
+            subtitle = paste("Mortality", 
+                              "Standardized Estimates",
+                              "Non Parametric Without Regression",
+                             sep = "<br>"))
+```
+
+and we now do it with the function `fciR::backdr_out_npr`. That function
+works exactly as the function `standr` in the book.
+
+```{r}
+message("This takes about 30 min. Load from file.")
+# startTime <- Sys.time()
+# mort.out.npr <- fciR::backdr_out_npr(mort, formula = Y ~ `T` + H + `T`:H,
+#                                      R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_mort_out_npr.rds")
+# saveRDS(mort.out.npr, file = a_file)
+mort.out.npr <- readRDS(file = a_file)
+fciR::gt_measures(mort.out.npr,  digits = 6,
+            title = "Mortality", 
+            subtitle = paste("Mortality", 
+                              "Standardized Estimates",
+                              "Non Parametric With Regression",
+                              sep = "<br>"))
+```
+
+
+
+
+We verify the algorithm once more using the `whatifdat` data set.
+
+
+```{r}
+data("whatifdat", package = "fciR")
+whatif.out.est <- est_out_np(whatifdat, outcome = Y, exposure = `T`, confound = H)
+whatif.out.est
+```
+and using the package we have the same result
+
+```{r}
+message("This takes about 15 sec.. Load from file.")
+# startTime <- Sys.time()
+# whatif.out.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = `T`, confound = H,
+#                                      R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+# a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
+# saveRDS(whatif.out.np, file = a_file)
+whatif.out.np <- readRDS(file = a_file)
+fciR::gt_measures(whatif.out.np, 
+            title = "Table 6.1", 
+            subtitle = paste("What-If Study", 
+                              "Standardized Estimates",
+                              "Non Parametric Without Regression",
+                             sep = "<br>"))
+```
+
+
 
 
 ### Examples {-}
@@ -71,8 +287,8 @@ and for the What-If? study this gives
 
 ```{r}
 data("whatifdat", package = "fciR")
-whatif.out <- fciR::backdr_out_np(whatifdat, formula = Y ~ A + H + A:H)
-whatif.out
+whatif.out <- fciR::backdr_out_npr(whatifdat, formula = Y ~ A + H + A:H)
+# whatif.out
 ```
 
 and we compare with the author's
@@ -91,7 +307,8 @@ and the results are presented in table 6.1
 ```{r}
 fciR::gt_measures(whatif.out, 
             title = "Table 6.1", 
-            subtitle = "What-If Study<br>Standardized Estimates")
+            subtitle = paste("What-If Study", "Standardized Estimates",
+                             sep = "<br>"))
 ```
 
 
@@ -109,14 +326,17 @@ data("doublewhatifdat", package = "fciR")
 
 
 ```{r}
-doublewhatif.out <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0)
+doublewhatif.out <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0)
 ```
 
 
 ```{r}
 fciR::gt_measures(doublewhatif.out, 
             title = "Table 6.2", 
-            subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = AD0</em>")
+            subtitle = paste("Double What-If Study", 
+                             "Standardized Estimates with <em>H = AD0</em>",
+                             "Non Parametric With Regression",
+                             sep = "<br>"))
 ```
 
 
@@ -126,14 +346,17 @@ fciR::gt_measures(doublewhatif.out,
 
 
 ```{r}
-doublewhatif.out <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0)
+doublewhatif.out <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0)
 ```
 
 
 ```{r}
 fciR::gt_measures(doublewhatif.out, 
             title = "Table 6.3", 
-            subtitle = "Double What-If Study<br>Standardized Estimates with <em>H = VL0</em>")
+            subtitle = paste("Double What-If Study", 
+                             "Standardized Estimates with <em>H = VL0</em>",
+                             "Non Parametric With Regression",
+                             sep = "<br>"))
 ```
 
 
@@ -141,7 +364,7 @@ fciR::gt_measures(doublewhatif.out,
 
 
 The function `bootstandatt` described in section 6.1.1 is not necessary,
-see the function `bootstand` in the prious section which can do it with the 
+see the function `bootstand` in the previous section which can do it with the 
 addition of the argument `att`.
 
 
@@ -149,7 +372,8 @@ addition of the argument `att`.
 
 
 ```{r}
-whatif.att <- fciR::backdr_out_np(whatifdat, formula = Y ~ A + H + A*H, att = TRUE)
+whatif.att <- fciR::backdr_out_npr(whatifdat, formula = Y ~ A + H + A*H, 
+                                   att = TRUE)
 ```
 
 and we compare with the author's
@@ -168,14 +392,16 @@ and the results are presented in table 6.1
 ```{r}
 fciR::gt_measures(whatif.att, 
             title = "Table 6.4", 
-            subtitle = "What-If Study<br>Standardized ATT estimates")
+            subtitle = paste("What-If Study", "Standardized ATT estimates",
+                             "Non Parametric With Regression",
+                             sep = "<br>"))
 ```
 #### Double What-if? Study {-}
 
 
 
 ```{r}
-doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0,
+doublewhatif.att <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0,
                               att = TRUE)
 ```
 
@@ -183,14 +409,17 @@ doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + AD0
 ```{r}
 fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.5", 
-            subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = AD0</em>")
+            subtitle = paste("Double What-If Study", 
+                             "Standardized ATT Estimates with <em>H = AD0</em>",
+                             "Non Parametric With Regression",
+                             sep = "<br>"))
 ```
 
 
 
 
 ```{r}
-doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0,
+doublewhatif.att <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0,
                               att = TRUE)
 ```
 
@@ -198,7 +427,10 @@ doublewhatif.att <- fciR::backdr_out_np(doublewhatifdat, formula = VL1 ~ A + VL0
 ```{r}
 fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.6", 
-            subtitle = "Double What-If Study<br>Standardized ATT Estimates with <em>H = VL0</em>")
+            subtitle = paste("Double What-If Study", 
+                             "Standardized ATT Estimates with <em>H = VL0</em>",
+                             "Non Parametric With Regression",
+                             sep = "<br>"))
 ```
 
 ### Standardization with a Parametric Outcome Model
@@ -231,7 +463,9 @@ and the results are presented in table 6.1
 ```{r}
 fciR::gt_measures(whatif2.out, 
             title = "Table 6.7", 
-            subtitle = "What-If Study<br>Outome-model Standardization with <em>H = lvlcont0</ems>")
+            subtitle = paste("What-If Study", 
+                             "Outome-model Standardization with <em>H = lvlcont0</ems>",
+                             sep = "<br>"))
 ```
 
 #### General Social Survey {-}
@@ -275,10 +509,11 @@ and the results are presented in table 6.8
 ```{r}
 fciR::gt_measures(gssrcc.out, 
             title = "Table 6.8", 
-            subtitle = "General Social Survey<br>
-            Outcome-model Standardization<br>
-            Effect of <em>More than High School Education</em> on <em>
-            Voting for Trump</em>")
+            subtitle = paste("General Social Survey",
+            "Outcome-model Standardization",
+            "Effect of <em>More than High School Education</em> on <em>
+            Voting for Trump</em>",
+            sep = "<br>"))
 ```
 
 ## Standardization via Exposure Modeling
@@ -363,7 +598,9 @@ and the results are presented in table 6.9
 ```{r}
 fciR::gt_measures(whatif2.exp, 
             title = "Table 6.9", 
-            subtitle = "What-If Study<br>Exposure-model Standardization with <em>H = lvlcont0</em>")
+            subtitle = paste("What-If Study", 
+                             "Exposure-model Standardization with <em>H = lvlcont0</em>",
+                             sep = "<br>"))
 ```
 
 
@@ -390,7 +627,9 @@ and the results are presented in table 6.9
 ```{r}
 fciR::gt_measures(whatif2.expgee, 
             title = "Table 6.9 geeglm", 
-            subtitle = "What-If Study<br>Exposure-model Standardization using <em>geeglm</em> wtih <em>H = lvlcont0</em>")
+            subtitle = paste("What-If Study", 
+                             "Exposure-model Standardization using <em>geeglm</em> wtih <em>H = lvlcont0</em>",
+                             sep = "<br>"))
 ```
 
 
@@ -435,9 +674,11 @@ and the results are presented in table 6.9
 ```{r}
 fciR::gt_measures(gssrcc.exp, 
             title = "Table 6.10", 
-            subtitle = "General Social Survey<br>Exposure-model Standardization<br>
-            Effect of <em>More than High School Education</em> on <em>
-            Voting for Trump</em>")
+            subtitle = paste(
+              "General Social Survey<br>Exposure-model Standardization", 
+              "Effect of <em>More than High School Education</em> on <em>
+              Voting for Trump</em>",
+            sep = "<br>"))
 ```
 
 
@@ -477,9 +718,11 @@ and the results are presented in table 6.9
 ```{r}
 fciR::gt_measures(whatif2.dr, 
             title = "Table 6.12", 
-            subtitle = "What-If Study<br>Doubly Robust Standardizaion<br>
-            Combining the Misspecified Outome Model of Table 6.11<br>
-            and the Exposure Model of Table 6.9")
+            subtitle = paste("What-If Study", 
+            "Doubly Robust Standardization",
+            "Combining the Misspecified Outome Model of Table 6.11", 
+            "and the Exposure Model of Table 6.9",
+            sep = "<br>"))
 ```
 
 ### Doubly Robust Standardization Simulation
@@ -510,9 +753,10 @@ df <- df %>% select(ss, estimator, description, mean, sd, pval) %>%
 
 
 title <- "Table 6.13 and 6.14"
-subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
-                   "Investigating Small-Sample Robustness", "<br>", 
-                   "True E(Y(0))=0.01, True E(Y(1))=0.02")
+subtitle <- paste("Sampling Distribution from Simulation", 
+                   "Investigating Small-Sample Robustness", 
+                   "True E(Y(0))=0.01, True E(Y(1))=0.02",
+                  sep = "<br>")
 fciR::gt_standdr(df, title = title, subtitle = subtitle)
 ```
 
@@ -556,6 +800,11 @@ mc.out <- mc.out %>%
 and show the results in a table
 
 ```{r echo=FALSE}
+the_estimators <- c("EYT0" = "Unadjusted", "EYT1" = "Unadjusted",
+                      "EY0exp" = "Linear Exposure", "EY1exp" = "Linear Exposure",
+                      "EY0exp2" = "Logistic Exposure", "EY1exp2" = "Logistic Exposure",
+                      "EY0out" = "Overspecified Outcome", "EY1out" = "Overspecified Outcome",
+                      "EY0dr" = "Doubly Robust", "EY1dr" = "Doubly Robust")
 dft <- mc.out %>%
   select(ss, estimator, mean, sd, pval) %>%
   mutate(ss = paste("ss", ss, sep = "=")) %>%
@@ -571,9 +820,10 @@ dft <- mc.out %>%
 dft <- dft[match(names(the_estimators), dft$estimator), ]
 
 title <- "Table 6.13 and 6.14 <em>(by FL)</em>"
-subtitle <- paste0("Sampling Distribution from Simulation", "<br>", 
-                   "Investigating Small-Sample Robustness", "<br>", 
-                   "True E(Y(0))=0.01, True E(Y(1))=0.02")
+subtitle <- paste("Sampling Distribution from Simulation", 
+                   "Investigating Small-Sample Robustness", 
+                   "True E(Y(0))=0.01, True E(Y(1))=0.02",
+                  sep = "<br>")
 fciR::gt_standdr(dft, title = title, subtitle = subtitle)
 ```
 
