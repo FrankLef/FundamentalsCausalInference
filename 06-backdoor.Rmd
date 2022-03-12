@@ -153,13 +153,13 @@ EYout
 ```
 
 Now, lets do it with raw data. For that we convert the mortality data to have
-1 line per thousands of observations.
+1 line per 10000 observations.
 
 
 ```{r}
 mort <- mortality %>%
   select(H, `T`, Y, n) %>%
-  mutate(n = as.integer(n / 1000)) %>%
+  mutate(n = as.integer(n / 10000)) %>%
   uncount(n)
 str(mort)
 ```
@@ -582,25 +582,89 @@ Compute the standardized estimates using exposure modeling with `fciR::backdr_ex
 
 
 ```{r}
-mortdat.out <- fciR::backdr_exp_np(mortdat, formula = Y ~ `T` + H, weights = "n")
+mortdat.out <- fciR::backdr_exp_bb(mortdat, formula = Y ~ `T` + H, weights = "n")
 mortdat.out[c("EY0", "EY1")]
 # verify with the author's
 stopifnot(abs(mortdat.out$EY0 - 0.0078399) < 1e-7,
           abs(mortdat.out$EY1 - 0.0069952) < 1e-7)
 ```
 
+```{r}
+summ <- mort %>%
+  count(Y, `T`, H, name = "n") %>%
+  mutate(freq = n / sum(n))
+summ
+stopifnot(sum(summ$freq) == 1)
+
+eH <- summ %>%
+  group_by(`T`, H) %>%
+  summarize(n = sum(n)) %>%
+  group_by(H) %>%
+  mutate(prob = n / sum(n)) %>%
+  filter(`T` == 1) %>%
+  arrange(H) %>%
+  pull(prob)
+# eH
+stopifnot(all(eH > .Machine$double.eps^0.5))
+eH0 <- eH[1]
+eH1 <- eH[2]
+
+is_att <- TRUE
+e0 <- 1L
+if (is_att) {
+  e0 <- summ %>%
+  filter(`T` == 1) %>%
+  summarize(sum(freq)) %>%
+  pull()
+}
+
+# create the  eH variable
+EY <- summ %>%
+  mutate(eH = (1 - H) * eH0 + H * eH1)
+
+# compute the summand of the estimating equations
+if (!is_att) {
+  EY <- EY %>%
+    mutate(s = (1 - `T`) * Y / (1 - eH) + `T` * Y / eH)
+} else {
+  EY <- EY %>%
+    mutate(s = (1 - `T`) * Y * eH / (e0 * (1 - eH)) + `T` * Y / eH)
+  # E(Y|T=1) is estimated as before (see very last paragraph of section 6.2.1)
+  EYT <- summ %>%
+    filter(`T` == 1) %>%
+    group_by(Y) %>%
+    summarize(n = sum(n)) %>%
+    mutate(prob = n / sum(n)) %>%
+    summarize(EYT = sum(Y * prob))
+}
+  
+
+# Estimate the value of the potential outcome
+EY <- EY %>%
+  group_by(`T`) %>%
+  summarize(EY = sum(s * freq)) %>%
+  arrange(`T`) %>%
+  pull(EY)
+
+if (is_att) EY[2] <- EYT
+
+EY
+```
+
+
 
 
 ### Average Effect of Treatment on the Treated
 
 
-See previous section for calculation with mortality data for the function
-`calc_exposure`.
+See previous section for calculation with mortality data for the function with
+the flag `is_att = TRUE`
 
 ```{r}
 mortdat.out[["EY0T1"]]
 stopifnot(abs(mortdat.out$EY0T1 - 0.010176) < 1e-6)
 ```
+
 
 ### Standardization with a Parametric Exposure Model
 
