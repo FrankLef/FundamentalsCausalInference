@@ -244,49 +244,23 @@ fciR::gt_measures(mort.out.npr,  digits = 6,
                               sep = "<br>"))
 ```
 
-
-
-
-We verify the algorithm once more using the `whatifdat` data set.
-
-
-```{r}
-data("whatifdat", package = "fciR")
-whatif.out.est <- est_out_np(whatifdat, outcome = Y, exposure = `T`, confound = H)
-whatif.out.est
-```
-and using the package we have the same result
-
-```{r}
-message("This takes about 15 sec.. Load from file.")
-# startTime <- Sys.time()
-# whatif.out.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = `T`, confound = H,
-#                                      R = 500)
-# endTime <- Sys.time()
-# print(endTime - startTime)
-# a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
-# saveRDS(whatif.out.np, file = a_file)
-whatif.out.np <- readRDS(file = a_file)
-fciR::gt_measures(whatif.out.np, 
-            title = "Table 6.1", 
-            subtitle = paste("What-If Study", 
-                              "Standardized Estimates",
-                              "Non Parametric Without Regression",
-                             sep = "<br>"))
-```
-
-
-
+and the results are the same again.  In conclusion pretty much any of the
+function.  The function `fciR::backdr_out_npr` seems faster.  The function
+`fciR::backdr_out_np` is actually useful as a double check and it actually
+uses a "pure" application of probabilities.
 
 ### Examples {-}
 
 #### What-if? Study {-}
 
-and for the What-If? study this gives
-
-
 ```{r}
 data("whatifdat", package = "fciR")
+```
+
+
+##### Non-parametric With Regression `backdr_out_npr` {-}
+
+```{r}
 whatif.out <- fciR::backdr_out_npr(whatifdat, formula = Y ~ A + H + A:H)
 # whatif.out
 ```
@@ -315,6 +289,31 @@ fciR::gt_measures(whatif.out,
 where we observe a reduction of the viral load but the difference is not
 statistically significant.
 
+##### Non-parametric Without Regression `backdr_out_np` {-}
+
+
+```{r}
+message("This takes about 15 sec.. Load from file.")
+# startTime <- Sys.time()
+# whatif.out.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = A, confound = H,
+#                                      R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
+# saveRDS(whatif.out.np, file = a_file)
+whatif.out.np <- readRDS(file = a_file)
+fciR::gt_measures(whatif.out.np, 
+            title = "Table 6.1", 
+            subtitle = paste("What-If Study", 
+                              "Standardized Estimates",
+                              "Non Parametric Without Regression",
+                             sep = "<br>"))
+```
+
+
+*T0.he results are different when we don't use linear regression!*. Not
+a very large difference but a significant one.
+
 
 #### Double What-if? Study {-}
 
@@ -324,6 +323,7 @@ data("doublewhatifdat", package = "fciR")
 # dataDoubleWhatIf <- doublewhatifsim()
 ```
 
+##### Non-parametric With Regression `backdr_out_npr` {-}
 
 ```{r}
 doublewhatif.out <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0)
@@ -339,6 +339,30 @@ fciR::gt_measures(doublewhatif.out,
                              sep = "<br>"))
 ```
 
+
+##### Non-parametric Without Regression `backdr_out_np` {-}
+
+
+```{r}
+message("This takes about 15 sec.. Load from file.")
+# startTime <- Sys.time()
+# doublewhatif.out.np <- fciR::backdr_out_np(doublewhatifdat, 
+#                                      outcome = VL1, exposure = A, confound = AD0,
+#                                      R = 500)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_doublewhatif_out_np.rds")
+# saveRDS(doublewhatif.out.np, file = a_file)
+doublewhatif.out.np <- readRDS(file = a_file)
+fciR::gt_measures(doublewhatif.out.np, 
+            title = "Table 6.1", 
+            subtitle = paste("Double What-If Study", 
+                              "Standardized Estimates",
+                              "Non Parametric Without Regression",
+                             sep = "<br>"))
+```
+
+and the results are the same
 
 
 > For comparisons, we repeat the standardization with $H = VL_0$
@@ -396,8 +420,31 @@ fciR::gt_measures(whatif.att,
                              "Non Parametric With Regression",
                              sep = "<br>"))
 ```
-#### Double What-if? Study {-}
 
+It can also be done using a non-parametric method without regression. That
+is following pure probabilities from the data.
+
+
+```{r}
+message("This takes about 8 sec.. Load from file.")
+# startTime <- Sys.time()
+# whatif.out.att.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = A, 
+#                                          confound = H, att = TRUE, R = 250)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_whatif_out_att_np.rds")
+# saveRDS(whatif.out.att.np, file = a_file)
+whatif.out.att.np <- readRDS(file = a_file)
+fciR::gt_measures(whatif.out.att.np, 
+            title = "Table 6.4", 
+            subtitle = paste("What-If Study", 
+                              "Standardized ATT Estimates",
+                              "Non Parametric Without Regression",
+                             sep = "<br>"))
+```
+
+
+#### Double What-if? Study {-}
 
 
 ```{r}
