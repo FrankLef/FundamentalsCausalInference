@@ -565,6 +565,44 @@ fciR::gt_measures(gssrcc.out,
 
 ## Standardization via Exposure Modeling
 
+> The exposure model is also known as the *propensity score*, denoted $e(H)$,
+as it is a function of $H$.
+
+$$
+\begin{align*}
+e(H) = (T \mid H) = expit(\alpha_0 + \alpha_1 H_1 + \ldots + \alpha_k H_k)
+\end{align*}
+$$
+
+the proof of
+
+$$
+E(Y(1)) = E \left( \frac{TY}{e(H)} \right)
+$$
+is
+
+
+$$
+\begin{align*}
+&\text{by definition of expectation} \\
+E \left( \frac{t \cdot y}{e(H)} \right) &= \sum_{y,t,h} \frac{TY}{e(H)} P(Y=y,T=t,H=h) \\
+&\text{by multiplication rule} \\
+&= \sum_{y,t,h} \frac{t \cdot y}{e(H)} P(Y=y \mid T=t,H=h) P(T=t \mid H=h) P(H=h) \\
+&\text{because } T \text{ is binary, and by definition of } e(H) \text{ then } e(H) = P(T \mid H) \\ &= \sum_{y,t,h} \frac{t \cdot y}{e(H)} P(Y=y \mid T=t,H=h) e(H) P(H=h) \\
+&\text{and when } T=0 \text{ the summand is zero, therefore we are left with } T=1 \\
+&= \sum_{y,h} \frac{y}{e(H)} P(Y=y \mid T=1,H=h) e(H) P(H=h) \\
+&\text{we cancel the } e(H) \text{ in numerator and denominator} \\
+&= \sum_{y,h} y P(Y=y \mid T=1,H=h) P(H=h) \\
+&\text{by definition of conditional expectation} \\
+&= E_H (E(Y \mid T=1, H)) \\
+&\text{and by (6.2) which implies (6.1)} \\
+&= E(Y(1))
+\end{align*}
+$$
+
+
+
+
 ### Examples {-}
 
 #### Mortality Rates by Country {-}
@@ -656,6 +694,49 @@ EY
 
 ### Average Effect of Treatment on the Treated
 
+It can be proven that
+
+$$
+E(Y(0) \mid T=1) = E \left( \frac{Y(1 - T) e(H)}{e_0(1 - e(H))}  \right), \, e_0 = P(T=1) \\
+$$
+
+as follows
+
+$$
+\begin{align*}
+&\text{by the rule of double expectation} \\
+E(Y(0) \mid T=1) &= E_{H \mid T=1} E(Y \mid T=0, H) \\
+&\text{by definition of expectation} \\
+&= E_{H \mid T=1} \left[ \sum_{y} y P(Y=y \mid T=0, H) \right] \\
+&\text{by definition of conditional expectation} \\
+&= \sum_h \left[ \sum_{y} y P(Y=y \mid T=0, H) \right] P(H=h \mid T=1) \\
+&\text{by definition of conditional expectation we have that} \\ 
+&P(H=h \mid T=1) = \frac{P(T=1 \mid H=h) P(H=h)}{P(T=1)} \\
+&\text{therefore} \\
+E(Y(0) \mid T=1) &= \sum_{y,h} y P(Y=y \mid T=0, H=h) \frac{P(T=1 \mid H=h) P(H=h)}{P(T=1)} \\
+&\text{rearranging terms} \\
+&= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)} \left[ P(Y=y \mid T=0, H=h)P(H=h)  \right] \\
+&\text{and multiply by } 1 = \frac{P(T=0 \mid H=h)}{P(T=0 \mid H=h)} \\
+&= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)} \left[ \frac{P(Y=y \mid T=0, H=h)P(T=0 \mid H=h)P(H=h)}{P(T=0 \mid H=h)}  \right] \\
+&\text{rearranging the terms again} \\
+&= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)P(T=0 \mid H=h)} \left[ P(Y=y \mid T=0, H=h)P(T=0 \mid H=h)P(H=h)  \right] \\
+&\text{using the multiplication rule} \\
+&= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)P(T=0 \mid H=h)} P(Y=y, T=0, H=h) \\
+&\text{ and since } e(h) = P(T=1 \mid H=h) \text{ and } e_0 = P(T=1) \\
+&= \sum_{y,h} y \cdot \frac{e(h)}{e_0 (1 - e(h))} \cdot P(Y=y, T=0, H=h) \\
+&\text{ and since } \sum_t (1-t) P(Y=y, T=t, H=h) = P(Y=y, T=0, H=h) \\
+&= \sum_{y,h} y \cdot \frac{e(h)}{e_0 (1 - e(h))} \cdot \sum_t (1-t) P(Y=y, T=t, H=h) \\
+&= \sum_{y,h, t} y \cdot \frac{e(h) (1-t)}{e_0 (1 - e(h))} \cdot P(Y=y, T=t, H=h) \\
+&\text{and by definition of expectation} \\
+&= E \left[ Y \cdot \frac{e(H) (1-T)}{e_0 (1 - e(H))} \right]
+\end{align*}
+$$
+
+and by the definition of conditional expectation we know that
+
+$$
+
+$$
 
 See previous section for calculation with mortality data for the function with
 the flag `is_att = TRUE`

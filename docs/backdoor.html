@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-03-12" />
+<meta name="date" content="2022-03-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -5938,6 +5938,37 @@ is following pure probabilities from the data.</p>
 </div>
 <div id="standardization-via-exposure-modeling" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Standardization via Exposure Modeling</h2>
+<blockquote>
+<p>The exposure model is also known as the <em>propensity score</em>, denoted <span class="math inline">\(e(H)\)</span>,
+as it is a function of <span class="math inline">\(H\)</span>.</p>
+</blockquote>
+<p><span class="math display">\[
+\begin{align*}
+e(H) = (T \mid H) = expit(\alpha_0 + \alpha_1 H_1 + \ldots + \alpha_k H_k)
+\end{align*}
+\]</span></p>
+<p>the proof of</p>
+<p><span class="math display">\[
+E(Y(1)) = E \left( \frac{TY}{e(H)} \right)
+\]</span>
+is</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\text{by definition of expectation} \\
+E \left( \frac{t \cdot y}{e(H)} \right) &amp;= \sum_{y,t,h} \frac{TY}{e(H)} P(Y=y,T=t,H=h) \\
+&amp;\text{by multiplication rule} \\
+&amp;= \sum_{y,t,h} \frac{t \cdot y}{e(H)} P(Y=y \mid T=t,H=h) P(T=t \mid H=h) P(H=h) \\
+&amp;\text{because } T \text{ is binary, and by definition of } e(H) \text{ then } e(H) = P(T \mid H) \\ &amp;= \sum_{y,t,h} \frac{t \cdot y}{e(H)} P(Y=y \mid T=t,H=h) e(H) P(H=h) \\
+&amp;\text{and when } T=0 \text{ the summand is zero, therefore we are left with } T=1 \\
+&amp;= \sum_{y,h} \frac{y}{e(H)} P(Y=y \mid T=1,H=h) e(H) P(H=h) \\
+&amp;\text{we cancel the } e(H) \text{ in numerator and denominator} \\
+&amp;= \sum_{y,h} y P(Y=y \mid T=1,H=h) P(H=h) \\
+&amp;\text{by definition of conditional expectation} \\
+&amp;= E_H (E(Y \mid T=1, H)) \\
+&amp;\text{and by (6.2) which implies (6.1)} \\
+&amp;= E(Y(1))
+\end{align*}
+\]</span></p>
 <div id="examples-2" class="section level3 unnumbered">
 <h3>Examples</h3>
 <div id="mortality-rates-by-country-1" class="section level4 unnumbered">
@@ -6033,6 +6064,43 @@ is following pure probabilities from the data.</p>
 </div>
 <div id="average-effect-of-treatment-on-the-treated-1" class="section level3" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> Average Effect of Treatment on the Treated</h3>
+<p>It can be proven that</p>
+<p><span class="math display">\[
+E(Y(0) \mid T=1) = E \left( \frac{Y(1 - T) e(H)}{e_0(1 - e(H))}  \right), \, e_0 = P(T=1) \\
+\]</span></p>
+<p>as follows</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\text{by the rule of double expectation} \\
+E(Y(0) \mid T=1) &amp;= E_{H \mid T=1} E(Y \mid T=0, H) \\
+&amp;\text{by definition of expectation} \\
+&amp;= E_{H \mid T=1} \left[ \sum_{y} y P(Y=y \mid T=0, H) \right] \\
+&amp;\text{by definition of conditional expectation} \\
+&amp;= \sum_h \left[ \sum_{y} y P(Y=y \mid T=0, H) \right] P(H=h \mid T=1) \\
+&amp;\text{by definition of conditional expectation we have that} \\ 
+&amp;P(H=h \mid T=1) = \frac{P(T=1 \mid H=h) P(H=h)}{P(T=1)} \\
+&amp;\text{therefore} \\
+E(Y(0) \mid T=1) &amp;= \sum_{y,h} y P(Y=y \mid T=0, H=h) \frac{P(T=1 \mid H=h) P(H=h)}{P(T=1)} \\
+&amp;\text{rearranging terms} \\
+&amp;= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)} \left[ P(Y=y \mid T=0, H=h)P(H=h)  \right] \\
+&amp;\text{and multiply by } 1 = \frac{P(T=0 \mid H=h)}{P(T=0 \mid H=h)} \\
+&amp;= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)} \left[ \frac{P(Y=y \mid T=0, H=h)P(T=0 \mid H=h)P(H=h)}{P(T=0 \mid H=h)}  \right] \\
+&amp;\text{rearranging the terms again} \\
+&amp;= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)P(T=0 \mid H=h)} \left[ P(Y=y \mid T=0, H=h)P(T=0 \mid H=h)P(H=h)  \right] \\
+&amp;\text{using the multiplication rule} \\
+&amp;= \sum_{y,h} y \frac{P(T=1 \mid H=h)}{P(T=1)P(T=0 \mid H=h)} P(Y=y, T=0, H=h) \\
+&amp;\text{ and since } e(h) = P(T=1 \mid H=h) \text{ and } e_0 = P(T=1) \\
+&amp;= \sum_{y,h} y \cdot \frac{e(h)}{e_0 (1 - e(h))} \cdot P(Y=y, T=0, H=h) \\
+&amp;\text{ and since } \sum_t (1-t) P(Y=y, T=t, H=h) = P(Y=y, T=0, H=h) \\
+&amp;= \sum_{y,h} y \cdot \frac{e(h)}{e_0 (1 - e(h))} \cdot \sum_t (1-t) P(Y=y, T=t, H=h) \\
+&amp;= \sum_{y,h, t} y \cdot \frac{e(h) (1-t)}{e_0 (1 - e(h))} \cdot P(Y=y, T=t, H=h) \\
+&amp;\text{and by definition of expectation} \\
+&amp;= E \left[ Y \cdot \frac{e(H) (1-T)}{e_0 (1 - e(H))} \right]
+\end{align*}
+\]</span></p>
+<p>and by the definition of conditional expectation we know that</p>
+<p>$$</p>
+<p>$$</p>
 <p>See previous section for calculation with mortality data for the function with
 the flag <code>is_att = TRUE</code></p>
 <div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="backdoor.html#cb196-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
