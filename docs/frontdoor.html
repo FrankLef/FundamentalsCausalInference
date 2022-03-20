@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>C Linear Regression with R | Exercises: Fundamentals of Causal Inferences With R</title>
+  <title>Chapter 8 Front-Door Method | Exercises: Fundamentals of Causal Inferences With R</title>
   <meta name="description" content="<p>This is aexercise solutions of Fundamentals of Causal Inferences by Babette A.
 Brumback. None of th solution has been reviewed or approved by the author or
 anyone.</p>" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="C Linear Regression with R | Exercises: Fundamentals of Causal Inferences With R" />
+  <meta property="og:title" content="Chapter 8 Front-Door Method | Exercises: Fundamentals of Causal Inferences With R" />
   <meta property="og:type" content="book" />
   
   
@@ -20,7 +20,7 @@ anyone.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="C Linear Regression with R | Exercises: Fundamentals of Causal Inferences With R" />
+  <meta name="twitter:title" content="Chapter 8 Front-Door Method | Exercises: Fundamentals of Causal Inferences With R" />
   
   <meta name="twitter:description" content="<p>This is aexercise solutions of Fundamentals of Causal Inferences by Babette A.
 Brumback. None of th solution has been reviewed or approved by the author or
@@ -37,8 +37,8 @@ anyone.</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="notes.html"/>
-<link rel="next" href="functions.html"/>
+<link rel="prev" href="did.html"/>
+<link rel="next" href="errata.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -393,111 +393,120 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="linreg" class="section level1" number="11">
-<h1><span class="header-section-number">C</span> Linear Regression with R</h1>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="linreg.html#cb238-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb238-2"><a href="linreg.html#cb238-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
-<p>At about every turn in this book one needs to do a linear regression using <code>R</code>.
-It is a simple function, easy to use. Using it to translate the various
-mathematical expressions into values requires to learn its different flavors
-and what they mean in mathematical terms. It is one of those things we think
-we know well . . . until we actually have to use it.</p>
-<p>The goal of this appendix is to explain these subtleties in the context of
-<span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span>.</p>
-<p>To illustrate we will use the <code>stats::glm()</code> function. Everything applies
-equally well to <code>stats::lm()</code>, <code>gee::gee()</code>, <code>geepack::geeglm()</code>, etc.</p>
-<div id="model" class="section level2" number="11.1">
-<h2><span class="header-section-number">C.1</span> Model</h2>
-<p>We will use the model from <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span>. in chapter 5, section 5.2, on
-page 89. Its DAG is illustrated in figure 5.7.</p>
-<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="linreg.html#cb239-1" aria-hidden="true" tabindex="-1"></a>sim2 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">888</span>) {</span>
-<span id="cb239-2"><a href="linreg.html#cb239-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb239-3"><a href="linreg.html#cb239-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the observed confounder</span></span>
-<span id="cb239-4"><a href="linreg.html#cb239-4" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.4</span>)</span>
-<span id="cb239-5"><a href="linreg.html#cb239-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the treatment depend on the confounder</span></span>
-<span id="cb239-6"><a href="linreg.html#cb239-6" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> H <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.3</span></span>
-<span id="cb239-7"><a href="linreg.html#cb239-7" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, probA)</span>
-<span id="cb239-8"><a href="linreg.html#cb239-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the outcome depend on the treatment and the confounder</span></span>
-<span id="cb239-9"><a href="linreg.html#cb239-9" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> A <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.7</span>) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.5</span>)</span>
-<span id="cb239-10"><a href="linreg.html#cb239-10" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
-<span id="cb239-11"><a href="linreg.html#cb239-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="st">&quot;H&quot;</span> <span class="ot">=</span> H, <span class="st">&quot;A&quot;</span> <span class="ot">=</span> A, <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y)</span>
-<span id="cb239-12"><a href="linreg.html#cb239-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb239-13"><a href="linreg.html#cb239-13" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">sim2</span>()</span>
-<span id="cb239-14"><a href="linreg.html#cb239-14" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    1000 obs. of  3 variables:
-##  $ H: int  0 0 0 1 1 0 0 0 0 1 ...
-##  $ A: int  0 0 0 0 1 0 0 0 0 0 ...
-##  $ Y: int  1 0 0 0 0 1 1 0 1 1 ...</code></pre>
+<div id="frontdoor" class="section level1" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Front-Door Method</h1>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="frontdoor.html#cb229-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb229-2"><a href="frontdoor.html#cb229-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb229-3"><a href="frontdoor.html#cb229-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(dagitty)</span></span>
+<span id="cb229-4"><a href="frontdoor.html#cb229-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb229-5"><a href="frontdoor.html#cb229-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div id="motivation" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Motivation</h2>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="frontdoor.html#cb230-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb230-2"><a href="frontdoor.html#cb230-2" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.1</span>, {</span>
+<span id="cb230-3"><a href="frontdoor.html#cb230-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb230-4"><a href="frontdoor.html#cb230-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb230-5"><a href="frontdoor.html#cb230-5" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A,</span>
+<span id="cb230-6"><a href="frontdoor.html#cb230-6" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U)</span>
+<span id="cb230-7"><a href="frontdoor.html#cb230-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb230-8"><a href="frontdoor.html#cb230-8" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb230-9"><a href="frontdoor.html#cb230-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-168"></span>
+<img src="_main_files/figure-html/unnamed-chunk-168-1.png" alt="Front-door Causal DAG" width="60%" />
+<p class="caption">
+Figure 8.1: Front-door Causal DAG
+</p>
 </div>
-<div id="fitted-vs-predict" class="section level2" number="11.2">
-<h2><span class="header-section-number">C.2</span> <code>fitted()</code> vs <code>predict()</code></h2>
-<div id="fitted" class="section level3" number="11.2.1">
-<h3><span class="header-section-number">C.2.1</span> <code>fitted()</code></h3>
-<p><code>fitted()</code> returns the expected values of the response <em>after</em> the link function is
-applied, i.e. <span class="math inline">\(E(Y_I)\)</span>. Also <code>fitted()</code> uses only the original data.</p>
-<p>For example</p>
-<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="linreg.html#cb241-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">5</span></span>
-<span id="cb241-2"><a href="linreg.html#cb241-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb241-3"><a href="linreg.html#cb241-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, <span class="at">lambda =</span> <span class="fu">exp</span>(x))</span>
-<span id="cb241-4"><a href="linreg.html#cb241-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;x&quot;</span> <span class="ot">=</span> x, <span class="st">&quot;y&quot;</span> <span class="ot">=</span> y)</span>
-<span id="cb241-5"><a href="linreg.html#cb241-5" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> df, <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>)</span></code></pre></div>
-<p>and <code>fitted()</code> give the <span class="math inline">\(E(Y_i)\)</span></p>
-<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="linreg.html#cb242-1" aria-hidden="true" tabindex="-1"></a>fitted.out <span class="ot">&lt;-</span> <span class="fu">fitted</span>(fit)</span>
-<span id="cb242-2"><a href="linreg.html#cb242-2" aria-hidden="true" tabindex="-1"></a>fitted.out</span></code></pre></div>
-<pre><code>##          1          2          3          4          5 
-## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
-<p>and if you try to fit with new data, nothing will happen, it doesn’t use the
-new data returns the same output,
-<em>no warning is given about the fact that <code>newdata</code> is not used</em>.</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="linreg.html#cb244-1" aria-hidden="true" tabindex="-1"></a>newdf <span class="ot">&lt;-</span> df</span>
-<span id="cb244-2"><a href="linreg.html#cb244-2" aria-hidden="true" tabindex="-1"></a>newdf<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
-<span id="cb244-3"><a href="linreg.html#cb244-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fitted</span>(fit, <span class="at">newdata =</span> newdf)</span></code></pre></div>
-<pre><code>##          1          2          3          4          5 
-## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
+<blockquote>
+<p>When <span class="math inline">\(S\)</span> is a surrogate marker</p>
+</blockquote>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\text{by double expectation rule} \\
+E(Y \mid A) &amp;= E_{S \mid A}(E(Y \mid A)) \\
+&amp;\text{by conditional expectation} \\
+&amp;= \sum_s E(Y \mid S=s, A) P(S=s \mid A) \\
+&amp;\text{because } Y \perp\!\!\!\perp A \mid S \\
+&amp;= \sum_s E(Y \mid S=s) P(S=s \mid A) \\
+&amp;\text{since there are no confounder for the effect of A on Y} \\
+E(Y(a)) = E(Y \mid A=a) &amp;=  \sum_s E(Y \mid S=s) P(S=s \mid A=a)
+\end{align*}
+\]</span></p>
 </div>
-<div id="predict" class="section level3" number="11.2.2">
-<h3><span class="header-section-number">C.2.2</span> <code>predict()</code></h3>
-<p>On the other hand <code>predict</code> gives the result <em>before</em> the link funciton is applied
-<em>and</em> uses <code>newdata</code></p>
-<p>First lets use <code>predict()</code> with the existing data</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="linreg.html#cb246-1" aria-hidden="true" tabindex="-1"></a>predict.out <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit)</span>
-<span id="cb246-2"><a href="linreg.html#cb246-2" aria-hidden="true" tabindex="-1"></a>predict.out</span></code></pre></div>
-<pre><code>##          1          2          3          4          5 
-## -0.0600878  1.6274351 -0.4642585 -2.3923702 -1.3963289</code></pre>
-<p>which is <em>before</em> the link function is applied and so</p>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="linreg.html#cb248-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(predict.out) <span class="sc">==</span> fitted.out</span></code></pre></div>
-<pre><code>##    1    2    3    4    5 
-## TRUE TRUE TRUE TRUE TRUE</code></pre>
-<p>and there is an option, <code>type = "response"</code> that tells predict to applied the link function so
-you don’t have to do it</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="linreg.html#cb250-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span></code></pre></div>
-<pre><code>##          1          2          3          4          5 
-## 0.94168185 5.09080045 0.62860104 0.09141276 0.24750390</code></pre>
+<div id="theory-and-method" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> Theory and Method</h2>
+<p>Using (8.1) from above</p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y(a)) = E(Y \mid A=a) &amp;=  \sum_s E(Y \mid S=s) P(S=s \mid A=a) \\
+&amp;\text{and with backdoor standardization we have that} \\
+&amp;E(Y \mid S=s) = \sum_{a^\prime} E(Y \mid S=s, A=a^\prime)P(A = a^\prime) \\
+\therefore \\
+E(Y(a)) = E(Y \mid A=a) &amp;=  \sum_s P(S=s \mid A=a) \left[ \sum_{a^\prime} E(Y \mid S=s, A=a^\prime)P(A = a^\prime) \right] \\
+\end{align*}
+\]</span></p>
+<p>and the Front-door causal DAG including potential outcomes is</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="frontdoor.html#cb231-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb231-2"><a href="frontdoor.html#cb231-2" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(<span class="fu">Y</span>(s))</span></code></pre></div>
+<pre><code>## Y(s)</code></pre>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="frontdoor.html#cb233-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.4</span>, {</span>
+<span id="cb233-2"><a href="frontdoor.html#cb233-2" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb233-3"><a href="frontdoor.html#cb233-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;U&quot;</span> <span class="ot">=</span> <span class="st">&quot;Y(a,s)&quot;</span>, </span>
+<span id="cb233-4"><a href="frontdoor.html#cb233-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Sa&quot;</span> <span class="ot">=</span> <span class="st">&quot;S(a)&quot;</span>,</span>
+<span id="cb233-5"><a href="frontdoor.html#cb233-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;S&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb233-6"><a href="frontdoor.html#cb233-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb233-7"><a href="frontdoor.html#cb233-7" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb233-8"><a href="frontdoor.html#cb233-8" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb233-9"><a href="frontdoor.html#cb233-9" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A <span class="sc">+</span> Sa,</span>
+<span id="cb233-10"><a href="frontdoor.html#cb233-10" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U,</span>
+<span id="cb233-11"><a href="frontdoor.html#cb233-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
+<span id="cb233-12"><a href="frontdoor.html#cb233-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb233-13"><a href="frontdoor.html#cb233-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb233-14"><a href="frontdoor.html#cb233-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-170"></span>
+<img src="_main_files/figure-html/unnamed-chunk-170-1.png" alt="Front-door Causal DAG Including Potential Outcomes" width="60%" />
+<p class="caption">
+Figure 8.2: Front-door Causal DAG Including Potential Outcomes
+</p>
 </div>
-<div id="conclusion" class="section level3" number="11.2.3">
-<h3><span class="header-section-number">C.2.3</span> Conclusion</h3>
-<p>In the context of <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span> we use <code>fitted()</code> when we use the
-original data to get <span class="math inline">\(E(E(Y_i))= \hat{Y}\)</span> and <code>predict()..., type = "response</code>)
-when we ave a counterfactual in the data, that is <span class="math inline">\(E(E(Y_i \mid T = t))= \hat{Y} \mid T=t\)</span></p>
-<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="linreg.html#cb252-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(fitted.out)</span></code></pre></div>
-<pre><code>## [1] 1.4</code></pre>
+</div>
+<div id="simulated-example" class="section level2" number="8.3">
+<h2><span class="header-section-number">8.3</span> Simulated Example</h2>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="frontdoor.html#cb234-1" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">seed =</span> <span class="dv">555</span>) {</span>
+<span id="cb234-2"><a href="frontdoor.html#cb234-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb234-3"><a href="frontdoor.html#cb234-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome Y(.,0) and Y(.,1)</span></span>
+<span id="cb234-4"><a href="frontdoor.html#cb234-4" aria-hidden="true" tabindex="-1"></a>  Ydot0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb234-5"><a href="frontdoor.html#cb234-5" aria-hidden="true" tabindex="-1"></a>  Ydot1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
+<span id="cb234-6"><a href="frontdoor.html#cb234-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let A depend on Y(.,1)</span></span>
+<span id="cb234-7"><a href="frontdoor.html#cb234-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Ydot1) <span class="sc">*</span> <span class="fl">0.1</span> <span class="sc">+</span> Ydot1 <span class="sc">*</span> <span class="fl">0.8</span></span>
+<span id="cb234-8"><a href="frontdoor.html#cb234-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
+<span id="cb234-9"><a href="frontdoor.html#cb234-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome S(0) and S(1)</span></span>
+<span id="cb234-10"><a href="frontdoor.html#cb234-10" aria-hidden="true" tabindex="-1"></a>  S0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb234-11"><a href="frontdoor.html#cb234-11" aria-hidden="true" tabindex="-1"></a>  S1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span>
+<span id="cb234-12"><a href="frontdoor.html#cb234-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># S is a function of S0, S1 and A</span></span>
+<span id="cb234-13"><a href="frontdoor.html#cb234-13" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> S0 <span class="sc">+</span> A <span class="sc">*</span> S1</span>
+<span id="cb234-14"><a href="frontdoor.html#cb234-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y is a function of Y(., 0) and Y(., 1) and S</span></span>
+<span id="cb234-15"><a href="frontdoor.html#cb234-15" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> S) <span class="sc">*</span> Ydot0 <span class="sc">+</span> S <span class="sc">*</span> Ydot1</span>
+<span id="cb234-16"><a href="frontdoor.html#cb234-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, S, Y, Ydot0, Ydot1))</span>
+<span id="cb234-17"><a href="frontdoor.html#cb234-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="frontdoor.html#cb235-1" aria-hidden="true" tabindex="-1"></a>sim1_df <span class="ot">&lt;-</span> <span class="fu">sim1</span>()</span>
+<span id="cb235-2"><a href="frontdoor.html#cb235-2" aria-hidden="true" tabindex="-1"></a>sim1.front <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">est_frontdr_np</span>(sim1_df, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>, <span class="at">surrogate =</span> <span class="st">&quot;S&quot;</span>)</span>
+<span id="cb235-3"><a href="frontdoor.html#cb235-3" aria-hidden="true" tabindex="-1"></a>sim1.front</span></code></pre></div>
+<pre><code>##        EY0        EY1 
+## 0.05584704 0.18536722</code></pre>
 
 </div>
 </div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-shanninbrumback2021" class="csl-entry">
-Jake Shannin, Babette A. Brumback. 2021. <em>Disagreement Concerning Effect-Measures Modification</em>. <a href="https://arxiv.org/abs/2105.07285v1">https://arxiv.org/abs/2105.07285v1</a>.
-</div>
-</div>
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="notes.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="did.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="errata.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -528,7 +537,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/USERNAME/REPO/edit/BRANCH/83-linreg.Rmd",
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/08-frontdoor.Rmd",
 "text": "Edit"
 },
 "history": {

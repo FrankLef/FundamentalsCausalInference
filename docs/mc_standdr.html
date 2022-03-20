@@ -268,6 +268,12 @@ div.csl-indent {
 <li class="chapter" data-level="7.2.1" data-path="did.html"><a href="did.html#doublewhatifdat"><i class="fa fa-check"></i><b>7.2.1</b> <code>doublewhatifdat</code></a></li>
 </ul></li>
 </ul></li>
+<li class="chapter" data-level="8" data-path="frontdoor.html"><a href="frontdoor.html"><i class="fa fa-check"></i><b>8</b> Front-Door Method</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="frontdoor.html"><a href="frontdoor.html#motivation"><i class="fa fa-check"></i><b>8.1</b> Motivation</a></li>
+<li class="chapter" data-level="8.2" data-path="frontdoor.html"><a href="frontdoor.html#theory-and-method"><i class="fa fa-check"></i><b>8.2</b> Theory and Method</a></li>
+<li class="chapter" data-level="8.3" data-path="frontdoor.html"><a href="frontdoor.html#simulated-example"><i class="fa fa-check"></i><b>8.3</b> Simulated Example</a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata</a>
 <ul>
@@ -387,15 +393,15 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="mc_standdr" class="section level1" number="12">
+<div id="mc_standdr" class="section level1" number="13">
 <h1><span class="header-section-number">E</span> Doubly Robust Simulation</h1>
-<div id="errata6a" class="section level2" number="12.1">
+<div id="errata6a" class="section level2" number="13.1">
 <h2><span class="header-section-number">E.1</span> Analyse <span class="math inline">\(T = \sum_{i=1}^J{T_i}\)</span> (Errata)</h2>
 <p>Section 6.3 claims that <span class="math inline">\(T=600\)</span> and <span class="math inline">\(P(T=1 \mid H) \in [0.041, 0.0468]\)</span>
 but the results obtained from running <code>simdr</code> as shown in the book are different.
 Not a lot but enough to puzzle the avid reader (like me for example).</p>
 <p>So lets go through <code>simdr</code> to explain the differences.</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="mc_standdr.html#cb257-1" aria-hidden="true" tabindex="-1"></a>simdr.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">seed =</span> <span class="dv">1009</span>)<span class="sc">$</span>stats</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="mc_standdr.html#cb265-1" aria-hidden="true" tabindex="-1"></a>simdr.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">seed =</span> <span class="dv">1009</span>)<span class="sc">$</span>stats</span></code></pre></div>
 <blockquote>
 <p>One might think that standardization with the exposure model would be
 preferable when the outcome indicates a rare condition. To see this,
@@ -418,8 +424,8 @@ with <span class="math inline">\(T=1\)</span>. This would suggest we can include
 <p>Brumback uses a linear function of <span class="math inline">\(H\)</span> to create a distribution of <span class="math inline">\(T_i\)</span> that makes
 it dependent on <span class="math inline">\(H\)</span> and which should give <span class="math inline">\(\sum T_i \approx 600\)</span>.
 However, <em>the simulation with <code>simdr</code> returns <span class="math inline">\(\sum T_i \approx 540\)</span></em>.</p>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="mc_standdr.html#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sum of T</span></span>
-<span id="cb258-2"><a href="mc_standdr.html#cb258-2" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
+<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="mc_standdr.html#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sum of T</span></span>
+<span id="cb266-2"><a href="mc_standdr.html#cb266-2" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
 <pre><code>## [1] 541</code></pre>
 <div id="errata1" class="greeting message" style="color: red;">
 <p>We observe that <span class="math inline">\(\sum_i T_i \approx 540 \not \approx 600\)</span>.</p>
@@ -516,14 +522,14 @@ E(T)&amp;= I (\alpha \cdot \beta \cdot p + p) \\
 \end{align*}
 \]</span></p>
 <p>and we simulate using <span class="math inline">\(\alpha = 0.15\)</span> to validate</p>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="mc_standdr.html#cb260-1" aria-hidden="true" tabindex="-1"></a>simdr600.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">seed =</span> <span class="dv">1009</span>)<span class="sc">$</span>stats</span>
-<span id="cb260-2"><a href="mc_standdr.html#cb260-2" aria-hidden="true" tabindex="-1"></a>simdr600.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="mc_standdr.html#cb268-1" aria-hidden="true" tabindex="-1"></a>simdr600.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">seed =</span> <span class="dv">1009</span>)<span class="sc">$</span>stats</span>
+<span id="cb268-2"><a href="mc_standdr.html#cb268-2" aria-hidden="true" tabindex="-1"></a>simdr600.out<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span><span class="sc">$</span>sum</span></code></pre></div>
 <pre><code>## [1] 593</code></pre>
 <div id="suggest1" class="greeting message" style="color: green;">
 <p>We suggest that <code>simdr</code> be modified to <strong>use 0.15 instead of 0.13</strong>.</p>
 </div>
 </div>
-<div id="analyse-y-sum_i1i-y_i" class="section level2" number="12.2">
+<div id="analyse-y-sum_i1i-y_i" class="section level2" number="13.2">
 <h2><span class="header-section-number">E.2</span> Analyse <span class="math inline">\(Y = \sum_{i=1}^I Y_i\)</span></h2>
 <p>First we analyse <span class="math inline">\(Y = \sum Y_i\)</span> mathematically using the same notation as above.</p>
 <p><span class="math display">\[
@@ -567,14 +573,14 @@ E(Y) &amp;= I \cdot E(Y_i) = 3000 \cdot 0.0118 = 35.4 \\
 such that approximately 35 individuals had <span class="math inline">\(Y=1\)</span>.</p>
 </blockquote>
 <p>and the result we get from both <code>simdr</code> is 38, close enough.</p>
-<div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="mc_standdr.html#cb262-1" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span>Y<span class="sc">$</span>sum</span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="mc_standdr.html#cb270-1" aria-hidden="true" tabindex="-1"></a>simdr.out<span class="sc">$</span>Y<span class="sc">$</span>sum</span></code></pre></div>
 <pre><code>## [1] 38</code></pre>
 <blockquote>
 <p>The mean of <span class="math inline">\(\sum_{k=1}^{ss}{H_{ik}}\)</span> was fixed at one, but when <span class="math inline">\(ss\)</span> was set to
 100, it ranged from 0.00 to 2.80.</p>
 </blockquote>
 <p>That is exactly what we get.</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="mc_standdr.html#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>sumH<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>sumH<span class="sc">$</span>max)</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="mc_standdr.html#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>sumH<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>sumH<span class="sc">$</span>max)</span></code></pre></div>
 <pre><code>## min max 
 ## 0.0 2.8</code></pre>
 <p>then</p>
@@ -584,24 +590,24 @@ such that approximately 35 individuals had <span class="math inline">\(Y=1\)</sp
 <div id="errata2" class="greeting message" style="color: red;">
 <p>The results are different.</p>
 </div>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="mc_standdr.html#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probT<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probT<span class="sc">$</span>max)</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="mc_standdr.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probT<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probT<span class="sc">$</span>max)</span></code></pre></div>
 <pre><code>##        min        max 
 ## 0.03873516 0.41876534</code></pre>
 <p>Probably because the original simulation came up with <span class="math inline">\(T=600\)</span> rather than
 <span class="math inline">\(T=540\)</span> as discussed above. Indeed if we verify with the simulation with
 <span class="math inline">\(T=600\)</span> the results are now reasonably close.</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="mc_standdr.html#cb268-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr600.out<span class="sc">$</span>probT<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr600.out<span class="sc">$</span>probT<span class="sc">$</span>max)</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="mc_standdr.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr600.out<span class="sc">$</span>probT<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr600.out<span class="sc">$</span>probT<span class="sc">$</span>max)</span></code></pre></div>
 <pre><code>##        min        max 
 ## 0.03873516 0.47476534</code></pre>
 <blockquote>
 <p><span class="math inline">\(E(Y \mid T, H)\)</span> ranged from 0.000 to 0.036.</p>
 </blockquote>
 <p>and the results are almost identical</p>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="mc_standdr.html#cb270-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probY<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probY<span class="sc">$</span>max)</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="mc_standdr.html#cb278-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;min&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probY<span class="sc">$</span>min, <span class="st">&quot;max&quot;</span> <span class="ot">=</span> simdr.out<span class="sc">$</span>probY<span class="sc">$</span>max)</span></code></pre></div>
 <pre><code>##   min   max 
 ## 0.000 0.038</code></pre>
 </div>
-<div id="functions-1" class="section level2" number="12.3">
+<div id="functions-1" class="section level2" number="13.3">
 <h2><span class="header-section-number">E.3</span> Functions</h2>
 <p>The function <code>simdr</code> is found on p. 127-128. See the script in the last section
 of this appendix. We just added some arguments and and output to facilitate the
@@ -619,324 +625,324 @@ analysis. See the next section <em>Analysis</em>.</p>
 </ul></li>
 </ul>
 <p><code>mc_standdr</code> and <code>simdr</code> give exactly the same results for the simulatted data</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="mc_standdr.html#cb272-1" aria-hidden="true" tabindex="-1"></a>simdr.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">seed =</span> <span class="dv">1009</span>)</span>
-<span id="cb272-2"><a href="mc_standdr.html#cb272-2" aria-hidden="true" tabindex="-1"></a>new_simdr.out <span class="ot">&lt;-</span> <span class="fu">standdr_sim</span>(<span class="at">seed =</span> <span class="dv">1009</span>)</span>
-<span id="cb272-3"><a href="mc_standdr.html#cb272-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">identical</span>(simdr.out<span class="sc">$</span>stats, new_simdr.out<span class="sc">$</span>stats))</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="mc_standdr.html#cb280-1" aria-hidden="true" tabindex="-1"></a>simdr.out <span class="ot">&lt;-</span> <span class="fu">simdr</span>(<span class="at">seed =</span> <span class="dv">1009</span>)</span>
+<span id="cb280-2"><a href="mc_standdr.html#cb280-2" aria-hidden="true" tabindex="-1"></a>new_simdr.out <span class="ot">&lt;-</span> <span class="fu">standdr_sim</span>(<span class="at">seed =</span> <span class="dv">1009</span>)</span>
+<span id="cb280-3"><a href="mc_standdr.html#cb280-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">identical</span>(simdr.out<span class="sc">$</span>stats, new_simdr.out<span class="sc">$</span>stats))</span></code></pre></div>
 <p>as well as the measurements</p>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="mc_standdr.html#cb273-1" aria-hidden="true" tabindex="-1"></a>new_simdr.est <span class="ot">&lt;-</span> <span class="fu">standdr_est</span>(<span class="at">Y =</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span>Y,</span>
-<span id="cb273-2"><a href="mc_standdr.html#cb273-2" aria-hidden="true" tabindex="-1"></a>                             <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>,</span>
-<span id="cb273-3"><a href="mc_standdr.html#cb273-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">H =</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span>H)</span>
-<span id="cb273-4"><a href="mc_standdr.html#cb273-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">identical</span>(simdr.out<span class="sc">$</span>est, new_simdr.est))</span></code></pre></div>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="mc_standdr.html#cb281-1" aria-hidden="true" tabindex="-1"></a>new_simdr.est <span class="ot">&lt;-</span> <span class="fu">standdr_est</span>(<span class="at">Y =</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span>Y,</span>
+<span id="cb281-2"><a href="mc_standdr.html#cb281-2" aria-hidden="true" tabindex="-1"></a>                             <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>,</span>
+<span id="cb281-3"><a href="mc_standdr.html#cb281-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">H =</span> new_simdr.out<span class="sc">$</span>data<span class="sc">$</span>H)</span>
+<span id="cb281-4"><a href="mc_standdr.html#cb281-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">identical</span>(simdr.out<span class="sc">$</span>est, new_simdr.est))</span></code></pre></div>
 </div>
-<div id="scripts" class="section level2" number="12.4">
+<div id="scripts" class="section level2" number="13.4">
 <h2><span class="header-section-number">E.4</span> Scripts</h2>
-<div id="simdr" class="section level3" number="12.4.1">
+<div id="simdr" class="section level3" number="13.4.1">
 <h3><span class="header-section-number">E.4.1</span> <code>simdr</code></h3>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="mc_standdr.html#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Doubly Robust Standardization Simulation</span></span>
-<span id="cb274-2"><a href="mc_standdr.html#cb274-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb274-3"><a href="mc_standdr.html#cb274-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Doubly robust standardization simulation.</span></span>
-<span id="cb274-4"><a href="mc_standdr.html#cb274-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb274-5"><a href="mc_standdr.html#cb274-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This is the function used in \emph{Fundamentals of Causal Inference} by</span></span>
-<span id="cb274-6"><a href="mc_standdr.html#cb274-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; B. Brumback in section 6.3 of chapter 6, p.127-128. \code{standdr_stats} is</span></span>
-<span id="cb274-7"><a href="mc_standdr.html#cb274-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; used in the output to give more statistics. Also the arguments </span></span>
-<span id="cb274-8"><a href="mc_standdr.html#cb274-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{beta = 0.13} and \code{gamma = 20} were necessary to analyse the</span></span>
-<span id="cb274-9"><a href="mc_standdr.html#cb274-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; algorithm, they don&#39;t change anything.</span></span>
-<span id="cb274-10"><a href="mc_standdr.html#cb274-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-11"><a href="mc_standdr.html#cb274-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}</span></span>
-<span id="cb274-12"><a href="mc_standdr.html#cb274-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param alpha coefficient used to compute the distribution of \code{`T`}.</span></span>
-<span id="cb274-13"><a href="mc_standdr.html#cb274-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param beta coefficient used to compute the distribution of \code{`T`}.</span></span>
-<span id="cb274-14"><a href="mc_standdr.html#cb274-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param seed Seed used for random number generation, default is \code{NULL}.</span></span>
-<span id="cb274-15"><a href="mc_standdr.html#cb274-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-16"><a href="mc_standdr.html#cb274-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List of statistics for thesimulated data and estimates using</span></span>
-<span id="cb274-17"><a href="mc_standdr.html#cb274-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; different merhods.</span></span>
-<span id="cb274-18"><a href="mc_standdr.html#cb274-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-19"><a href="mc_standdr.html#cb274-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb274-20"><a href="mc_standdr.html#cb274-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb274-21"><a href="mc_standdr.html#cb274-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; simdr()</span></span>
-<span id="cb274-22"><a href="mc_standdr.html#cb274-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb274-23"><a href="mc_standdr.html#cb274-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb274-24"><a href="mc_standdr.html#cb274-24" aria-hidden="true" tabindex="-1"></a>simdr <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb274-25"><a href="mc_standdr.html#cb274-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-26"><a href="mc_standdr.html#cb274-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb274-27"><a href="mc_standdr.html#cb274-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-28"><a href="mc_standdr.html#cb274-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ss is the number of confounders</span></span>
-<span id="cb274-29"><a href="mc_standdr.html#cb274-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># i.e. the number of columns of H</span></span>
-<span id="cb274-30"><a href="mc_standdr.html#cb274-30" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="dv">3000</span>, ss)</span>
-<span id="cb274-31"><a href="mc_standdr.html#cb274-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let all components of H be independent Bernoulli variables with p=0.05</span></span>
-<span id="cb274-32"><a href="mc_standdr.html#cb274-32" aria-hidden="true" tabindex="-1"></a>  probH <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.05</span>, <span class="dv">3000</span>)</span>
-<span id="cb274-33"><a href="mc_standdr.html#cb274-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>ss) {</span>
-<span id="cb274-34"><a href="mc_standdr.html#cb274-34" aria-hidden="true" tabindex="-1"></a>    H[, i] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probH)</span>
-<span id="cb274-35"><a href="mc_standdr.html#cb274-35" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb274-36"><a href="mc_standdr.html#cb274-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the treatment depend on a function of H</span></span>
-<span id="cb274-37"><a href="mc_standdr.html#cb274-37" aria-hidden="true" tabindex="-1"></a>  sumH <span class="ot">&lt;-</span> <span class="fu">apply</span>(H, <span class="dv">1</span>, sum) <span class="sc">*</span> beta <span class="sc">/</span> ss</span>
-<span id="cb274-38"><a href="mc_standdr.html#cb274-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make sure P(T=1) is between 0 and 1, i.e. positivity assumption</span></span>
-<span id="cb274-39"><a href="mc_standdr.html#cb274-39" aria-hidden="true" tabindex="-1"></a>  probT <span class="ot">&lt;-</span> alpha <span class="sc">*</span> sumH <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
-<span id="cb274-40"><a href="mc_standdr.html#cb274-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># validate the positivity assumption</span></span>
-<span id="cb274-41"><a href="mc_standdr.html#cb274-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probT <span class="sc">&gt;</span> <span class="dv">0</span>, probT <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
-<span id="cb274-42"><a href="mc_standdr.html#cb274-42" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-43"><a href="mc_standdr.html#cb274-43" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probT)</span>
-<span id="cb274-44"><a href="mc_standdr.html#cb274-44" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-45"><a href="mc_standdr.html#cb274-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the outcome depend on T and H</span></span>
-<span id="cb274-46"><a href="mc_standdr.html#cb274-46" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> <span class="fl">0.01</span> <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> <span class="fl">0.01</span> <span class="sc">*</span> sumH</span>
-<span id="cb274-47"><a href="mc_standdr.html#cb274-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># positivity assumption is not required for the outcome</span></span>
-<span id="cb274-48"><a href="mc_standdr.html#cb274-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># see intro to chapter 6 p. 99</span></span>
-<span id="cb274-49"><a href="mc_standdr.html#cb274-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probY <span class="sc">&gt;=</span> <span class="dv">0</span>, probY <span class="sc">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb274-50"><a href="mc_standdr.html#cb274-50" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-51"><a href="mc_standdr.html#cb274-51" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
-<span id="cb274-52"><a href="mc_standdr.html#cb274-52" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-53"><a href="mc_standdr.html#cb274-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># put the simulated resuts in a list</span></span>
-<span id="cb274-54"><a href="mc_standdr.html#cb274-54" aria-hidden="true" tabindex="-1"></a>  stats <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;sumH&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(sumH),</span>
-<span id="cb274-55"><a href="mc_standdr.html#cb274-55" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;probT&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(probT),</span>
-<span id="cb274-56"><a href="mc_standdr.html#cb274-56" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>),</span>
-<span id="cb274-57"><a href="mc_standdr.html#cb274-57" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;probY&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(probY),</span>
-<span id="cb274-58"><a href="mc_standdr.html#cb274-58" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(Y))</span>
-<span id="cb274-59"><a href="mc_standdr.html#cb274-59" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-60"><a href="mc_standdr.html#cb274-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit the exposure model</span></span>
-<span id="cb274-61"><a href="mc_standdr.html#cb274-61" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">lm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H))</span>
-<span id="cb274-62"><a href="mc_standdr.html#cb274-62" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-63"><a href="mc_standdr.html#cb274-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># refit the exposure model using an incorrect logistic model</span></span>
-<span id="cb274-64"><a href="mc_standdr.html#cb274-64" aria-hidden="true" tabindex="-1"></a>  e2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">glm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>), <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb274-65"><a href="mc_standdr.html#cb274-65" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-66"><a href="mc_standdr.html#cb274-66" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the weights</span></span>
-<span id="cb274-67"><a href="mc_standdr.html#cb274-67" aria-hidden="true" tabindex="-1"></a>  w0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)</span>
-<span id="cb274-68"><a href="mc_standdr.html#cb274-68" aria-hidden="true" tabindex="-1"></a>  w1 <span class="ot">&lt;-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">/</span> e</span>
-<span id="cb274-69"><a href="mc_standdr.html#cb274-69" aria-hidden="true" tabindex="-1"></a>  w02 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e2)</span>
-<span id="cb274-70"><a href="mc_standdr.html#cb274-70" aria-hidden="true" tabindex="-1"></a>  w12 <span class="ot">&lt;-</span> T <span class="sc">/</span> e2</span>
-<span id="cb274-71"><a href="mc_standdr.html#cb274-71" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-72"><a href="mc_standdr.html#cb274-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit an overspecified (saturated) outcome model</span></span>
-<span id="cb274-73"><a href="mc_standdr.html#cb274-73" aria-hidden="true" tabindex="-1"></a>  mod.out <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> H)</span>
-<span id="cb274-74"><a href="mc_standdr.html#cb274-74" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-75"><a href="mc_standdr.html#cb274-75" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate the expected potential outcomes using the various methods</span></span>
-<span id="cb274-76"><a href="mc_standdr.html#cb274-76" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb274-77"><a href="mc_standdr.html#cb274-77" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> dat</span>
-<span id="cb274-78"><a href="mc_standdr.html#cb274-78" aria-hidden="true" tabindex="-1"></a>  dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb274-79"><a href="mc_standdr.html#cb274-79" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> dat</span>
-<span id="cb274-80"><a href="mc_standdr.html#cb274-80" aria-hidden="true" tabindex="-1"></a>  dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb274-81"><a href="mc_standdr.html#cb274-81" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-82"><a href="mc_standdr.html#cb274-82" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the predicted data</span></span>
-<span id="cb274-83"><a href="mc_standdr.html#cb274-83" aria-hidden="true" tabindex="-1"></a>  preds0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat0)</span>
-<span id="cb274-84"><a href="mc_standdr.html#cb274-84" aria-hidden="true" tabindex="-1"></a>  preds1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat1)</span>
-<span id="cb274-85"><a href="mc_standdr.html#cb274-85" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-86"><a href="mc_standdr.html#cb274-86" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the estimates</span></span>
-<span id="cb274-87"><a href="mc_standdr.html#cb274-87" aria-hidden="true" tabindex="-1"></a>  EYT0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>))</span>
-<span id="cb274-88"><a href="mc_standdr.html#cb274-88" aria-hidden="true" tabindex="-1"></a>  EYT1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb274-89"><a href="mc_standdr.html#cb274-89" aria-hidden="true" tabindex="-1"></a>  EY0exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w0)</span>
-<span id="cb274-90"><a href="mc_standdr.html#cb274-90" aria-hidden="true" tabindex="-1"></a>  EY1exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w1)</span>
-<span id="cb274-91"><a href="mc_standdr.html#cb274-91" aria-hidden="true" tabindex="-1"></a>  EY0exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w02)</span>
-<span id="cb274-92"><a href="mc_standdr.html#cb274-92" aria-hidden="true" tabindex="-1"></a>  EY1exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w12)</span>
-<span id="cb274-93"><a href="mc_standdr.html#cb274-93" aria-hidden="true" tabindex="-1"></a>  EY0out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds0)</span>
-<span id="cb274-94"><a href="mc_standdr.html#cb274-94" aria-hidden="true" tabindex="-1"></a>  EY1out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds1)</span>
-<span id="cb274-95"><a href="mc_standdr.html#cb274-95" aria-hidden="true" tabindex="-1"></a>  EY0dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w0 <span class="sc">*</span> Y <span class="sc">+</span> preds0 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
-<span id="cb274-96"><a href="mc_standdr.html#cb274-96" aria-hidden="true" tabindex="-1"></a>  EY1dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w1 <span class="sc">*</span> Y <span class="sc">-</span> preds1 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
-<span id="cb274-97"><a href="mc_standdr.html#cb274-97" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-98"><a href="mc_standdr.html#cb274-98" aria-hidden="true" tabindex="-1"></a>  est <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb274-99"><a href="mc_standdr.html#cb274-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EYT0&quot;</span> <span class="ot">=</span> EYT0,</span>
-<span id="cb274-100"><a href="mc_standdr.html#cb274-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EYT1&quot;</span> <span class="ot">=</span> EYT1,</span>
-<span id="cb274-101"><a href="mc_standdr.html#cb274-101" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0exp&quot;</span> <span class="ot">=</span> EY0exp,</span>
-<span id="cb274-102"><a href="mc_standdr.html#cb274-102" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1exp&quot;</span> <span class="ot">=</span> EY1exp,</span>
-<span id="cb274-103"><a href="mc_standdr.html#cb274-103" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0exp2&quot;</span> <span class="ot">=</span> EY0exp2,</span>
-<span id="cb274-104"><a href="mc_standdr.html#cb274-104" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1exp2&quot;</span> <span class="ot">=</span> EY1exp2,</span>
-<span id="cb274-105"><a href="mc_standdr.html#cb274-105" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0out&quot;</span> <span class="ot">=</span> EY0out,</span>
-<span id="cb274-106"><a href="mc_standdr.html#cb274-106" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1out&quot;</span> <span class="ot">=</span> EY1out,</span>
-<span id="cb274-107"><a href="mc_standdr.html#cb274-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0dr&quot;</span> <span class="ot">=</span> EY0dr,</span>
-<span id="cb274-108"><a href="mc_standdr.html#cb274-108" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1dr&quot;</span> <span class="ot">=</span> EY1dr</span>
-<span id="cb274-109"><a href="mc_standdr.html#cb274-109" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb274-110"><a href="mc_standdr.html#cb274-110" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb274-111"><a href="mc_standdr.html#cb274-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;stats&quot;</span> <span class="ot">=</span> stats, <span class="st">&quot;est&quot;</span> <span class="ot">=</span> est)</span>
-<span id="cb274-112"><a href="mc_standdr.html#cb274-112" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb274-113"><a href="mc_standdr.html#cb274-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb274-114"><a href="mc_standdr.html#cb274-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute statistics from \code{simdr}. Sames as \code{standdr_est}</span></span>
-<span id="cb274-115"><a href="mc_standdr.html#cb274-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-116"><a href="mc_standdr.html#cb274-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param x Vector of numeric values.</span></span>
-<span id="cb274-117"><a href="mc_standdr.html#cb274-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-118"><a href="mc_standdr.html#cb274-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.</span></span>
-<span id="cb274-119"><a href="mc_standdr.html#cb274-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb274-120"><a href="mc_standdr.html#cb274-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standdr_stats</span></span>
-<span id="cb274-121"><a href="mc_standdr.html#cb274-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb274-122"><a href="mc_standdr.html#cb274-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb274-123"><a href="mc_standdr.html#cb274-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; simdr_stats(runif(20))</span></span>
-<span id="cb274-124"><a href="mc_standdr.html#cb274-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb274-125"><a href="mc_standdr.html#cb274-125" aria-hidden="true" tabindex="-1"></a>simdr_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb274-126"><a href="mc_standdr.html#cb274-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;sum&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(x), <span class="st">&quot;mean&quot;</span> <span class="ot">=</span> <span class="fu">mean</span>(x), <span class="st">&quot;min&quot;</span> <span class="ot">=</span> <span class="fu">min</span>(x), <span class="st">&quot;max&quot;</span> <span class="ot">=</span> <span class="fu">max</span>(x))</span>
-<span id="cb274-127"><a href="mc_standdr.html#cb274-127" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="mc_standdr.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Doubly Robust Standardization Simulation</span></span>
+<span id="cb282-2"><a href="mc_standdr.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb282-3"><a href="mc_standdr.html#cb282-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Doubly robust standardization simulation.</span></span>
+<span id="cb282-4"><a href="mc_standdr.html#cb282-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb282-5"><a href="mc_standdr.html#cb282-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; This is the function used in \emph{Fundamentals of Causal Inference} by</span></span>
+<span id="cb282-6"><a href="mc_standdr.html#cb282-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; B. Brumback in section 6.3 of chapter 6, p.127-128. \code{standdr_stats} is</span></span>
+<span id="cb282-7"><a href="mc_standdr.html#cb282-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; used in the output to give more statistics. Also the arguments </span></span>
+<span id="cb282-8"><a href="mc_standdr.html#cb282-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \code{beta = 0.13} and \code{gamma = 20} were necessary to analyse the</span></span>
+<span id="cb282-9"><a href="mc_standdr.html#cb282-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; algorithm, they don&#39;t change anything.</span></span>
+<span id="cb282-10"><a href="mc_standdr.html#cb282-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-11"><a href="mc_standdr.html#cb282-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Number of covariates i.i.d with \code{rbinom(n, size=1, prob=probH)}</span></span>
+<span id="cb282-12"><a href="mc_standdr.html#cb282-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param alpha coefficient used to compute the distribution of \code{`T`}.</span></span>
+<span id="cb282-13"><a href="mc_standdr.html#cb282-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param beta coefficient used to compute the distribution of \code{`T`}.</span></span>
+<span id="cb282-14"><a href="mc_standdr.html#cb282-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param seed Seed used for random number generation, default is \code{NULL}.</span></span>
+<span id="cb282-15"><a href="mc_standdr.html#cb282-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-16"><a href="mc_standdr.html#cb282-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List of statistics for thesimulated data and estimates using</span></span>
+<span id="cb282-17"><a href="mc_standdr.html#cb282-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; different merhods.</span></span>
+<span id="cb282-18"><a href="mc_standdr.html#cb282-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-19"><a href="mc_standdr.html#cb282-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb282-20"><a href="mc_standdr.html#cb282-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb282-21"><a href="mc_standdr.html#cb282-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; simdr()</span></span>
+<span id="cb282-22"><a href="mc_standdr.html#cb282-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb282-23"><a href="mc_standdr.html#cb282-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb282-24"><a href="mc_standdr.html#cb282-24" aria-hidden="true" tabindex="-1"></a>simdr <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb282-25"><a href="mc_standdr.html#cb282-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-26"><a href="mc_standdr.html#cb282-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb282-27"><a href="mc_standdr.html#cb282-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-28"><a href="mc_standdr.html#cb282-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ss is the number of confounders</span></span>
+<span id="cb282-29"><a href="mc_standdr.html#cb282-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># i.e. the number of columns of H</span></span>
+<span id="cb282-30"><a href="mc_standdr.html#cb282-30" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="dv">3000</span>, ss)</span>
+<span id="cb282-31"><a href="mc_standdr.html#cb282-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let all components of H be independent Bernoulli variables with p=0.05</span></span>
+<span id="cb282-32"><a href="mc_standdr.html#cb282-32" aria-hidden="true" tabindex="-1"></a>  probH <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.05</span>, <span class="dv">3000</span>)</span>
+<span id="cb282-33"><a href="mc_standdr.html#cb282-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>ss) {</span>
+<span id="cb282-34"><a href="mc_standdr.html#cb282-34" aria-hidden="true" tabindex="-1"></a>    H[, i] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probH)</span>
+<span id="cb282-35"><a href="mc_standdr.html#cb282-35" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb282-36"><a href="mc_standdr.html#cb282-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Let the treatment depend on a function of H</span></span>
+<span id="cb282-37"><a href="mc_standdr.html#cb282-37" aria-hidden="true" tabindex="-1"></a>  sumH <span class="ot">&lt;-</span> <span class="fu">apply</span>(H, <span class="dv">1</span>, sum) <span class="sc">*</span> beta <span class="sc">/</span> ss</span>
+<span id="cb282-38"><a href="mc_standdr.html#cb282-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make sure P(T=1) is between 0 and 1, i.e. positivity assumption</span></span>
+<span id="cb282-39"><a href="mc_standdr.html#cb282-39" aria-hidden="true" tabindex="-1"></a>  probT <span class="ot">&lt;-</span> alpha <span class="sc">*</span> sumH <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
+<span id="cb282-40"><a href="mc_standdr.html#cb282-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># validate the positivity assumption</span></span>
+<span id="cb282-41"><a href="mc_standdr.html#cb282-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probT <span class="sc">&gt;</span> <span class="dv">0</span>, probT <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb282-42"><a href="mc_standdr.html#cb282-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-43"><a href="mc_standdr.html#cb282-43" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probT)</span>
+<span id="cb282-44"><a href="mc_standdr.html#cb282-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-45"><a href="mc_standdr.html#cb282-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the outcome depend on T and H</span></span>
+<span id="cb282-46"><a href="mc_standdr.html#cb282-46" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> <span class="fl">0.01</span> <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> <span class="fl">0.01</span> <span class="sc">*</span> sumH</span>
+<span id="cb282-47"><a href="mc_standdr.html#cb282-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># positivity assumption is not required for the outcome</span></span>
+<span id="cb282-48"><a href="mc_standdr.html#cb282-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># see intro to chapter 6 p. 99</span></span>
+<span id="cb282-49"><a href="mc_standdr.html#cb282-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probY <span class="sc">&gt;=</span> <span class="dv">0</span>, probY <span class="sc">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb282-50"><a href="mc_standdr.html#cb282-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-51"><a href="mc_standdr.html#cb282-51" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
+<span id="cb282-52"><a href="mc_standdr.html#cb282-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-53"><a href="mc_standdr.html#cb282-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># put the simulated resuts in a list</span></span>
+<span id="cb282-54"><a href="mc_standdr.html#cb282-54" aria-hidden="true" tabindex="-1"></a>  stats <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;sumH&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(sumH),</span>
+<span id="cb282-55"><a href="mc_standdr.html#cb282-55" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;probT&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(probT),</span>
+<span id="cb282-56"><a href="mc_standdr.html#cb282-56" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>),</span>
+<span id="cb282-57"><a href="mc_standdr.html#cb282-57" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;probY&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(probY),</span>
+<span id="cb282-58"><a href="mc_standdr.html#cb282-58" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">simdr_stats</span>(Y))</span>
+<span id="cb282-59"><a href="mc_standdr.html#cb282-59" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-60"><a href="mc_standdr.html#cb282-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit the exposure model</span></span>
+<span id="cb282-61"><a href="mc_standdr.html#cb282-61" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">lm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H))</span>
+<span id="cb282-62"><a href="mc_standdr.html#cb282-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-63"><a href="mc_standdr.html#cb282-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># refit the exposure model using an incorrect logistic model</span></span>
+<span id="cb282-64"><a href="mc_standdr.html#cb282-64" aria-hidden="true" tabindex="-1"></a>  e2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">glm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>), <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb282-65"><a href="mc_standdr.html#cb282-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-66"><a href="mc_standdr.html#cb282-66" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the weights</span></span>
+<span id="cb282-67"><a href="mc_standdr.html#cb282-67" aria-hidden="true" tabindex="-1"></a>  w0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)</span>
+<span id="cb282-68"><a href="mc_standdr.html#cb282-68" aria-hidden="true" tabindex="-1"></a>  w1 <span class="ot">&lt;-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">/</span> e</span>
+<span id="cb282-69"><a href="mc_standdr.html#cb282-69" aria-hidden="true" tabindex="-1"></a>  w02 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e2)</span>
+<span id="cb282-70"><a href="mc_standdr.html#cb282-70" aria-hidden="true" tabindex="-1"></a>  w12 <span class="ot">&lt;-</span> T <span class="sc">/</span> e2</span>
+<span id="cb282-71"><a href="mc_standdr.html#cb282-71" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-72"><a href="mc_standdr.html#cb282-72" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit an overspecified (saturated) outcome model</span></span>
+<span id="cb282-73"><a href="mc_standdr.html#cb282-73" aria-hidden="true" tabindex="-1"></a>  mod.out <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> H)</span>
+<span id="cb282-74"><a href="mc_standdr.html#cb282-74" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-75"><a href="mc_standdr.html#cb282-75" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate the expected potential outcomes using the various methods</span></span>
+<span id="cb282-76"><a href="mc_standdr.html#cb282-76" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb282-77"><a href="mc_standdr.html#cb282-77" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> dat</span>
+<span id="cb282-78"><a href="mc_standdr.html#cb282-78" aria-hidden="true" tabindex="-1"></a>  dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb282-79"><a href="mc_standdr.html#cb282-79" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> dat</span>
+<span id="cb282-80"><a href="mc_standdr.html#cb282-80" aria-hidden="true" tabindex="-1"></a>  dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb282-81"><a href="mc_standdr.html#cb282-81" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-82"><a href="mc_standdr.html#cb282-82" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the predicted data</span></span>
+<span id="cb282-83"><a href="mc_standdr.html#cb282-83" aria-hidden="true" tabindex="-1"></a>  preds0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat0)</span>
+<span id="cb282-84"><a href="mc_standdr.html#cb282-84" aria-hidden="true" tabindex="-1"></a>  preds1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat1)</span>
+<span id="cb282-85"><a href="mc_standdr.html#cb282-85" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-86"><a href="mc_standdr.html#cb282-86" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the estimates</span></span>
+<span id="cb282-87"><a href="mc_standdr.html#cb282-87" aria-hidden="true" tabindex="-1"></a>  EYT0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>))</span>
+<span id="cb282-88"><a href="mc_standdr.html#cb282-88" aria-hidden="true" tabindex="-1"></a>  EYT1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb282-89"><a href="mc_standdr.html#cb282-89" aria-hidden="true" tabindex="-1"></a>  EY0exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w0)</span>
+<span id="cb282-90"><a href="mc_standdr.html#cb282-90" aria-hidden="true" tabindex="-1"></a>  EY1exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w1)</span>
+<span id="cb282-91"><a href="mc_standdr.html#cb282-91" aria-hidden="true" tabindex="-1"></a>  EY0exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w02)</span>
+<span id="cb282-92"><a href="mc_standdr.html#cb282-92" aria-hidden="true" tabindex="-1"></a>  EY1exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w12)</span>
+<span id="cb282-93"><a href="mc_standdr.html#cb282-93" aria-hidden="true" tabindex="-1"></a>  EY0out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds0)</span>
+<span id="cb282-94"><a href="mc_standdr.html#cb282-94" aria-hidden="true" tabindex="-1"></a>  EY1out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds1)</span>
+<span id="cb282-95"><a href="mc_standdr.html#cb282-95" aria-hidden="true" tabindex="-1"></a>  EY0dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w0 <span class="sc">*</span> Y <span class="sc">+</span> preds0 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
+<span id="cb282-96"><a href="mc_standdr.html#cb282-96" aria-hidden="true" tabindex="-1"></a>  EY1dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w1 <span class="sc">*</span> Y <span class="sc">-</span> preds1 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
+<span id="cb282-97"><a href="mc_standdr.html#cb282-97" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-98"><a href="mc_standdr.html#cb282-98" aria-hidden="true" tabindex="-1"></a>  est <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb282-99"><a href="mc_standdr.html#cb282-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EYT0&quot;</span> <span class="ot">=</span> EYT0,</span>
+<span id="cb282-100"><a href="mc_standdr.html#cb282-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EYT1&quot;</span> <span class="ot">=</span> EYT1,</span>
+<span id="cb282-101"><a href="mc_standdr.html#cb282-101" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0exp&quot;</span> <span class="ot">=</span> EY0exp,</span>
+<span id="cb282-102"><a href="mc_standdr.html#cb282-102" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1exp&quot;</span> <span class="ot">=</span> EY1exp,</span>
+<span id="cb282-103"><a href="mc_standdr.html#cb282-103" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0exp2&quot;</span> <span class="ot">=</span> EY0exp2,</span>
+<span id="cb282-104"><a href="mc_standdr.html#cb282-104" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1exp2&quot;</span> <span class="ot">=</span> EY1exp2,</span>
+<span id="cb282-105"><a href="mc_standdr.html#cb282-105" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0out&quot;</span> <span class="ot">=</span> EY0out,</span>
+<span id="cb282-106"><a href="mc_standdr.html#cb282-106" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1out&quot;</span> <span class="ot">=</span> EY1out,</span>
+<span id="cb282-107"><a href="mc_standdr.html#cb282-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY0dr&quot;</span> <span class="ot">=</span> EY0dr,</span>
+<span id="cb282-108"><a href="mc_standdr.html#cb282-108" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EY1dr&quot;</span> <span class="ot">=</span> EY1dr</span>
+<span id="cb282-109"><a href="mc_standdr.html#cb282-109" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb282-110"><a href="mc_standdr.html#cb282-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb282-111"><a href="mc_standdr.html#cb282-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;stats&quot;</span> <span class="ot">=</span> stats, <span class="st">&quot;est&quot;</span> <span class="ot">=</span> est)</span>
+<span id="cb282-112"><a href="mc_standdr.html#cb282-112" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb282-113"><a href="mc_standdr.html#cb282-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb282-114"><a href="mc_standdr.html#cb282-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute statistics from \code{simdr}. Sames as \code{standdr_est}</span></span>
+<span id="cb282-115"><a href="mc_standdr.html#cb282-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-116"><a href="mc_standdr.html#cb282-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param x Vector of numeric values.</span></span>
+<span id="cb282-117"><a href="mc_standdr.html#cb282-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-118"><a href="mc_standdr.html#cb282-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.</span></span>
+<span id="cb282-119"><a href="mc_standdr.html#cb282-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb282-120"><a href="mc_standdr.html#cb282-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standdr_stats</span></span>
+<span id="cb282-121"><a href="mc_standdr.html#cb282-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb282-122"><a href="mc_standdr.html#cb282-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb282-123"><a href="mc_standdr.html#cb282-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; simdr_stats(runif(20))</span></span>
+<span id="cb282-124"><a href="mc_standdr.html#cb282-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb282-125"><a href="mc_standdr.html#cb282-125" aria-hidden="true" tabindex="-1"></a>simdr_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb282-126"><a href="mc_standdr.html#cb282-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;sum&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(x), <span class="st">&quot;mean&quot;</span> <span class="ot">=</span> <span class="fu">mean</span>(x), <span class="st">&quot;min&quot;</span> <span class="ot">=</span> <span class="fu">min</span>(x), <span class="st">&quot;max&quot;</span> <span class="ot">=</span> <span class="fu">max</span>(x))</span>
+<span id="cb282-127"><a href="mc_standdr.html#cb282-127" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
-<div id="mc_standdr-1" class="section level3" number="12.4.2">
+<div id="mc_standdr-1" class="section level3" number="13.4.2">
 <h3><span class="header-section-number">E.4.2</span> <code>mc_standdr</code></h3>
-<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="mc_standdr.html#cb275-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Monte Carlo Simulation of Doubly Robust Standardization</span></span>
-<span id="cb275-2"><a href="mc_standdr.html#cb275-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-3"><a href="mc_standdr.html#cb275-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Integer(). Number of covariates.</span></span>
-<span id="cb275-4"><a href="mc_standdr.html#cb275-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param nrep Number of Monte Carlo repetitions.</span></span>
-<span id="cb275-5"><a href="mc_standdr.html#cb275-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param width Width of interval. e.g. 0.95 will give interval c(0.025, 0.975).</span></span>
-<span id="cb275-6"><a href="mc_standdr.html#cb275-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Default is 0.95.</span></span>
-<span id="cb275-7"><a href="mc_standdr.html#cb275-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
-<span id="cb275-8"><a href="mc_standdr.html#cb275-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standdr_sim standdr_est</span></span>
-<span id="cb275-9"><a href="mc_standdr.html#cb275-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-10"><a href="mc_standdr.html#cb275-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of results.</span></span>
-<span id="cb275-11"><a href="mc_standdr.html#cb275-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb275-12"><a href="mc_standdr.html#cb275-12" aria-hidden="true" tabindex="-1"></a>mc_standdr <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ss =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">100</span>), <span class="at">nrep =</span> <span class="dv">1000</span>, <span class="at">width =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb275-13"><a href="mc_standdr.html#cb275-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(ss <span class="sc">&gt;=</span> <span class="dv">1</span>), nrep <span class="sc">&gt;=</span> <span class="dv">1</span>, width <span class="sc">&gt;</span> <span class="dv">0</span>, width <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
-<span id="cb275-14"><a href="mc_standdr.html#cb275-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-15"><a href="mc_standdr.html#cb275-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We use alpha = 0.15 to match results with the books</span></span>
-<span id="cb275-16"><a href="mc_standdr.html#cb275-16" aria-hidden="true" tabindex="-1"></a>  ms_standdr_func <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, </span>
-<span id="cb275-17"><a href="mc_standdr.html#cb275-17" aria-hidden="true" tabindex="-1"></a>                              <span class="at">probH =</span> <span class="fl">0.05</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb275-18"><a href="mc_standdr.html#cb275-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb275-19"><a href="mc_standdr.html#cb275-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># first we simulate the data</span></span>
-<span id="cb275-20"><a href="mc_standdr.html#cb275-20" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> <span class="fu">standdr_sim</span>(<span class="at">n =</span> n, <span class="at">ss =</span> ss, <span class="at">alpha =</span> alpha, <span class="at">beta =</span> beta, </span>
-<span id="cb275-21"><a href="mc_standdr.html#cb275-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">probH =</span> probH, <span class="at">seed =</span> seed)<span class="sc">$</span>data</span>
-<span id="cb275-22"><a href="mc_standdr.html#cb275-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># then output the estimates in a list</span></span>
-<span id="cb275-23"><a href="mc_standdr.html#cb275-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">standdr_est</span>(<span class="at">Y =</span> dat<span class="sc">$</span>Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> dat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">H =</span> dat<span class="sc">$</span>H)</span>
-<span id="cb275-24"><a href="mc_standdr.html#cb275-24" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb275-25"><a href="mc_standdr.html#cb275-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-26"><a href="mc_standdr.html#cb275-26" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;ss&quot;</span> <span class="ot">=</span> ss)</span>
-<span id="cb275-27"><a href="mc_standdr.html#cb275-27" aria-hidden="true" tabindex="-1"></a>  mc.out <span class="ot">&lt;-</span> MonteCarlo<span class="sc">::</span><span class="fu">MonteCarlo</span>(<span class="at">func =</span> ms_standdr_func,</span>
-<span id="cb275-28"><a href="mc_standdr.html#cb275-28" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">nrep =</span> nrep, <span class="at">param_list =</span> params)</span>
-<span id="cb275-29"><a href="mc_standdr.html#cb275-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-30"><a href="mc_standdr.html#cb275-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output results in a dataframe</span></span>
-<span id="cb275-31"><a href="mc_standdr.html#cb275-31" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(MonteCarlo<span class="sc">::</span><span class="fu">MakeFrame</span>(mc.out))</span>
-<span id="cb275-32"><a href="mc_standdr.html#cb275-32" aria-hidden="true" tabindex="-1"></a>  out <span class="sc">%&gt;%</span></span>
-<span id="cb275-33"><a href="mc_standdr.html#cb275-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>ss, <span class="at">names_to =</span> <span class="st">&quot;estimator&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb275-34"><a href="mc_standdr.html#cb275-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(ss, estimator) <span class="sc">%&gt;%</span></span>
-<span id="cb275-35"><a href="mc_standdr.html#cb275-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), </span>
-<span id="cb275-36"><a href="mc_standdr.html#cb275-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">mean =</span> <span class="fu">mean</span>(value),</span>
-<span id="cb275-37"><a href="mc_standdr.html#cb275-37" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd =</span> <span class="fu">sd</span>(value),</span>
-<span id="cb275-38"><a href="mc_standdr.html#cb275-38" aria-hidden="true" tabindex="-1"></a>              <span class="at">lower =</span> <span class="fu">quantile</span>(value, <span class="at">probs =</span> (<span class="dv">1</span> <span class="sc">-</span> width) <span class="sc">/</span> <span class="dv">2</span>),</span>
-<span id="cb275-39"><a href="mc_standdr.html#cb275-39" aria-hidden="true" tabindex="-1"></a>              <span class="at">upper =</span> <span class="fu">quantile</span>(value, <span class="at">probs =</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> width) <span class="sc">/</span> <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb275-40"><a href="mc_standdr.html#cb275-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb275-41"><a href="mc_standdr.html#cb275-41" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb275-42"><a href="mc_standdr.html#cb275-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb275-43"><a href="mc_standdr.html#cb275-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Data Simulation for Doubly Robust Standardization</span></span>
-<span id="cb275-44"><a href="mc_standdr.html#cb275-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-45"><a href="mc_standdr.html#cb275-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param n Number of individuals/observations.</span></span>
-<span id="cb275-46"><a href="mc_standdr.html#cb275-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Number of covariates.</span></span>
-<span id="cb275-47"><a href="mc_standdr.html#cb275-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param alpha coefficient used to compute the distribution of \code{`T`}.</span></span>
-<span id="cb275-48"><a href="mc_standdr.html#cb275-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param beta coefficient used to compute the distribution of \code{`T`}.</span></span>
-<span id="cb275-49"><a href="mc_standdr.html#cb275-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param probH probability of H.</span></span>
-<span id="cb275-50"><a href="mc_standdr.html#cb275-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param seed Seed value. default is \code{NULL}.</span></span>
-<span id="cb275-51"><a href="mc_standdr.html#cb275-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-52"><a href="mc_standdr.html#cb275-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List with a dataframe of Y, T and H and summary statitics.</span></span>
-<span id="cb275-53"><a href="mc_standdr.html#cb275-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb275-54"><a href="mc_standdr.html#cb275-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-55"><a href="mc_standdr.html#cb275-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb275-56"><a href="mc_standdr.html#cb275-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
-<span id="cb275-57"><a href="mc_standdr.html#cb275-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; standdr_sim()</span></span>
-<span id="cb275-58"><a href="mc_standdr.html#cb275-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
-<span id="cb275-59"><a href="mc_standdr.html#cb275-59" aria-hidden="true" tabindex="-1"></a>standdr_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, </span>
-<span id="cb275-60"><a href="mc_standdr.html#cb275-60" aria-hidden="true" tabindex="-1"></a>                        <span class="at">probH =</span> <span class="fl">0.05</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb275-61"><a href="mc_standdr.html#cb275-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb275-62"><a href="mc_standdr.html#cb275-62" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-63"><a href="mc_standdr.html#cb275-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># matrix of independent Bernoulli vector with prob = 0.05</span></span>
-<span id="cb275-64"><a href="mc_standdr.html#cb275-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;The columns of H were independent indicator variables each</span></span>
-<span id="cb275-65"><a href="mc_standdr.html#cb275-65" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  with probability 0.05&quot;</span></span>
-<span id="cb275-66"><a href="mc_standdr.html#cb275-66" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">replicate</span>(<span class="at">n =</span> ss, <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probH)))</span>
-<span id="cb275-67"><a href="mc_standdr.html#cb275-67" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-68"><a href="mc_standdr.html#cb275-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the treatment depend on a function of H</span></span>
-<span id="cb275-69"><a href="mc_standdr.html#cb275-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;We simulated T  as indicator variables with probabilities that varied as</span></span>
-<span id="cb275-70"><a href="mc_standdr.html#cb275-70" aria-hidden="true" tabindex="-1"></a>  <span class="co"># a linear function  of H such that approximately 600 individuals had T=1&quot;</span></span>
-<span id="cb275-71"><a href="mc_standdr.html#cb275-71" aria-hidden="true" tabindex="-1"></a>  sumH <span class="ot">&lt;-</span> <span class="fu">apply</span>(H, <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> sum) <span class="sc">*</span> beta <span class="sc">/</span> ss</span>
-<span id="cb275-72"><a href="mc_standdr.html#cb275-72" aria-hidden="true" tabindex="-1"></a>  probT <span class="ot">&lt;-</span> alpha <span class="sc">*</span> sumH <span class="sc">+</span> probH <span class="sc">*</span> <span class="fu">rnorm</span>(<span class="at">n =</span> n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
-<span id="cb275-73"><a href="mc_standdr.html#cb275-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># validate the positivity assumption</span></span>
-<span id="cb275-74"><a href="mc_standdr.html#cb275-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probT <span class="sc">&gt;</span> <span class="dv">0</span>, probT <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
-<span id="cb275-75"><a href="mc_standdr.html#cb275-75" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-76"><a href="mc_standdr.html#cb275-76" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probT)</span>
-<span id="cb275-77"><a href="mc_standdr.html#cb275-77" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-78"><a href="mc_standdr.html#cb275-78" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-79"><a href="mc_standdr.html#cb275-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the outcome depend on T and H</span></span>
-<span id="cb275-80"><a href="mc_standdr.html#cb275-80" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;We simulated Y as a function T ans sumH such hat approximatey 35 </span></span>
-<span id="cb275-81"><a href="mc_standdr.html#cb275-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># individuals had Y = 1&quot;</span></span>
-<span id="cb275-82"><a href="mc_standdr.html#cb275-82" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> <span class="fl">0.01</span> <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> <span class="fl">0.01</span> <span class="sc">*</span> sumH</span>
-<span id="cb275-83"><a href="mc_standdr.html#cb275-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># positivity assumption is not required for the outcome</span></span>
-<span id="cb275-84"><a href="mc_standdr.html#cb275-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># see intro to chapter 6 p. 99</span></span>
-<span id="cb275-85"><a href="mc_standdr.html#cb275-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probY <span class="sc">&gt;=</span> <span class="dv">0</span>, probY <span class="sc">&lt;=</span> <span class="dv">1</span>)</span>
-<span id="cb275-86"><a href="mc_standdr.html#cb275-86" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-87"><a href="mc_standdr.html#cb275-87" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
-<span id="cb275-88"><a href="mc_standdr.html#cb275-88" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-89"><a href="mc_standdr.html#cb275-89" aria-hidden="true" tabindex="-1"></a>  <span class="co"># put the data in a data.frame</span></span>
-<span id="cb275-90"><a href="mc_standdr.html#cb275-90" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="st">&quot;H&quot;</span> <span class="ot">=</span> H)</span>
-<span id="cb275-91"><a href="mc_standdr.html#cb275-91" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-92"><a href="mc_standdr.html#cb275-92" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output results in a list</span></span>
-<span id="cb275-93"><a href="mc_standdr.html#cb275-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
-<span id="cb275-94"><a href="mc_standdr.html#cb275-94" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;stats&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">&quot;sumH&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(sumH),</span>
-<span id="cb275-95"><a href="mc_standdr.html#cb275-95" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;probT&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(probT),</span>
-<span id="cb275-96"><a href="mc_standdr.html#cb275-96" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>),</span>
-<span id="cb275-97"><a href="mc_standdr.html#cb275-97" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;probY&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(probY),</span>
-<span id="cb275-98"><a href="mc_standdr.html#cb275-98" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(Y)),</span>
-<span id="cb275-99"><a href="mc_standdr.html#cb275-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;data&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="st">&quot;H&quot;</span> <span class="ot">=</span> H)</span>
-<span id="cb275-100"><a href="mc_standdr.html#cb275-100" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb275-101"><a href="mc_standdr.html#cb275-101" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb275-102"><a href="mc_standdr.html#cb275-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb275-103"><a href="mc_standdr.html#cb275-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb275-104"><a href="mc_standdr.html#cb275-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Estimates from Doubly Robust Standardization Simulation</span></span>
-<span id="cb275-105"><a href="mc_standdr.html#cb275-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-106"><a href="mc_standdr.html#cb275-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param Y Vector of outcomes</span></span>
-<span id="cb275-107"><a href="mc_standdr.html#cb275-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param `T` Vector of treatments</span></span>
-<span id="cb275-108"><a href="mc_standdr.html#cb275-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param H Matrix of covariates</span></span>
-<span id="cb275-109"><a href="mc_standdr.html#cb275-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-110"><a href="mc_standdr.html#cb275-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List of estimates</span></span>
-<span id="cb275-111"><a href="mc_standdr.html#cb275-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb275-112"><a href="mc_standdr.html#cb275-112" aria-hidden="true" tabindex="-1"></a>standdr_est <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) {</span>
-<span id="cb275-113"><a href="mc_standdr.html#cb275-113" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-114"><a href="mc_standdr.html#cb275-114" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit the exposure model</span></span>
-<span id="cb275-115"><a href="mc_standdr.html#cb275-115" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">lm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H))</span>
-<span id="cb275-116"><a href="mc_standdr.html#cb275-116" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-117"><a href="mc_standdr.html#cb275-117" aria-hidden="true" tabindex="-1"></a>  <span class="co"># refit the exposure model using an incorrect logistic model</span></span>
-<span id="cb275-118"><a href="mc_standdr.html#cb275-118" aria-hidden="true" tabindex="-1"></a>  e2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">glm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>), <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
-<span id="cb275-119"><a href="mc_standdr.html#cb275-119" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-120"><a href="mc_standdr.html#cb275-120" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the weights</span></span>
-<span id="cb275-121"><a href="mc_standdr.html#cb275-121" aria-hidden="true" tabindex="-1"></a>  w0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)</span>
-<span id="cb275-122"><a href="mc_standdr.html#cb275-122" aria-hidden="true" tabindex="-1"></a>  w1 <span class="ot">&lt;-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">/</span> e</span>
-<span id="cb275-123"><a href="mc_standdr.html#cb275-123" aria-hidden="true" tabindex="-1"></a>  w02 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e2)</span>
-<span id="cb275-124"><a href="mc_standdr.html#cb275-124" aria-hidden="true" tabindex="-1"></a>  w12 <span class="ot">&lt;-</span> T <span class="sc">/</span> e2</span>
-<span id="cb275-125"><a href="mc_standdr.html#cb275-125" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-126"><a href="mc_standdr.html#cb275-126" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit an overspecified (saturated) outcome model</span></span>
-<span id="cb275-127"><a href="mc_standdr.html#cb275-127" aria-hidden="true" tabindex="-1"></a>  mod.out <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> H)</span>
-<span id="cb275-128"><a href="mc_standdr.html#cb275-128" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-129"><a href="mc_standdr.html#cb275-129" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate the expected potential outcomes using the various methods</span></span>
-<span id="cb275-130"><a href="mc_standdr.html#cb275-130" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb275-131"><a href="mc_standdr.html#cb275-131" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> dat</span>
-<span id="cb275-132"><a href="mc_standdr.html#cb275-132" aria-hidden="true" tabindex="-1"></a>  dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb275-133"><a href="mc_standdr.html#cb275-133" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> dat</span>
-<span id="cb275-134"><a href="mc_standdr.html#cb275-134" aria-hidden="true" tabindex="-1"></a>  dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb275-135"><a href="mc_standdr.html#cb275-135" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-136"><a href="mc_standdr.html#cb275-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the predicted data</span></span>
-<span id="cb275-137"><a href="mc_standdr.html#cb275-137" aria-hidden="true" tabindex="-1"></a>  preds0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat0)</span>
-<span id="cb275-138"><a href="mc_standdr.html#cb275-138" aria-hidden="true" tabindex="-1"></a>  preds1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat1)</span>
-<span id="cb275-139"><a href="mc_standdr.html#cb275-139" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-140"><a href="mc_standdr.html#cb275-140" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the estimates</span></span>
-<span id="cb275-141"><a href="mc_standdr.html#cb275-141" aria-hidden="true" tabindex="-1"></a>  EYT0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>))</span>
-<span id="cb275-142"><a href="mc_standdr.html#cb275-142" aria-hidden="true" tabindex="-1"></a>  EYT1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
-<span id="cb275-143"><a href="mc_standdr.html#cb275-143" aria-hidden="true" tabindex="-1"></a>  EY0exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w0)</span>
-<span id="cb275-144"><a href="mc_standdr.html#cb275-144" aria-hidden="true" tabindex="-1"></a>  EY1exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w1)</span>
-<span id="cb275-145"><a href="mc_standdr.html#cb275-145" aria-hidden="true" tabindex="-1"></a>  EY0exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w02)</span>
-<span id="cb275-146"><a href="mc_standdr.html#cb275-146" aria-hidden="true" tabindex="-1"></a>  EY1exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w12)</span>
-<span id="cb275-147"><a href="mc_standdr.html#cb275-147" aria-hidden="true" tabindex="-1"></a>  EY0out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds0)</span>
-<span id="cb275-148"><a href="mc_standdr.html#cb275-148" aria-hidden="true" tabindex="-1"></a>  EY1out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds1)</span>
-<span id="cb275-149"><a href="mc_standdr.html#cb275-149" aria-hidden="true" tabindex="-1"></a>  EY0dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w0 <span class="sc">*</span> Y <span class="sc">+</span> preds0 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
-<span id="cb275-150"><a href="mc_standdr.html#cb275-150" aria-hidden="true" tabindex="-1"></a>  EY1dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w1 <span class="sc">*</span> Y <span class="sc">-</span> preds1 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
-<span id="cb275-151"><a href="mc_standdr.html#cb275-151" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb275-152"><a href="mc_standdr.html#cb275-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EYT0&quot;</span> <span class="ot">=</span> EYT0,</span>
-<span id="cb275-153"><a href="mc_standdr.html#cb275-153" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EYT1&quot;</span> <span class="ot">=</span> EYT1,</span>
-<span id="cb275-154"><a href="mc_standdr.html#cb275-154" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0exp&quot;</span> <span class="ot">=</span> EY0exp,</span>
-<span id="cb275-155"><a href="mc_standdr.html#cb275-155" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1exp&quot;</span> <span class="ot">=</span> EY1exp,</span>
-<span id="cb275-156"><a href="mc_standdr.html#cb275-156" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0exp2&quot;</span> <span class="ot">=</span> EY0exp2,</span>
-<span id="cb275-157"><a href="mc_standdr.html#cb275-157" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1exp2&quot;</span> <span class="ot">=</span> EY1exp2,</span>
-<span id="cb275-158"><a href="mc_standdr.html#cb275-158" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0out&quot;</span> <span class="ot">=</span> EY0out,</span>
-<span id="cb275-159"><a href="mc_standdr.html#cb275-159" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1out&quot;</span> <span class="ot">=</span> EY1out,</span>
-<span id="cb275-160"><a href="mc_standdr.html#cb275-160" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0dr&quot;</span> <span class="ot">=</span> EY0dr,</span>
-<span id="cb275-161"><a href="mc_standdr.html#cb275-161" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1dr&quot;</span> <span class="ot">=</span> EY1dr)</span>
-<span id="cb275-162"><a href="mc_standdr.html#cb275-162" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb275-163"><a href="mc_standdr.html#cb275-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb275-164"><a href="mc_standdr.html#cb275-164" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute Statistics from \code{standdr_sim}.</span></span>
-<span id="cb275-165"><a href="mc_standdr.html#cb275-165" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-166"><a href="mc_standdr.html#cb275-166" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param x Vector of numeric values.</span></span>
-<span id="cb275-167"><a href="mc_standdr.html#cb275-167" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-168"><a href="mc_standdr.html#cb275-168" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.</span></span>
-<span id="cb275-169"><a href="mc_standdr.html#cb275-169" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
-<span id="cb275-170"><a href="mc_standdr.html#cb275-170" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
-<span id="cb275-171"><a href="mc_standdr.html#cb275-171" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; standdr_est(runif(20))</span></span>
-<span id="cb275-172"><a href="mc_standdr.html#cb275-172" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
-<span id="cb275-173"><a href="mc_standdr.html#cb275-173" aria-hidden="true" tabindex="-1"></a>standdr_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb275-174"><a href="mc_standdr.html#cb275-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;sum&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(x), <span class="st">&quot;mean&quot;</span> <span class="ot">=</span> <span class="fu">mean</span>(x), <span class="st">&quot;min&quot;</span> <span class="ot">=</span> <span class="fu">min</span>(x), <span class="st">&quot;max&quot;</span> <span class="ot">=</span> <span class="fu">max</span>(x))</span>
-<span id="cb275-175"><a href="mc_standdr.html#cb275-175" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="mc_standdr.html#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Monte Carlo Simulation of Doubly Robust Standardization</span></span>
+<span id="cb283-2"><a href="mc_standdr.html#cb283-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-3"><a href="mc_standdr.html#cb283-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Integer(). Number of covariates.</span></span>
+<span id="cb283-4"><a href="mc_standdr.html#cb283-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param nrep Number of Monte Carlo repetitions.</span></span>
+<span id="cb283-5"><a href="mc_standdr.html#cb283-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param width Width of interval. e.g. 0.95 will give interval c(0.025, 0.975).</span></span>
+<span id="cb283-6"><a href="mc_standdr.html#cb283-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Default is 0.95.</span></span>
+<span id="cb283-7"><a href="mc_standdr.html#cb283-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; </span></span>
+<span id="cb283-8"><a href="mc_standdr.html#cb283-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @seealso standdr_sim standdr_est</span></span>
+<span id="cb283-9"><a href="mc_standdr.html#cb283-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-10"><a href="mc_standdr.html#cb283-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return Dataframe of results.</span></span>
+<span id="cb283-11"><a href="mc_standdr.html#cb283-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb283-12"><a href="mc_standdr.html#cb283-12" aria-hidden="true" tabindex="-1"></a>mc_standdr <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ss =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">100</span>), <span class="at">nrep =</span> <span class="dv">1000</span>, <span class="at">width =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb283-13"><a href="mc_standdr.html#cb283-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(ss <span class="sc">&gt;=</span> <span class="dv">1</span>), nrep <span class="sc">&gt;=</span> <span class="dv">1</span>, width <span class="sc">&gt;</span> <span class="dv">0</span>, width <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb283-14"><a href="mc_standdr.html#cb283-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-15"><a href="mc_standdr.html#cb283-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We use alpha = 0.15 to match results with the books</span></span>
+<span id="cb283-16"><a href="mc_standdr.html#cb283-16" aria-hidden="true" tabindex="-1"></a>  ms_standdr_func <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, </span>
+<span id="cb283-17"><a href="mc_standdr.html#cb283-17" aria-hidden="true" tabindex="-1"></a>                              <span class="at">probH =</span> <span class="fl">0.05</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb283-18"><a href="mc_standdr.html#cb283-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb283-19"><a href="mc_standdr.html#cb283-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># first we simulate the data</span></span>
+<span id="cb283-20"><a href="mc_standdr.html#cb283-20" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> <span class="fu">standdr_sim</span>(<span class="at">n =</span> n, <span class="at">ss =</span> ss, <span class="at">alpha =</span> alpha, <span class="at">beta =</span> beta, </span>
+<span id="cb283-21"><a href="mc_standdr.html#cb283-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">probH =</span> probH, <span class="at">seed =</span> seed)<span class="sc">$</span>data</span>
+<span id="cb283-22"><a href="mc_standdr.html#cb283-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># then output the estimates in a list</span></span>
+<span id="cb283-23"><a href="mc_standdr.html#cb283-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">standdr_est</span>(<span class="at">Y =</span> dat<span class="sc">$</span>Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> dat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">H =</span> dat<span class="sc">$</span>H)</span>
+<span id="cb283-24"><a href="mc_standdr.html#cb283-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb283-25"><a href="mc_standdr.html#cb283-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-26"><a href="mc_standdr.html#cb283-26" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;ss&quot;</span> <span class="ot">=</span> ss)</span>
+<span id="cb283-27"><a href="mc_standdr.html#cb283-27" aria-hidden="true" tabindex="-1"></a>  mc.out <span class="ot">&lt;-</span> MonteCarlo<span class="sc">::</span><span class="fu">MonteCarlo</span>(<span class="at">func =</span> ms_standdr_func,</span>
+<span id="cb283-28"><a href="mc_standdr.html#cb283-28" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">nrep =</span> nrep, <span class="at">param_list =</span> params)</span>
+<span id="cb283-29"><a href="mc_standdr.html#cb283-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-30"><a href="mc_standdr.html#cb283-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output results in a dataframe</span></span>
+<span id="cb283-31"><a href="mc_standdr.html#cb283-31" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(MonteCarlo<span class="sc">::</span><span class="fu">MakeFrame</span>(mc.out))</span>
+<span id="cb283-32"><a href="mc_standdr.html#cb283-32" aria-hidden="true" tabindex="-1"></a>  out <span class="sc">%&gt;%</span></span>
+<span id="cb283-33"><a href="mc_standdr.html#cb283-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>ss, <span class="at">names_to =</span> <span class="st">&quot;estimator&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb283-34"><a href="mc_standdr.html#cb283-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(ss, estimator) <span class="sc">%&gt;%</span></span>
+<span id="cb283-35"><a href="mc_standdr.html#cb283-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), </span>
+<span id="cb283-36"><a href="mc_standdr.html#cb283-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">mean =</span> <span class="fu">mean</span>(value),</span>
+<span id="cb283-37"><a href="mc_standdr.html#cb283-37" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd =</span> <span class="fu">sd</span>(value),</span>
+<span id="cb283-38"><a href="mc_standdr.html#cb283-38" aria-hidden="true" tabindex="-1"></a>              <span class="at">lower =</span> <span class="fu">quantile</span>(value, <span class="at">probs =</span> (<span class="dv">1</span> <span class="sc">-</span> width) <span class="sc">/</span> <span class="dv">2</span>),</span>
+<span id="cb283-39"><a href="mc_standdr.html#cb283-39" aria-hidden="true" tabindex="-1"></a>              <span class="at">upper =</span> <span class="fu">quantile</span>(value, <span class="at">probs =</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> width) <span class="sc">/</span> <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb283-40"><a href="mc_standdr.html#cb283-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb283-41"><a href="mc_standdr.html#cb283-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb283-42"><a href="mc_standdr.html#cb283-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb283-43"><a href="mc_standdr.html#cb283-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Data Simulation for Doubly Robust Standardization</span></span>
+<span id="cb283-44"><a href="mc_standdr.html#cb283-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-45"><a href="mc_standdr.html#cb283-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param n Number of individuals/observations.</span></span>
+<span id="cb283-46"><a href="mc_standdr.html#cb283-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param ss Number of covariates.</span></span>
+<span id="cb283-47"><a href="mc_standdr.html#cb283-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param alpha coefficient used to compute the distribution of \code{`T`}.</span></span>
+<span id="cb283-48"><a href="mc_standdr.html#cb283-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param beta coefficient used to compute the distribution of \code{`T`}.</span></span>
+<span id="cb283-49"><a href="mc_standdr.html#cb283-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param probH probability of H.</span></span>
+<span id="cb283-50"><a href="mc_standdr.html#cb283-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param seed Seed value. default is \code{NULL}.</span></span>
+<span id="cb283-51"><a href="mc_standdr.html#cb283-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-52"><a href="mc_standdr.html#cb283-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List with a dataframe of Y, T and H and summary statitics.</span></span>
+<span id="cb283-53"><a href="mc_standdr.html#cb283-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb283-54"><a href="mc_standdr.html#cb283-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-55"><a href="mc_standdr.html#cb283-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb283-56"><a href="mc_standdr.html#cb283-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; \dontrun{</span></span>
+<span id="cb283-57"><a href="mc_standdr.html#cb283-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; standdr_sim()</span></span>
+<span id="cb283-58"><a href="mc_standdr.html#cb283-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; }</span></span>
+<span id="cb283-59"><a href="mc_standdr.html#cb283-59" aria-hidden="true" tabindex="-1"></a>standdr_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">3000</span>, <span class="at">ss =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.13</span>, <span class="at">beta =</span> <span class="dv">20</span>, </span>
+<span id="cb283-60"><a href="mc_standdr.html#cb283-60" aria-hidden="true" tabindex="-1"></a>                        <span class="at">probH =</span> <span class="fl">0.05</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb283-61"><a href="mc_standdr.html#cb283-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb283-62"><a href="mc_standdr.html#cb283-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-63"><a href="mc_standdr.html#cb283-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># matrix of independent Bernoulli vector with prob = 0.05</span></span>
+<span id="cb283-64"><a href="mc_standdr.html#cb283-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;The columns of H were independent indicator variables each</span></span>
+<span id="cb283-65"><a href="mc_standdr.html#cb283-65" aria-hidden="true" tabindex="-1"></a>  <span class="co">#  with probability 0.05&quot;</span></span>
+<span id="cb283-66"><a href="mc_standdr.html#cb283-66" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">replicate</span>(<span class="at">n =</span> ss, <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probH)))</span>
+<span id="cb283-67"><a href="mc_standdr.html#cb283-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-68"><a href="mc_standdr.html#cb283-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the treatment depend on a function of H</span></span>
+<span id="cb283-69"><a href="mc_standdr.html#cb283-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;We simulated T  as indicator variables with probabilities that varied as</span></span>
+<span id="cb283-70"><a href="mc_standdr.html#cb283-70" aria-hidden="true" tabindex="-1"></a>  <span class="co"># a linear function  of H such that approximately 600 individuals had T=1&quot;</span></span>
+<span id="cb283-71"><a href="mc_standdr.html#cb283-71" aria-hidden="true" tabindex="-1"></a>  sumH <span class="ot">&lt;-</span> <span class="fu">apply</span>(H, <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> sum) <span class="sc">*</span> beta <span class="sc">/</span> ss</span>
+<span id="cb283-72"><a href="mc_standdr.html#cb283-72" aria-hidden="true" tabindex="-1"></a>  probT <span class="ot">&lt;-</span> alpha <span class="sc">*</span> sumH <span class="sc">+</span> probH <span class="sc">*</span> <span class="fu">rnorm</span>(<span class="at">n =</span> n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
+<span id="cb283-73"><a href="mc_standdr.html#cb283-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># validate the positivity assumption</span></span>
+<span id="cb283-74"><a href="mc_standdr.html#cb283-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probT <span class="sc">&gt;</span> <span class="dv">0</span>, probT <span class="sc">&lt;</span> <span class="dv">1</span>)</span>
+<span id="cb283-75"><a href="mc_standdr.html#cb283-75" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-76"><a href="mc_standdr.html#cb283-76" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probT)</span>
+<span id="cb283-77"><a href="mc_standdr.html#cb283-77" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-78"><a href="mc_standdr.html#cb283-78" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-79"><a href="mc_standdr.html#cb283-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the outcome depend on T and H</span></span>
+<span id="cb283-80"><a href="mc_standdr.html#cb283-80" aria-hidden="true" tabindex="-1"></a>  <span class="co"># &quot;We simulated Y as a function T ans sumH such hat approximatey 35 </span></span>
+<span id="cb283-81"><a href="mc_standdr.html#cb283-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># individuals had Y = 1&quot;</span></span>
+<span id="cb283-82"><a href="mc_standdr.html#cb283-82" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> <span class="fl">0.01</span> <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> <span class="fl">0.01</span> <span class="sc">*</span> sumH</span>
+<span id="cb283-83"><a href="mc_standdr.html#cb283-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># positivity assumption is not required for the outcome</span></span>
+<span id="cb283-84"><a href="mc_standdr.html#cb283-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># see intro to chapter 6 p. 99</span></span>
+<span id="cb283-85"><a href="mc_standdr.html#cb283-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(probY <span class="sc">&gt;=</span> <span class="dv">0</span>, probY <span class="sc">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb283-86"><a href="mc_standdr.html#cb283-86" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-87"><a href="mc_standdr.html#cb283-87" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
+<span id="cb283-88"><a href="mc_standdr.html#cb283-88" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-89"><a href="mc_standdr.html#cb283-89" aria-hidden="true" tabindex="-1"></a>  <span class="co"># put the data in a data.frame</span></span>
+<span id="cb283-90"><a href="mc_standdr.html#cb283-90" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="st">&quot;H&quot;</span> <span class="ot">=</span> H)</span>
+<span id="cb283-91"><a href="mc_standdr.html#cb283-91" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-92"><a href="mc_standdr.html#cb283-92" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output results in a list</span></span>
+<span id="cb283-93"><a href="mc_standdr.html#cb283-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb283-94"><a href="mc_standdr.html#cb283-94" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;stats&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">&quot;sumH&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(sumH),</span>
+<span id="cb283-95"><a href="mc_standdr.html#cb283-95" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;probT&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(probT),</span>
+<span id="cb283-96"><a href="mc_standdr.html#cb283-96" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>),</span>
+<span id="cb283-97"><a href="mc_standdr.html#cb283-97" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;probY&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(probY),</span>
+<span id="cb283-98"><a href="mc_standdr.html#cb283-98" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="fu">standdr_stats</span>(Y)),</span>
+<span id="cb283-99"><a href="mc_standdr.html#cb283-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;data&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="st">&quot;H&quot;</span> <span class="ot">=</span> H)</span>
+<span id="cb283-100"><a href="mc_standdr.html#cb283-100" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb283-101"><a href="mc_standdr.html#cb283-101" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb283-102"><a href="mc_standdr.html#cb283-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb283-103"><a href="mc_standdr.html#cb283-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb283-104"><a href="mc_standdr.html#cb283-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Estimates from Doubly Robust Standardization Simulation</span></span>
+<span id="cb283-105"><a href="mc_standdr.html#cb283-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-106"><a href="mc_standdr.html#cb283-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param Y Vector of outcomes</span></span>
+<span id="cb283-107"><a href="mc_standdr.html#cb283-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param `T` Vector of treatments</span></span>
+<span id="cb283-108"><a href="mc_standdr.html#cb283-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param H Matrix of covariates</span></span>
+<span id="cb283-109"><a href="mc_standdr.html#cb283-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-110"><a href="mc_standdr.html#cb283-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return List of estimates</span></span>
+<span id="cb283-111"><a href="mc_standdr.html#cb283-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb283-112"><a href="mc_standdr.html#cb283-112" aria-hidden="true" tabindex="-1"></a>standdr_est <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) {</span>
+<span id="cb283-113"><a href="mc_standdr.html#cb283-113" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-114"><a href="mc_standdr.html#cb283-114" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit the exposure model</span></span>
+<span id="cb283-115"><a href="mc_standdr.html#cb283-115" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">lm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H))</span>
+<span id="cb283-116"><a href="mc_standdr.html#cb283-116" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-117"><a href="mc_standdr.html#cb283-117" aria-hidden="true" tabindex="-1"></a>  <span class="co"># refit the exposure model using an incorrect logistic model</span></span>
+<span id="cb283-118"><a href="mc_standdr.html#cb283-118" aria-hidden="true" tabindex="-1"></a>  e2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="fu">glm</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">~</span> H, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>), <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb283-119"><a href="mc_standdr.html#cb283-119" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-120"><a href="mc_standdr.html#cb283-120" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the weights</span></span>
+<span id="cb283-121"><a href="mc_standdr.html#cb283-121" aria-hidden="true" tabindex="-1"></a>  w0 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e)</span>
+<span id="cb283-122"><a href="mc_standdr.html#cb283-122" aria-hidden="true" tabindex="-1"></a>  w1 <span class="ot">&lt;-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">/</span> e</span>
+<span id="cb283-123"><a href="mc_standdr.html#cb283-123" aria-hidden="true" tabindex="-1"></a>  w02 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e2)</span>
+<span id="cb283-124"><a href="mc_standdr.html#cb283-124" aria-hidden="true" tabindex="-1"></a>  w12 <span class="ot">&lt;-</span> T <span class="sc">/</span> e2</span>
+<span id="cb283-125"><a href="mc_standdr.html#cb283-125" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-126"><a href="mc_standdr.html#cb283-126" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fit an overspecified (saturated) outcome model</span></span>
+<span id="cb283-127"><a href="mc_standdr.html#cb283-127" aria-hidden="true" tabindex="-1"></a>  mod.out <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> H)</span>
+<span id="cb283-128"><a href="mc_standdr.html#cb283-128" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-129"><a href="mc_standdr.html#cb283-129" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate the expected potential outcomes using the various methods</span></span>
+<span id="cb283-130"><a href="mc_standdr.html#cb283-130" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;Y&quot;</span> <span class="ot">=</span> Y, <span class="st">&quot;T&quot;</span> <span class="ot">=</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb283-131"><a href="mc_standdr.html#cb283-131" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> dat</span>
+<span id="cb283-132"><a href="mc_standdr.html#cb283-132" aria-hidden="true" tabindex="-1"></a>  dat0<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb283-133"><a href="mc_standdr.html#cb283-133" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> dat</span>
+<span id="cb283-134"><a href="mc_standdr.html#cb283-134" aria-hidden="true" tabindex="-1"></a>  dat1<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb283-135"><a href="mc_standdr.html#cb283-135" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-136"><a href="mc_standdr.html#cb283-136" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the predicted data</span></span>
+<span id="cb283-137"><a href="mc_standdr.html#cb283-137" aria-hidden="true" tabindex="-1"></a>  preds0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat0)</span>
+<span id="cb283-138"><a href="mc_standdr.html#cb283-138" aria-hidden="true" tabindex="-1"></a>  preds1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod.out, <span class="at">newdata =</span> dat1)</span>
+<span id="cb283-139"><a href="mc_standdr.html#cb283-139" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-140"><a href="mc_standdr.html#cb283-140" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the estimates</span></span>
+<span id="cb283-141"><a href="mc_standdr.html#cb283-141" aria-hidden="true" tabindex="-1"></a>  EYT0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>))</span>
+<span id="cb283-142"><a href="mc_standdr.html#cb283-142" aria-hidden="true" tabindex="-1"></a>  EYT1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(Y <span class="sc">*</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>)</span>
+<span id="cb283-143"><a href="mc_standdr.html#cb283-143" aria-hidden="true" tabindex="-1"></a>  EY0exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w0)</span>
+<span id="cb283-144"><a href="mc_standdr.html#cb283-144" aria-hidden="true" tabindex="-1"></a>  EY1exp <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w1)</span>
+<span id="cb283-145"><a href="mc_standdr.html#cb283-145" aria-hidden="true" tabindex="-1"></a>  EY0exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w02)</span>
+<span id="cb283-146"><a href="mc_standdr.html#cb283-146" aria-hidden="true" tabindex="-1"></a>  EY1exp2 <span class="ot">&lt;-</span> <span class="fu">weighted.mean</span>(Y, <span class="at">w =</span> w12)</span>
+<span id="cb283-147"><a href="mc_standdr.html#cb283-147" aria-hidden="true" tabindex="-1"></a>  EY0out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds0)</span>
+<span id="cb283-148"><a href="mc_standdr.html#cb283-148" aria-hidden="true" tabindex="-1"></a>  EY1out <span class="ot">&lt;-</span> <span class="fu">mean</span>(preds1)</span>
+<span id="cb283-149"><a href="mc_standdr.html#cb283-149" aria-hidden="true" tabindex="-1"></a>  EY0dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w0 <span class="sc">*</span> Y <span class="sc">+</span> preds0 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> e))</span>
+<span id="cb283-150"><a href="mc_standdr.html#cb283-150" aria-hidden="true" tabindex="-1"></a>  EY1dr <span class="ot">&lt;-</span> <span class="fu">mean</span>(w1 <span class="sc">*</span> Y <span class="sc">-</span> preds1 <span class="sc">*</span> (<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">-</span> e) <span class="sc">/</span> e)</span>
+<span id="cb283-151"><a href="mc_standdr.html#cb283-151" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb283-152"><a href="mc_standdr.html#cb283-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;EYT0&quot;</span> <span class="ot">=</span> EYT0,</span>
+<span id="cb283-153"><a href="mc_standdr.html#cb283-153" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EYT1&quot;</span> <span class="ot">=</span> EYT1,</span>
+<span id="cb283-154"><a href="mc_standdr.html#cb283-154" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0exp&quot;</span> <span class="ot">=</span> EY0exp,</span>
+<span id="cb283-155"><a href="mc_standdr.html#cb283-155" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1exp&quot;</span> <span class="ot">=</span> EY1exp,</span>
+<span id="cb283-156"><a href="mc_standdr.html#cb283-156" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0exp2&quot;</span> <span class="ot">=</span> EY0exp2,</span>
+<span id="cb283-157"><a href="mc_standdr.html#cb283-157" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1exp2&quot;</span> <span class="ot">=</span> EY1exp2,</span>
+<span id="cb283-158"><a href="mc_standdr.html#cb283-158" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0out&quot;</span> <span class="ot">=</span> EY0out,</span>
+<span id="cb283-159"><a href="mc_standdr.html#cb283-159" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1out&quot;</span> <span class="ot">=</span> EY1out,</span>
+<span id="cb283-160"><a href="mc_standdr.html#cb283-160" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY0dr&quot;</span> <span class="ot">=</span> EY0dr,</span>
+<span id="cb283-161"><a href="mc_standdr.html#cb283-161" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;EY1dr&quot;</span> <span class="ot">=</span> EY1dr)</span>
+<span id="cb283-162"><a href="mc_standdr.html#cb283-162" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb283-163"><a href="mc_standdr.html#cb283-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb283-164"><a href="mc_standdr.html#cb283-164" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; Compute Statistics from \code{standdr_sim}.</span></span>
+<span id="cb283-165"><a href="mc_standdr.html#cb283-165" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-166"><a href="mc_standdr.html#cb283-166" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @param x Vector of numeric values.</span></span>
+<span id="cb283-167"><a href="mc_standdr.html#cb283-167" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-168"><a href="mc_standdr.html#cb283-168" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @return list of statistics: \code{sun(x), mean(x), min(x), max(x)}.</span></span>
+<span id="cb283-169"><a href="mc_standdr.html#cb283-169" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39;</span></span>
+<span id="cb283-170"><a href="mc_standdr.html#cb283-170" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @examples</span></span>
+<span id="cb283-171"><a href="mc_standdr.html#cb283-171" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; standdr_est(runif(20))</span></span>
+<span id="cb283-172"><a href="mc_standdr.html#cb283-172" aria-hidden="true" tabindex="-1"></a><span class="co">#&#39; @export</span></span>
+<span id="cb283-173"><a href="mc_standdr.html#cb283-173" aria-hidden="true" tabindex="-1"></a>standdr_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb283-174"><a href="mc_standdr.html#cb283-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">&quot;sum&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(x), <span class="st">&quot;mean&quot;</span> <span class="ot">=</span> <span class="fu">mean</span>(x), <span class="st">&quot;min&quot;</span> <span class="ot">=</span> <span class="fu">min</span>(x), <span class="st">&quot;max&quot;</span> <span class="ot">=</span> <span class="fu">max</span>(x))</span>
+<span id="cb283-175"><a href="mc_standdr.html#cb283-175" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
 </div>
