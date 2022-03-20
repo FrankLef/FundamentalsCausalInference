@@ -41,12 +41,9 @@ data("recovery", package = "fciR")
 run `boot()`, alias `meas_effect_modif()` with the RECOVERY data set
 
 ```{r}
-vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
-            "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
-            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
 recovery.out <- boot_est(data = recovery, func = meas_effect_modif,
                          R = 100, conf = 0.95,
-                         inv = "exp", vars = vars,
+                         inv = "exp", evars = "modifier",
                          outcome.name = "Y", exposure.name = "T",
                          modifier.name = "M")
 ```
@@ -159,13 +156,9 @@ Run the bootsrap
 
 
 ```{r}
-# nces.out <- fciR::meas_effect_modif(nces, formula = highmathsat ~ female + selective)
-vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
-            "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
-            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
 nces.out <- boot_est(data = nces, func = meas_effect_modif,
                          R = 100, conf = 0.95,
-                         inv = "exp", vars = vars,
+                         inv = "exp", evars = "modifier",
                          outcome.name = "highmathsat", exposure.name = "female",
                          modifier.name = "selective")
 ```

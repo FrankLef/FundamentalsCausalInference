@@ -489,8 +489,10 @@ For a the parametric outcome model `fciR::backdr_out()` is used
 
 ```{r}
 data("whatif2dat", package = "fciR")
-whatif2.out <- fciR::backdr_out(whatif2dat, formula = vl4 ~ A + lvlcont0)
-# whatif2.out
+whatif2.out<- boot_est(data = whatif2dat, func = backdr_out,
+                  R = 100, conf = 0.95,
+                  outcome.name = "vl4", exposure.name = "A",
+                  confound.names = "lvlcont0")
 ```
 
 and we compare with the author's
@@ -530,8 +532,10 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 ```{r}
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
-# gssrcc.out <- fciR::backdr_out(gssrcc,
-#                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# gssrcc.out <- boot_est(data = gssrcc, func = backdr_out,
+#                   R = 100, conf = 0.95,
+#                   outcome.name = "trump", exposure.name = "gthsedu",
+#                   confound.names = c("magthsedu", "white", "female", "gt65"))
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_gssrcc_out.rds")
