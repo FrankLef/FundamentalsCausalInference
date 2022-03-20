@@ -5,6 +5,14 @@ library(fciR)
 ```
 
 
+```{r include=FALSE}
+# directory of data files
+dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
+```
+
+
 The mortality data was given in chapter 1, section 1.2.1.
 
 ```{r}
@@ -102,12 +110,22 @@ Run and verify against the author's results on p.34
 
 ```{r}
 data("whatifdat", package = "fciR")
-d <- fciR::lmodboot(whatifdat, R = 500)
-d
+message("this takes 10 sec.: we load a saved file instead")
+# startTime <- Sys.time()
+# out <- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,
+#                 inv = "expit", vars = c("P" = "logitP"),
+#                 outcome.name = "Y",
+#                 input.names = c("T", "A", "H"))
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap02_lmodboot.rds")
+# saveRDS(out, file = a_file)
+out <- readRDS(file = a_file)
+
 # check results with book
-stopifnot(abs(d["est"] - 0.60596) < 0.02,
-          abs(d["lci"] - 0.41638) < 0.02,
-          abs(d["uci"] - 0.76823) < 0.02)
+stopifnot(abs(out["est"] - 0.60596) < 0.02,
+          abs(out["lci"] - 0.41638) < 0.02,
+          abs(out["uci"] - 0.76823) < 0.02)
 ```
 
 

@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-03-19" />
+<meta name="date" content="2022-03-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -402,23 +402,17 @@ div.csl-indent {
 <h2><span class="header-section-number">4.1</span> Effect-Measure Modification and Statistical Interaction</h2>
 <div id="recovery-trial" class="section level3" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> RECOVERY trial</h3>
-<p>Create the data.frame for <em>RECOVERY</em> trial</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="measures.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery &lt;- expand.grid(Y = 0:1, `T` = 0:1, M = 0:1)</span></span>
-<span id="cb26-2"><a href="measures.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery$n &lt;- as.integer(c(787, 2851, 368, 1412, 278, 405, 86, 238))</span></span>
-<span id="cb26-3"><a href="measures.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery &lt;- lapply(X = seq_len(nrow(recovery)), FUN = function(i) {</span></span>
-<span id="cb26-4"><a href="measures.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   data.frame(</span></span>
-<span id="cb26-5"><a href="measures.html#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     M = rep(recovery$M[i], recovery$n[i]),</span></span>
-<span id="cb26-6"><a href="measures.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     `T` = rep(recovery$`T`[i], recovery$n[i]),</span></span>
-<span id="cb26-7"><a href="measures.html#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     Y = rep(recovery$Y[i], recovery$n[i])</span></span>
-<span id="cb26-8"><a href="measures.html#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
-<span id="cb26-9"><a href="measures.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
-<span id="cb26-10"><a href="measures.html#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery &lt;- do.call(rbind, recovery)</span></span>
-<span id="cb26-11"><a href="measures.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># # create an id variable for use with gee() later</span></span>
-<span id="cb26-12"><a href="measures.html#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery$id &lt;- seq_len(nrow(recovery))</span></span>
-<span id="cb26-13"><a href="measures.html#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;recovery&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
-<p>run <code>boot()</code> with the RECOVERY data set</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="measures.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recovery.out &lt;- boot(recovery, formula = Y ~ `T` + M)</span></span>
-<span id="cb27-2"><a href="measures.html#cb27-2" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">meas_effect_modif</span>(recovery, <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M)</span></code></pre></div>
+<p>Get the data.frame for <em>RECOVERY</em> trial</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="measures.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;recovery&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
+<p>run <code>boot()</code>, alias <code>meas_effect_modif()</code> with the RECOVERY data set</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="measures.html#cb27-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;RR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;RR.diff&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR.diff&quot;</span>,</span>
+<span id="cb27-2"><a href="measures.html#cb27-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;RR*.M0&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;RR*.M1&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M1&quot;</span>, <span class="st">&quot;RR*.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR*.diff&quot;</span>,</span>
+<span id="cb27-3"><a href="measures.html#cb27-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;OR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;OR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;OR.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.diff&quot;</span>)</span>
+<span id="cb27-4"><a href="measures.html#cb27-4" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> recovery, <span class="at">func =</span> meas_effect_modif,</span>
+<span id="cb27-5"><a href="measures.html#cb27-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb27-6"><a href="measures.html#cb27-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">vars =</span> vars,</span>
+<span id="cb27-7"><a href="measures.html#cb27-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
+<span id="cb27-8"><a href="measures.html#cb27-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;M&quot;</span>)</span></code></pre></div>
 <p>verify the results with the author’s on p. 65.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="measures.html#cb28-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb28-2"><a href="measures.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
@@ -431,23 +425,25 @@ div.csl-indent {
 <span id="cb28-9"><a href="measures.html#cb28-9" aria-hidden="true" tabindex="-1"></a>          <span class="sc">-</span><span class="fl">0.191</span>, <span class="sc">-</span><span class="fl">0.059</span>, <span class="fl">0.132</span>, <span class="fl">1.012</span>, <span class="fl">1.239</span>, <span class="fl">1.224</span>,</span>
 <span id="cb28-10"><a href="measures.html#cb28-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">1.046</span>, <span class="fl">1.533</span>, <span class="fl">1.466</span>, <span class="fl">1.059</span>, <span class="fl">1.9</span>, <span class="fl">1.794</span>)</span>
 <span id="cb28-11"><a href="measures.html#cb28-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb28-12"><a href="measures.html#cb28-12" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb,</span>
-<span id="cb28-13"><a href="measures.html#cb28-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d =</span> recovery.out[<span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group), </span>
-<span id="cb28-14"><a href="measures.html#cb28-14" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">paste</span>(recovery.out<span class="sc">$</span>estimator, recovery.out<span class="sc">$</span>group)), </span>
-<span id="cb28-15"><a href="measures.html#cb28-15" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">&quot;est&quot;</span>])</span>
-<span id="cb28-16"><a href="measures.html#cb28-16" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
-<span id="cb28-17"><a href="measures.html#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span>
-<span id="cb28-18"><a href="measures.html#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span></code></pre></div>
+<span id="cb28-12"><a href="measures.html#cb28-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), recovery.out<span class="sc">$</span>name)</span>
+<span id="cb28-13"><a href="measures.html#cb28-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb,</span>
+<span id="cb28-14"><a href="measures.html#cb28-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d =</span> recovery.out[ids, <span class="st">&quot;est&quot;</span>])</span>
+<span id="cb28-15"><a href="measures.html#cb28-15" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
+<span id="cb28-16"><a href="measures.html#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span>
+<span id="cb28-17"><a href="measures.html#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span></code></pre></div>
 <p>and we communicate the results in a table</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="measures.html#cb29-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(recovery.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
-<span id="cb29-2"><a href="measures.html#cb29-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.2 RECOVERY Trial&quot;</span>,</span>
-<span id="cb29-3"><a href="measures.html#cb29-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
-<div id="ueqqnfqoyt" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="measures.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
+<span id="cb29-2"><a href="measures.html#cb29-2" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> recovery.out <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="measures.html#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-4"><a href="measures.html#cb29-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(recovery.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb29-5"><a href="measures.html#cb29-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.2 RECOVERY Trial&quot;</span>,</span>
+<span id="cb29-6"><a href="measures.html#cb29-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
+<div id="ptphparmag" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ueqqnfqoyt .gt_table {
+#ptphparmag .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -472,7 +468,7 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_heading {
+#ptphparmag .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -484,7 +480,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_title {
+#ptphparmag .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -494,7 +490,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#ueqqnfqoyt .gt_subtitle {
+#ptphparmag .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -504,13 +500,13 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#ueqqnfqoyt .gt_bottom_border {
+#ptphparmag .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_col_headings {
+#ptphparmag .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -525,7 +521,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_col_heading {
+#ptphparmag .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -545,7 +541,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ueqqnfqoyt .gt_column_spanner_outer {
+#ptphparmag .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -557,15 +553,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#ueqqnfqoyt .gt_column_spanner_outer:first-child {
+#ptphparmag .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ueqqnfqoyt .gt_column_spanner_outer:last-child {
+#ptphparmag .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ueqqnfqoyt .gt_column_spanner {
+#ptphparmag .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -577,7 +573,7 @@ div.csl-indent {
   width: 100%;
 }
 
-#ueqqnfqoyt .gt_group_heading {
+#ptphparmag .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -599,7 +595,7 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#ueqqnfqoyt .gt_empty_group_heading {
+#ptphparmag .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -614,15 +610,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#ueqqnfqoyt .gt_from_md > :first-child {
+#ptphparmag .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ueqqnfqoyt .gt_from_md > :last-child {
+#ptphparmag .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ueqqnfqoyt .gt_row {
+#ptphparmag .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -641,7 +637,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ueqqnfqoyt .gt_stub {
+#ptphparmag .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -653,7 +649,7 @@ div.csl-indent {
   padding-left: 12px;
 }
 
-#ueqqnfqoyt .gt_summary_row {
+#ptphparmag .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -663,7 +659,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ueqqnfqoyt .gt_first_summary_row {
+#ptphparmag .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -673,7 +669,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_grand_summary_row {
+#ptphparmag .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -683,7 +679,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ueqqnfqoyt .gt_first_grand_summary_row {
+#ptphparmag .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -693,11 +689,11 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_striped {
+#ptphparmag .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ueqqnfqoyt .gt_table_body {
+#ptphparmag .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -706,7 +702,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_footnotes {
+#ptphparmag .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -720,13 +716,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_footnote {
+#ptphparmag .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ueqqnfqoyt .gt_sourcenotes {
+#ptphparmag .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -740,41 +736,41 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ueqqnfqoyt .gt_sourcenote {
+#ptphparmag .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ueqqnfqoyt .gt_left {
+#ptphparmag .gt_left {
   text-align: left;
 }
 
-#ueqqnfqoyt .gt_center {
+#ptphparmag .gt_center {
   text-align: center;
 }
 
-#ueqqnfqoyt .gt_right {
+#ptphparmag .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ueqqnfqoyt .gt_font_normal {
+#ptphparmag .gt_font_normal {
   font-weight: normal;
 }
 
-#ueqqnfqoyt .gt_font_bold {
+#ptphparmag .gt_font_bold {
   font-weight: bold;
 }
 
-#ueqqnfqoyt .gt_font_italic {
+#ptphparmag .gt_font_italic {
   font-style: italic;
 }
 
-#ueqqnfqoyt .gt_super {
+#ptphparmag .gt_super {
   font-size: 65%;
 }
 
-#ueqqnfqoyt .gt_footnote_marks {
+#ptphparmag .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -814,46 +810,46 @@ div.csl-indent {
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_center">EYT0</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.784</td>
-<td class="gt_row gt_center">(0.770, 0.797)</td>
+<td class="gt_row gt_center">(0.771, 0.795)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.593</td>
-<td class="gt_row gt_center">(0.556, 0.629)</td>
+<td class="gt_row gt_center">(0.557, 0.628)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">-0.191</td>
-<td class="gt_row gt_center">(-0.230, -0.151)</td></tr>
+<td class="gt_row gt_center">(-0.228, -0.153)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">EYT1</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.793</td>
-<td class="gt_row gt_center gt_striped">(0.776, 0.811)</td>
+<td class="gt_row gt_center gt_striped">(0.777, 0.810)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.735</td>
-<td class="gt_row gt_center gt_striped">(0.685, 0.782)</td>
+<td class="gt_row gt_center gt_striped">(0.685, 0.776)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">-0.059</td>
-<td class="gt_row gt_center gt_striped">(-0.113, -0.007)</td></tr>
+<td class="gt_row gt_center gt_striped">(-0.113, -0.013)</td></tr>
     <tr><td class="gt_row gt_center">RD</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.010</td>
-<td class="gt_row gt_center">(-0.012, 0.032)</td>
+<td class="gt_row gt_center">(-0.010, 0.030)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.142</td>
-<td class="gt_row gt_center">(0.081, 0.202)</td>
+<td class="gt_row gt_center">(0.086, 0.190)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.132</td>
-<td class="gt_row gt_center">(0.064, 0.198)</td></tr>
+<td class="gt_row gt_center">(0.069, 0.186)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.012</td>
-<td class="gt_row gt_center gt_striped">(0.985, 1.042)</td>
+<td class="gt_row gt_center gt_striped">(0.988, 1.039)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.239</td>
-<td class="gt_row gt_center gt_striped">(1.132, 1.356)</td>
+<td class="gt_row gt_center gt_striped">(1.140, 1.331)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.224</td>
-<td class="gt_row gt_center gt_striped">(1.109, 1.347)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.117, 1.325)</td></tr>
     <tr><td class="gt_row gt_center">RR*</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.046</td>
-<td class="gt_row gt_center">(0.944, 1.166)</td>
+<td class="gt_row gt_center">(0.954, 1.152)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.533</td>
-<td class="gt_row gt_center">(1.242, 1.874)</td>
+<td class="gt_row gt_center">(1.254, 1.807)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.466</td>
-<td class="gt_row gt_center">(1.143, 1.849)</td></tr>
+<td class="gt_row gt_center">(1.155, 1.784)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.059</td>
-<td class="gt_row gt_center gt_striped">(0.930, 1.215)</td>
+<td class="gt_row gt_center gt_striped">(0.943, 1.197)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.900</td>
-<td class="gt_row gt_center gt_striped">(1.410, 2.534)</td>
+<td class="gt_row gt_center gt_striped">(1.437, 2.395)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.794</td>
-<td class="gt_row gt_center gt_striped">(1.273, 2.481)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.296, 2.353)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -883,7 +879,7 @@ between the 2 strata.</p>
 lack of effect of dexamethasone without intrusive mechanical ventilation (M0)
 vs its use with intrusive mechanical ventilation (M1) which is significant.</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="measures.html#cb30-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(recovery.out, <span class="at">title =</span> <span class="st">&quot;RECOVERY trial&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <p>The <code>gee::gee()</code> function is used to find information on the coefficients
 and see if they are statistically significant. The same could be done
 withe <code>glm::glm()</code> but <code>gee</code> offers results with robust statistics which
@@ -961,7 +957,15 @@ us the 2-sided p-value that is significant</p>
 <h3><span class="header-section-number">4.1.2</span> NCES</h3>
 <p>We process the <code>NCES</code> data the same way we did for the RECOVERY trial.</p>
 <p>Run the bootsrap</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="measures.html#cb45-1" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">meas_effect_modif</span>(nces, <span class="at">formula =</span> highmathsat <span class="sc">~</span> female <span class="sc">+</span> selective)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="measures.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nces.out &lt;- fciR::meas_effect_modif(nces, formula = highmathsat ~ female + selective)</span></span>
+<span id="cb45-2"><a href="measures.html#cb45-2" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M0&quot;</span>, <span class="st">&quot;RR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR.M1&quot;</span>, <span class="st">&quot;RR.diff&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR.diff&quot;</span>,</span>
+<span id="cb45-3"><a href="measures.html#cb45-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;RR*.M0&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M0&quot;</span>, <span class="st">&quot;RR*.M1&quot;</span>  <span class="ot">=</span> <span class="st">&quot;logRR*.M1&quot;</span>, <span class="st">&quot;RR*.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logRR*.diff&quot;</span>,</span>
+<span id="cb45-4"><a href="measures.html#cb45-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;OR.M0&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M0&quot;</span>, <span class="st">&quot;OR.M1&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.M1&quot;</span>, <span class="st">&quot;OR.diff&quot;</span> <span class="ot">=</span> <span class="st">&quot;logOR.diff&quot;</span>)</span>
+<span id="cb45-5"><a href="measures.html#cb45-5" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> nces, <span class="at">func =</span> meas_effect_modif,</span>
+<span id="cb45-6"><a href="measures.html#cb45-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb45-7"><a href="measures.html#cb45-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">vars =</span> vars,</span>
+<span id="cb45-8"><a href="measures.html#cb45-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;highmathsat&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;female&quot;</span>,</span>
+<span id="cb45-9"><a href="measures.html#cb45-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;selective&quot;</span>)</span></code></pre></div>
 <p>verify the results with the author’s on p. 70.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="measures.html#cb46-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb46-2"><a href="measures.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
@@ -974,22 +978,23 @@ us the 2-sided p-value that is significant</p>
 <span id="cb46-9"><a href="measures.html#cb46-9" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.509</span>, <span class="fl">0.264</span>, <span class="sc">-</span><span class="fl">0.244</span>, <span class="fl">0.486</span>, <span class="fl">0.511</span>, <span class="fl">1.052</span>,</span>
 <span id="cb46-10"><a href="measures.html#cb46-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.907</span>, <span class="fl">0.496</span>, <span class="fl">0.547</span>, <span class="fl">0.44</span>, <span class="fl">0.254</span>, <span class="fl">0.576</span>)</span>
 <span id="cb46-11"><a href="measures.html#cb46-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb46-12"><a href="measures.html#cb46-12" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb,</span>
-<span id="cb46-13"><a href="measures.html#cb46-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d =</span> nces.out[<span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group), </span>
-<span id="cb46-14"><a href="measures.html#cb46-14" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">paste</span>(nces.out<span class="sc">$</span>estimator, nces.out<span class="sc">$</span>group)), </span>
-<span id="cb46-15"><a href="measures.html#cb46-15" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">&quot;est&quot;</span>])</span>
-<span id="cb46-16"><a href="measures.html#cb46-16" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
-<span id="cb46-17"><a href="measures.html#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<span id="cb46-12"><a href="measures.html#cb46-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), nces.out<span class="sc">$</span>name)</span>
+<span id="cb46-13"><a href="measures.html#cb46-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb, <span class="at">d =</span> nces.out[ids, <span class="st">&quot;est&quot;</span>])</span>
+<span id="cb46-14"><a href="measures.html#cb46-14" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
+<span id="cb46-15"><a href="measures.html#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the table is</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="measures.html#cb47-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(nces.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
-<span id="cb47-2"><a href="measures.html#cb47-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.3 NCES data&quot;</span>,</span>
-<span id="cb47-3"><a href="measures.html#cb47-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
-<div id="mnfrtbzhqn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="measures.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
+<span id="cb47-2"><a href="measures.html#cb47-2" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> nces.out <span class="sc">%&gt;%</span></span>
+<span id="cb47-3"><a href="measures.html#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb47-4"><a href="measures.html#cb47-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(nces.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb47-5"><a href="measures.html#cb47-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.3 NCES data&quot;</span>,</span>
+<span id="cb47-6"><a href="measures.html#cb47-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
+<div id="mtrqdxzicm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mnfrtbzhqn .gt_table {
+#mtrqdxzicm .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1014,7 +1019,7 @@ us the 2-sided p-value that is significant</p>
   border-left-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_heading {
+#mtrqdxzicm .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1026,7 +1031,7 @@ us the 2-sided p-value that is significant</p>
   border-right-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_title {
+#mtrqdxzicm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -1036,7 +1041,7 @@ us the 2-sided p-value that is significant</p>
   border-bottom-width: 0;
 }
 
-#mnfrtbzhqn .gt_subtitle {
+#mtrqdxzicm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -1046,13 +1051,13 @@ us the 2-sided p-value that is significant</p>
   border-top-width: 0;
 }
 
-#mnfrtbzhqn .gt_bottom_border {
+#mtrqdxzicm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_col_headings {
+#mtrqdxzicm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1067,7 +1072,7 @@ us the 2-sided p-value that is significant</p>
   border-right-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_col_heading {
+#mtrqdxzicm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1087,7 +1092,7 @@ us the 2-sided p-value that is significant</p>
   overflow-x: hidden;
 }
 
-#mnfrtbzhqn .gt_column_spanner_outer {
+#mtrqdxzicm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1099,15 +1104,15 @@ us the 2-sided p-value that is significant</p>
   padding-right: 4px;
 }
 
-#mnfrtbzhqn .gt_column_spanner_outer:first-child {
+#mtrqdxzicm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mnfrtbzhqn .gt_column_spanner_outer:last-child {
+#mtrqdxzicm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mnfrtbzhqn .gt_column_spanner {
+#mtrqdxzicm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1119,7 +1124,7 @@ us the 2-sided p-value that is significant</p>
   width: 100%;
 }
 
-#mnfrtbzhqn .gt_group_heading {
+#mtrqdxzicm .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1141,7 +1146,7 @@ us the 2-sided p-value that is significant</p>
   vertical-align: middle;
 }
 
-#mnfrtbzhqn .gt_empty_group_heading {
+#mtrqdxzicm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1156,15 +1161,15 @@ us the 2-sided p-value that is significant</p>
   vertical-align: middle;
 }
 
-#mnfrtbzhqn .gt_from_md > :first-child {
+#mtrqdxzicm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mnfrtbzhqn .gt_from_md > :last-child {
+#mtrqdxzicm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mnfrtbzhqn .gt_row {
+#mtrqdxzicm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1183,7 +1188,7 @@ us the 2-sided p-value that is significant</p>
   overflow-x: hidden;
 }
 
-#mnfrtbzhqn .gt_stub {
+#mtrqdxzicm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1195,7 +1200,7 @@ us the 2-sided p-value that is significant</p>
   padding-left: 12px;
 }
 
-#mnfrtbzhqn .gt_summary_row {
+#mtrqdxzicm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1205,7 +1210,7 @@ us the 2-sided p-value that is significant</p>
   padding-right: 5px;
 }
 
-#mnfrtbzhqn .gt_first_summary_row {
+#mtrqdxzicm .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1215,7 +1220,7 @@ us the 2-sided p-value that is significant</p>
   border-top-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_grand_summary_row {
+#mtrqdxzicm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1225,7 +1230,7 @@ us the 2-sided p-value that is significant</p>
   padding-right: 5px;
 }
 
-#mnfrtbzhqn .gt_first_grand_summary_row {
+#mtrqdxzicm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1235,11 +1240,11 @@ us the 2-sided p-value that is significant</p>
   border-top-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_striped {
+#mtrqdxzicm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mnfrtbzhqn .gt_table_body {
+#mtrqdxzicm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1248,7 +1253,7 @@ us the 2-sided p-value that is significant</p>
   border-bottom-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_footnotes {
+#mtrqdxzicm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1262,13 +1267,13 @@ us the 2-sided p-value that is significant</p>
   border-right-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_footnote {
+#mtrqdxzicm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#mnfrtbzhqn .gt_sourcenotes {
+#mtrqdxzicm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1282,41 +1287,41 @@ us the 2-sided p-value that is significant</p>
   border-right-color: #D3D3D3;
 }
 
-#mnfrtbzhqn .gt_sourcenote {
+#mtrqdxzicm .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#mnfrtbzhqn .gt_left {
+#mtrqdxzicm .gt_left {
   text-align: left;
 }
 
-#mnfrtbzhqn .gt_center {
+#mtrqdxzicm .gt_center {
   text-align: center;
 }
 
-#mnfrtbzhqn .gt_right {
+#mtrqdxzicm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mnfrtbzhqn .gt_font_normal {
+#mtrqdxzicm .gt_font_normal {
   font-weight: normal;
 }
 
-#mnfrtbzhqn .gt_font_bold {
+#mtrqdxzicm .gt_font_bold {
   font-weight: bold;
 }
 
-#mnfrtbzhqn .gt_font_italic {
+#mtrqdxzicm .gt_font_italic {
   font-style: italic;
 }
 
-#mnfrtbzhqn .gt_super {
+#mtrqdxzicm .gt_super {
   font-size: 65%;
 }
 
-#mnfrtbzhqn .gt_footnote_marks {
+#mtrqdxzicm .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1356,46 +1361,46 @@ us the 2-sided p-value that is significant</p>
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_center">EYT0</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.167</td>
-<td class="gt_row gt_center">(0.136, 0.199)</td>
+<td class="gt_row gt_center">(0.135, 0.196)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.675</td>
-<td class="gt_row gt_center">(0.597, 0.751)</td>
+<td class="gt_row gt_center">(0.600, 0.740)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.509</td>
-<td class="gt_row gt_center">(0.425, 0.588)</td></tr>
+<td class="gt_row gt_center">(0.426, 0.583)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">EYT1</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.081</td>
-<td class="gt_row gt_center gt_striped">(0.054, 0.106)</td>
+<td class="gt_row gt_center gt_striped">(0.054, 0.109)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.345</td>
-<td class="gt_row gt_center gt_striped">(0.241, 0.451)</td>
+<td class="gt_row gt_center gt_striped">(0.247, 0.445)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.264</td>
-<td class="gt_row gt_center gt_striped">(0.159, 0.373)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.161, 0.367)</td></tr>
     <tr><td class="gt_row gt_center">RD</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">-0.086</td>
-<td class="gt_row gt_center">(-0.127, -0.047)</td>
+<td class="gt_row gt_center">(-0.125, -0.042)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">-0.330</td>
-<td class="gt_row gt_center">(-0.457, -0.198)</td>
+<td class="gt_row gt_center">(-0.448, -0.200)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">-0.244</td>
-<td class="gt_row gt_center">(-0.375, -0.107)</td></tr>
+<td class="gt_row gt_center">(-0.378, -0.104)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.486</td>
-<td class="gt_row gt_center gt_striped">(0.333, 0.706)</td>
+<td class="gt_row gt_center gt_striped">(0.337, 0.744)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.511</td>
-<td class="gt_row gt_center gt_striped">(0.372, 0.725)</td>
+<td class="gt_row gt_center gt_striped">(0.382, 0.711)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">1.052</td>
-<td class="gt_row gt_center gt_striped">(0.655, 1.753)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.611, 1.772)</td></tr>
     <tr><td class="gt_row gt_center">RR*</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.907</td>
-<td class="gt_row gt_center">(0.864, 0.949)</td>
+<td class="gt_row gt_center">(0.867, 0.954)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.496</td>
-<td class="gt_row gt_center">(0.375, 0.669)</td>
+<td class="gt_row gt_center">(0.384, 0.667)</td>
 <td class="gt_row gt_center" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.547</td>
-<td class="gt_row gt_center">(0.413, 0.741)</td></tr>
+<td class="gt_row gt_center">(0.418, 0.742)</td></tr>
     <tr><td class="gt_row gt_center gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.440</td>
-<td class="gt_row gt_center gt_striped">(0.289, 0.667)</td>
+<td class="gt_row gt_center gt_striped">(0.293, 0.708)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.253</td>
-<td class="gt_row gt_center gt_striped">(0.144, 0.469)</td>
+<td class="gt_row gt_center gt_striped">(0.151, 0.462)</td>
 <td class="gt_row gt_center gt_striped" style="border-left-width: 1.5px; border-left-style: solid; border-left-color: grey60;">0.576</td>
-<td class="gt_row gt_center gt_striped">(0.291, 1.205)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.272, 1.234)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -1420,7 +1425,7 @@ us the 2-sided p-value that is significant</p>
 </div>
 <p>and we plot the results</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="measures.html#cb48-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(nces.out, <span class="at">title =</span> <span class="st">&quot;NCES data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
 <p>We observe that</p>
 <ul>
 <li>RD: Risk difference shows that using selection to accept more women
@@ -1554,7 +1559,7 @@ Venn diagram as follows</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="measures.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim, <span class="at">n =</span> <span class="dv">1000</span>, </span>
 <span id="cb62-2"><a href="measures.html#cb62-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>),</span>
 <span id="cb62-3"><a href="measures.html#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram of effect measure modifications&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
 <p>now for <strong>constrained data</strong></p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="measures.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 1 sec.: we load a saved file instead</code></pre>
@@ -1624,7 +1629,7 @@ in the 4-set Venn diagram.</p>
 <span id="cb76-2"><a href="measures.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim_const,</span>
 <span id="cb76-3"><a href="measures.html#cb76-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;cyan&quot;</span>, <span class="st">&quot;gold&quot;</span>, <span class="st">&quot;springgreen&quot;</span>, <span class="st">&quot;hotpink&quot;</span>),</span>
 <span id="cb76-4"><a href="measures.html#cb76-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram for constrained data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 </div>
 <div id="applications" class="section level3" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Applications</h3>
@@ -1674,7 +1679,7 @@ direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
 <p>and to show as a heatmap</p>
 <div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="measures.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>, </span>
 <span id="cb82-2"><a href="measures.html#cb82-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue4&quot;</span>))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
 <p>and comparing with the author</p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="measures.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
 <span id="cb83-2"><a href="measures.html#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
@@ -1698,7 +1703,7 @@ direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
 <div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="measures.html#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim_const, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>,</span>
 <span id="cb90-2"><a href="measures.html#cb90-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon4&quot;</span>),</span>
 <span id="cb90-3"><a href="measures.html#cb90-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">title =</span> <span class="st">&quot;Monte Carlo simulation. Constrained data.&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
 <p>and comparing with the author</p>
 <div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="measures.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
 <span id="cb91-2"><a href="measures.html#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>

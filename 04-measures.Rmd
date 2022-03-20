@@ -30,31 +30,25 @@ source(file = file.path(dir_lib, "ggp_betasim.R"),
 ### RECOVERY trial
 
 
-Create the data.frame for *RECOVERY* trial
+Get the data.frame for *RECOVERY* trial
 
 ```{r echo=TRUE}
-# recovery <- expand.grid(Y = 0:1, `T` = 0:1, M = 0:1)
-# recovery$n <- as.integer(c(787, 2851, 368, 1412, 278, 405, 86, 238))
-# recovery <- lapply(X = seq_len(nrow(recovery)), FUN = function(i) {
-#   data.frame(
-#     M = rep(recovery$M[i], recovery$n[i]),
-#     `T` = rep(recovery$`T`[i], recovery$n[i]),
-#     Y = rep(recovery$Y[i], recovery$n[i])
-#   )
-# })
-# recovery <- do.call(rbind, recovery)
-# # create an id variable for use with gee() later
-# recovery$id <- seq_len(nrow(recovery))
 data("recovery", package = "fciR")
 ```
 
 
 
-run `boot()` with the RECOVERY data set
+run `boot()`, alias `meas_effect_modif()` with the RECOVERY data set
 
 ```{r}
-# recovery.out <- boot(recovery, formula = Y ~ `T` + M)
-recovery.out <- fciR::meas_effect_modif(recovery, formula = Y ~ `T` + M)
+vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
+            "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
+            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
+recovery.out <- boot_est(data = recovery, func = meas_effect_modif,
+                         R = 100, conf = 0.95,
+                         inv = "exp", vars = vars,
+                         outcome.name = "Y", exposure.name = "T",
+                         modifier.name = "M")
 ```
 
 
@@ -72,10 +66,9 @@ bb <- data.frame(
           -0.191, -0.059, 0.132, 1.012, 1.239, 1.224,
           1.046, 1.533, 1.466, 1.059, 1.9, 1.794)
   )
+ids <- match(paste(bb$estimator, bb$group, sep = "."), recovery.out$name)
 comp <- data.frame(bb = bb,
-                   d = recovery.out[match(paste(bb$estimator, bb$group), 
-                                          paste(recovery.out$estimator, recovery.out$group)), 
-                                    "est"])
+                   d = recovery.out[ids, "est"])
 comp$dev <- abs(comp$bb.est - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
 # comp
@@ -84,9 +77,10 @@ stopifnot(sum(comp$dev) < 0.01)
 and we communicate the results in a table
 
 
-
-
 ```{r}
+# reformat to use for table and plot
+recovery.out <- recovery.out %>%
+  separate(col = "name", into = c("estimator", "group"), sep = "[.]", remove = TRUE)
 fciR::gt_measures_colgrp(recovery.out, var_grp = "group",
                    title = "Table 4.2 RECOVERY Trial",
                    subtitle = "Effect-measure Modification")
@@ -165,7 +159,15 @@ Run the bootsrap
 
 
 ```{r}
-nces.out <- fciR::meas_effect_modif(nces, formula = highmathsat ~ female + selective)
+# nces.out <- fciR::meas_effect_modif(nces, formula = highmathsat ~ female + selective)
+vars <- c("RR.M0" = "logRR.M0", "RR.M1" = "logRR.M1", "RR.diff"  = "logRR.diff",
+            "RR*.M0"  = "logRR*.M0", "RR*.M1"  = "logRR*.M1", "RR*.diff" = "logRR*.diff",
+            "OR.M0" = "logOR.M0", "OR.M1" = "logOR.M1", "OR.diff" = "logOR.diff")
+nces.out <- boot_est(data = nces, func = meas_effect_modif,
+                         R = 100, conf = 0.95,
+                         inv = "exp", vars = vars,
+                         outcome.name = "highmathsat", exposure.name = "female",
+                         modifier.name = "selective")
 ```
 
 verify the results with the author's on p. 70.
@@ -182,10 +184,8 @@ bb <- data.frame(
           0.509, 0.264, -0.244, 0.486, 0.511, 1.052,
           0.907, 0.496, 0.547, 0.44, 0.254, 0.576)
   )
-comp <- data.frame(bb = bb,
-                   d = nces.out[match(paste(bb$estimator, bb$group), 
-                                          paste(nces.out$estimator, nces.out$group)), 
-                                    "est"])
+ids <- match(paste(bb$estimator, bb$group, sep = "."), nces.out$name)
+comp <- data.frame(bb = bb, d = nces.out[ids, "est"])
 comp$dev <- abs(comp$bb.est - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
 ```
@@ -194,6 +194,9 @@ stopifnot(sum(comp$dev) < 0.01)
 and the table is
 
 ```{r}
+# reformat to use for table and plot
+nces.out <- nces.out %>%
+  separate(col = "name", into = c("estimator", "group"), sep = "[.]", remove = TRUE)
 fciR::gt_measures_colgrp(nces.out, var_grp = "group",
                    title = "Table 4.3 NCES data",
                    subtitle = "Effect-measure Modification")

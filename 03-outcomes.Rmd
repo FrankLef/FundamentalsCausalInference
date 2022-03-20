@@ -32,9 +32,10 @@ stopifnot(nrow(gssrcc) == 2348 - 180)  # see comment on p. 46
 
 
 ```{r}
-message("this takes 30 sec.: we load a saved file instead")
-# startTime <- Sys.time()
-# uncond <- fciR::meas_effect_uncond(dat = gssrcc, formula = trump ~ gthsedu)
+message("this takes 20 sec.: we load a saved file instead")
+startTime <- Sys.time()
+# uncond <- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,
+#                   outcome.name = "trump", input.names = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
@@ -108,12 +109,11 @@ $$
 
 
 ```{r}
-message("this takes 10 sec.: we load a saved file instead")
+message("this takes 20 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# condit <- fciR::meas_effect_cond(dat = gssrcc,
-#              formula = trump ~ gthsedu + magthsedu + white + female + gt65,
-#              cond0 = trump ~ magthsedu + white + female + gt65,
-#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)
+# condit <- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,
+#                   outcome.name = "trump", exposure.name = "gthsedu",
+#                   confound.names = c("magthsedu", "white", "female", "gt65"))
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootc.rds")

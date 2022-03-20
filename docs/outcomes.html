@@ -30,7 +30,7 @@ anyone.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-03-19" />
+<meta name="date" content="2022-03-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -409,25 +409,26 @@ div.csl-indent {
 <span id="cb14-2"><a href="outcomes.html#cb14-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
 <span id="cb14-3"><a href="outcomes.html#cb14-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(gssrcc), ]</span>
 <span id="cb14-4"><a href="outcomes.html#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(gssrcc) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="outcomes.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
-<pre><code>## this takes 30 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="outcomes.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb17-2"><a href="outcomes.html#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::meas_effect_uncond(dat = gssrcc, formula = trump ~ gthsedu)</span></span>
-<span id="cb17-3"><a href="outcomes.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb17-4"><a href="outcomes.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb17-5"><a href="outcomes.html#cb17-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
-<span id="cb17-6"><a href="outcomes.html#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
-<span id="cb17-7"><a href="outcomes.html#cb17-7" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="outcomes.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="outcomes.html#cb17-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb17-2"><a href="outcomes.html#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,</span></span>
+<span id="cb17-3"><a href="outcomes.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, input.names = &quot;gthsedu&quot;)</span></span>
+<span id="cb17-4"><a href="outcomes.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb17-5"><a href="outcomes.html#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb17-6"><a href="outcomes.html#cb17-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
+<span id="cb17-7"><a href="outcomes.html#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
+<span id="cb17-8"><a href="outcomes.html#cb17-8" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="outcomes.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
 <span id="cb18-2"><a href="outcomes.html#cb18-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
 <span id="cb18-3"><a href="outcomes.html#cb18-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Association Measures Relating&lt;br&gt;&lt;em&gt;More than High School</span></span>
 <span id="cb18-4"><a href="outcomes.html#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
-<div id="swieqrwiia" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="rrkiiyrqsn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#swieqrwiia .gt_table {
+#rrkiiyrqsn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -452,7 +453,7 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_heading {
+#rrkiiyrqsn .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -464,7 +465,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_title {
+#rrkiiyrqsn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -474,7 +475,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#swieqrwiia .gt_subtitle {
+#rrkiiyrqsn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -484,13 +485,13 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#swieqrwiia .gt_bottom_border {
+#rrkiiyrqsn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_col_headings {
+#rrkiiyrqsn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -505,7 +506,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_col_heading {
+#rrkiiyrqsn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -525,7 +526,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#swieqrwiia .gt_column_spanner_outer {
+#rrkiiyrqsn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -537,15 +538,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#swieqrwiia .gt_column_spanner_outer:first-child {
+#rrkiiyrqsn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#swieqrwiia .gt_column_spanner_outer:last-child {
+#rrkiiyrqsn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#swieqrwiia .gt_column_spanner {
+#rrkiiyrqsn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -557,7 +558,7 @@ div.csl-indent {
   width: 100%;
 }
 
-#swieqrwiia .gt_group_heading {
+#rrkiiyrqsn .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -579,7 +580,7 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#swieqrwiia .gt_empty_group_heading {
+#rrkiiyrqsn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -594,15 +595,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#swieqrwiia .gt_from_md > :first-child {
+#rrkiiyrqsn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#swieqrwiia .gt_from_md > :last-child {
+#rrkiiyrqsn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#swieqrwiia .gt_row {
+#rrkiiyrqsn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -621,7 +622,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#swieqrwiia .gt_stub {
+#rrkiiyrqsn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -633,7 +634,7 @@ div.csl-indent {
   padding-left: 12px;
 }
 
-#swieqrwiia .gt_summary_row {
+#rrkiiyrqsn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -643,7 +644,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#swieqrwiia .gt_first_summary_row {
+#rrkiiyrqsn .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -653,7 +654,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_grand_summary_row {
+#rrkiiyrqsn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -663,7 +664,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#swieqrwiia .gt_first_grand_summary_row {
+#rrkiiyrqsn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -673,11 +674,11 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_striped {
+#rrkiiyrqsn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#swieqrwiia .gt_table_body {
+#rrkiiyrqsn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -686,7 +687,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_footnotes {
+#rrkiiyrqsn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -700,13 +701,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_footnote {
+#rrkiiyrqsn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#swieqrwiia .gt_sourcenotes {
+#rrkiiyrqsn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -720,41 +721,41 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#swieqrwiia .gt_sourcenote {
+#rrkiiyrqsn .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#swieqrwiia .gt_left {
+#rrkiiyrqsn .gt_left {
   text-align: left;
 }
 
-#swieqrwiia .gt_center {
+#rrkiiyrqsn .gt_center {
   text-align: center;
 }
 
-#swieqrwiia .gt_right {
+#rrkiiyrqsn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#swieqrwiia .gt_font_normal {
+#rrkiiyrqsn .gt_font_normal {
   font-weight: normal;
 }
 
-#swieqrwiia .gt_font_bold {
+#rrkiiyrqsn .gt_font_bold {
   font-weight: bold;
 }
 
-#swieqrwiia .gt_font_italic {
+#rrkiiyrqsn .gt_font_italic {
   font-style: italic;
 }
 
-#swieqrwiia .gt_super {
+#rrkiiyrqsn .gt_super {
   font-size: 65%;
 }
 
-#swieqrwiia .gt_footnote_marks {
+#rrkiiyrqsn .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -780,22 +781,22 @@ div.csl-indent {
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left">P0</td>
 <td class="gt_row gt_center">0.233</td>
-<td class="gt_row gt_center">(0.21, 0.257)</td></tr>
+<td class="gt_row gt_center">(0.208, 0.256)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">P1</td>
 <td class="gt_row gt_center gt_striped">0.271</td>
-<td class="gt_row gt_center gt_striped">(0.243, 0.301)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.244, 0.299)</td></tr>
     <tr><td class="gt_row gt_left">RD</td>
 <td class="gt_row gt_center">0.038</td>
-<td class="gt_row gt_center">(0, 0.076)</td></tr>
+<td class="gt_row gt_center">(0.003, 0.075)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped">1.162</td>
-<td class="gt_row gt_center gt_striped">(1, 1.354)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.012, 1.348)</td></tr>
     <tr><td class="gt_row gt_left">RR*</td>
 <td class="gt_row gt_center">1.052</td>
-<td class="gt_row gt_center">(0.999, 1.108)</td></tr>
+<td class="gt_row gt_center">(1.004, 1.106)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped">1.222</td>
-<td class="gt_row gt_center gt_striped">(0.999, 1.499)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.016, 1.491)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -861,29 +862,28 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 \text{trump} &amp;\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="outcomes.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
-<pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="outcomes.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="outcomes.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb22-2"><a href="outcomes.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::meas_effect_cond(dat = gssrcc,</span></span>
-<span id="cb22-3"><a href="outcomes.html#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#              formula = trump ~ gthsedu + magthsedu + white + female + gt65,</span></span>
-<span id="cb22-4"><a href="outcomes.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond0 = trump ~ magthsedu + white + female + gt65,</span></span>
-<span id="cb22-5"><a href="outcomes.html#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#              cond1 = trump ~ gthsedu + magthsedu + white + female + gt65)</span></span>
-<span id="cb22-6"><a href="outcomes.html#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb22-7"><a href="outcomes.html#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb22-8"><a href="outcomes.html#cb22-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
-<span id="cb22-9"><a href="outcomes.html#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
-<span id="cb22-10"><a href="outcomes.html#cb22-10" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<span id="cb22-2"><a href="outcomes.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,</span></span>
+<span id="cb22-3"><a href="outcomes.html#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
+<span id="cb22-4"><a href="outcomes.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
+<span id="cb22-5"><a href="outcomes.html#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb22-6"><a href="outcomes.html#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb22-7"><a href="outcomes.html#cb22-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
+<span id="cb22-8"><a href="outcomes.html#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
+<span id="cb22-9"><a href="outcomes.html#cb22-9" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="outcomes.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
 <span id="cb23-2"><a href="outcomes.html#cb23-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
 <span id="cb23-3"><a href="outcomes.html#cb23-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Conditional Association or Effect Measures&lt;br&gt;</span></span>
 <span id="cb23-4"><a href="outcomes.html#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
 <span id="cb23-5"><a href="outcomes.html#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
-<div id="ntodqpruxf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="wxppasnrtp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ntodqpruxf .gt_table {
+#wxppasnrtp .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -908,7 +908,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-left-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_heading {
+#wxppasnrtp .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -920,7 +920,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_title {
+#wxppasnrtp .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -930,7 +930,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-bottom-width: 0;
 }
 
-#ntodqpruxf .gt_subtitle {
+#wxppasnrtp .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -940,13 +940,13 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-top-width: 0;
 }
 
-#ntodqpruxf .gt_bottom_border {
+#wxppasnrtp .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_col_headings {
+#wxppasnrtp .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -961,7 +961,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_col_heading {
+#wxppasnrtp .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -981,7 +981,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   overflow-x: hidden;
 }
 
-#ntodqpruxf .gt_column_spanner_outer {
+#wxppasnrtp .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -993,15 +993,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 4px;
 }
 
-#ntodqpruxf .gt_column_spanner_outer:first-child {
+#wxppasnrtp .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ntodqpruxf .gt_column_spanner_outer:last-child {
+#wxppasnrtp .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ntodqpruxf .gt_column_spanner {
+#wxppasnrtp .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1013,7 +1013,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   width: 100%;
 }
 
-#ntodqpruxf .gt_group_heading {
+#wxppasnrtp .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1035,7 +1035,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   vertical-align: middle;
 }
 
-#ntodqpruxf .gt_empty_group_heading {
+#wxppasnrtp .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1050,15 +1050,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   vertical-align: middle;
 }
 
-#ntodqpruxf .gt_from_md > :first-child {
+#wxppasnrtp .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ntodqpruxf .gt_from_md > :last-child {
+#wxppasnrtp .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ntodqpruxf .gt_row {
+#wxppasnrtp .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1077,7 +1077,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   overflow-x: hidden;
 }
 
-#ntodqpruxf .gt_stub {
+#wxppasnrtp .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1089,7 +1089,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-left: 12px;
 }
 
-#ntodqpruxf .gt_summary_row {
+#wxppasnrtp .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1099,7 +1099,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#ntodqpruxf .gt_first_summary_row {
+#wxppasnrtp .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1109,7 +1109,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-top-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_grand_summary_row {
+#wxppasnrtp .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1119,7 +1119,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#ntodqpruxf .gt_first_grand_summary_row {
+#wxppasnrtp .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1129,11 +1129,11 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-top-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_striped {
+#wxppasnrtp .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ntodqpruxf .gt_table_body {
+#wxppasnrtp .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1142,7 +1142,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-bottom-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_footnotes {
+#wxppasnrtp .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1156,13 +1156,13 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_footnote {
+#wxppasnrtp .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ntodqpruxf .gt_sourcenotes {
+#wxppasnrtp .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1176,41 +1176,41 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#ntodqpruxf .gt_sourcenote {
+#wxppasnrtp .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ntodqpruxf .gt_left {
+#wxppasnrtp .gt_left {
   text-align: left;
 }
 
-#ntodqpruxf .gt_center {
+#wxppasnrtp .gt_center {
   text-align: center;
 }
 
-#ntodqpruxf .gt_right {
+#wxppasnrtp .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ntodqpruxf .gt_font_normal {
+#wxppasnrtp .gt_font_normal {
   font-weight: normal;
 }
 
-#ntodqpruxf .gt_font_bold {
+#wxppasnrtp .gt_font_bold {
   font-weight: bold;
 }
 
-#ntodqpruxf .gt_font_italic {
+#wxppasnrtp .gt_font_italic {
   font-style: italic;
 }
 
-#ntodqpruxf .gt_super {
+#wxppasnrtp .gt_super {
   font-size: 65%;
 }
 
-#ntodqpruxf .gt_footnote_marks {
+#wxppasnrtp .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1237,22 +1237,22 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left">P0</td>
 <td class="gt_row gt_center">0.255</td>
-<td class="gt_row gt_center">(0.182, 0.323)</td></tr>
+<td class="gt_row gt_center">(0.182, 0.322)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">P1</td>
 <td class="gt_row gt_center gt_striped">0.301</td>
-<td class="gt_row gt_center gt_striped">(0.229, 0.372)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.23, 0.369)</td></tr>
     <tr><td class="gt_row gt_left">RD</td>
 <td class="gt_row gt_center">0.046</td>
-<td class="gt_row gt_center">(0.004, 0.092)</td></tr>
+<td class="gt_row gt_center">(0.005, 0.091)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped">1.182</td>
-<td class="gt_row gt_center gt_striped">(1.009, 1.4)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.009, 1.394)</td></tr>
     <tr><td class="gt_row gt_left">RR*</td>
 <td class="gt_row gt_center">1.066</td>
-<td class="gt_row gt_center">(1.005, 1.137)</td></tr>
+<td class="gt_row gt_center">(1.005, 1.134)</td></tr>
     <tr><td class="gt_row gt_left gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped">1.261</td>
-<td class="gt_row gt_center gt_striped">(1.017, 1.588)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.018, 1.576)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
