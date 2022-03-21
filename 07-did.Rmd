@@ -142,8 +142,10 @@ The functions used for DID estimations are `fciR::did_linear()`,
 The DiD estimator with the linear model
 
 ```{r}
-dwhatif.lindid <- fciR::did_linear(doublewhatifdat, outcomes = c("VL0", "VL1"), 
-                                   outcome = "Y", treatment = "A", R = 100)
+dwhatif.lindid <- fciR::boot_est(
+  doublewhatifdat, fciR::did_linear, R = 100, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "VL0")
+
 # dwhatif.lindid
 ```
 
@@ -152,8 +154,9 @@ dwhatif.lindid <- fciR::did_linear(doublewhatifdat, outcomes = c("VL0", "VL1"),
 The DiD estimator with the loglinear model
 
 ```{r}
-dwhatif.loglindid <- fciR::did_loglinear(doublewhatifdat, outcomes = c("VL0", "VL1"), 
-                                   outcome = "Y", treatment = "A", R = 100)
+dwhatif.loglindid <- fciR::boot_est(
+  doublewhatifdat, fciR::did_loglinear, R = 100, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "VL0")
 # dwhatif.loglindid
 ```
 
@@ -161,8 +164,9 @@ dwhatif.loglindid <- fciR::did_loglinear(doublewhatifdat, outcomes = c("VL0", "V
 The DiD estimator with the logistic model
 
 ```{r}
-dwhatif.logisticdid <- fciR::did_logistic(doublewhatifdat, outcomes = c("VL0", "VL1"), 
-                                   outcome = "Y", treatment = "A", R = 100)
+dwhatif.logisticdid <- fciR::boot_est(
+  doublewhatifdat, fciR::did_logistic, R = 100, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "VL0")
 # dwhatif.logisticdid
 ```
 
@@ -189,7 +193,7 @@ gt_measures_rowgrp(
   )
 ```
 
-and the results from my own functions
+and the results using the `fciR` package are identical.
 
 ```{r}
 rbind(
