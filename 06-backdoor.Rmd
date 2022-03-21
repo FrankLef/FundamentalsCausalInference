@@ -206,15 +206,19 @@ and we can see it gives the same results (the function is also found in
 `fciR::backdr_out_np`)
 
 ```{r}
-message("This takes about 22 min. Load from file.")
+message("This takes about 2 min. Load from file.")
 # startTime <- Sys.time()
-# mort.out.np <- fciR::backdr_out_np(mort, outcome = Y, exposure = `T`, confound = H,
-#                                      R = 500)
+# mort.out.np <- fciR::boot_est(
+#   mort, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "Y", 
+#   exposure.name = "T", confound.names = "H")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_mort_out_np.rds")
 # saveRDS(mort.out.np, file = a_file)
 mort.out.np <- readRDS(file = a_file)
+```
+
+```{r echo=FALSE}
 fciR::gt_measures(mort.out.np,  digits = 6,
             title = "Mortality", 
             subtitle = paste("Mortality", 
@@ -223,19 +227,24 @@ fciR::gt_measures(mort.out.np,  digits = 6,
                              sep = "<br>"))
 ```
 
+
 and we now do it with the function `fciR::backdr_out_npr`. That function
 works exactly as the function `standr` in the book.
 
 ```{r}
-message("This takes about 30 min. Load from file.")
+message("This takes about 3 min. Load from file.")
 # startTime <- Sys.time()
-# mort.out.npr <- fciR::backdr_out_npr(mort, formula = Y ~ `T` + H + `T`:H,
-#                                      R = 500)
+# mort.out.npr <- fciR::boot_est(
+#   mort, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
+#   exposure.name = "T", confound.names = "H", interactions = list(c("T", "H")))
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_mort_out_npr.rds")
 # saveRDS(mort.out.npr, file = a_file)
 mort.out.npr <- readRDS(file = a_file)
+```
+
+```{r echo=FALSE}
 fciR::gt_measures(mort.out.npr,  digits = 6,
             title = "Mortality", 
             subtitle = paste("Mortality", 
@@ -243,6 +252,7 @@ fciR::gt_measures(mort.out.npr,  digits = 6,
                               "Non Parametric With Regression",
                               sep = "<br>"))
 ```
+
 
 and the results are the same again.  In conclusion pretty much any of the
 function.  The function `fciR::backdr_out_npr` seems faster.  The function
@@ -261,7 +271,9 @@ data("whatifdat", package = "fciR")
 ##### Non-parametric With Regression `backdr_out_npr` {-}
 
 ```{r}
-whatif.out <- fciR::backdr_out_npr(whatifdat, formula = Y ~ A + H + A:H)
+whatif.out <- fciR::boot_est(
+  whatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
+  exposure.name = "A", confound.names = "H", interactions = list(c("A", "H")))
 # whatif.out
 ```
 
@@ -278,7 +290,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.1
 
-```{r}
+```{r echo=FALSE}
 fciR::gt_measures(whatif.out, 
             title = "Table 6.1", 
             subtitle = paste("What-If Study", "Standardized Estimates",
@@ -295,13 +307,17 @@ statistically significant.
 ```{r}
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
-# whatif.out.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = A, confound = H,
-#                                      R = 500)
+# whatif.out.np <- fciR::boot_est(
+#   whatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "Y",
+#   exposure.name = "A", confound.names = "H")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
 # saveRDS(whatif.out.np, file = a_file)
 whatif.out.np <- readRDS(file = a_file)
+```
+
+```{r echo=FALSE}
 fciR::gt_measures(whatif.out.np, 
             title = "Table 6.1", 
             subtitle = paste("What-If Study", 
@@ -309,6 +325,7 @@ fciR::gt_measures(whatif.out.np,
                               "Non Parametric Without Regression",
                              sep = "<br>"))
 ```
+
 
 
 *T0.he results are different when we don't use linear regression!*. Not
@@ -320,17 +337,18 @@ a very large difference but a significant one.
 
 ```{r}
 data("doublewhatifdat", package = "fciR")
-# dataDoubleWhatIf <- doublewhatifsim()
 ```
 
 ##### Non-parametric With Regression `backdr_out_npr` {-}
 
 ```{r}
-doublewhatif.out <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0)
+doublewhatif.out <- fciR::boot_est(
+  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "AD0", interactions = list(c("A", "AD0")))
 ```
 
 
-```{r}
+```{r echo=FALSE}
 fciR::gt_measures(doublewhatif.out, 
             title = "Table 6.2", 
             subtitle = paste("Double What-If Study", 
@@ -346,14 +364,17 @@ fciR::gt_measures(doublewhatif.out,
 ```{r}
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
-# doublewhatif.out.np <- fciR::backdr_out_np(doublewhatifdat, 
-#                                      outcome = VL1, exposure = A, confound = AD0,
-#                                      R = 500)
+# doublewhatif.out.np <- fciR::boot_est(
+#   doublewhatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "VL1",
+#   exposure.name = "A", confound.names = "AD0")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_doublewhatif_out_np.rds")
 # saveRDS(doublewhatif.out.np, file = a_file)
 doublewhatif.out.np <- readRDS(file = a_file)
+```
+
+```{r echo=FALSE}
 fciR::gt_measures(doublewhatif.out.np, 
             title = "Table 6.1", 
             subtitle = paste("Double What-If Study", 
@@ -361,6 +382,7 @@ fciR::gt_measures(doublewhatif.out.np,
                               "Non Parametric Without Regression",
                              sep = "<br>"))
 ```
+
 
 and the results are the same
 
@@ -370,7 +392,9 @@ and the results are the same
 
 
 ```{r}
-doublewhatif.out <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0)
+doublewhatif.out <- fciR::boot_est(
+  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "VL0", interactions = list(c("A", "VL0")))
 ```
 
 
@@ -396,8 +420,10 @@ addition of the argument `att`.
 
 
 ```{r}
-whatif.att <- fciR::backdr_out_npr(whatifdat, formula = Y ~ A + H + A*H, 
-                                   att = TRUE)
+whatif.att <- fciR::boot_est(
+  whatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
+  exposure.name = "A", confound.names = "H", interactions = list(c("A", "H")),
+  att = TRUE)
 ```
 
 and we compare with the author's
@@ -428,13 +454,17 @@ is following pure probabilities from the data.
 ```{r}
 message("This takes about 8 sec.. Load from file.")
 # startTime <- Sys.time()
-# whatif.out.att.np <- fciR::backdr_out_np(whatifdat, outcome = Y, exposure = A, 
-#                                          confound = H, att = TRUE, R = 250)
+# whatif.out.att.np <- fciR::boot_est(
+#   whatifdat, fciR::backdr_out_np, R = 250, conf = 0.95, outcome.name = "Y",
+#   exposure.name = "A", confound.names = "H", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_whatif_out_att_np.rds")
 # saveRDS(whatif.out.att.np, file = a_file)
 whatif.out.att.np <- readRDS(file = a_file)
+```
+
+```{r echo=FALSE}
 fciR::gt_measures(whatif.out.att.np, 
             title = "Table 6.4", 
             subtitle = paste("What-If Study", 
@@ -444,16 +474,19 @@ fciR::gt_measures(whatif.out.att.np,
 ```
 
 
+
 #### Double What-if? Study {-}
 
 
 ```{r}
-doublewhatif.att <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + AD0 + A*AD0,
-                              att = TRUE)
+doublewhatif.att <- fciR::boot_est(
+  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "AD0", interactions = list(c("A", "AD0")),
+  att = TRUE)
 ```
 
 
-```{r}
+```{r echo=FALSE}
 fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.5", 
             subtitle = paste("Double What-If Study", 
@@ -466,12 +499,14 @@ fciR::gt_measures(doublewhatif.att,
 
 
 ```{r}
-doublewhatif.att <- fciR::backdr_out_npr(doublewhatifdat, formula = VL1 ~ A + VL0 + A*VL0,
-                              att = TRUE)
+doublewhatif.att <- fciR::boot_est(
+  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
+  exposure.name = "A", confound.names = "VL0", interactions = list(c("A", "VL0")),
+  att = TRUE)
 ```
 
 
-```{r}
+```{r echo=FALSE}
 fciR::gt_measures(doublewhatif.att, 
             title = "Table 6.6", 
             subtitle = paste("Double What-If Study", 
@@ -489,10 +524,10 @@ For a the parametric outcome model `fciR::backdr_out()` is used
 
 ```{r}
 data("whatif2dat", package = "fciR")
-whatif2.out<- boot_est(data = whatif2dat, func = backdr_out,
-                  R = 100, conf = 0.95,
-                  outcome.name = "vl4", exposure.name = "A",
-                  confound.names = "lvlcont0")
+whatif2.out <- fciR::boot_est(
+  whatif2dat, fciR::backdr_out, R = 100, conf = 0.95, outcome.name = "vl4",
+  exposure.name = "A", confound.names = "lvlcont0")
+
 ```
 
 and we compare with the author's
@@ -616,7 +651,7 @@ See section 1.2.1 in chapter 1 for details on `data_mortability_exp`.
 
 ```{r}
 data("mortality_long", package = "fciR")
-mortdat <- mortality_long
+mortdat <- as.data.frame(mortality_long)
 ```
 
 
@@ -624,11 +659,12 @@ Compute the standardized estimates using exposure modeling with `fciR::backdr_ex
 
 
 ```{r}
-mortdat.out <- fciR::backdr_exp_bb(mortdat, formula = Y ~ `T` + H, weights = "n")
+mortdat.out <- fciR::backdr_exp_bb(mortdat, outcome.name = "Y", exposure.name = "T",
+                  confound.names = "H", weights = "n")
 mortdat.out[c("EY0", "EY1")]
 # verify with the author's
-stopifnot(abs(mortdat.out$EY0 - 0.0078399) < 1e-7,
-          abs(mortdat.out$EY1 - 0.0069952) < 1e-7)
+stopifnot(abs(mortdat.out$EY0 - 0.0078399) < 1e-6,
+          abs(mortdat.out$EY1 - 0.0069952) < 1e-6)
 ```
 
 ```{r}
@@ -736,12 +772,6 @@ E(Y(0) \mid T=1) &= \sum_{y,h} y P(Y=y \mid T=0, H=h) \frac{P(T=1 \mid H=h) P(H=
 \end{align*}
 $$
 
-and by the definition of conditional expectation we know that
-
-$$
-
-$$
-
 See previous section for calculation with mortality data for the function with
 the flag `is_att = TRUE`
 
@@ -772,7 +802,10 @@ more informative and avoid mix up with the much-used base R function `exp.`
 First we do it using the `glm` fit
 
 ```{r}
-whatif2.exp <- fciR::backdr_exp(whatif2dat, formula = vl4 ~ A + lvlcont0)
+whatif2.exp <- boot_est(data = whatif2dat, func = backdr_exp,
+                  R = 250, conf = 0.95,
+                  outcome.name = "vl4", exposure.name = "A",
+                  confound.names = c("lvlcont0"))
 # whatif2.exp
 ```
 
@@ -791,7 +824,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.9
 
-```{r}
+```{r echo=FALSE}
 fciR::gt_measures(whatif2.exp, 
             title = "Table 6.9", 
             subtitle = paste("What-If Study", 
@@ -803,9 +836,12 @@ fciR::gt_measures(whatif2.exp,
 then we use the `geeglm` from the `geepack` package fit for risk difference
 
 ```{r}
-message("This takes about 15 sec.. Load from file.")
+message("This takes about 6 sec.. Load from file.")
 # startTime <- Sys.time()
-# whatif2.expgee <- fciR::backdr_exp_gee(whatif2dat, formula = vl4 ~ A + lvlcont0)
+# whatif2.expgee <- boot_est(data = whatif2dat, func = backdr_exp_gee,
+#                   R = 250, conf = 0.95,
+#                   outcome.name = "vl4", exposure.name = "A",
+#                   confound.names = "lvlcont0")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 
@@ -843,8 +879,10 @@ to run it as follows
 ```{r}
 message("This takes about 10 sec. Load from file.")
 # startTime <- Sys.time()
-# gssrcc.exp <- fciR::backdr_exp(gssrcc,
-#                         formula = trump ~ gthsedu + magthsedu + white + female + gt65)
+# gssrcc.exp <- boot_est(data = gssrcc, func = backdr_exp,
+#                   R = 250, conf = 0.95,
+#                   outcome.name = "trump", exposure.name = "gthsedu",
+#                   confound.names = c("magthsedu", "white", "female", "gt65"))
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_gssrcc_exp.rds")
@@ -892,8 +930,11 @@ and using the What-if Study we obtain
 
 
 ```{r}
-whatif2.dr <- fciR::backdr_dr_bad(whatif2dat, formula = vl4 ~ A + lvlcont0)
-# whatif2.dr
+whatif2.bad <- boot_est(data = whatif2dat, func = fciR::backdr_dr_bad,
+                  R = 100, conf = 0.95,
+                  outcome.name = "vl4", exposure.name = "A",
+                  confound.names = "lvlcont0")
+# whatif2.bad
 ```
 
 and compare with the author's
@@ -903,7 +944,7 @@ and compare with the author's
 comp <- data.frame(
   name = c("EY0", "EY1", "RD", "RR"),
   auth = c(0.362, 0.300, -0.062, 0.830),
-  est = whatif2.dr$est[whatif2.dr$name %in% c("EY0", "EY1", "RD", "RR")])
+  est = whatif2.bad$est[whatif2.bad$name %in% c("EY0", "EY1", "RD", "RR")])
 stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 ```
 
@@ -912,7 +953,7 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 and the results are presented in table 6.9
 
 ```{r}
-fciR::gt_measures(whatif2.dr, 
+fciR::gt_measures(whatif2.bad, 
             title = "Table 6.12", 
             subtitle = paste("What-If Study", 
             "Doubly Robust Standardization",
