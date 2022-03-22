@@ -395,9 +395,9 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="did" class="section level1" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Difference-in-Differences Estimators</h1>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="did.html#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb215-2"><a href="did.html#cb215-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb215-3"><a href="did.html#cb215-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="did.html#cb216-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb216-2"><a href="did.html#cb216-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb216-3"><a href="did.html#cb216-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <div id="difference-in-differences-did-estimators" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> Difference-in-Differences (DiD) Estimators</h2>
 <div id="did-estimator-with-a-linear-model" class="section level3" number="7.1.1">
@@ -512,36 +512,40 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 <div id="doublewhatifdat" class="section level3" number="7.2.1">
 <h3><span class="header-section-number">7.2.1</span> <code>doublewhatifdat</code></h3>
 <p>The DiD estimator with the linear model</p>
-<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="did.html#cb216-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lindid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">did_linear</span>(doublewhatifdat, <span class="at">outcomes =</span> <span class="fu">c</span>(<span class="st">&quot;VL0&quot;</span>, <span class="st">&quot;VL1&quot;</span>), </span>
-<span id="cb216-2"><a href="did.html#cb216-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">treatment =</span> <span class="st">&quot;A&quot;</span>, <span class="at">R =</span> <span class="dv">100</span>)</span>
-<span id="cb216-3"><a href="did.html#cb216-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.lindid</span></span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="did.html#cb217-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lindid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb217-2"><a href="did.html#cb217-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>did_linear, <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb217-3"><a href="did.html#cb217-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>)</span>
+<span id="cb217-4"><a href="did.html#cb217-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-5"><a href="did.html#cb217-5" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.lindid</span></span></code></pre></div>
 <p>The DiD estimator with the loglinear model</p>
-<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="did.html#cb217-1" aria-hidden="true" tabindex="-1"></a>dwhatif.loglindid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">did_loglinear</span>(doublewhatifdat, <span class="at">outcomes =</span> <span class="fu">c</span>(<span class="st">&quot;VL0&quot;</span>, <span class="st">&quot;VL1&quot;</span>), </span>
-<span id="cb217-2"><a href="did.html#cb217-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">treatment =</span> <span class="st">&quot;A&quot;</span>, <span class="at">R =</span> <span class="dv">100</span>)</span>
-<span id="cb217-3"><a href="did.html#cb217-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.loglindid</span></span></code></pre></div>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="did.html#cb218-1" aria-hidden="true" tabindex="-1"></a>dwhatif.loglindid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb218-2"><a href="did.html#cb218-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>did_loglinear, <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb218-3"><a href="did.html#cb218-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>)</span>
+<span id="cb218-4"><a href="did.html#cb218-4" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.loglindid</span></span></code></pre></div>
 <p>The DiD estimator with the logistic model</p>
-<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="did.html#cb218-1" aria-hidden="true" tabindex="-1"></a>dwhatif.logisticdid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">did_logistic</span>(doublewhatifdat, <span class="at">outcomes =</span> <span class="fu">c</span>(<span class="st">&quot;VL0&quot;</span>, <span class="st">&quot;VL1&quot;</span>), </span>
-<span id="cb218-2"><a href="did.html#cb218-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">treatment =</span> <span class="st">&quot;A&quot;</span>, <span class="at">R =</span> <span class="dv">100</span>)</span>
-<span id="cb218-3"><a href="did.html#cb218-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.logisticdid</span></span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="did.html#cb219-1" aria-hidden="true" tabindex="-1"></a>dwhatif.logisticdid <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb219-2"><a href="did.html#cb219-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>did_logistic, <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb219-3"><a href="did.html#cb219-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>)</span>
+<span id="cb219-4"><a href="did.html#cb219-4" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.logisticdid</span></span></code></pre></div>
 <p>verify the results</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="did.html#cb219-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fciR<span class="sc">::</span>fci_tbl_07_02)</span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="did.html#cb220-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fciR<span class="sc">::</span>fci_tbl_07_02)</span></code></pre></div>
 <pre><code>## Warning in data(fciR::fci_tbl_07_02): data set &#39;fciR::fci_tbl_07_02&#39; not found</code></pre>
-<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="did.html#cb221-1" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_07_02</span>
-<span id="cb221-2"><a href="did.html#cb221-2" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span></code></pre></div>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="did.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb222-2"><a href="did.html#cb222-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
-<span id="cb222-3"><a href="did.html#cb222-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb222-4"><a href="did.html#cb222-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb222-5"><a href="did.html#cb222-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb222-6"><a href="did.html#cb222-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&quot;</span>, </span>
-<span id="cb222-7"><a href="did.html#cb222-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
-<span id="cb222-8"><a href="did.html#cb222-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<div id="cszuvadxft" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="did.html#cb222-1" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_07_02</span>
+<span id="cb222-2"><a href="did.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span></code></pre></div>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="did.html#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb223-2"><a href="did.html#cb223-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
+<span id="cb223-3"><a href="did.html#cb223-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb223-4"><a href="did.html#cb223-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb223-5"><a href="did.html#cb223-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb223-6"><a href="did.html#cb223-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&quot;</span>, </span>
+<span id="cb223-7"><a href="did.html#cb223-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
+<span id="cb223-8"><a href="did.html#cb223-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div id="iciyoaqehv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#cszuvadxft .gt_table {
+#iciyoaqehv .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -566,7 +570,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-left-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_heading {
+#iciyoaqehv .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -578,7 +582,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_title {
+#iciyoaqehv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -588,7 +592,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-bottom-width: 0;
 }
 
-#cszuvadxft .gt_subtitle {
+#iciyoaqehv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -598,13 +602,13 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-width: 0;
 }
 
-#cszuvadxft .gt_bottom_border {
+#iciyoaqehv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_col_headings {
+#iciyoaqehv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -619,7 +623,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_col_heading {
+#iciyoaqehv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -639,7 +643,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   overflow-x: hidden;
 }
 
-#cszuvadxft .gt_column_spanner_outer {
+#iciyoaqehv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -651,15 +655,15 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 4px;
 }
 
-#cszuvadxft .gt_column_spanner_outer:first-child {
+#iciyoaqehv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cszuvadxft .gt_column_spanner_outer:last-child {
+#iciyoaqehv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cszuvadxft .gt_column_spanner {
+#iciyoaqehv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -671,7 +675,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   width: 100%;
 }
 
-#cszuvadxft .gt_group_heading {
+#iciyoaqehv .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -693,7 +697,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   vertical-align: middle;
 }
 
-#cszuvadxft .gt_empty_group_heading {
+#iciyoaqehv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -708,15 +712,15 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   vertical-align: middle;
 }
 
-#cszuvadxft .gt_from_md > :first-child {
+#iciyoaqehv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cszuvadxft .gt_from_md > :last-child {
+#iciyoaqehv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cszuvadxft .gt_row {
+#iciyoaqehv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -735,7 +739,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   overflow-x: hidden;
 }
 
-#cszuvadxft .gt_stub {
+#iciyoaqehv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -747,7 +751,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-left: 12px;
 }
 
-#cszuvadxft .gt_summary_row {
+#iciyoaqehv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -757,7 +761,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 5px;
 }
 
-#cszuvadxft .gt_first_summary_row {
+#iciyoaqehv .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -767,7 +771,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_grand_summary_row {
+#iciyoaqehv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -777,7 +781,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 5px;
 }
 
-#cszuvadxft .gt_first_grand_summary_row {
+#iciyoaqehv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -787,11 +791,11 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_striped {
+#iciyoaqehv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cszuvadxft .gt_table_body {
+#iciyoaqehv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -800,7 +804,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-bottom-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_footnotes {
+#iciyoaqehv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -814,13 +818,13 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_footnote {
+#iciyoaqehv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#cszuvadxft .gt_sourcenotes {
+#iciyoaqehv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -834,41 +838,41 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#cszuvadxft .gt_sourcenote {
+#iciyoaqehv .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#cszuvadxft .gt_left {
+#iciyoaqehv .gt_left {
   text-align: left;
 }
 
-#cszuvadxft .gt_center {
+#iciyoaqehv .gt_center {
   text-align: center;
 }
 
-#cszuvadxft .gt_right {
+#iciyoaqehv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cszuvadxft .gt_font_normal {
+#iciyoaqehv .gt_font_normal {
   font-weight: normal;
 }
 
-#cszuvadxft .gt_font_bold {
+#iciyoaqehv .gt_font_bold {
   font-weight: bold;
 }
 
-#cszuvadxft .gt_font_italic {
+#iciyoaqehv .gt_font_italic {
   font-style: italic;
 }
 
-#cszuvadxft .gt_super {
+#iciyoaqehv .gt_super {
   font-size: 65%;
 }
 
-#cszuvadxft .gt_footnote_marks {
+#iciyoaqehv .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -981,30 +985,30 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   </tfoot>
 </table>
 </div>
-<p>and the results from my own functions</p>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="did.html#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb223-2"><a href="did.html#cb223-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb223-3"><a href="did.html#cb223-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
-<span id="cb223-4"><a href="did.html#cb223-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lindid), </span>
-<span id="cb223-5"><a href="did.html#cb223-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb223-6"><a href="did.html#cb223-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
-<span id="cb223-7"><a href="did.html#cb223-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglindid),</span>
-<span id="cb223-8"><a href="did.html#cb223-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb223-9"><a href="did.html#cb223-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
-<span id="cb223-10"><a href="did.html#cb223-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logisticdid)) <span class="sc">%&gt;%</span></span>
-<span id="cb223-11"><a href="did.html#cb223-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb223-12"><a href="did.html#cb223-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb223-13"><a href="did.html#cb223-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb223-14"><a href="did.html#cb223-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb223-15"><a href="did.html#cb223-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>, </span>
-<span id="cb223-16"><a href="did.html#cb223-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
-<span id="cb223-17"><a href="did.html#cb223-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<div id="wtysmzfzoz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<p>and the results using the <code>fciR</code> package are identical.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="did.html#cb224-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
+<span id="cb224-2"><a href="did.html#cb224-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb224-3"><a href="did.html#cb224-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
+<span id="cb224-4"><a href="did.html#cb224-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lindid), </span>
+<span id="cb224-5"><a href="did.html#cb224-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb224-6"><a href="did.html#cb224-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
+<span id="cb224-7"><a href="did.html#cb224-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglindid),</span>
+<span id="cb224-8"><a href="did.html#cb224-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb224-9"><a href="did.html#cb224-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
+<span id="cb224-10"><a href="did.html#cb224-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logisticdid)) <span class="sc">%&gt;%</span></span>
+<span id="cb224-11"><a href="did.html#cb224-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb224-12"><a href="did.html#cb224-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb224-13"><a href="did.html#cb224-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb224-14"><a href="did.html#cb224-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb224-15"><a href="did.html#cb224-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>, </span>
+<span id="cb224-16"><a href="did.html#cb224-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
+<span id="cb224-17"><a href="did.html#cb224-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div id="qevapbbyou" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#wtysmzfzoz .gt_table {
+#qevapbbyou .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1029,7 +1033,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-left-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_heading {
+#qevapbbyou .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1041,7 +1045,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_title {
+#qevapbbyou .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -1051,7 +1055,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-bottom-width: 0;
 }
 
-#wtysmzfzoz .gt_subtitle {
+#qevapbbyou .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -1061,13 +1065,13 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-width: 0;
 }
 
-#wtysmzfzoz .gt_bottom_border {
+#qevapbbyou .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_col_headings {
+#qevapbbyou .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1082,7 +1086,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_col_heading {
+#qevapbbyou .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1102,7 +1106,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   overflow-x: hidden;
 }
 
-#wtysmzfzoz .gt_column_spanner_outer {
+#qevapbbyou .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1114,15 +1118,15 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 4px;
 }
 
-#wtysmzfzoz .gt_column_spanner_outer:first-child {
+#qevapbbyou .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wtysmzfzoz .gt_column_spanner_outer:last-child {
+#qevapbbyou .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wtysmzfzoz .gt_column_spanner {
+#qevapbbyou .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1134,7 +1138,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   width: 100%;
 }
 
-#wtysmzfzoz .gt_group_heading {
+#qevapbbyou .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1156,7 +1160,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   vertical-align: middle;
 }
 
-#wtysmzfzoz .gt_empty_group_heading {
+#qevapbbyou .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1171,15 +1175,15 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   vertical-align: middle;
 }
 
-#wtysmzfzoz .gt_from_md > :first-child {
+#qevapbbyou .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wtysmzfzoz .gt_from_md > :last-child {
+#qevapbbyou .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wtysmzfzoz .gt_row {
+#qevapbbyou .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1198,7 +1202,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   overflow-x: hidden;
 }
 
-#wtysmzfzoz .gt_stub {
+#qevapbbyou .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1210,7 +1214,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-left: 12px;
 }
 
-#wtysmzfzoz .gt_summary_row {
+#qevapbbyou .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1220,7 +1224,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 5px;
 }
 
-#wtysmzfzoz .gt_first_summary_row {
+#qevapbbyou .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1230,7 +1234,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_grand_summary_row {
+#qevapbbyou .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1240,7 +1244,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   padding-right: 5px;
 }
 
-#wtysmzfzoz .gt_first_grand_summary_row {
+#qevapbbyou .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1250,11 +1254,11 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-top-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_striped {
+#qevapbbyou .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wtysmzfzoz .gt_table_body {
+#qevapbbyou .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1263,7 +1267,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-bottom-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_footnotes {
+#qevapbbyou .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1277,13 +1281,13 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_footnote {
+#qevapbbyou .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#wtysmzfzoz .gt_sourcenotes {
+#qevapbbyou .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1297,41 +1301,41 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   border-right-color: #D3D3D3;
 }
 
-#wtysmzfzoz .gt_sourcenote {
+#qevapbbyou .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#wtysmzfzoz .gt_left {
+#qevapbbyou .gt_left {
   text-align: left;
 }
 
-#wtysmzfzoz .gt_center {
+#qevapbbyou .gt_center {
   text-align: center;
 }
 
-#wtysmzfzoz .gt_right {
+#qevapbbyou .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wtysmzfzoz .gt_font_normal {
+#qevapbbyou .gt_font_normal {
   font-weight: normal;
 }
 
-#wtysmzfzoz .gt_font_bold {
+#qevapbbyou .gt_font_bold {
   font-weight: bold;
 }
 
-#wtysmzfzoz .gt_font_italic {
+#qevapbbyou .gt_font_italic {
   font-style: italic;
 }
 
-#wtysmzfzoz .gt_super {
+#qevapbbyou .gt_super {
   font-size: 65%;
 }
 
-#wtysmzfzoz .gt_footnote_marks {
+#qevapbbyou .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1362,7 +1366,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 <td class="gt_row gt_center">(0.493, 0.661)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center gt_striped">0.577</td>
-<td class="gt_row gt_center gt_striped">(0.503, 0.653)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.503, 0.654)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Logistic</td>
 <td class="gt_row gt_center">0.592</td>
 <td class="gt_row gt_center">(0.518, 0.675)</td></tr>
@@ -1371,7 +1375,7 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
     </tr>
     <tr><td class="gt_row gt_left gt_stub">Linear</td>
 <td class="gt_row gt_center gt_striped">0.231</td>
-<td class="gt_row gt_center gt_striped">(0.17, 0.289)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.171, 0.289)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center">0.231</td>
 <td class="gt_row gt_center">(0.179, 0.283)</td></tr>
@@ -1383,10 +1387,10 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
     </tr>
     <tr><td class="gt_row gt_left gt_stub">Linear</td>
 <td class="gt_row gt_center">-0.355</td>
-<td class="gt_row gt_center">(-0.433, -0.262)</td></tr>
+<td class="gt_row gt_center">(-0.432, -0.262)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center gt_striped">-0.346</td>
-<td class="gt_row gt_center gt_striped">(-0.425, -0.27)</td></tr>
+<td class="gt_row gt_center gt_striped">(-0.426, -0.269)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Logistic</td>
 <td class="gt_row gt_center">-0.362</td>
 <td class="gt_row gt_center">(-0.454, -0.285)</td></tr>
@@ -1395,13 +1399,13 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
     </tr>
     <tr><td class="gt_row gt_left gt_stub">Linear</td>
 <td class="gt_row gt_center gt_striped">0.394</td>
-<td class="gt_row gt_center gt_striped">(0.313, 0.514)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.313, 0.513)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center">0.400</td>
 <td class="gt_row gt_center">(0.32, 0.503)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Logistic</td>
 <td class="gt_row gt_center gt_striped">0.390</td>
-<td class="gt_row gt_center gt_striped">(0.307, 0.473)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.307, 0.474)</td></tr>
     <tr class="gt_group_heading_row">
       <td colspan="3" class="gt_group_heading">RR*</td>
     </tr>
@@ -1410,10 +1414,10 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 <td class="gt_row gt_center">(0.452, 0.675)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center gt_striped">0.550</td>
-<td class="gt_row gt_center gt_striped">(0.463, 0.653)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.463, 0.654)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Logistic</td>
 <td class="gt_row gt_center">0.530</td>
-<td class="gt_row gt_center">(0.432, 0.635)</td></tr>
+<td class="gt_row gt_center">(0.432, 0.636)</td></tr>
     <tr class="gt_group_heading_row">
       <td colspan="3" class="gt_group_heading">OR</td>
     </tr>
@@ -1422,10 +1426,10 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 <td class="gt_row gt_center gt_striped">(0.149, 0.329)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Loglinear</td>
 <td class="gt_row gt_center">0.220</td>
-<td class="gt_row gt_center">(0.155, 0.315)</td></tr>
+<td class="gt_row gt_center">(0.154, 0.316)</td></tr>
     <tr><td class="gt_row gt_left gt_stub">Logistic</td>
 <td class="gt_row gt_center gt_striped">0.206</td>
-<td class="gt_row gt_center gt_striped">(0.136, 0.292)</td></tr>
+<td class="gt_row gt_center gt_striped">(0.137, 0.292)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
