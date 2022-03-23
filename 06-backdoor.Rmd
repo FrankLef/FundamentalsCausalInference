@@ -5,6 +5,7 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(patchwork)
 library(fciR)
 options(dplyr.summarise.inform = FALSE)
 ```
@@ -244,21 +245,25 @@ a_file <- file.path(dir_data, "chap06_mort_out_npr.rds")
 mort.out.npr <- readRDS(file = a_file)
 ```
 
-```{r echo=FALSE}
-fciR::gt_measures(mort.out.npr,  digits = 6,
+
+
+```{r echo=FALSE, out.width="100%"}
+tbl <- fciR::gt_measures(mort.out.npr,  digits = 6,
             title = "Mortality", 
             subtitle = paste("Mortality", 
                               "Standardized Estimates",
                               "Non Parametric With Regression",
                               sep = "<br>"))
-```
-
-
-
-```{r}
-fciR::ggp_measures(mort.out.npr,
-                   title = "Moratility Data Effect Measure",
-                   subtitle = "Standardized Estimates\n95% confidence interval")
+p <- fciR::ggp_measures(mort.out.npr,
+                   title = "Mortality Data Effect Measures",
+                   subtitle = "Standardized Estimates\n95% confidence interval",
+                   vline = list(colors = c("lightseagreen", "violet"),
+                                      linetype = "solid", size = 3, alpha = 0.5),
+                   pointrange = list(size = 1, fatten = 2),
+                   text = list(size = 3, color = "navy", digits = 2),
+                   title_size = 0.9, text_y_size = 0.9)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl
 ```
 
 
