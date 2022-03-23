@@ -248,22 +248,25 @@ mort.out.npr <- readRDS(file = a_file)
 
 
 ```{r echo=FALSE, out.width="100%"}
-tbl <- fciR::gt_measures(mort.out.npr,  digits = 6,
+df <- mort.out.npr
+tbl <- fciR::gt_measures(df,  digits = 6,
             title = "Mortality", 
             subtitle = paste("Mortality", 
                               "Standardized Estimates",
                               "Non Parametric With Regression",
                               sep = "<br>"))
-p <- fciR::ggp_measures(mort.out.npr,
-                   title = "Mortality Data Effect Measures",
-                   subtitle = "Standardized Estimates\n95% confidence interval",
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL,
                    vline = list(colors = c("lightseagreen", "violet"),
                                       linetype = "solid", size = 3, alpha = 0.5),
                    pointrange = list(size = 1, fatten = 2),
                    text = list(size = 3, color = "navy", digits = 2),
-                   title_size = 0.9, text_y_size = 0.9)
+                   text_size = list(title = 0.9, y_axis = 0.9))
 tbl <- fciR::gt2ggp(tbl)
-p + tbl
+p + tbl + plot_annotation(title = "Mortality Data Effect Measures",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -304,11 +307,19 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.1
 
-```{r echo=FALSE}
-fciR::gt_measures(whatif.out, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif.out
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.1", 
             subtitle = paste("What-If Study", "Standardized Estimates",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -331,13 +342,21 @@ a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
 whatif.out.np <- readRDS(file = a_file)
 ```
 
-```{r echo=FALSE}
-fciR::gt_measures(whatif.out.np, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif.out.np
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.1", 
             subtitle = paste("What-If Study", 
                               "Standardized Estimates",
                               "Non Parametric Without Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -362,13 +381,21 @@ doublewhatif.out <- fciR::boot_est(
 ```
 
 
-```{r echo=FALSE}
-fciR::gt_measures(doublewhatif.out, 
+```{r echo=FALSE, out.width="100%"}
+df <- doublewhatif.out
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.2", 
             subtitle = paste("Double What-If Study", 
                              "Standardized Estimates with <em>H = AD0</em>",
                              "Non Parametric With Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Double What-If Study",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -388,13 +415,21 @@ a_file <- file.path(dir_data, "chap06_doublewhatif_out_np.rds")
 doublewhatif.out.np <- readRDS(file = a_file)
 ```
 
-```{r echo=FALSE}
-fciR::gt_measures(doublewhatif.out.np, 
+```{r echo=FALSE, out.width="100%"}
+df <- doublewhatif.out.np
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.1", 
             subtitle = paste("Double What-If Study", 
                               "Standardized Estimates",
                               "Non Parametric Without Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Double What-If Study",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -412,13 +447,21 @@ doublewhatif.out <- fciR::boot_est(
 ```
 
 
-```{r}
-fciR::gt_measures(doublewhatif.out, 
+```{r echo=FALSE, out.width="100%"}
+df <- doublewhatif.out
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.3", 
             subtitle = paste("Double What-If Study", 
                              "Standardized Estimates with <em>H = VL0</em>",
                              "Non Parametric With Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Double What-If Study",
+                          subtitle = "Standardized Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -453,12 +496,20 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.1
 
-```{r}
-fciR::gt_measures(whatif.att, 
+```{r, out.width="100%"}
+df <- whatif.att
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.4", 
             subtitle = paste("What-If Study", "Standardized ATT estimates",
                              "Non Parametric With Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Standardized ATT Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 It can also be done using a non-parametric method without regression. That
@@ -478,13 +529,21 @@ a_file <- file.path(dir_data, "chap06_whatif_out_att_np.rds")
 whatif.out.att.np <- readRDS(file = a_file)
 ```
 
-```{r echo=FALSE}
-fciR::gt_measures(whatif.out.att.np, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif.out.att.np
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.4", 
             subtitle = paste("What-If Study", 
                               "Standardized ATT Estimates",
                               "Non Parametric Without Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Standardized ATT Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -500,13 +559,21 @@ doublewhatif.att <- fciR::boot_est(
 ```
 
 
-```{r echo=FALSE}
-fciR::gt_measures(doublewhatif.att, 
+```{r echo=FALSE, out.width="100%"}
+df <- doublewhatif.att
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.5", 
             subtitle = paste("Double What-If Study", 
                              "Standardized ATT Estimates with <em>H = AD0</em>",
                              "Non Parametric With Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Double What-If Study",
+                          subtitle = "Standardized ATT Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -520,13 +587,21 @@ doublewhatif.att <- fciR::boot_est(
 ```
 
 
-```{r echo=FALSE}
-fciR::gt_measures(doublewhatif.att, 
+```{r echo=FALSE, out.width="100%"}
+df <- doublewhatif.att
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.6", 
             subtitle = paste("Double What-If Study", 
                              "Standardized ATT Estimates with <em>H = VL0</em>",
                              "Non Parametric With Regression",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Double What-If Study",
+                          subtitle = "Standardized ATT Estimates, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 ### Standardization with a Parametric Outcome Model
@@ -558,12 +633,20 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.1
 
-```{r}
-fciR::gt_measures(whatif2.out, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif2.out
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.7", 
             subtitle = paste("What-If Study", 
-                             "Outome-model Standardization with <em>H = lvlcont0</ems>",
+                             "Outcome-model Standardization with <em>H = lvlcont0</ems>",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Outcome-model Standardization, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 #### General Social Survey {-}
@@ -606,14 +689,22 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.8
 
-```{r}
-fciR::gt_measures(gssrcc.out, 
+```{r echo=FALSE, out.width="100%"}
+df <- gssrcc.out
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.8", 
             subtitle = paste("General Social Survey",
             "Outcome-model Standardization",
             "Effect of <em>More than High School Education</em> on <em>
             Voting for Trump</em>",
             sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "General Social Survey",
+                          subtitle = "Outcome-model Standardization, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 ## Standardization via Exposure Modeling
@@ -838,12 +929,20 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.9
 
-```{r echo=FALSE}
-fciR::gt_measures(whatif2.exp, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif2.exp
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.9", 
             subtitle = paste("What-If Study", 
                              "Exposure-model Standardization with <em>H = lvlcont0</em>",
                              sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Exposure-model Standardization, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -870,12 +969,14 @@ whatif2.expgee <- whatif2.expgee[!(whatif2.expgee$name %in% c("RR*", "OR")), ]
 
 and the results are presented in table 6.9
 
-```{r}
-fciR::gt_measures(whatif2.expgee, 
+```{r echo=FALSE}
+df <- whatif2.expgee
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.9 geeglm", 
             subtitle = paste("What-If Study", 
                              "Exposure-model Standardization using <em>geeglm</em> wtih <em>H = lvlcont0</em>",
                              sep = "<br>"))
+tbl
 ```
 
 
@@ -919,14 +1020,22 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.9
 
-```{r}
-fciR::gt_measures(gssrcc.exp, 
+```{r echo=FALSE, out.width="100%"}
+df <- gssrcc.exp
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.10", 
             subtitle = paste(
               "General Social Survey<br>Exposure-model Standardization", 
               "Effect of <em>More than High School Education</em> on <em>
               Voting for Trump</em>",
             sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "General Social Survey",
+                          subtitle = "Exposure-model Standardization, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 
@@ -966,14 +1075,22 @@ stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
 
 and the results are presented in table 6.9
 
-```{r}
-fciR::gt_measures(whatif2.bad, 
+```{r echo=FALSE, out.width="100%"}
+df <- whatif2.bad
+tbl <- fciR::gt_measures(df, 
             title = "Table 6.12", 
             subtitle = paste("What-If Study", 
             "Doubly Robust Standardization",
             "Combining the Misspecified Outome Model of Table 6.11", 
             "and the Exposure Model of Table 6.9",
             sep = "<br>"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "What-If Study",
+                          subtitle = "Doubly Robust Standardization MISSPECIFIED, 95% confidence interval") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
 ### Doubly Robust Standardization Simulation

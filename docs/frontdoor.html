@@ -392,22 +392,22 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="frontdoor" class="section level1" number="8">
 <h1><span class="header-section-number">Chapter 8</span> Front-Door Method</h1>
-<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="frontdoor.html#cb224-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb224-2"><a href="frontdoor.html#cb224-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb224-3"><a href="frontdoor.html#cb224-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(dagitty)</span></span>
-<span id="cb224-4"><a href="frontdoor.html#cb224-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb224-5"><a href="frontdoor.html#cb224-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="frontdoor.html#cb218-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb218-2"><a href="frontdoor.html#cb218-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb218-3"><a href="frontdoor.html#cb218-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(dagitty)</span></span>
+<span id="cb218-4"><a href="frontdoor.html#cb218-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb218-5"><a href="frontdoor.html#cb218-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <div id="motivation" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> Motivation</h2>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="frontdoor.html#cb225-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb225-2"><a href="frontdoor.html#cb225-2" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.1</span>, {</span>
-<span id="cb225-3"><a href="frontdoor.html#cb225-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb225-4"><a href="frontdoor.html#cb225-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
-<span id="cb225-5"><a href="frontdoor.html#cb225-5" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A,</span>
-<span id="cb225-6"><a href="frontdoor.html#cb225-6" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U)</span>
-<span id="cb225-7"><a href="frontdoor.html#cb225-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb225-8"><a href="frontdoor.html#cb225-8" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb225-9"><a href="frontdoor.html#cb225-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="frontdoor.html#cb219-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb219-2"><a href="frontdoor.html#cb219-2" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.1</span>, {</span>
+<span id="cb219-3"><a href="frontdoor.html#cb219-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb219-4"><a href="frontdoor.html#cb219-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb219-5"><a href="frontdoor.html#cb219-5" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A,</span>
+<span id="cb219-6"><a href="frontdoor.html#cb219-6" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U)</span>
+<span id="cb219-7"><a href="frontdoor.html#cb219-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb219-8"><a href="frontdoor.html#cb219-8" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb219-9"><a href="frontdoor.html#cb219-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-174"></span>
 <img src="_main_files/figure-html/unnamed-chunk-174-1.png" alt="Front-door Causal DAG" width="60%" />
 <p class="caption">
@@ -443,23 +443,23 @@ E(Y(a)) = E(Y \mid A=a) &amp;=  \sum_s P(S=s \mid A=a) \left[ \sum_{a^\prime} E(
 \end{align*}
 \]</span></p>
 <p>and the Front-door causal DAG including potential outcomes is</p>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="frontdoor.html#cb226-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb226-2"><a href="frontdoor.html#cb226-2" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(<span class="fu">Y</span>(s))</span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="frontdoor.html#cb220-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb220-2"><a href="frontdoor.html#cb220-2" aria-hidden="true" tabindex="-1"></a><span class="fu">substitute</span>(<span class="fu">Y</span>(s))</span></code></pre></div>
 <pre><code>## Y(s)</code></pre>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="frontdoor.html#cb228-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.4</span>, {</span>
-<span id="cb228-2"><a href="frontdoor.html#cb228-2" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb228-3"><a href="frontdoor.html#cb228-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;U&quot;</span> <span class="ot">=</span> <span class="st">&quot;Y(a,s)&quot;</span>, </span>
-<span id="cb228-4"><a href="frontdoor.html#cb228-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Sa&quot;</span> <span class="ot">=</span> <span class="st">&quot;S(a)&quot;</span>,</span>
-<span id="cb228-5"><a href="frontdoor.html#cb228-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;S&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb228-6"><a href="frontdoor.html#cb228-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb228-7"><a href="frontdoor.html#cb228-7" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb228-8"><a href="frontdoor.html#cb228-8" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
-<span id="cb228-9"><a href="frontdoor.html#cb228-9" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A <span class="sc">+</span> Sa,</span>
-<span id="cb228-10"><a href="frontdoor.html#cb228-10" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U,</span>
-<span id="cb228-11"><a href="frontdoor.html#cb228-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
-<span id="cb228-12"><a href="frontdoor.html#cb228-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb228-13"><a href="frontdoor.html#cb228-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb228-14"><a href="frontdoor.html#cb228-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="frontdoor.html#cb222-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.4</span>, {</span>
+<span id="cb222-2"><a href="frontdoor.html#cb222-2" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb222-3"><a href="frontdoor.html#cb222-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;U&quot;</span> <span class="ot">=</span> <span class="st">&quot;Y(a,s)&quot;</span>, </span>
+<span id="cb222-4"><a href="frontdoor.html#cb222-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Sa&quot;</span> <span class="ot">=</span> <span class="st">&quot;S(a)&quot;</span>,</span>
+<span id="cb222-5"><a href="frontdoor.html#cb222-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;S&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb222-6"><a href="frontdoor.html#cb222-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb222-7"><a href="frontdoor.html#cb222-7" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb222-8"><a href="frontdoor.html#cb222-8" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb222-9"><a href="frontdoor.html#cb222-9" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A <span class="sc">+</span> Sa,</span>
+<span id="cb222-10"><a href="frontdoor.html#cb222-10" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U,</span>
+<span id="cb222-11"><a href="frontdoor.html#cb222-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
+<span id="cb222-12"><a href="frontdoor.html#cb222-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb222-13"><a href="frontdoor.html#cb222-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb222-14"><a href="frontdoor.html#cb222-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-176"></span>
 <img src="_main_files/figure-html/unnamed-chunk-176-1.png" alt="Front-door Causal DAG Including Potential Outcomes" width="60%" />
 <p class="caption">
@@ -469,26 +469,26 @@ Figure 8.2: Front-door Causal DAG Including Potential Outcomes
 </div>
 <div id="simulated-example" class="section level2" number="8.3">
 <h2><span class="header-section-number">8.3</span> Simulated Example</h2>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="frontdoor.html#cb229-1" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">seed =</span> <span class="dv">555</span>) {</span>
-<span id="cb229-2"><a href="frontdoor.html#cb229-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb229-3"><a href="frontdoor.html#cb229-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome Y(.,0) and Y(.,1)</span></span>
-<span id="cb229-4"><a href="frontdoor.html#cb229-4" aria-hidden="true" tabindex="-1"></a>  Ydot0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb229-5"><a href="frontdoor.html#cb229-5" aria-hidden="true" tabindex="-1"></a>  Ydot1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
-<span id="cb229-6"><a href="frontdoor.html#cb229-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let A depend on Y(.,1)</span></span>
-<span id="cb229-7"><a href="frontdoor.html#cb229-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Ydot1) <span class="sc">*</span> <span class="fl">0.1</span> <span class="sc">+</span> Ydot1 <span class="sc">*</span> <span class="fl">0.8</span></span>
-<span id="cb229-8"><a href="frontdoor.html#cb229-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
-<span id="cb229-9"><a href="frontdoor.html#cb229-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome S(0) and S(1)</span></span>
-<span id="cb229-10"><a href="frontdoor.html#cb229-10" aria-hidden="true" tabindex="-1"></a>  S0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb229-11"><a href="frontdoor.html#cb229-11" aria-hidden="true" tabindex="-1"></a>  S1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span>
-<span id="cb229-12"><a href="frontdoor.html#cb229-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># S is a function of S0, S1 and A</span></span>
-<span id="cb229-13"><a href="frontdoor.html#cb229-13" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> S0 <span class="sc">+</span> A <span class="sc">*</span> S1</span>
-<span id="cb229-14"><a href="frontdoor.html#cb229-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y is a function of Y(., 0) and Y(., 1) and S</span></span>
-<span id="cb229-15"><a href="frontdoor.html#cb229-15" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> S) <span class="sc">*</span> Ydot0 <span class="sc">+</span> S <span class="sc">*</span> Ydot1</span>
-<span id="cb229-16"><a href="frontdoor.html#cb229-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, S, Y, Ydot0, Ydot1))</span>
-<span id="cb229-17"><a href="frontdoor.html#cb229-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="frontdoor.html#cb230-1" aria-hidden="true" tabindex="-1"></a>sim1_df <span class="ot">&lt;-</span> <span class="fu">sim1</span>()</span>
-<span id="cb230-2"><a href="frontdoor.html#cb230-2" aria-hidden="true" tabindex="-1"></a>sim1.front <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">frontdr_np</span>(sim1_df, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;S&quot;</span>)</span>
-<span id="cb230-3"><a href="frontdoor.html#cb230-3" aria-hidden="true" tabindex="-1"></a>sim1.front</span></code></pre></div>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="frontdoor.html#cb223-1" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">seed =</span> <span class="dv">555</span>) {</span>
+<span id="cb223-2"><a href="frontdoor.html#cb223-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb223-3"><a href="frontdoor.html#cb223-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome Y(.,0) and Y(.,1)</span></span>
+<span id="cb223-4"><a href="frontdoor.html#cb223-4" aria-hidden="true" tabindex="-1"></a>  Ydot0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb223-5"><a href="frontdoor.html#cb223-5" aria-hidden="true" tabindex="-1"></a>  Ydot1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
+<span id="cb223-6"><a href="frontdoor.html#cb223-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let A depend on Y(.,1)</span></span>
+<span id="cb223-7"><a href="frontdoor.html#cb223-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Ydot1) <span class="sc">*</span> <span class="fl">0.1</span> <span class="sc">+</span> Ydot1 <span class="sc">*</span> <span class="fl">0.8</span></span>
+<span id="cb223-8"><a href="frontdoor.html#cb223-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
+<span id="cb223-9"><a href="frontdoor.html#cb223-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome S(0) and S(1)</span></span>
+<span id="cb223-10"><a href="frontdoor.html#cb223-10" aria-hidden="true" tabindex="-1"></a>  S0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb223-11"><a href="frontdoor.html#cb223-11" aria-hidden="true" tabindex="-1"></a>  S1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span>
+<span id="cb223-12"><a href="frontdoor.html#cb223-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># S is a function of S0, S1 and A</span></span>
+<span id="cb223-13"><a href="frontdoor.html#cb223-13" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> S0 <span class="sc">+</span> A <span class="sc">*</span> S1</span>
+<span id="cb223-14"><a href="frontdoor.html#cb223-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y is a function of Y(., 0) and Y(., 1) and S</span></span>
+<span id="cb223-15"><a href="frontdoor.html#cb223-15" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> S) <span class="sc">*</span> Ydot0 <span class="sc">+</span> S <span class="sc">*</span> Ydot1</span>
+<span id="cb223-16"><a href="frontdoor.html#cb223-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, S, Y, Ydot0, Ydot1))</span>
+<span id="cb223-17"><a href="frontdoor.html#cb223-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="frontdoor.html#cb224-1" aria-hidden="true" tabindex="-1"></a>sim1_df <span class="ot">&lt;-</span> <span class="fu">sim1</span>()</span>
+<span id="cb224-2"><a href="frontdoor.html#cb224-2" aria-hidden="true" tabindex="-1"></a>sim1.front <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">frontdr_np</span>(sim1_df, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;S&quot;</span>)</span>
+<span id="cb224-3"><a href="frontdoor.html#cb224-3" aria-hidden="true" tabindex="-1"></a>sim1.front</span></code></pre></div>
 <pre><code>##        EY0        EY1 
 ## 0.05584704 0.18536722</code></pre>
 
