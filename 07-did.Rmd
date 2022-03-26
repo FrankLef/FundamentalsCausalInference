@@ -176,7 +176,7 @@ dwhatif.logisticdid <- fciR::boot_est(
 verify the results
 
 ```{r}
-data(fciR::fci_tbl_07_02)
+data("fci_tbl_07_02", package = "fciR")
 bb_dwhatif <- fci_tbl_07_02
 # bb_dwhatif
 ```
@@ -196,7 +196,7 @@ gt_measures_rowgrp(
 and the results using the `fciR` package are identical.
 
 ```{r}
-rbind(
+tbl_7.2 <- rbind(
   data.frame(
     method = "Linear",
     dwhatif.lindid), 
@@ -205,14 +205,16 @@ rbind(
     dwhatif.loglindid),
   data.frame(
     method = "Logistic",
-    dwhatif.logisticdid)) %>%
-  gt_measures_rowgrp(
+    dwhatif.logisticdid))
+gt_measures_rowgrp(tbl_7.2,
     rowgroup = "name",
     rowname = "method",
     conf = 0.95,
     title = "Table 7.2<em>(by FL)</em>", 
     subtitle = "Double What-If Study<br>Difference-in-Differences Estimation of the ATT"
   )
+fciR::ggp_measures_groups(tbl_7.2, title = "Table 7.2",
+                    subtitle = "Double What-If Study\nDifference-in-Differences Estimation of the ATT")
 ```
 
 

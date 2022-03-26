@@ -4,7 +4,8 @@
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(ggdag)
-# library(dagitty)
+library(patchwork)
+library(ggplot2)
 library(fciR)
 options(dplyr.summarise.inform = FALSE)
 ```
@@ -26,10 +27,14 @@ dir_lib <- file.path(getwd(), "lib")
 ```{r echo=TRUE, warning=FALSE}
 scm_8.1 <- list()
 scm_8.1 <- within(scm_8.1, {
+  coords <- list(
+    x = c(A = 1, S = 2, U = 2, Y = 3),
+    y = c(A = 1, S = 1, U = 2, Y = 1))
   dag <- dagify(
     A ~ U,
     S ~ A,
-    Y ~ S + U)
+    Y ~ S + U,
+    coords = coords)
 
   plot <- fciR::ggp_dag(dag)
 })
@@ -69,31 +74,6 @@ E(Y(a)) = E(Y \mid A=a) &=  \sum_s P(S=s \mid A=a) \left[ \sum_{a^\prime} E(Y \m
 \end{align*}
 $$
 
-and the Front-door causal DAG including potential outcomes is
-
-
-```{r echo=TRUE, warning=FALSE}
-scm_8.4 <- list()
-substitute(Y(s))
-scm_8.4 <- within(scm_8.4, {
-  the_nodes <- c("A" = "", 
-                 "U" = "Y(a,s)", 
-                 "Sa" = "S(a)",
-                 "S" = "",
-                 "Y" = "")
-  dag <- dagify(
-    A ~ U,
-    S ~ A + Sa,
-    Y ~ S + U,
-    labels = the_nodes)
-
-  plot <- fciR::ggp_dag(dag)
-})
-```
-
-```{r echo=FALSE, fig.align='center', fig.cap="Front-door Causal DAG Including Potential Outcomes", warning=FALSE, out.width="60%"}
-scm_8.4$plot
-```
 
 ## Simulated Example
 
@@ -120,7 +100,32 @@ sim1 <- function(n = 1e4, seed = 555) {
 
 ```{r}
 sim1_df <- sim1()
-sim1.front <- fciR::frontdr_np(sim1_df, outcome.name = "Y", exposure.name = "A", confound.names = "S")
+sim1.front <- fciR::frontdr_np(sim1_df, outcome.name = "Y", exposure.name = "A", surrogate.name = "S")
 sim1.front
 ```
+
+and we can estimates the confidence intervals using the usual bootstrapping.
+
+```{r echo=FALSE}
+sim1.df <- fciR::boot_est(
+  sim1_df, fciR::frontdr_np, R = 100, conf = 0.95, inv = "none", outcome.name = "Y",
+  exposure.name = "A", surrogate.name = "S")
+df <- sim1.df
+tbl <- fciR::gt_measures(df, 
+            title = "Chapter 8: Simulated Example", 
+            subtitle = paste("Front-Door Method Standardized Estimates"))
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL,
+                   vline = list(colors = c("lightseagreen", "violet"),
+                                      linetype = "solid", size = 3, alpha = 0.5),
+                   pointrange = list(size = 1, fatten = 2),
+                   text = list(size = 3, color = "navy", digits = 2),
+                   text_size = list(title = 0.9, y_axis = 0.9))
+tbl <- fciR::gt2ggp(tbl)
+p + tbl + plot_annotation(title = "Chapter 8: Simulated Example",
+                          subtitle = "Standardized Estimates Using the Front-door Method") &
+  theme(title = element_text(color = "midnightblue", size = rel(0.9)))
+```
+
 

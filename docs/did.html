@@ -27,7 +27,7 @@ Brumback. The exercises are done in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-03-23" />
+<meta name="date" content="2022-03-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -300,6 +300,11 @@ div.csl-indent {
 <li class="chapter" data-level="A.8" data-path="errata.html"><a href="errata.html#chapter-7"><i class="fa fa-check"></i><b>A.8</b> Chapter 7</a>
 <ul>
 <li class="chapter" data-level="A.8.1" data-path="errata.html"><a href="errata.html#section-7.2-equation-7.11-p.-139"><i class="fa fa-check"></i><b>A.8.1</b> Section 7.2, equation (7.11), p. 139</a></li>
+<li class="chapter" data-level="A.8.2" data-path="errata.html"><a href="errata.html#exercise-2"><i class="fa fa-check"></i><b>A.8.2</b> Exercise 2</a></li>
+</ul></li>
+<li class="chapter" data-level="A.9" data-path="errata.html"><a href="errata.html#chapter-8"><i class="fa fa-check"></i><b>A.9</b> Chapter 8</a>
+<ul>
+<li class="chapter" data-level="A.9.1" data-path="errata.html"><a href="errata.html#section-8.2-p.-150"><i class="fa fa-check"></i><b>A.9.1</b> Section 8.2, p. 150</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="notes.html"><a href="notes.html"><i class="fa fa-check"></i><b>B</b> Notes</a>
@@ -525,18 +530,17 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 <span id="cb212-3"><a href="did.html#cb212-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>)</span>
 <span id="cb212-4"><a href="did.html#cb212-4" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.logisticdid</span></span></code></pre></div>
 <p>verify the results</p>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="did.html#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fciR<span class="sc">::</span>fci_tbl_07_02)</span></code></pre></div>
-<pre><code>## Warning in data(fciR::fci_tbl_07_02): data set &#39;fciR::fci_tbl_07_02&#39; not found</code></pre>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="did.html#cb215-1" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_07_02</span>
-<span id="cb215-2"><a href="did.html#cb215-2" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span></code></pre></div>
-<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="did.html#cb216-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb216-2"><a href="did.html#cb216-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
-<span id="cb216-3"><a href="did.html#cb216-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb216-4"><a href="did.html#cb216-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb216-5"><a href="did.html#cb216-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb216-6"><a href="did.html#cb216-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&quot;</span>, </span>
-<span id="cb216-7"><a href="did.html#cb216-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
-<span id="cb216-8"><a href="did.html#cb216-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="did.html#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_07_02&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb213-2"><a href="did.html#cb213-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_07_02</span>
+<span id="cb213-3"><a href="did.html#cb213-3" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="did.html#cb214-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb214-2"><a href="did.html#cb214-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
+<span id="cb214-3"><a href="did.html#cb214-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb214-4"><a href="did.html#cb214-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb214-5"><a href="did.html#cb214-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb214-6"><a href="did.html#cb214-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&quot;</span>, </span>
+<span id="cb214-7"><a href="did.html#cb214-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
+<span id="cb214-8"><a href="did.html#cb214-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <div id="gclqyxwrjf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -983,23 +987,23 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
 </table>
 </div>
 <p>and the results using the <code>fciR</code> package are identical.</p>
-<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="did.html#cb217-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(</span>
-<span id="cb217-2"><a href="did.html#cb217-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb217-3"><a href="did.html#cb217-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
-<span id="cb217-4"><a href="did.html#cb217-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lindid), </span>
-<span id="cb217-5"><a href="did.html#cb217-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb217-6"><a href="did.html#cb217-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
-<span id="cb217-7"><a href="did.html#cb217-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglindid),</span>
-<span id="cb217-8"><a href="did.html#cb217-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb217-9"><a href="did.html#cb217-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
-<span id="cb217-10"><a href="did.html#cb217-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logisticdid)) <span class="sc">%&gt;%</span></span>
-<span id="cb217-11"><a href="did.html#cb217-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb217-12"><a href="did.html#cb217-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb217-13"><a href="did.html#cb217-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb217-14"><a href="did.html#cb217-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb217-15"><a href="did.html#cb217-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>, </span>
-<span id="cb217-16"><a href="did.html#cb217-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
-<span id="cb217-17"><a href="did.html#cb217-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb215-1"><a href="did.html#cb215-1" aria-hidden="true" tabindex="-1"></a>tbl_7<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb215-2"><a href="did.html#cb215-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb215-3"><a href="did.html#cb215-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
+<span id="cb215-4"><a href="did.html#cb215-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lindid), </span>
+<span id="cb215-5"><a href="did.html#cb215-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb215-6"><a href="did.html#cb215-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
+<span id="cb215-7"><a href="did.html#cb215-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglindid),</span>
+<span id="cb215-8"><a href="did.html#cb215-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb215-9"><a href="did.html#cb215-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
+<span id="cb215-10"><a href="did.html#cb215-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logisticdid))</span>
+<span id="cb215-11"><a href="did.html#cb215-11" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(tbl_7<span class="fl">.2</span>,</span>
+<span id="cb215-12"><a href="did.html#cb215-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb215-13"><a href="did.html#cb215-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb215-14"><a href="did.html#cb215-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb215-15"><a href="did.html#cb215-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 7.2&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>, </span>
+<span id="cb215-16"><a href="did.html#cb215-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study&lt;br&gt;Difference-in-Differences Estimation of the ATT&quot;</span></span>
+<span id="cb215-17"><a href="did.html#cb215-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <div id="fukoeyernj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1449,6 +1453,9 @@ logit(E(Y_0(0) \mid A=1)) - logit(E(Y_0(0) \mid A=1))
   </tfoot>
 </table>
 </div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="did.html#cb216-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_groups</span>(tbl_7<span class="fl">.2</span>, <span class="at">title =</span> <span class="st">&quot;Table 7.2&quot;</span>,</span>
+<span id="cb216-2"><a href="did.html#cb216-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">subtitle =</span> <span class="st">&quot;Double What-If Study</span><span class="sc">\n</span><span class="st">Difference-in-Differences Estimation of the ATT&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-170-1.png" width="672" /></p>
 
 </div>
 </div>
