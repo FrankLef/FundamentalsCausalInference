@@ -1,0 +1,41 @@
+# Instrumental Variables {#instrument}
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggdag)
+library(patchwork)
+library(ggplot2)
+library(fciR)
+options(dplyr.summarise.inform = FALSE)
+```
+
+
+
+```{r include=FALSE}
+# directory of data files
+dir_data <- file.path(getwd(), "data")
+# directory for functions
+dir_lib <- file.path(getwd(), "lib")
+```
+
+
+
+```{r echo=FALSE, warning=FALSE}
+scm_9.1 <- list()
+scm_9.1 <- within(scm_9.1, {
+  coords <- list(
+    x = c(`T` = 1, A = 2, U = 3, Y = 4),
+    y = c(`T` = 1, A = 1, U = 2, Y = 1))
+  dag <- dagify(
+    A ~ `T` + U,
+    Y ~ A + U,
+    coords = coords)
+
+  plot <- fciR::ggp_dag(dag)
+})
+```
+
+```{r echo=FALSE, fig.align='center', fig.cap="Instrumental Variable for the Effect of A on Y", warning=FALSE, out.width="60%"}
+scm_9.1$plot
+```

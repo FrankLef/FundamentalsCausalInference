@@ -255,14 +255,9 @@ tbl <- fciR::gt_measures(df,  digits = 6,
                               "Standardized Estimates",
                               "Non Parametric With Regression",
                               sep = "<br>"))
-p <- fciR::ggp_measures(df,
-                   title = NULL,
-                   subtitle = NULL,
-                   vline = list(colors = c("lightseagreen", "violet"),
-                                      linetype = "solid", size = 3, alpha = 0.5),
-                   pointrange = list(size = 1, fatten = 2),
-                   text = list(size = 3, color = "navy", digits = 2),
-                   text_size = list(title = 0.9, y_axis = 0.9))
+p <- ggp_format(df, type = "measures_tbl")
+p <- do.call(what = fciR::ggp_measures, args = p)
+
 tbl <- fciR::gt2ggp(tbl)
 p + tbl + plot_annotation(title = "Mortality Data Effect Measures",
                           subtitle = "Standardized Estimates, 95% confidence interval") &
