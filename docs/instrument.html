@@ -26,7 +26,7 @@ Brumback. The exercises are done in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-04-19" />
+<meta name="date" content="2022-04-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -272,7 +272,11 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="9" data-path="instrument.html"><a href="instrument.html"><i class="fa fa-check"></i><b>9</b> Instrumental Variables<span></span></a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect-and-principal-stratification"><i class="fa fa-check"></i><b>9.1</b> Complier Average Causal Effect and Principal Stratification<span></span></a></li>
+<li class="chapter" data-level="9.1" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect-and-principal-stratification"><i class="fa fa-check"></i><b>9.1</b> Complier Average Causal Effect and Principal Stratification<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="instrument.html"><a href="instrument.html#principal-stratification"><i class="fa fa-check"></i><b>9.1.1</b> Principal Stratification<span></span></a></li>
+<li class="chapter" data-level="9.1.2" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect"><i class="fa fa-check"></i><b>9.1.2</b> Complier Average Causal Effect<span></span></a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix<span></span></b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata<span></span></a>
@@ -308,6 +312,10 @@ div.csl-indent {
 <li class="chapter" data-level="A.9" data-path="errata.html"><a href="errata.html#chapter-8"><i class="fa fa-check"></i><b>A.9</b> Chapter 8<span></span></a>
 <ul>
 <li class="chapter" data-level="A.9.1" data-path="errata.html"><a href="errata.html#section-8.2-p.-150"><i class="fa fa-check"></i><b>A.9.1</b> Section 8.2, p. 150<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="A.10" data-path="errata.html"><a href="errata.html#chapter-9"><i class="fa fa-check"></i><b>A.10</b> Chapter 9<span></span></a>
+<ul>
+<li class="chapter" data-level="A.10.1" data-path="errata.html"><a href="errata.html#beginning-of-chapter-p.-158"><i class="fa fa-check"></i><b>A.10.1</b> Beginning of chapter, p. 158<span></span></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="B" data-path="notes.html"><a href="notes.html"><i class="fa fa-check"></i><b>B</b> Notes<span></span></a>
@@ -372,14 +380,14 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="instrument" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Instrumental Variables<a href="instrument.html#instrument" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="instrument.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="instrument.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb1-3"><a href="instrument.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-4"><a href="instrument.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-5"><a href="instrument.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb1-6"><a href="instrument.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
-<img src="_main_files/figure-html/unnamed-chunk-4-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="instrument.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb222-2"><a href="instrument.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb222-3"><a href="instrument.html#cb222-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb222-4"><a href="instrument.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb222-5"><a href="instrument.html#cb222-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb222-6"><a href="instrument.html#cb222-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-181"></span>
+<img src="_main_files/figure-html/unnamed-chunk-181-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
 <p class="caption">
 Figure 9.1: Instrumental Variable for the Effect of A on Y
 </p>
@@ -401,12 +409,60 @@ by the participant. <span class="math inline">\(A\)</span> is therefore a post-r
 <li><em>per-protocol</em>: We let <span class="math inline">\(Z=1\)</span> if <span class="math inline">\(A=T\)</span> and use ordinary stratification on
 <span class="math inline">\(Z=1\)</span> to compare <span class="math inline">\(E(Y \mid T=1, Z=1)\)</span> with <span class="math inline">\(E(Y \mid T=0, Z=1)\)</span></li>
 </ol>
-<p><span class="math inline">\(Z=1\)</span> is not a randomization event since it uses actually observed measurements
+<p><span class="math inline">\(Z=1\)</span> is not a randomization event since it uses observed measurements
 after they occur. As a result <span class="math inline">\(Z\)</span> <em>cannot be expected to balance across 2
-treatments groups</em>.</p>
+treatments groups</em>. For example sicker patients could alwyas comply but healthy
+ones might. In thsi case we have <span class="math inline">\(T=1, A=1\)</span> for the sicker patient but the healthy
+patients would be a mix of <span class="math inline">\(T=1, A-1\)</span> and <span class="math inline">\(T=1, A=0\)</span>.</p>
+<blockquote>
+<p>For these reasons, many studies rely on the <em>intent-to-treat effect</em> (ITT)
+<span class="math inline">\(E(Y \mid T=1) - E(Y \mid T=0)\)</span>. This equates to the causal effect</p>
+</blockquote>
+<p><span class="math display">\[
+ITT = E(Y(1,A(1))) -  E(Y, A(0, 0)))
+\]</span></p>
 <div id="complier-average-causal-effect-and-principal-stratification" class="section level2 hasAnchor" number="9.1">
 <h2><span class="header-section-number">9.1</span> Complier Average Causal Effect and Principal Stratification<a href="instrument.html#complier-average-causal-effect-and-principal-stratification" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="principal-stratification" class="section level3 hasAnchor" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> Principal Stratification<a href="instrument.html#principal-stratification" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<blockquote>
+<p>Principal stratification classifies participants according to the potential
+occurence of a <em>post-randomization event</em>. We define 4 principal strata of
+participants according tottheir potential outcome <span class="math inline">\(A(t)\)</span>.</p>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li><em>never-taker</em>: <span class="math inline">\(A(0)=A(1)=0\)</span>. Will not take the treatment regardless of
+randomized assignment.</li>
+<li><em>always-taker</em>: <span class="math inline">\(A(0)=A(1)=1\)</span>. Will not take the treatment regardless of
+randomized assignment.</li>
+<li><em>complier</em>: <span class="math inline">\(A(0)=0, A(1)=1\)</span>, i.e. <span class="math inline">\(A(t)=t\)</span>. Will take the treatment as
+required.</li>
+<li><em>defier</em>: <span class="math inline">\(A(0)=1, A(1)=0\)</span>, i.e. <span class="math inline">\(A(t)=1-t\)</span>. Will refuse to take the
+treatment as required.</li>
+</ol>
+<p>Let <span class="math inline">\(C\)</span> indicate a complier, i.e. that <span class="math inline">\(A(t)=t\)</span>. Then since</p>
+<ol style="list-style-type: lower-alpha">
+<li><span class="math inline">\(T\)</span> is a randomized, i.e. <span class="math inline">\(Y \perp\!\!\!\perp T \mid C\)</span></li>
+<li><span class="math inline">\(C\)</span> is a pre-randomization variable, i.e. <span class="math inline">\(T \perp\!\!\!\perp C\)</span></li>
+<li><span class="math inline">\(Y(t,a) = Y(a)\)</span></li>
+</ol>
+<p>it is reasonable to assume</p>
+<p><span class="math display">\[
+Y(a) \perp\!\!\!\perp T \mid C
+\]</span></p>
+</div>
+<div id="complier-average-causal-effect" class="section level3 hasAnchor" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Complier Average Causal Effect<a href="instrument.html#complier-average-causal-effect" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <em>complier average causal effect</em> (CACE) is defined as the average effect of
+treatment (ATT) in the compliers. That is</p>
+<p><span class="math display">\[
+\begin{align*}
+CACE &amp;= E(Y(1) \mid C=1) - E(Y(0) \mid C=1) \\
+&amp;= E(Y \mid T=1, C=1) - E(Y \mid T=0, C=1)
+\end{align*}
+\]</span></p>
 
+</div>
 </div>
 </div>
 
