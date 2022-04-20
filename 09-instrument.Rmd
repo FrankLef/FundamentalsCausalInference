@@ -36,6 +36,41 @@ scm_9.1 <- within(scm_9.1, {
 })
 ```
 
-```{r echo=FALSE, fig.align='center', fig.cap="Instrumental Variable for the Effect of A on Y", warning=FALSE, out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.cap="Instrumental Variable for the Effect of A on Y", out.width="60%"}
 scm_9.1$plot
 ```
+
+
+> We enlist the following notation for this chapter. Let $Y(t,a)$ be the 
+potential outcome for $Y$ assuming we set $T=t$ and then $A=a$.
+
+* We assume consistency $E(Y(t) \mid T=t)= E(Y \mid T=t$)
+* We assume exclusion $Y(t,a)=Y(a)$
+
+Lets say that participants to treatment $T$ may comply or not and let $A$ be 
+the treatment actually taken. That is $A=1$ means that the treatment was taken
+by the participant. $A$ is therefore a post-randomization event.
+
+When $A$ does not equal $T$ there is 2 historical methods:
+
+1. *as-treated*: Compare $E(Y \mid A=1) with $E(Y \mid A=0)
+2. *per-protocol*: We let $Z=1$ if $A=T$ and use ordinary stratification on
+$Z=1$ to compare $E(Y \mid T=1, Z=1)$ with $E(Y \mid T=0, Z=1)$
+
+$Z=1$ is not a randomization event since it uses observed measurements
+after they occur. As a result $Z$ *cannot be expected to balance across 2 
+treatments groups*. For example sicker patients could alwyas comply but healthy
+ones might. In thsi case we have $T=1, A=1$ for the sicker patient but the healthy
+patients would be a mix of $T=1, A-1$ and $T=1, A=0$.
+
+> For these reasons, many studies rely on the *intent-to-treat effect* (ITT)
+$E(Y \mid T=1) - E(Y \mid T=0)$. This equates to the causal effect
+
+$$
+ITT = E(Y(1,A(1))) -  E(Y, A(0, 0)))
+$$
+
+
+## Complier Average Causal Effect and Principal Stratification
+
+

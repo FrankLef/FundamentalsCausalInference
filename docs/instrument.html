@@ -26,7 +26,7 @@ Brumback. The exercises are done in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-03-30" />
+<meta name="date" content="2022-04-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -270,7 +270,10 @@ div.csl-indent {
 <li class="chapter" data-level="8.2" data-path="frontdoor.html"><a href="frontdoor.html#theory-and-method"><i class="fa fa-check"></i><b>8.2</b> Theory and Method<span></span></a></li>
 <li class="chapter" data-level="8.3" data-path="frontdoor.html"><a href="frontdoor.html#simulated-example"><i class="fa fa-check"></i><b>8.3</b> Simulated Example<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="instrument.html"><a href="instrument.html"><i class="fa fa-check"></i><b>9</b> Instrumental Variables<span></span></a></li>
+<li class="chapter" data-level="9" data-path="instrument.html"><a href="instrument.html"><i class="fa fa-check"></i><b>9</b> Instrumental Variables<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect-and-principal-stratification"><i class="fa fa-check"></i><b>9.1</b> Complier Average Causal Effect and Principal Stratification<span></span></a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix<span></span></b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata<span></span></a>
 <ul>
@@ -369,19 +372,42 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="instrument" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Instrumental Variables<a href="instrument.html#instrument" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="instrument.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb222-2"><a href="instrument.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb222-3"><a href="instrument.html#cb222-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb222-4"><a href="instrument.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb222-5"><a href="instrument.html#cb222-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb222-6"><a href="instrument.html#cb222-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-181"></span>
-<img src="_main_files/figure-html/unnamed-chunk-181-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="instrument.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="instrument.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-3"><a href="instrument.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="instrument.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="instrument.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb1-6"><a href="instrument.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="_main_files/figure-html/unnamed-chunk-4-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
 <p class="caption">
 Figure 9.1: Instrumental Variable for the Effect of A on Y
 </p>
 </div>
+<blockquote>
+<p>We enlist the following notation for this chapter. Let <span class="math inline">\(Y(t,a)\)</span> be the
+potential outcome for <span class="math inline">\(Y\)</span> assuming we set <span class="math inline">\(T=t\)</span> and then <span class="math inline">\(A=a\)</span>.</p>
+</blockquote>
+<ul>
+<li>We assume consistency <span class="math inline">\(E(Y(t) \mid T=t)= E(Y \mid T=t\)</span>)</li>
+<li>We assume exclusion <span class="math inline">\(Y(t,a)=Y(a)\)</span></li>
+</ul>
+<p>Lets say that participants to treatment <span class="math inline">\(T\)</span> may comply or not and let <span class="math inline">\(A\)</span> be
+the treatment actually taken. That is <span class="math inline">\(A=1\)</span> means that the treatment was taken
+by the participant. <span class="math inline">\(A\)</span> is therefore a post-randomization event.</p>
+<p>When <span class="math inline">\(A\)</span> does not equal <span class="math inline">\(T\)</span> there is 2 historical methods:</p>
+<ol style="list-style-type: decimal">
+<li><em>as-treated</em>: Compare $E(Y A=1) with $E(Y A=0)</li>
+<li><em>per-protocol</em>: We let <span class="math inline">\(Z=1\)</span> if <span class="math inline">\(A=T\)</span> and use ordinary stratification on
+<span class="math inline">\(Z=1\)</span> to compare <span class="math inline">\(E(Y \mid T=1, Z=1)\)</span> with <span class="math inline">\(E(Y \mid T=0, Z=1)\)</span></li>
+</ol>
+<p><span class="math inline">\(Z=1\)</span> is not a randomization event since it uses actually observed measurements
+after they occur. As a result <span class="math inline">\(Z\)</span> <em>cannot be expected to balance across 2
+treatments groups</em>.</p>
+<div id="complier-average-causal-effect-and-principal-stratification" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Complier Average Causal Effect and Principal Stratification<a href="instrument.html#complier-average-causal-effect-and-principal-stratification" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 
+</div>
 </div>
 
 
