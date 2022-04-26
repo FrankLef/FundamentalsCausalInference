@@ -2,6 +2,7 @@
 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(rsample)
 library(dplyr)
 library(ggdag)
 library(patchwork)
@@ -111,5 +112,248 @@ CACE &= E(Y(1) \mid C=1) - E(Y(0) \mid C=1) \\
 &= E(Y \mid T=1, C=1) - E(Y \mid T=0, C=1)
 \end{align*}
 $$
+
+The equation shows CACE as a stratified treatment effct, but $C=1$ defines a
+principal stratum instead of an ordinary one.
+
+We can estimate CACE assuming exclusion and *no defiers*. Assuming no defiers implies
+
+$$
+E(Y \mid T=1, C=0) = E(Y \mid T=0, C=0)
+$$
+
+because no defiers implies that $C=0$ includes only *never-takers* and 
+*always-takers* and these 2 groups act the same way regardless of what $T$ is. 
+In addition, exclusion ensures that randomization of $T$ cannot affect
+the outcome of the never-takers and always-takers since $Y \perp\!\!\!\perp T \mid A$.
+
+The, **assuming no defierss** we can say the
+
+$$
+E(Y \mid T=1) = E(Y \mid T=1, C=1)P(C=1) + E(Y \mid T=1, C=0)(1-P(C=1))
+$$
+and
+
+$$
+E(Y \mid T=0) = E(Y \mid T=0, C=1)P(C=1) + E(Y \mid T=0, C=0)(1-P(C=1))
+$$
+and therefore
+
+$$
+\begin{align*}
+E(Y \mid T=1) - E(Y \mid T=0) &= E(Y \mid T=1, C=1)P(C=1) + E(Y \mid T=1, C=0)(1-P(C=1)) - \left[ E(Y \mid T=0, C=1)P(C=1) + E(Y \mid T=0, C=0)(1-P(C=1)) \right] \\
+\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} &= E(Y \mid T=1, C=1) + \frac{E(Y \mid T=1, C=0)}{P(C=1)} - E(Y \mid T=1, C=0) - \left[ E(Y \mid T=0, C=1) + 
+\frac{E(Y \mid T=0, C=0)}{P(C=1)} - E(Y \mid T=0, C=0) \right] \\
+\end{align*}
+$$
+and since from above we know that
+
+
+$$
+E(Y \mid T=1, C=0) = E(Y \mid T=0, C=0)
+$$
+
+then
+
+
+$$
+\begin{align*}
+\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} = E(Y \mid T=1, C=1) - E(Y \mid T=1, C=0)
+\end{align*}
+$$
+
+and to find $P(C=1)$ since *we assume no defiers* then we know that
+
+
+$$
+P(C=1) + P(A=0 \mid T=1) + P(A=1 \mid T=0) = 1
+$$
+
+and therefore
+
+$$
+\begin{align*}
+&\text{assuming no defiers} \\
+P(C=1) &= 1 - P(A=0 \mid T=1) + P(A=1 \mid T=0) \\
+&= P(A=1 \mid T=1) + P(A=1 \mid T=0)
+\end{align*}
+$$
+and putting it together we obtain
+
+
+$$
+\begin{align*}
+\text{CACE} &= E(Y \mid T=1, C=1) - E(Y \mid T=1, C=0) \\
+&= \frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(A=1 \mid T=1) + P(A=1 \mid T=0)} \\
+&= \frac{ITT}{P(A=1 \mid T=1) + P(A=1 \mid T=0)}
+\end{align*}
+$$
+## Average Effect of Treatment on the Treated and Structural Nested mean Models
+
+> A drawback of the CACE is that it applies only to the compliers, a subgroup 
+of the populaiton that we cannot even identify.
+
+Another way to do it is to use the average effect of treatment on the treated
+
+$$
+\text{ATT} = E(Y(1) - Y(0) \mid A=1) = E(Y - Y(0) \mid A=1)
+$$
+
+> To estimate the ATT using the instrumental variable, $T$, we introduce
+structural nested mean models.
+
+The linear structural nested mean model is
+
+$$
+E(Y - Y(0) \mid A, T) = A \beta
+$$
+
+$Y-Y(0)$ is assumed to be mean indedendent of $T$ given $A$. Thsi therefore 
+implies that there is no defiers as they create a dependency on $T$. It also
+implies that *any effect modifiers of $Y-Y(0)$ is balanced across $T=0$ and 
+$T=1$ groups.
+
+The non-causal linear model is using $D$ which is a function of $A$ and $T$
+
+$$
+E(Y \mid A,T)=D \eta
+$$
+
+therefore
+
+$$
+D \eta - A \beta = E(Y(0) \mid A, T)
+$$
+and so
+
+$$
+E_{A \mid T} (D \eta - A \beta) = E(Y(0) \mid A, T)
+$$
+
+The solution for $\eta$ is found using the method of chapter 2, section 2.3.
+
+$$
+\sum_{n=1}^n (1,T_i)^T(D_i \hat{\eta} -A_i \beta - \alpha) = 0
+$$
+
+and for $\alpha$ and $\beta$ we use instrumental variable regression which can 
+be done with the `ivreg` function from the package $AER$.
+
+
+$$
+\sum_{n=1}^n (1,T_i)^T(Y_i^* - A_i^* \beta - \alpha) = 0
+$$
+
+## Examples
+
+### What-If Study
+
+```{r}
+data("whatifdat", package = "fciR")
+whatif <- whatifdat
+round(prop.table(xtabs(data = whatif, formula = ~ `T` + A), margin = 1), 2)
+rm(whatifdat)
+```
+and the  function as found on p. 164 is modified to allow the bootstrapping
+with many iterations by setting IV to `NA` where the denominator is too small.
+
+```{r}
+instr_vars <- function(data, outcome.name = "Y", exposure.name = "A",
+                       instrument.name = "T", tol = .Machine$double.eps^0.5) {
+  
+  # estimate the ITT
+  dat0 <- data[, instrument.name] == 0
+  dat1 <- data[, instrument.name] == 1
+  ITT <- mean(data[dat1, outcome.name]) - mean(data[dat0, outcome.name])
+  
+  # estimate the denominator of the CAE and ATT with equation (9.5)
+  denom <- mean(data[dat1, exposure.name]) - mean(data[dat0, exposure.name])
+  # denominator should not be near zero to avoid numerical problems
+  check <- abs(denom) >= tol
+  if(check) {
+    IV <- ITT / denom
+  } else {
+    IV <- NA_real_
+  }
+  c("ITT" = ITT, "IV" = IV)
+  } 
+```
+
+with the results
+
+```{r}
+whatif.est <- instr_vars(whatif, outcome.name = "Y", exposure.name = "A", instrument.name = "T")
+stopifnot(sum(abs(whatif.est - c(0.007352941, 0.27777778))) < .Machine$double.eps^0.5)
+whatif.est
+.Machine$double.eps^0.5
+
+```
+
+and using only 100 boots to estimate the CI
+
+```{r}
+whatif.out <- fciR::boot_est(
+  whatif, instr_vars, R = 1000, conf = 0.95, inv = "none", outcome.name = "Y",
+  exposure.name = "A", instrument.name = "T", tol = 1e-6) %>%
+  mutate(across(.cols = where(is.numeric), .fns = round, digits = 4))
+whatif.out
+```
+
+**Note:** Although we used 1000 iterations for bootstraping with `NA` when the 
+denominator is too close to zero. It is more flexible than the code in the
+book but **still with a lot of variability** for the CI of IV. In fact, in very 
+many iterations, the CI were much wider than what the author calculated and most
+of the time the CI was about `c(-30, 30)`.
+
+
+### Double What-if Study
+
+```{r}
+data("doublewhatifdat", package = "fciR")
+dwhatif <- doublewhatifdat
+```
+
+
+We compute the estimator for the linear, loglinear and logistic SNMM using
+the Double What-If Study. The functions are in the `fciR` package and can be
+consulted as usual by using `F2` on the function.
+
+```{r}
+dwhatif.lininstr <- fciR::instr_linear(dwhatif, outcome.name = "VL1",
+                                       exposure.name = "A", 
+                                       instrument.name = "T")
+dwhatif.lininstr
+```
+and we bootstrap instead of using `jackknife`
+
+```{r}
+?jackknife
+```
+
+
+```{r}
+# whatif.out <- fciR::boot_est(
+#   dwhatif.lininstr, fciR::instr_linear, R = 10, conf = 0.95, inv = "none",
+#   outcome.name = "VL1", exposure.name = "A", instrument.name = "T", tol = 1e-6)
+# whatif.out
+```
+
+
+
+```{r}
+data("fci_tbl_09_01", package = "fciR")
+bb_dwhatif <- fci_tbl_09_01
+bb_dwhatif
+gt_measures_rowgrp(
+    bb_dwhatif, 
+    rowgroup = "name",
+    rowname = "method",
+    conf = 0.95,
+    title = "Table 9.1", 
+    subtitle = paste("Double What-If Study",
+                     "Instrumental Variables Analysis",
+                     sep = "<br>"))
+```
+
 
 

@@ -26,7 +26,7 @@ Brumback. The exercises are done in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-04-20" />
+<meta name="date" content="2022-04-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -277,6 +277,11 @@ div.csl-indent {
 <li class="chapter" data-level="9.1.1" data-path="instrument.html"><a href="instrument.html#principal-stratification"><i class="fa fa-check"></i><b>9.1.1</b> Principal Stratification<span></span></a></li>
 <li class="chapter" data-level="9.1.2" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect"><i class="fa fa-check"></i><b>9.1.2</b> Complier Average Causal Effect<span></span></a></li>
 </ul></li>
+<li class="chapter" data-level="9.2" data-path="instrument.html"><a href="instrument.html#examples-3"><i class="fa fa-check"></i><b>9.2</b> Examples<span></span></a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="instrument.html"><a href="instrument.html#what-if-study-4"><i class="fa fa-check"></i><b>9.2.1</b> What-If Study<span></span></a></li>
+<li class="chapter" data-level="9.2.2" data-path="instrument.html"><a href="instrument.html#double-what-if-study-2"><i class="fa fa-check"></i><b>9.2.2</b> Double What-if Study<span></span></a></li>
+</ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix<span></span></b></span></li>
 <li class="chapter" data-level="A" data-path="errata.html"><a href="errata.html"><i class="fa fa-check"></i><b>A</b> Errata<span></span></a>
@@ -335,6 +340,10 @@ div.csl-indent {
 <li class="chapter" data-level="B.3.1" data-path="notes.html"><a href="notes.html#section-6.1.1-att"><i class="fa fa-check"></i><b>B.3.1</b> Section 6.1.1 ATT<span></span></a></li>
 <li class="chapter" data-level="B.3.2" data-path="notes.html"><a href="notes.html#section-6.3"><i class="fa fa-check"></i><b>B.3.2</b> Section 6.3<span></span></a></li>
 </ul></li>
+<li class="chapter" data-level="B.4" data-path="notes.html"><a href="notes.html#chapter-9-1"><i class="fa fa-check"></i><b>B.4</b> Chapter 9<span></span></a>
+<ul>
+<li class="chapter" data-level="B.4.1" data-path="notes.html"><a href="notes.html#section-9.3"><i class="fa fa-check"></i><b>B.4.1</b> Section 9.3<span></span></a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="C" data-path="linreg.html"><a href="linreg.html"><i class="fa fa-check"></i><b>C</b> Linear Regression with R<span></span></a>
 <ul>
@@ -380,12 +389,13 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="instrument" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Instrumental Variables<a href="instrument.html#instrument" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="instrument.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb222-2"><a href="instrument.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb222-3"><a href="instrument.html#cb222-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb222-4"><a href="instrument.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb222-5"><a href="instrument.html#cb222-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb222-6"><a href="instrument.html#cb222-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="instrument.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb222-2"><a href="instrument.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb222-3"><a href="instrument.html#cb222-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb222-4"><a href="instrument.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb222-5"><a href="instrument.html#cb222-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb222-6"><a href="instrument.html#cb222-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb222-7"><a href="instrument.html#cb222-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-181"></span>
 <img src="_main_files/figure-html/unnamed-chunk-181-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
 <p class="caption">
@@ -461,6 +471,703 @@ CACE &amp;= E(Y(1) \mid C=1) - E(Y(0) \mid C=1) \\
 &amp;= E(Y \mid T=1, C=1) - E(Y \mid T=0, C=1)
 \end{align*}
 \]</span></p>
+<p>The equation shows CACE as a stratified treatment effct, but <span class="math inline">\(C=1\)</span> defines a
+principal stratum instead of an ordinary one.</p>
+<p>We can estimate CACE assuming exclusion and <em>no defiers</em>. Assuming no defiers implies</p>
+<p><span class="math display">\[
+E(Y \mid T=1, C=0) = E(Y \mid T=0, C=0)
+\]</span></p>
+<p>because no defiers implies that <span class="math inline">\(C=0\)</span> includes only <em>never-takers</em> and
+<em>always-takers</em> and these 2 groups act the same way regardless of what <span class="math inline">\(T\)</span> is.
+In addition, exclusion ensures that randomization of <span class="math inline">\(T\)</span> cannot affect
+the outcome of the never-takers and always-takers since <span class="math inline">\(Y \perp\!\!\!\perp T \mid A\)</span>.</p>
+<p>The, <strong>assuming no defierss</strong> we can say the</p>
+<p><span class="math display">\[
+E(Y \mid T=1) = E(Y \mid T=1, C=1)P(C=1) + E(Y \mid T=1, C=0)(1-P(C=1))
+\]</span>
+and</p>
+<p><span class="math display">\[
+E(Y \mid T=0) = E(Y \mid T=0, C=1)P(C=1) + E(Y \mid T=0, C=0)(1-P(C=1))
+\]</span>
+and therefore</p>
+<p><span class="math display">\[
+\begin{align*}
+E(Y \mid T=1) - E(Y \mid T=0) &amp;= E(Y \mid T=1, C=1)P(C=1) + E(Y \mid T=1, C=0)(1-P(C=1)) - \left[ E(Y \mid T=0, C=1)P(C=1) + E(Y \mid T=0, C=0)(1-P(C=1)) \right] \\
+\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} &amp;= E(Y \mid T=1, C=1) + \frac{E(Y \mid T=1, C=0)}{P(C=1)} - E(Y \mid T=1, C=0) - \left[ E(Y \mid T=0, C=1) + 
+\frac{E(Y \mid T=0, C=0)}{P(C=1)} - E(Y \mid T=0, C=0) \right] \\
+\end{align*}
+\]</span>
+and since from above we know that</p>
+<p><span class="math display">\[
+E(Y \mid T=1, C=0) = E(Y \mid T=0, C=0)
+\]</span></p>
+<p>then</p>
+<p><span class="math display">\[
+\begin{align*}
+\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} = E(Y \mid T=1, C=1) - E(Y \mid T=1, C=0)
+\end{align*}
+\]</span></p>
+<p>and to find <span class="math inline">\(P(C=1)\)</span> since <em>we assume no defiers</em> then we know that</p>
+<p><span class="math display">\[
+P(C=1) + P(A=0 \mid T=1) + P(A=1 \mid T=0) = 1
+\]</span></p>
+<p>and therefore</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\text{assuming no defiers} \\
+P(C=1) &amp;= 1 - P(A=0 \mid T=1) + P(A=1 \mid T=0) \\
+&amp;= P(A=1 \mid T=1) + P(A=1 \mid T=0)
+\end{align*}
+\]</span>
+and putting it together we obtain</p>
+<p><span class="math display">\[
+\begin{align*}
+\text{CACE} &amp;= E(Y \mid T=1, C=1) - E(Y \mid T=1, C=0) \\
+&amp;= \frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(A=1 \mid T=1) + P(A=1 \mid T=0)} \\
+&amp;= \frac{ITT}{P(A=1 \mid T=1) + P(A=1 \mid T=0)}
+\end{align*}
+\]</span>
+## Average Effect of Treatment on the Treated and Structural Nested mean Models</p>
+<blockquote>
+<p>A drawback of the CACE is that it applies only to the compliers, a subgroup
+of the populaiton that we cannot even identify.</p>
+</blockquote>
+<p>Another way to do it is to use the average effect of treatment on the treated</p>
+<p><span class="math display">\[
+\text{ATT} = E(Y(1) - Y(0) \mid A=1) = E(Y - Y(0) \mid A=1)
+\]</span></p>
+<blockquote>
+<p>To estimate the ATT using the instrumental variable, <span class="math inline">\(T\)</span>, we introduce
+structural nested mean models.</p>
+</blockquote>
+<p>The linear structural nested mean model is</p>
+<p><span class="math display">\[
+E(Y - Y(0) \mid A, T) = A \beta
+\]</span></p>
+<p><span class="math inline">\(Y-Y(0)\)</span> is assumed to be mean indedendent of <span class="math inline">\(T\)</span> given <span class="math inline">\(A\)</span>. Thsi therefore
+implies that there is no defiers as they create a dependency on <span class="math inline">\(T\)</span>. It also
+implies that *any effect modifiers of <span class="math inline">\(Y-Y(0)\)</span> is balanced across <span class="math inline">\(T=0\)</span> and
+<span class="math inline">\(T=1\)</span> groups.</p>
+<p>The non-causal linear model is using <span class="math inline">\(D\)</span> which is a function of <span class="math inline">\(A\)</span> and <span class="math inline">\(T\)</span></p>
+<p><span class="math display">\[
+E(Y \mid A,T)=D \eta
+\]</span></p>
+<p>therefore</p>
+<p><span class="math display">\[
+D \eta - A \beta = E(Y(0) \mid A, T)
+\]</span>
+and so</p>
+<p><span class="math display">\[
+E_{A \mid T} (D \eta - A \beta) = E(Y(0) \mid A, T)
+\]</span></p>
+<p>The solution for <span class="math inline">\(\eta\)</span> is found using the method of chapter 2, section 2.3.</p>
+<p><span class="math display">\[
+\sum_{n=1}^n (1,T_i)^T(D_i \hat{\eta} -A_i \beta - \alpha) = 0
+\]</span></p>
+<p>and for <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> we use instrumental variable regression which can
+be done with the <code>ivreg</code> function from the package <span class="math inline">\(AER\)</span>.</p>
+<p><span class="math display">\[
+\sum_{n=1}^n (1,T_i)^T(Y_i^* - A_i^* \beta - \alpha) = 0
+\]</span></p>
+</div>
+</div>
+<div id="examples-3" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> Examples<a href="instrument.html#examples-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="what-if-study-4" class="section level3 hasAnchor" number="9.2.1">
+<h3><span class="header-section-number">9.2.1</span> What-If Study<a href="instrument.html#what-if-study-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="instrument.html#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb223-2"><a href="instrument.html#cb223-2" aria-hidden="true" tabindex="-1"></a>whatif <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb223-3"><a href="instrument.html#cb223-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">xtabs</span>(<span class="at">data =</span> whatif, <span class="at">formula =</span> <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##    A
+## T      0    1
+##   0 0.38 0.62
+##   1 0.35 0.65</code></pre>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="instrument.html#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(whatifdat)</span></code></pre></div>
+<p>and the function as found on p. 164 is modified to allow the bootstrapping
+with many iterations by setting IV to <code>NA</code> where the denominator is too small.</p>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="instrument.html#cb226-1" aria-hidden="true" tabindex="-1"></a>instr_vars <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb226-2"><a href="instrument.html#cb226-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>) {</span>
+<span id="cb226-3"><a href="instrument.html#cb226-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb226-4"><a href="instrument.html#cb226-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the ITT</span></span>
+<span id="cb226-5"><a href="instrument.html#cb226-5" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb226-6"><a href="instrument.html#cb226-6" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">1</span></span>
+<span id="cb226-7"><a href="instrument.html#cb226-7" aria-hidden="true" tabindex="-1"></a>  ITT <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, outcome.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, outcome.name])</span>
+<span id="cb226-8"><a href="instrument.html#cb226-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb226-9"><a href="instrument.html#cb226-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the denominator of the CAE and ATT with equation (9.5)</span></span>
+<span id="cb226-10"><a href="instrument.html#cb226-10" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, exposure.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, exposure.name])</span>
+<span id="cb226-11"><a href="instrument.html#cb226-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator should not be near zero to avoid numerical problems</span></span>
+<span id="cb226-12"><a href="instrument.html#cb226-12" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">abs</span>(denom) <span class="sc">&gt;=</span> tol</span>
+<span id="cb226-13"><a href="instrument.html#cb226-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(check) {</span>
+<span id="cb226-14"><a href="instrument.html#cb226-14" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> ITT <span class="sc">/</span> denom</span>
+<span id="cb226-15"><a href="instrument.html#cb226-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb226-16"><a href="instrument.html#cb226-16" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb226-17"><a href="instrument.html#cb226-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb226-18"><a href="instrument.html#cb226-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ITT&quot;</span> <span class="ot">=</span> ITT, <span class="st">&quot;IV&quot;</span> <span class="ot">=</span> IV)</span>
+<span id="cb226-19"><a href="instrument.html#cb226-19" aria-hidden="true" tabindex="-1"></a>  } </span></code></pre></div>
+<p>with the results</p>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="instrument.html#cb227-1" aria-hidden="true" tabindex="-1"></a>whatif.est <span class="ot">&lt;-</span> <span class="fu">instr_vars</span>(whatif, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb227-2"><a href="instrument.html#cb227-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(whatif.est <span class="sc">-</span> <span class="fu">c</span>(<span class="fl">0.007352941</span>, <span class="fl">0.27777778</span>))) <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span>
+<span id="cb227-3"><a href="instrument.html#cb227-3" aria-hidden="true" tabindex="-1"></a>whatif.est</span></code></pre></div>
+<pre><code>##         ITT          IV 
+## 0.007352941 0.277777778</code></pre>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="instrument.html#cb229-1" aria-hidden="true" tabindex="-1"></a>.Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span></span></code></pre></div>
+<pre><code>## [1] 1.490116e-08</code></pre>
+<p>and using only 100 boots to estimate the CI</p>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="instrument.html#cb231-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb231-2"><a href="instrument.html#cb231-2" aria-hidden="true" tabindex="-1"></a>  whatif, instr_vars, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb231-3"><a href="instrument.html#cb231-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb231-4"><a href="instrument.html#cb231-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>))</span>
+<span id="cb231-5"><a href="instrument.html#cb231-5" aria-hidden="true" tabindex="-1"></a>whatif.out</span></code></pre></div>
+<pre><code>##   name    est conf      lci     uci
+## 1  ITT 0.0074 0.95  -0.1365  0.1452
+## 2   IV 0.2778 0.95 -26.3220 27.9195</code></pre>
+<p><strong>Note:</strong> Although we used 1000 iterations for bootstraping with <code>NA</code> when the
+denominator is too close to zero. It is more flexible than the code in the
+book but <strong>still with a lot of variability</strong> for the CI of IV. In fact, in very
+many iterations, the CI were much wider than what the author calculated and most
+of the time the CI was about <code>c(-30, 30)</code>.</p>
+</div>
+<div id="double-what-if-study-2" class="section level3 hasAnchor" number="9.2.2">
+<h3><span class="header-section-number">9.2.2</span> Double What-if Study<a href="instrument.html#double-what-if-study-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="instrument.html#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb233-2"><a href="instrument.html#cb233-2" aria-hidden="true" tabindex="-1"></a>dwhatif <span class="ot">&lt;-</span> doublewhatifdat</span></code></pre></div>
+<p>We compute the estimator for the linear, loglinear and logistic SNMM using
+the Double What-If Study. The functions are in the <code>fciR</code> package and can be
+consulted as usual by using <code>F2</code> on the function.</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="instrument.html#cb234-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">instr_linear</span>(dwhatif, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb234-2"><a href="instrument.html#cb234-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
+<span id="cb234-3"><a href="instrument.html#cb234-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb234-4"><a href="instrument.html#cb234-4" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr</span></code></pre></div>
+<pre><code>##        EY0        EY1         RD      logRR     logRR*      logOR 
+##  0.6400410  0.2307692 -0.4092717 -1.0201140 -0.7594008 -1.7795147</code></pre>
+<p>and we bootstrap instead of using <code>jackknife</code></p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="instrument.html#cb236-1" aria-hidden="true" tabindex="-1"></a>?jackknife</span></code></pre></div>
+<pre><code>## No documentation for &#39;jackknife&#39; in specified packages and libraries:
+## you could try &#39;??jackknife&#39;</code></pre>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="instrument.html#cb238-1" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out &lt;- fciR::boot_est(</span></span>
+<span id="cb238-2"><a href="instrument.html#cb238-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   dwhatif.lininstr, fciR::instr_linear, R = 10, conf = 0.95, inv = &quot;none&quot;,</span></span>
+<span id="cb238-3"><a href="instrument.html#cb238-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;, instrument.name = &quot;T&quot;, tol = 1e-6)</span></span>
+<span id="cb238-4"><a href="instrument.html#cb238-4" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="instrument.html#cb239-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_09_01&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb239-2"><a href="instrument.html#cb239-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_09_01</span>
+<span id="cb239-3"><a href="instrument.html#cb239-3" aria-hidden="true" tabindex="-1"></a>bb_dwhatif</span></code></pre></div>
+<pre><code>##       method                               name  Truth    est conf    lci
+## 1       CACE                 E(Y(1) - Y(0)|C=1)     NA -0.409 0.95 -0.564
+## 2     Linear                      E(Y-Y(0)|A=1) -0.360 -0.409 0.95 -0.564
+## 3  Loglinear                      E(Y-Y(0)|A=1) -0.360 -0.483 0.95 -0.746
+## 4   Logistic                      E(Y-Y(0)|A=1) -0.360 -0.413 0.95 -0.560
+## 5     Linear     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.020 0.95 -1.340
+## 6  Loglinear     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.129 0.95 -1.564
+## 7   Logistic     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.025 0.95 -1.339
+## 8     Linear logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -1.780 0.95 -2.478
+## 9  Loglinear logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -2.116 0.95 -3.409
+## 10  Logistic logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -1.794 0.95 -2.464
+##       uci
+## 1  -0.254
+## 2  -0.254
+## 3  -0.219
+## 4  -0.265
+## 5  -0.700
+## 6  -0.693
+## 7  -0.712
+## 8  -1.081
+## 9  -0.822
+## 10 -1.124</code></pre>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="instrument.html#cb241-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb241-2"><a href="instrument.html#cb241-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
+<span id="cb241-3"><a href="instrument.html#cb241-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb241-4"><a href="instrument.html#cb241-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb241-5"><a href="instrument.html#cb241-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb241-6"><a href="instrument.html#cb241-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&quot;</span>, </span>
+<span id="cb241-7"><a href="instrument.html#cb241-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
+<span id="cb241-8"><a href="instrument.html#cb241-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
+<span id="cb241-9"><a href="instrument.html#cb241-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
+<div id="rmefokxtlg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#rmefokxtlg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rmefokxtlg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rmefokxtlg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rmefokxtlg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rmefokxtlg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rmefokxtlg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rmefokxtlg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rmefokxtlg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rmefokxtlg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rmefokxtlg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rmefokxtlg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rmefokxtlg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rmefokxtlg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmefokxtlg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rmefokxtlg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rmefokxtlg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmefokxtlg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rmefokxtlg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmefokxtlg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rmefokxtlg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmefokxtlg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rmefokxtlg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmefokxtlg .gt_left {
+  text-align: left;
+}
+
+#rmefokxtlg .gt_center {
+  text-align: center;
+}
+
+#rmefokxtlg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rmefokxtlg .gt_font_normal {
+  font-weight: normal;
+}
+
+#rmefokxtlg .gt_font_bold {
+  font-weight: bold;
+}
+
+#rmefokxtlg .gt_font_italic {
+  font-style: italic;
+}
+
+#rmefokxtlg .gt_super {
+  font-size: 65%;
+}
+
+#rmefokxtlg .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#rmefokxtlg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rmefokxtlg .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#rmefokxtlg .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#rmefokxtlg .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1</strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Double What-If Study<br>Instrumental Variables Analysis</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Truth</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">E(Y(1) - Y(0)|C=1)</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">CACE</td>
+<td class="gt_row gt_center">NA</td>
+<td class="gt_row gt_center">-0.409</td>
+<td class="gt_row gt_center">(-0.564, -0.254)</td></tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">E(Y-Y(0)|A=1)</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center gt_striped">-0.360</td>
+<td class="gt_row gt_center gt_striped">-0.409</td>
+<td class="gt_row gt_center gt_striped">(-0.564, -0.254)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center">-0.360</td>
+<td class="gt_row gt_center">-0.483</td>
+<td class="gt_row gt_center">(-0.746, -0.219)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center gt_striped">-0.360</td>
+<td class="gt_row gt_center gt_striped">-0.413</td>
+<td class="gt_row gt_center gt_striped">(-0.56, -0.265)</td></tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">log(E(Y|A=1))-log(E(Y(0)|A=1))</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center">-1.033</td>
+<td class="gt_row gt_center">-1.020</td>
+<td class="gt_row gt_center">(-1.34, -0.7)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center gt_striped">-1.033</td>
+<td class="gt_row gt_center gt_striped">-1.129</td>
+<td class="gt_row gt_center gt_striped">(-1.564, -0.693)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center">-1.033</td>
+<td class="gt_row gt_center">-1.025</td>
+<td class="gt_row gt_center">(-1.339, -0.712)</td></tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">logit(E(Y|A=1))-logit(E(Y(0)|A=1))</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center gt_striped">-1.630</td>
+<td class="gt_row gt_center gt_striped">-1.780</td>
+<td class="gt_row gt_center gt_striped">(-2.478, -1.081)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center">-1.630</td>
+<td class="gt_row gt_center">-2.116</td>
+<td class="gt_row gt_center">(-3.409, -0.822)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center gt_striped">-1.630</td>
+<td class="gt_row gt_center gt_striped">-1.794</td>
+<td class="gt_row gt_center gt_striped">(-2.464, -1.124)</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="4">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> 95% confidence interval</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
 
 </div>
 </div>
