@@ -318,26 +318,80 @@ We compute the estimator for the linear, loglinear and logistic SNMM using
 the Double What-If Study. The functions are in the `fciR` package and can be
 consulted as usual by using `F2` on the function.
 
+The `jacknife` function from the package `resample` is replaced by using the
+`loo_cv` from the `rsample` package. This function creates n sets of data,
+with n being the nb of rows in the data, where 1 row is left out for every
+set.  This is the same as a jackknife.
+
+Using the `rsample` package offers a more versatile and modern way of working
+with R as it is the tidyverse way of coding.  In addition, the author of
+`resample` mentions that he has stopped maintaining the resample package and
+recommends using `rsample`.
+
+See [STA 430](http://campus.murraystate.edu/academic/faculty/cmecklin/STA430/_book/the-jackknife-and-the-bootstrap.html) for an easy to understand explanation on how to compute the
+standard error of a jackknife.
+
+
 ```{r}
 dwhatif.lininstr <- fciR::instr_linear(dwhatif, outcome.name = "VL1",
                                        exposure.name = "A", 
                                        instrument.name = "T")
 dwhatif.lininstr
 ```
-and we bootstrap instead of using `jackknife`
-
-```{r}
-?jackknife
-```
+and we use a jackknife as discussed above. Since the jacknife is custom-made,
+we test it with the `mtcars` data set as follows.
 
 
 ```{r}
-# whatif.out <- fciR::boot_est(
-#   dwhatif.lininstr, fciR::instr_linear, R = 10, conf = 0.95, inv = "none",
-#   outcome.name = "VL1", exposure.name = "A", instrument.name = "T", tol = 1e-6)
-# whatif.out
+# the function to compute the standard error and confidence interval
+jack.stats <- function(x, conf = 0.95) {
+  n <- length(x)
+  nsample <- n - 1
+  m <- mean(x)
+  v <- (nsample / n) * sum((x - m)^2)
+  se <- sqrt(v)
+  ci <- qt(conf, df = nsample)
+  c("est" = m, "se" = sqrt(v), "conf" = conf, 
+    "lci" = m - ci * se, "uci" = m + ci * se)
+}
+
+mtcars.jack <- sapply(seq_along(mtcars$mpg), FUN = function(i) {
+  x <- mtcars$mpg[-i]
+  mean(x)
+})
+mtcars.out <- jack.stats(mtcars.jack)
+
+stopifnot(mean(mtcars$mpg) == mtcars.out["est"],
+          # the standard error
+          abs(sd(mtcars$mpg) / sqrt(nrow(mtcars)) - mtcars.out["se"]) < 
+            .Machine$double.eps^0.5)
 ```
 
+
+
+
+```{r}
+# the list of data with n-1 row
+dwhatif.lin <- rsample::loo_cv(dwhatif)
+
+dwhatif.lin$results <- purrr::map_dfr(.x = dwhatif.lin$splits, .f = function(x) {
+  df <- analysis(x)
+  fciR::instr_linear(df, outcome.name = "VL1", 
+                            exposure.name = "A", 
+                            instrument.name = "T")
+  }) |>
+  select(-`logRR*`) %>%
+  as.data.frame()
+dwhatif.lin$results
+
+out <- sapply(dwhatif.lin$results, FUN = function(x) {
+  jack.stats(x)
+}) |>
+  t() %>%
+  as.data.frame()
+out
+message("the difference in CI is because author uses 1.96 instead of qt()")
+```
 
 
 ```{r}
