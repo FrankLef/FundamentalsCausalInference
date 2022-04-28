@@ -344,7 +344,7 @@ we test it with the `mtcars` data set as follows.
 
 ```{r}
 # the function to compute the standard error and confidence interval
-jack.stats <- function(x, conf = 0.95) {
+jack_ci <- function(x, conf = 0.95) {
   n <- length(x)
   nsample <- n - 1
   m <- mean(x)
@@ -359,7 +359,7 @@ mtcars.jack <- sapply(seq_along(mtcars$mpg), FUN = function(i) {
   x <- mtcars$mpg[-i]
   mean(x)
 })
-mtcars.out <- jack.stats(mtcars.jack)
+mtcars.out <- jack_ci(mtcars.jack)
 
 stopifnot(mean(mtcars$mpg) == mtcars.out["est"],
           # the standard error
@@ -367,6 +367,77 @@ stopifnot(mean(mtcars$mpg) == mtcars.out["est"],
             .Machine$double.eps^0.5)
 ```
 
+
+
+```{r}
+jack_run <- function(data, func, conf = 0.95, ...) {
+  # get the leave-one-out samples
+  the_samples <- rsample::loo_cv(data)
+  
+  # estimates the effect measures
+  the_results <- purrr::map_dfr(.x = the_samples$splits, .f = function(x) {
+    df <- analysis(x)
+    func(df, ...)
+    })
+  
+  # compute the confidence intervals
+  purrr::map_dfr(.x = the_results, .f = ~jack_ci(., conf = conf), 
+                 .id = "name")
+}
+```
+
+```{r}
+df <- jack_run(data = dwhatif, conf = 0.95, func = fciR::instr_linear,
+               outcome.name = "VL1", exposure.name = "A", instrument.name = "T")
+df
+```
+
+```{r}
+jack_est <- function(data, func, conf = 0.95,
+                     inv = c("exp", "expit", "none"),
+                     evars = c("standard", "modifier", "logit"),
+                     ...) {
+  inv <- match.arg(inv)
+  evars <- match.arg(evars)
+
+  out <- jack_run(data = data, func = func, conf = conf, ...)
+
+  # inverse transform the result
+  vars <- effect_vars(evars = evars)
+  effect_inv(data = out, inv = inv, vars = vars)
+}
+```
+
+
+```{r}
+out <- jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,
+                     inv = "none", evars = "standard",
+                     outcome.name = "VL1", exposure.name = "A", 
+                     instrument.name = "T")
+out
+```
+
+
+```{r}
+# boot_est <- function(data, func, R = 1000, conf = 0.95,
+#                      inv = c("exp", "expit", "none"),
+#                      evars = c("standard", "modifier", "logit"),
+#                      ...) {
+#   inv <- match.arg(inv)
+#   evars <- match.arg(evars)
+# 
+#   estimator <- function(data, ids) {
+#     dat <- data[ids, ]
+#     func(dat, ...)
+#   }
+# 
+#   out <- boot_run(data = data, statistic = estimator, R = R, conf = conf)
+# 
+#   # inverse transform the result
+#   vars <- effect_vars(evars = evars)
+#   effect_inv(data = out, inv = inv, vars = vars)
+# }
+```
 
 
 
@@ -379,19 +450,19 @@ dwhatif.lin$results <- purrr::map_dfr(.x = dwhatif.lin$splits, .f = function(x) 
   fciR::instr_linear(df, outcome.name = "VL1", 
                             exposure.name = "A", 
                             instrument.name = "T")
-  }) |>
-  select(-`logRR*`) %>%
-  as.data.frame()
-dwhatif.lin$results
+  })
+  # select(-`logRR*`) %>%
+  # as.data.frame()
+str(dwhatif.lin$results)
 
-out <- sapply(dwhatif.lin$results, FUN = function(x) {
-  jack.stats(x)
-}) |>
-  t() %>%
-  as.data.frame()
+# dwhatif.lin$out <- data.frame(matrix(ncol = 0, nrow = 0))
+out <- purrr::map_dfr(.x = dwhatif.lin$results, .f = ~jack.stats(.))
 out
 message("the difference in CI is because author uses 1.96 instead of qt()")
 ```
+
+
+
 
 
 ```{r}
