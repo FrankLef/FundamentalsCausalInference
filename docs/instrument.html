@@ -26,7 +26,7 @@ Brumback. The exercises are done in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-04-28" />
+<meta name="date" content="2022-05-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -277,10 +277,11 @@ div.csl-indent {
 <li class="chapter" data-level="9.1.1" data-path="instrument.html"><a href="instrument.html#principal-stratification"><i class="fa fa-check"></i><b>9.1.1</b> Principal Stratification<span></span></a></li>
 <li class="chapter" data-level="9.1.2" data-path="instrument.html"><a href="instrument.html#complier-average-causal-effect"><i class="fa fa-check"></i><b>9.1.2</b> Complier Average Causal Effect<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="instrument.html"><a href="instrument.html#examples-3"><i class="fa fa-check"></i><b>9.2</b> Examples<span></span></a>
+<li class="chapter" data-level="9.2" data-path="instrument.html"><a href="instrument.html#average-effect-of-treatment-on-the-treated-and-structural-nested-mean-models"><i class="fa fa-check"></i><b>9.2</b> Average Effect of Treatment on the Treated and Structural Nested mean Models<span></span></a></li>
+<li class="chapter" data-level="9.3" data-path="instrument.html"><a href="instrument.html#examples-3"><i class="fa fa-check"></i><b>9.3</b> Examples<span></span></a>
 <ul>
-<li class="chapter" data-level="9.2.1" data-path="instrument.html"><a href="instrument.html#what-if-study-4"><i class="fa fa-check"></i><b>9.2.1</b> What-If Study<span></span></a></li>
-<li class="chapter" data-level="9.2.2" data-path="instrument.html"><a href="instrument.html#double-what-if-study-2"><i class="fa fa-check"></i><b>9.2.2</b> Double What-if Study<span></span></a></li>
+<li class="chapter" data-level="9.3.1" data-path="instrument.html"><a href="instrument.html#what-if-study-4"><i class="fa fa-check"></i><b>9.3.1</b> What-If Study<span></span></a></li>
+<li class="chapter" data-level="9.3.2" data-path="instrument.html"><a href="instrument.html#double-what-if-study-2"><i class="fa fa-check"></i><b>9.3.2</b> Double What-if Study<span></span></a></li>
 </ul></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix<span></span></b></span></li>
@@ -389,15 +390,15 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="instrument" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Instrumental Variables<a href="instrument.html#instrument" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="instrument.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
-<span id="cb222-2"><a href="instrument.html#cb222-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb222-3"><a href="instrument.html#cb222-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb222-4"><a href="instrument.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb222-5"><a href="instrument.html#cb222-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb222-6"><a href="instrument.html#cb222-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb222-7"><a href="instrument.html#cb222-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-181"></span>
-<img src="_main_files/figure-html/unnamed-chunk-181-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="instrument.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-2"><a href="instrument.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="instrument.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-4"><a href="instrument.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-5"><a href="instrument.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="instrument.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb1-7"><a href="instrument.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="_main_files/figure-html/unnamed-chunk-4-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
 <p class="caption">
 Figure 9.1: Instrumental Variable for the Effect of A on Y
 </p>
@@ -526,8 +527,11 @@ and putting it together we obtain</p>
 &amp;= \frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(A=1 \mid T=1) + P(A=1 \mid T=0)} \\
 &amp;= \frac{ITT}{P(A=1 \mid T=1) + P(A=1 \mid T=0)}
 \end{align*}
-\]</span>
-## Average Effect of Treatment on the Treated and Structural Nested mean Models</p>
+\]</span></p>
+</div>
+</div>
+<div id="average-effect-of-treatment-on-the-treated-and-structural-nested-mean-models" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> Average Effect of Treatment on the Treated and Structural Nested mean Models<a href="instrument.html#average-effect-of-treatment-on-the-treated-and-structural-nested-mean-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <blockquote>
 <p>A drawback of the CACE is that it applies only to the compliers, a subgroup
 of the populaiton that we cannot even identify.</p>
@@ -570,67 +574,66 @@ be done with the <code>ivreg</code> function from the package <span class="math 
 \sum_{n=1}^n (1,T_i)^T(Y_i^* - A_i^* \beta - \alpha) = 0
 \]</span></p>
 </div>
-</div>
-<div id="examples-3" class="section level2 hasAnchor" number="9.2">
-<h2><span class="header-section-number">9.2</span> Examples<a href="instrument.html#examples-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="what-if-study-4" class="section level3 hasAnchor" number="9.2.1">
-<h3><span class="header-section-number">9.2.1</span> What-If Study<a href="instrument.html#what-if-study-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="instrument.html#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb223-2"><a href="instrument.html#cb223-2" aria-hidden="true" tabindex="-1"></a>whatif <span class="ot">&lt;-</span> whatifdat</span>
-<span id="cb223-3"><a href="instrument.html#cb223-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">xtabs</span>(<span class="at">data =</span> whatif, <span class="at">formula =</span> <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div>
+<div id="examples-3" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Examples<a href="instrument.html#examples-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="what-if-study-4" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> What-If Study<a href="instrument.html#what-if-study-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="instrument.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb2-2"><a href="instrument.html#cb2-2" aria-hidden="true" tabindex="-1"></a>whatif <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb2-3"><a href="instrument.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">xtabs</span>(<span class="at">data =</span> whatif, <span class="at">formula =</span> <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##    A
 ## T      0    1
 ##   0 0.38 0.62
 ##   1 0.35 0.65</code></pre>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="instrument.html#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(whatifdat)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="instrument.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(whatifdat)</span></code></pre></div>
 <p>and the function as found on p. 164 is modified to allow the bootstrapping
 with many iterations by setting IV to <code>NA</code> where the denominator is too small.</p>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="instrument.html#cb226-1" aria-hidden="true" tabindex="-1"></a>instr_vars <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
-<span id="cb226-2"><a href="instrument.html#cb226-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>) {</span>
-<span id="cb226-3"><a href="instrument.html#cb226-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb226-4"><a href="instrument.html#cb226-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the ITT</span></span>
-<span id="cb226-5"><a href="instrument.html#cb226-5" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">0</span></span>
-<span id="cb226-6"><a href="instrument.html#cb226-6" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">1</span></span>
-<span id="cb226-7"><a href="instrument.html#cb226-7" aria-hidden="true" tabindex="-1"></a>  ITT <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, outcome.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, outcome.name])</span>
-<span id="cb226-8"><a href="instrument.html#cb226-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb226-9"><a href="instrument.html#cb226-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the denominator of the CAE and ATT with equation (9.5)</span></span>
-<span id="cb226-10"><a href="instrument.html#cb226-10" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, exposure.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, exposure.name])</span>
-<span id="cb226-11"><a href="instrument.html#cb226-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator should not be near zero to avoid numerical problems</span></span>
-<span id="cb226-12"><a href="instrument.html#cb226-12" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">abs</span>(denom) <span class="sc">&gt;=</span> tol</span>
-<span id="cb226-13"><a href="instrument.html#cb226-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(check) {</span>
-<span id="cb226-14"><a href="instrument.html#cb226-14" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> ITT <span class="sc">/</span> denom</span>
-<span id="cb226-15"><a href="instrument.html#cb226-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb226-16"><a href="instrument.html#cb226-16" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb226-17"><a href="instrument.html#cb226-17" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb226-18"><a href="instrument.html#cb226-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ITT&quot;</span> <span class="ot">=</span> ITT, <span class="st">&quot;IV&quot;</span> <span class="ot">=</span> IV)</span>
-<span id="cb226-19"><a href="instrument.html#cb226-19" aria-hidden="true" tabindex="-1"></a>  } </span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="instrument.html#cb5-1" aria-hidden="true" tabindex="-1"></a>instr_vars <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb5-2"><a href="instrument.html#cb5-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>) {</span>
+<span id="cb5-3"><a href="instrument.html#cb5-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-4"><a href="instrument.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the ITT</span></span>
+<span id="cb5-5"><a href="instrument.html#cb5-5" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb5-6"><a href="instrument.html#cb5-6" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">1</span></span>
+<span id="cb5-7"><a href="instrument.html#cb5-7" aria-hidden="true" tabindex="-1"></a>  ITT <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, outcome.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, outcome.name])</span>
+<span id="cb5-8"><a href="instrument.html#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-9"><a href="instrument.html#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the denominator of the CAE and ATT with equation (9.5)</span></span>
+<span id="cb5-10"><a href="instrument.html#cb5-10" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, exposure.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, exposure.name])</span>
+<span id="cb5-11"><a href="instrument.html#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator should not be near zero to avoid numerical problems</span></span>
+<span id="cb5-12"><a href="instrument.html#cb5-12" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">abs</span>(denom) <span class="sc">&gt;=</span> tol</span>
+<span id="cb5-13"><a href="instrument.html#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(check) {</span>
+<span id="cb5-14"><a href="instrument.html#cb5-14" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> ITT <span class="sc">/</span> denom</span>
+<span id="cb5-15"><a href="instrument.html#cb5-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb5-16"><a href="instrument.html#cb5-16" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb5-17"><a href="instrument.html#cb5-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-18"><a href="instrument.html#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ITT&quot;</span> <span class="ot">=</span> ITT, <span class="st">&quot;IV&quot;</span> <span class="ot">=</span> IV)</span>
+<span id="cb5-19"><a href="instrument.html#cb5-19" aria-hidden="true" tabindex="-1"></a>  } </span></code></pre></div>
 <p>with the results</p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb227-1"><a href="instrument.html#cb227-1" aria-hidden="true" tabindex="-1"></a>whatif.est <span class="ot">&lt;-</span> <span class="fu">instr_vars</span>(whatif, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb227-2"><a href="instrument.html#cb227-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(whatif.est <span class="sc">-</span> <span class="fu">c</span>(<span class="fl">0.007352941</span>, <span class="fl">0.27777778</span>))) <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span>
-<span id="cb227-3"><a href="instrument.html#cb227-3" aria-hidden="true" tabindex="-1"></a>whatif.est</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="instrument.html#cb6-1" aria-hidden="true" tabindex="-1"></a>whatif.est <span class="ot">&lt;-</span> <span class="fu">instr_vars</span>(whatif, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb6-2"><a href="instrument.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(whatif.est <span class="sc">-</span> <span class="fu">c</span>(<span class="fl">0.007352941</span>, <span class="fl">0.27777778</span>))) <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span>
+<span id="cb6-3"><a href="instrument.html#cb6-3" aria-hidden="true" tabindex="-1"></a>whatif.est</span></code></pre></div>
 <pre><code>##         ITT          IV 
 ## 0.007352941 0.277777778</code></pre>
-<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="instrument.html#cb229-1" aria-hidden="true" tabindex="-1"></a>.Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="instrument.html#cb8-1" aria-hidden="true" tabindex="-1"></a>.Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span></span></code></pre></div>
 <pre><code>## [1] 1.490116e-08</code></pre>
 <p>and using only 100 boots to estimate the CI</p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="instrument.html#cb231-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb231-2"><a href="instrument.html#cb231-2" aria-hidden="true" tabindex="-1"></a>  whatif, instr_vars, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
-<span id="cb231-3"><a href="instrument.html#cb231-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb231-4"><a href="instrument.html#cb231-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>))</span>
-<span id="cb231-5"><a href="instrument.html#cb231-5" aria-hidden="true" tabindex="-1"></a>whatif.out</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="instrument.html#cb10-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb10-2"><a href="instrument.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  whatif, instr_vars, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb10-3"><a href="instrument.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="instrument.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>))</span>
+<span id="cb10-5"><a href="instrument.html#cb10-5" aria-hidden="true" tabindex="-1"></a>whatif.out</span></code></pre></div>
 <pre><code>##   name    est conf      lci     uci
-## 1  ITT 0.0074 0.95  -0.1365  0.1452
-## 2   IV 0.2778 0.95 -26.3220 27.9195</code></pre>
+## 1  ITT 0.0074 0.95  -0.1350  0.1544
+## 2   IV 0.2778 0.95 -54.8789 53.4541</code></pre>
 <p><strong>Note:</strong> Although we used 1000 iterations for bootstraping with <code>NA</code> when the
 denominator is too close to zero. It is more flexible than the code in the
 book but <strong>still with a lot of variability</strong> for the CI of IV. In fact, in very
 many iterations, the CI were much wider than what the author calculated and most
 of the time the CI was about <code>c(-30, 30)</code>.</p>
 </div>
-<div id="double-what-if-study-2" class="section level3 hasAnchor" number="9.2.2">
-<h3><span class="header-section-number">9.2.2</span> Double What-if Study<a href="instrument.html#double-what-if-study-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="instrument.html#cb233-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb233-2"><a href="instrument.html#cb233-2" aria-hidden="true" tabindex="-1"></a>dwhatif <span class="ot">&lt;-</span> doublewhatifdat</span></code></pre></div>
+<div id="double-what-if-study-2" class="section level3 hasAnchor" number="9.3.2">
+<h3><span class="header-section-number">9.3.2</span> Double What-if Study<a href="instrument.html#double-what-if-study-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="instrument.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb12-2"><a href="instrument.html#cb12-2" aria-hidden="true" tabindex="-1"></a>dwhatif <span class="ot">&lt;-</span> doublewhatifdat</span></code></pre></div>
 <p>We compute the estimator for the linear, loglinear and logistic SNMM using
 the Double What-If Study. The functions are in the <code>fciR</code> package and can be
 consulted as usual by using <code>F2</code> on the function.</p>
@@ -644,53 +647,53 @@ with R as it is the tidyverse way of coding. In addition, the author of
 recommends using <code>rsample</code>.</p>
 <p>See <a href="http://campus.murraystate.edu/academic/faculty/cmecklin/STA430/_book/the-jackknife-and-the-bootstrap.html">STA 430</a> for an easy to understand explanation on how to compute the
 standard error of a jackknife.</p>
-<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="instrument.html#cb234-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">instr_linear</span>(dwhatif, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb234-2"><a href="instrument.html#cb234-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
-<span id="cb234-3"><a href="instrument.html#cb234-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb234-4"><a href="instrument.html#cb234-4" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="instrument.html#cb13-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">instr_linear</span>(dwhatif, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb13-2"><a href="instrument.html#cb13-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
+<span id="cb13-3"><a href="instrument.html#cb13-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb13-4"><a href="instrument.html#cb13-4" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr</span></code></pre></div>
 <pre><code>##        EY0        EY1         RD      logRR     logRR*      logOR 
 ##  0.6400410  0.2307692 -0.4092717 -1.0201140 -0.7594008 -1.7795147</code></pre>
 <p>and we use a jackknife as discussed above. Since the jacknife is custom-made,
 we test it with the <code>mtcars</code> data set as follows.</p>
-<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="instrument.html#cb236-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the function to compute the standard error and confidence interval</span></span>
-<span id="cb236-2"><a href="instrument.html#cb236-2" aria-hidden="true" tabindex="-1"></a>jack_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb236-3"><a href="instrument.html#cb236-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb236-4"><a href="instrument.html#cb236-4" aria-hidden="true" tabindex="-1"></a>  nsample <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb236-5"><a href="instrument.html#cb236-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb236-6"><a href="instrument.html#cb236-6" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> (nsample <span class="sc">/</span> n) <span class="sc">*</span> <span class="fu">sum</span>((x <span class="sc">-</span> m)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb236-7"><a href="instrument.html#cb236-7" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v)</span>
-<span id="cb236-8"><a href="instrument.html#cb236-8" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> <span class="fu">qt</span>(conf, <span class="at">df =</span> nsample)</span>
-<span id="cb236-9"><a href="instrument.html#cb236-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;est&quot;</span> <span class="ot">=</span> m, <span class="st">&quot;se&quot;</span> <span class="ot">=</span> <span class="fu">sqrt</span>(v), <span class="st">&quot;conf&quot;</span> <span class="ot">=</span> conf, </span>
-<span id="cb236-10"><a href="instrument.html#cb236-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;lci&quot;</span> <span class="ot">=</span> m <span class="sc">-</span> ci <span class="sc">*</span> se, <span class="st">&quot;uci&quot;</span> <span class="ot">=</span> m <span class="sc">+</span> ci <span class="sc">*</span> se)</span>
-<span id="cb236-11"><a href="instrument.html#cb236-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb236-12"><a href="instrument.html#cb236-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb236-13"><a href="instrument.html#cb236-13" aria-hidden="true" tabindex="-1"></a>mtcars.jack <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq_along</span>(mtcars<span class="sc">$</span>mpg), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
-<span id="cb236-14"><a href="instrument.html#cb236-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> mtcars<span class="sc">$</span>mpg[<span class="sc">-</span>i]</span>
-<span id="cb236-15"><a href="instrument.html#cb236-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x)</span>
-<span id="cb236-16"><a href="instrument.html#cb236-16" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb236-17"><a href="instrument.html#cb236-17" aria-hidden="true" tabindex="-1"></a>mtcars.out <span class="ot">&lt;-</span> <span class="fu">jack_ci</span>(mtcars.jack)</span>
-<span id="cb236-18"><a href="instrument.html#cb236-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb236-19"><a href="instrument.html#cb236-19" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">==</span> mtcars.out[<span class="st">&quot;est&quot;</span>],</span>
-<span id="cb236-20"><a href="instrument.html#cb236-20" aria-hidden="true" tabindex="-1"></a>          <span class="co"># the standard error</span></span>
-<span id="cb236-21"><a href="instrument.html#cb236-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(<span class="fu">sd</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">nrow</span>(mtcars)) <span class="sc">-</span> mtcars.out[<span class="st">&quot;se&quot;</span>]) <span class="sc">&lt;</span> </span>
-<span id="cb236-22"><a href="instrument.html#cb236-22" aria-hidden="true" tabindex="-1"></a>            .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="instrument.html#cb237-1" aria-hidden="true" tabindex="-1"></a>jack_run <span class="ot">&lt;-</span> <span class="cf">function</span>(data, func, <span class="at">conf =</span> <span class="fl">0.95</span>, ...) {</span>
-<span id="cb237-2"><a href="instrument.html#cb237-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the leave-one-out samples</span></span>
-<span id="cb237-3"><a href="instrument.html#cb237-3" aria-hidden="true" tabindex="-1"></a>  the_samples <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">loo_cv</span>(data)</span>
-<span id="cb237-4"><a href="instrument.html#cb237-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb237-5"><a href="instrument.html#cb237-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimates the effect measures</span></span>
-<span id="cb237-6"><a href="instrument.html#cb237-6" aria-hidden="true" tabindex="-1"></a>  the_results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_samples<span class="sc">$</span>splits, <span class="at">.f =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb237-7"><a href="instrument.html#cb237-7" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">analysis</span>(x)</span>
-<span id="cb237-8"><a href="instrument.html#cb237-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">func</span>(df, ...)</span>
-<span id="cb237-9"><a href="instrument.html#cb237-9" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb237-10"><a href="instrument.html#cb237-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb237-11"><a href="instrument.html#cb237-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the confidence intervals</span></span>
-<span id="cb237-12"><a href="instrument.html#cb237-12" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_results, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">jack_ci</span>(., <span class="at">conf =</span> conf), </span>
-<span id="cb237-13"><a href="instrument.html#cb237-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.id =</span> <span class="st">&quot;name&quot;</span>)</span>
-<span id="cb237-14"><a href="instrument.html#cb237-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="instrument.html#cb238-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">jack_run</span>(<span class="at">data =</span> dwhatif, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">func =</span> fciR<span class="sc">::</span>instr_linear,</span>
-<span id="cb238-2"><a href="instrument.html#cb238-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb238-3"><a href="instrument.html#cb238-3" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="instrument.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the function to compute the standard error and confidence interval</span></span>
+<span id="cb15-2"><a href="instrument.html#cb15-2" aria-hidden="true" tabindex="-1"></a>jack_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb15-3"><a href="instrument.html#cb15-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb15-4"><a href="instrument.html#cb15-4" aria-hidden="true" tabindex="-1"></a>  nsample <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb15-5"><a href="instrument.html#cb15-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb15-6"><a href="instrument.html#cb15-6" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> (nsample <span class="sc">/</span> n) <span class="sc">*</span> <span class="fu">sum</span>((x <span class="sc">-</span> m)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb15-7"><a href="instrument.html#cb15-7" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v)</span>
+<span id="cb15-8"><a href="instrument.html#cb15-8" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> <span class="fu">qt</span>(conf, <span class="at">df =</span> nsample)</span>
+<span id="cb15-9"><a href="instrument.html#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;est&quot;</span> <span class="ot">=</span> m, <span class="st">&quot;se&quot;</span> <span class="ot">=</span> <span class="fu">sqrt</span>(v), <span class="st">&quot;conf&quot;</span> <span class="ot">=</span> conf, </span>
+<span id="cb15-10"><a href="instrument.html#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;lci&quot;</span> <span class="ot">=</span> m <span class="sc">-</span> ci <span class="sc">*</span> se, <span class="st">&quot;uci&quot;</span> <span class="ot">=</span> m <span class="sc">+</span> ci <span class="sc">*</span> se)</span>
+<span id="cb15-11"><a href="instrument.html#cb15-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-12"><a href="instrument.html#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="instrument.html#cb15-13" aria-hidden="true" tabindex="-1"></a>mtcars.jack <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq_along</span>(mtcars<span class="sc">$</span>mpg), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb15-14"><a href="instrument.html#cb15-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> mtcars<span class="sc">$</span>mpg[<span class="sc">-</span>i]</span>
+<span id="cb15-15"><a href="instrument.html#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x)</span>
+<span id="cb15-16"><a href="instrument.html#cb15-16" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb15-17"><a href="instrument.html#cb15-17" aria-hidden="true" tabindex="-1"></a>mtcars.out <span class="ot">&lt;-</span> <span class="fu">jack_ci</span>(mtcars.jack)</span>
+<span id="cb15-18"><a href="instrument.html#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="instrument.html#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">==</span> mtcars.out[<span class="st">&quot;est&quot;</span>],</span>
+<span id="cb15-20"><a href="instrument.html#cb15-20" aria-hidden="true" tabindex="-1"></a>          <span class="co"># the standard error</span></span>
+<span id="cb15-21"><a href="instrument.html#cb15-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(<span class="fu">sd</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">nrow</span>(mtcars)) <span class="sc">-</span> mtcars.out[<span class="st">&quot;se&quot;</span>]) <span class="sc">&lt;</span> </span>
+<span id="cb15-22"><a href="instrument.html#cb15-22" aria-hidden="true" tabindex="-1"></a>            .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="instrument.html#cb16-1" aria-hidden="true" tabindex="-1"></a>jack_run <span class="ot">&lt;-</span> <span class="cf">function</span>(data, func, <span class="at">conf =</span> <span class="fl">0.95</span>, ...) {</span>
+<span id="cb16-2"><a href="instrument.html#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the leave-one-out samples</span></span>
+<span id="cb16-3"><a href="instrument.html#cb16-3" aria-hidden="true" tabindex="-1"></a>  the_samples <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">loo_cv</span>(data)</span>
+<span id="cb16-4"><a href="instrument.html#cb16-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-5"><a href="instrument.html#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimates the effect measures</span></span>
+<span id="cb16-6"><a href="instrument.html#cb16-6" aria-hidden="true" tabindex="-1"></a>  the_results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_samples<span class="sc">$</span>splits, <span class="at">.f =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb16-7"><a href="instrument.html#cb16-7" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">analysis</span>(x)</span>
+<span id="cb16-8"><a href="instrument.html#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">func</span>(df, ...)</span>
+<span id="cb16-9"><a href="instrument.html#cb16-9" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb16-10"><a href="instrument.html#cb16-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-11"><a href="instrument.html#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the confidence intervals</span></span>
+<span id="cb16-12"><a href="instrument.html#cb16-12" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_results, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">jack_ci</span>(., <span class="at">conf =</span> conf), </span>
+<span id="cb16-13"><a href="instrument.html#cb16-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.id =</span> <span class="st">&quot;name&quot;</span>)</span>
+<span id="cb16-14"><a href="instrument.html#cb16-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="instrument.html#cb17-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">jack_run</span>(<span class="at">data =</span> dwhatif, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">func =</span> fciR<span class="sc">::</span>instr_linear,</span>
+<span id="cb17-2"><a href="instrument.html#cb17-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb17-3"><a href="instrument.html#cb17-3" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 6
 ##   name      est     se  conf    lci    uci
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
@@ -700,24 +703,23 @@ we test it with the <code>mtcars</code> data set as follows.</p>
 ## 4 logRR  -1.02  0.163   0.95 -1.29  -0.751
 ## 5 logRR* -0.759 0.211   0.95 -1.11  -0.412
 ## 6 logOR  -1.78  0.356   0.95 -2.37  -1.19</code></pre>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="instrument.html#cb240-1" aria-hidden="true" tabindex="-1"></a>jack_est <span class="ot">&lt;-</span> <span class="cf">function</span>(data, func, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb240-2"><a href="instrument.html#cb240-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">inv =</span> <span class="fu">c</span>(<span class="st">&quot;exp&quot;</span>, <span class="st">&quot;expit&quot;</span>, <span class="st">&quot;none&quot;</span>),</span>
-<span id="cb240-3"><a href="instrument.html#cb240-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">evars =</span> <span class="fu">c</span>(<span class="st">&quot;standard&quot;</span>, <span class="st">&quot;modifier&quot;</span>, <span class="st">&quot;logit&quot;</span>),</span>
-<span id="cb240-4"><a href="instrument.html#cb240-4" aria-hidden="true" tabindex="-1"></a>                     ...) {</span>
-<span id="cb240-5"><a href="instrument.html#cb240-5" aria-hidden="true" tabindex="-1"></a>  inv <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(inv)</span>
-<span id="cb240-6"><a href="instrument.html#cb240-6" aria-hidden="true" tabindex="-1"></a>  evars <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(evars)</span>
-<span id="cb240-7"><a href="instrument.html#cb240-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb240-8"><a href="instrument.html#cb240-8" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">jack_run</span>(<span class="at">data =</span> data, <span class="at">func =</span> func, <span class="at">conf =</span> conf, ...)</span>
-<span id="cb240-9"><a href="instrument.html#cb240-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb240-10"><a href="instrument.html#cb240-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># inverse transform the result</span></span>
-<span id="cb240-11"><a href="instrument.html#cb240-11" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> <span class="fu">effect_vars</span>(<span class="at">evars =</span> evars)</span>
-<span id="cb240-12"><a href="instrument.html#cb240-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">effect_inv</span>(<span class="at">data =</span> out, <span class="at">inv =</span> inv, <span class="at">vars =</span> vars)</span>
-<span id="cb240-13"><a href="instrument.html#cb240-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="instrument.html#cb241-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">jack_est</span>(<span class="at">data =</span> dwhatif, <span class="at">func =</span> fciR<span class="sc">::</span>instr_linear, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb241-2"><a href="instrument.html#cb241-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;standard&quot;</span>,</span>
-<span id="cb241-3"><a href="instrument.html#cb241-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
-<span id="cb241-4"><a href="instrument.html#cb241-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb241-5"><a href="instrument.html#cb241-5" aria-hidden="true" tabindex="-1"></a>out</span></code></pre></div>
+<p>and the function to do the full jackknife in one function is included in the
+<code>fci</code> package and cn be used as follows.</p>
+<p>First with the linear model</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="instrument.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 25 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 25 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="instrument.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb21-2"><a href="instrument.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.lin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,</span></span>
+<span id="cb21-3"><a href="instrument.html#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb21-4"><a href="instrument.html#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;, </span></span>
+<span id="cb21-5"><a href="instrument.html#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
+<span id="cb21-6"><a href="instrument.html#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb21-7"><a href="instrument.html#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb21-8"><a href="instrument.html#cb21-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_lin.rds&quot;</span>)</span>
+<span id="cb21-9"><a href="instrument.html#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.lin, file = a_file)</span></span>
+<span id="cb21-10"><a href="instrument.html#cb21-10" aria-hidden="true" tabindex="-1"></a>dwhatif.lin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb21-11"><a href="instrument.html#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="instrument.html#cb21-12" aria-hidden="true" tabindex="-1"></a>dwhatif.lin</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 6
 ##   name      est     se  conf    lci    uci
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
@@ -727,97 +729,79 @@ we test it with the <code>mtcars</code> data set as follows.</p>
 ## 4 logRR  -1.02  0.163   0.95 -1.29  -0.751
 ## 5 logRR* -0.759 0.211   0.95 -1.11  -0.412
 ## 6 logOR  -1.78  0.356   0.95 -2.37  -1.19</code></pre>
-<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="instrument.html#cb243-1" aria-hidden="true" tabindex="-1"></a><span class="co"># boot_est &lt;- function(data, func, R = 1000, conf = 0.95,</span></span>
-<span id="cb243-2"><a href="instrument.html#cb243-2" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = c(&quot;exp&quot;, &quot;expit&quot;, &quot;none&quot;),</span></span>
-<span id="cb243-3"><a href="instrument.html#cb243-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      evars = c(&quot;standard&quot;, &quot;modifier&quot;, &quot;logit&quot;),</span></span>
-<span id="cb243-4"><a href="instrument.html#cb243-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      ...) {</span></span>
-<span id="cb243-5"><a href="instrument.html#cb243-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   inv &lt;- match.arg(inv)</span></span>
-<span id="cb243-6"><a href="instrument.html#cb243-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   evars &lt;- match.arg(evars)</span></span>
-<span id="cb243-7"><a href="instrument.html#cb243-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb243-8"><a href="instrument.html#cb243-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   estimator &lt;- function(data, ids) {</span></span>
-<span id="cb243-9"><a href="instrument.html#cb243-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     dat &lt;- data[ids, ]</span></span>
-<span id="cb243-10"><a href="instrument.html#cb243-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     func(dat, ...)</span></span>
-<span id="cb243-11"><a href="instrument.html#cb243-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
-<span id="cb243-12"><a href="instrument.html#cb243-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb243-13"><a href="instrument.html#cb243-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   out &lt;- boot_run(data = data, statistic = estimator, R = R, conf = conf)</span></span>
-<span id="cb243-14"><a href="instrument.html#cb243-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb243-15"><a href="instrument.html#cb243-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   # inverse transform the result</span></span>
-<span id="cb243-16"><a href="instrument.html#cb243-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   vars &lt;- effect_vars(evars = evars)</span></span>
-<span id="cb243-17"><a href="instrument.html#cb243-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   effect_inv(data = out, inv = inv, vars = vars)</span></span>
-<span id="cb243-18"><a href="instrument.html#cb243-18" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code></pre></div>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="instrument.html#cb244-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the list of data with n-1 row</span></span>
-<span id="cb244-2"><a href="instrument.html#cb244-2" aria-hidden="true" tabindex="-1"></a>dwhatif.lin <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">loo_cv</span>(dwhatif)</span>
-<span id="cb244-3"><a href="instrument.html#cb244-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb244-4"><a href="instrument.html#cb244-4" aria-hidden="true" tabindex="-1"></a>dwhatif.lin<span class="sc">$</span>results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> dwhatif.lin<span class="sc">$</span>splits, <span class="at">.f =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb244-5"><a href="instrument.html#cb244-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">analysis</span>(x)</span>
-<span id="cb244-6"><a href="instrument.html#cb244-6" aria-hidden="true" tabindex="-1"></a>  fciR<span class="sc">::</span><span class="fu">instr_linear</span>(df, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>, </span>
-<span id="cb244-7"><a href="instrument.html#cb244-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
-<span id="cb244-8"><a href="instrument.html#cb244-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb244-9"><a href="instrument.html#cb244-9" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb244-10"><a href="instrument.html#cb244-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select(-`logRR*`) %&gt;%</span></span>
-<span id="cb244-11"><a href="instrument.html#cb244-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># as.data.frame()</span></span>
-<span id="cb244-12"><a href="instrument.html#cb244-12" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dwhatif.lin<span class="sc">$</span>results)</span></code></pre></div>
-<pre><code>## tibble [1,000 x 6] (S3: tbl_df/tbl/data.frame)
-##  $ EY0   : num [1:1000] 0.638 0.638 0.641 0.638 0.644 ...
-##  $ EY1   : num [1:1000] 0.231 0.231 0.228 0.231 0.231 ...
-##  $ RD    : num [1:1000] -0.408 -0.408 -0.413 -0.408 -0.413 ...
-##  $ logRR : num [1:1000] -1.02 -1.02 -1.04 -1.02 -1.03 ...
-##  $ logRR*: num [1:1000] -0.755 -0.755 -0.766 -0.755 -0.77 ...
-##  $ logOR : num [1:1000] -1.77 -1.77 -1.8 -1.77 -1.8 ...</code></pre>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="instrument.html#cb246-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.lin$out &lt;- data.frame(matrix(ncol = 0, nrow = 0))</span></span>
-<span id="cb246-2"><a href="instrument.html#cb246-2" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> dwhatif.lin<span class="sc">$</span>results, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">jack.stats</span>(.))</span>
-<span id="cb246-3"><a href="instrument.html#cb246-3" aria-hidden="true" tabindex="-1"></a>out</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 5
-##      est     se  conf    lci    uci
-##    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1  0.640 0.0754  0.95  0.516  0.764
-## 2  0.231 0.0269  0.95  0.186  0.275
-## 3 -0.409 0.0792  0.95 -0.540 -0.279
-## 4 -1.02  0.163   0.95 -1.29  -0.751
-## 5 -0.759 0.211   0.95 -1.11  -0.412
-## 6 -1.78  0.356   0.95 -2.37  -1.19</code></pre>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="instrument.html#cb248-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;the difference in CI is because author uses 1.96 instead of qt()&quot;</span>)</span></code></pre></div>
-<pre><code>## the difference in CI is because author uses 1.96 instead of qt()</code></pre>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="instrument.html#cb250-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_09_01&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb250-2"><a href="instrument.html#cb250-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_09_01</span>
-<span id="cb250-3"><a href="instrument.html#cb250-3" aria-hidden="true" tabindex="-1"></a>bb_dwhatif</span></code></pre></div>
-<pre><code>##       method                               name  Truth    est conf    lci
-## 1       CACE                 E(Y(1) - Y(0)|C=1)     NA -0.409 0.95 -0.564
-## 2     Linear                      E(Y-Y(0)|A=1) -0.360 -0.409 0.95 -0.564
-## 3  Loglinear                      E(Y-Y(0)|A=1) -0.360 -0.483 0.95 -0.746
-## 4   Logistic                      E(Y-Y(0)|A=1) -0.360 -0.413 0.95 -0.560
-## 5     Linear     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.020 0.95 -1.340
-## 6  Loglinear     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.129 0.95 -1.564
-## 7   Logistic     log(E(Y|A=1))-log(E(Y(0)|A=1)) -1.033 -1.025 0.95 -1.339
-## 8     Linear logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -1.780 0.95 -2.478
-## 9  Loglinear logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -2.116 0.95 -3.409
-## 10  Logistic logit(E(Y|A=1))-logit(E(Y(0)|A=1)) -1.630 -1.794 0.95 -2.464
-##       uci
-## 1  -0.254
-## 2  -0.254
-## 3  -0.219
-## 4  -0.265
-## 5  -0.700
-## 6  -0.693
-## 7  -0.712
-## 8  -1.081
-## 9  -0.822
-## 10 -1.124</code></pre>
-<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="instrument.html#cb252-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb252-2"><a href="instrument.html#cb252-2" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
-<span id="cb252-3"><a href="instrument.html#cb252-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb252-4"><a href="instrument.html#cb252-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb252-5"><a href="instrument.html#cb252-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb252-6"><a href="instrument.html#cb252-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&quot;</span>, </span>
-<span id="cb252-7"><a href="instrument.html#cb252-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
-<span id="cb252-8"><a href="instrument.html#cb252-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
-<span id="cb252-9"><a href="instrument.html#cb252-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
-<div id="bdewwfxdso" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<p>then the loglinear model</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="instrument.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 45 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 45 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="instrument.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb25-2"><a href="instrument.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.loglin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear, conf = 0.95,</span></span>
+<span id="cb25-3"><a href="instrument.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb25-4"><a href="instrument.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;,</span></span>
+<span id="cb25-5"><a href="instrument.html#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
+<span id="cb25-6"><a href="instrument.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb25-7"><a href="instrument.html#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb25-8"><a href="instrument.html#cb25-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_loglin.rds&quot;</span>)</span>
+<span id="cb25-9"><a href="instrument.html#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.loglin, file = a_file)</span></span>
+<span id="cb25-10"><a href="instrument.html#cb25-10" aria-hidden="true" tabindex="-1"></a>dwhatif.loglin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb25-11"><a href="instrument.html#cb25-11" aria-hidden="true" tabindex="-1"></a>dwhatif.loglin</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 6
+##   name      est     se  conf    lci    uci
+##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 EY0     0.713 0.131   0.95  0.498  0.928
+## 2 EY1     0.231 0.0269  0.95  0.186  0.275
+## 3 RD     -0.483 0.135   0.95 -0.704 -0.261
+## 4 logRR  -1.13  0.222   0.95 -1.49  -0.762
+## 5 logRR* -0.987 0.453   0.95 -1.73  -0.241
+## 6 logOR  -2.12  0.660   0.95 -3.20  -1.03</code></pre>
+<p>an the logistic model</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="instrument.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 40 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 40 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="instrument.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb29-2"><a href="instrument.html#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.logistic &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic, conf = 0.95,</span></span>
+<span id="cb29-3"><a href="instrument.html#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb29-4"><a href="instrument.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;,</span></span>
+<span id="cb29-5"><a href="instrument.html#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
+<span id="cb29-6"><a href="instrument.html#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb29-7"><a href="instrument.html#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb29-8"><a href="instrument.html#cb29-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_logistic.rds&quot;</span>)</span>
+<span id="cb29-9"><a href="instrument.html#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.logistic, file = a_file)</span></span>
+<span id="cb29-10"><a href="instrument.html#cb29-10" aria-hidden="true" tabindex="-1"></a>dwhatif.logistic <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb29-11"><a href="instrument.html#cb29-11" aria-hidden="true" tabindex="-1"></a>dwhatif.logistic</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 6
+##   name      est     se  conf    lci    uci
+##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 EY0     0.643 0.0705  0.95  0.527  0.759
+## 2 EY1     0.231 0.0269  0.95  0.186  0.275
+## 3 RD     -0.413 0.0753  0.95 -0.537 -0.289
+## 4 logRR  -1.03  0.160   0.95 -1.29  -0.762
+## 5 logRR* -0.769 0.201   0.95 -1.10  -0.439
+## 6 logOR  -1.79  0.342   0.95 -2.36  -1.23</code></pre>
+<p>which gives us the following result,</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="instrument.html#cb31-1" aria-hidden="true" tabindex="-1"></a>tbl_9<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb31-2"><a href="instrument.html#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb31-3"><a href="instrument.html#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
+<span id="cb31-4"><a href="instrument.html#cb31-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lin),</span>
+<span id="cb31-5"><a href="instrument.html#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb31-6"><a href="instrument.html#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
+<span id="cb31-7"><a href="instrument.html#cb31-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglin),</span>
+<span id="cb31-8"><a href="instrument.html#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb31-9"><a href="instrument.html#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
+<span id="cb31-10"><a href="instrument.html#cb31-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logistic)) <span class="sc">|&gt;</span></span>
+<span id="cb31-11"><a href="instrument.html#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span>, <span class="st">&quot;logRR&quot;</span>, <span class="st">&quot;logOR&quot;</span>))</span>
+<span id="cb31-12"><a href="instrument.html#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(tbl_9<span class="fl">.1</span>,</span>
+<span id="cb31-13"><a href="instrument.html#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb31-14"><a href="instrument.html#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb31-15"><a href="instrument.html#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb31-16"><a href="instrument.html#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>,</span>
+<span id="cb31-17"><a href="instrument.html#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
+<span id="cb31-18"><a href="instrument.html#cb31-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
+<span id="cb31-19"><a href="instrument.html#cb31-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>)</span>
+<span id="cb31-20"><a href="instrument.html#cb31-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div id="gnjkueirvl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#bdewwfxdso .gt_table {
+#gnjkueirvl .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -842,7 +826,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-left-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_heading {
+#gnjkueirvl .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -854,7 +838,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_title {
+#gnjkueirvl .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -866,7 +850,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-width: 0;
 }
 
-#bdewwfxdso .gt_subtitle {
+#gnjkueirvl .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -878,13 +862,13 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-top-width: 0;
 }
 
-#bdewwfxdso .gt_bottom_border {
+#gnjkueirvl .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_col_headings {
+#gnjkueirvl .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -899,7 +883,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_col_heading {
+#gnjkueirvl .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -919,7 +903,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   overflow-x: hidden;
 }
 
-#bdewwfxdso .gt_column_spanner_outer {
+#gnjkueirvl .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -931,15 +915,15 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 4px;
 }
 
-#bdewwfxdso .gt_column_spanner_outer:first-child {
+#gnjkueirvl .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bdewwfxdso .gt_column_spanner_outer:last-child {
+#gnjkueirvl .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bdewwfxdso .gt_column_spanner {
+#gnjkueirvl .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -951,7 +935,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   width: 100%;
 }
 
-#bdewwfxdso .gt_group_heading {
+#gnjkueirvl .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -976,7 +960,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: middle;
 }
 
-#bdewwfxdso .gt_empty_group_heading {
+#gnjkueirvl .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -991,15 +975,15 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: middle;
 }
 
-#bdewwfxdso .gt_from_md > :first-child {
+#gnjkueirvl .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bdewwfxdso .gt_from_md > :last-child {
+#gnjkueirvl .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bdewwfxdso .gt_row {
+#gnjkueirvl .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1018,7 +1002,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   overflow-x: hidden;
 }
 
-#bdewwfxdso .gt_stub {
+#gnjkueirvl .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1031,7 +1015,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#bdewwfxdso .gt_stub_row_group {
+#gnjkueirvl .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1045,11 +1029,11 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: top;
 }
 
-#bdewwfxdso .gt_row_group_first td {
+#gnjkueirvl .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bdewwfxdso .gt_summary_row {
+#gnjkueirvl .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1059,16 +1043,16 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#bdewwfxdso .gt_first_summary_row {
+#gnjkueirvl .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_first_summary_row.thick {
+#gnjkueirvl .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bdewwfxdso .gt_last_summary_row {
+#gnjkueirvl .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1078,7 +1062,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_grand_summary_row {
+#gnjkueirvl .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1088,7 +1072,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#bdewwfxdso .gt_first_grand_summary_row {
+#gnjkueirvl .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1098,11 +1082,11 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-top-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_striped {
+#gnjkueirvl .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bdewwfxdso .gt_table_body {
+#gnjkueirvl .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1111,7 +1095,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_footnotes {
+#gnjkueirvl .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1125,7 +1109,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_footnote {
+#gnjkueirvl .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1134,7 +1118,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#bdewwfxdso .gt_sourcenotes {
+#gnjkueirvl .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1148,7 +1132,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#bdewwfxdso .gt_sourcenote {
+#gnjkueirvl .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1156,60 +1140,554 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#bdewwfxdso .gt_left {
+#gnjkueirvl .gt_left {
   text-align: left;
 }
 
-#bdewwfxdso .gt_center {
+#gnjkueirvl .gt_center {
   text-align: center;
 }
 
-#bdewwfxdso .gt_right {
+#gnjkueirvl .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bdewwfxdso .gt_font_normal {
+#gnjkueirvl .gt_font_normal {
   font-weight: normal;
 }
 
-#bdewwfxdso .gt_font_bold {
+#gnjkueirvl .gt_font_bold {
   font-weight: bold;
 }
 
-#bdewwfxdso .gt_font_italic {
+#gnjkueirvl .gt_font_italic {
   font-style: italic;
 }
 
-#bdewwfxdso .gt_super {
+#gnjkueirvl .gt_super {
   font-size: 65%;
 }
 
-#bdewwfxdso .gt_footnote_marks {
+#gnjkueirvl .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#bdewwfxdso .gt_asterisk {
+#gnjkueirvl .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bdewwfxdso .gt_slash_mark {
+#gnjkueirvl .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#bdewwfxdso .gt_fraction_numerator {
+#gnjkueirvl .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#bdewwfxdso .gt_fraction_denominator {
+#gnjkueirvl .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1<em>(by FL)</em></strong></th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Double What-If Study<br>Instrumental Variables Analysis</strong></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">se</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">RD</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center">-0.409</td>
+<td class="gt_row gt_center">0.079</td>
+<td class="gt_row gt_center">(-0.54, -0.279)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center gt_striped">-0.483</td>
+<td class="gt_row gt_center gt_striped">0.135</td>
+<td class="gt_row gt_center gt_striped">(-0.704, -0.261)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center">-0.413</td>
+<td class="gt_row gt_center">0.075</td>
+<td class="gt_row gt_center">(-0.537, -0.289)</td></tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">logRR</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center gt_striped">-1.020</td>
+<td class="gt_row gt_center gt_striped">0.163</td>
+<td class="gt_row gt_center gt_striped">(-1.289, -0.751)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center">-1.129</td>
+<td class="gt_row gt_center">0.222</td>
+<td class="gt_row gt_center">(-1.495, -0.762)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center gt_striped">-1.025</td>
+<td class="gt_row gt_center gt_striped">0.160</td>
+<td class="gt_row gt_center gt_striped">(-1.288, -0.762)</td></tr>
+    <tr class="gt_group_heading_row">
+      <td colspan="4" class="gt_group_heading">logOR</td>
+    </tr>
+    <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
+<td class="gt_row gt_center">-1.780</td>
+<td class="gt_row gt_center">0.356</td>
+<td class="gt_row gt_center">(-2.366, -1.193)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
+<td class="gt_row gt_center gt_striped">-2.116</td>
+<td class="gt_row gt_center gt_striped">0.660</td>
+<td class="gt_row gt_center gt_striped">(-3.202, -1.029)</td></tr>
+    <tr><td class="gt_row gt_right gt_stub">Logistic</td>
+<td class="gt_row gt_center">-1.794</td>
+<td class="gt_row gt_center">0.342</td>
+<td class="gt_row gt_center">(-2.357, -1.231)</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="4">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+    </tr>
+  </tfoot>
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> 95% confidence interval</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<p>The difference in confidence intervals is because the author uses
+<code>1.96 = round(qnorm(0.95), 2)</code> as a
+whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code>.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="instrument.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_09_01&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb32-2"><a href="instrument.html#cb32-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_09_01</span>
+<span id="cb32-3"><a href="instrument.html#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span>
+<span id="cb32-4"><a href="instrument.html#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb32-5"><a href="instrument.html#cb32-5" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
+<span id="cb32-6"><a href="instrument.html#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb32-7"><a href="instrument.html#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb32-8"><a href="instrument.html#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb32-9"><a href="instrument.html#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&quot;</span>, </span>
+<span id="cb32-10"><a href="instrument.html#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
+<span id="cb32-11"><a href="instrument.html#cb32-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
+<span id="cb32-12"><a href="instrument.html#cb32-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
+<div id="gsezvcubba" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#gsezvcubba .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_heading {
+  background-color: #DCDCDC;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gsezvcubba .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: bold;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gsezvcubba .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gsezvcubba .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gsezvcubba .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gsezvcubba .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gsezvcubba .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gsezvcubba .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gsezvcubba .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gsezvcubba .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gsezvcubba .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gsezvcubba .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gsezvcubba .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsezvcubba .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gsezvcubba .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gsezvcubba .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsezvcubba .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gsezvcubba .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsezvcubba .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gsezvcubba .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsezvcubba .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gsezvcubba .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsezvcubba .gt_left {
+  text-align: left;
+}
+
+#gsezvcubba .gt_center {
+  text-align: center;
+}
+
+#gsezvcubba .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gsezvcubba .gt_font_normal {
+  font-weight: normal;
+}
+
+#gsezvcubba .gt_font_bold {
+  font-weight: bold;
+}
+
+#gsezvcubba .gt_font_italic {
+  font-style: italic;
+}
+
+#gsezvcubba .gt_super {
+  font-size: 65%;
+}
+
+#gsezvcubba .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#gsezvcubba .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gsezvcubba .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#gsezvcubba .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#gsezvcubba .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1234,7 +1712,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   </thead>
   <tbody class="gt_table_body">
     <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">E(Y(1) - Y(0)|C=1)</td>
+      <td colspan="4" class="gt_group_heading">E(Y(1)-Y(0)|C=1)</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">CACE</td>
 <td class="gt_row gt_center">NA</td>

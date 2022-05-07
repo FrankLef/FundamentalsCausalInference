@@ -188,6 +188,7 @@ $$
 &= \frac{ITT}{P(A=1 \mid T=1) + P(A=1 \mid T=0)}
 \end{align*}
 $$
+
 ## Average Effect of Treatment on the Treated and Structural Nested mean Models
 
 > A drawback of the CACE is that it applies only to the compliers, a subgroup 
@@ -285,8 +286,6 @@ with the results
 whatif.est <- instr_vars(whatif, outcome.name = "Y", exposure.name = "A", instrument.name = "T")
 stopifnot(sum(abs(whatif.est - c(0.007352941, 0.27777778))) < .Machine$double.eps^0.5)
 whatif.est
-.Machine$double.eps^0.5
-
 ```
 
 and using only 100 boots to estimate the CI
@@ -392,83 +391,101 @@ df <- jack_run(data = dwhatif, conf = 0.95, func = fciR::instr_linear,
 df
 ```
 
+
+
+and the function to do the full jackknife in one function is included in the 
+`fci` package and cn be used as follows.
+
+First with the linear model
+
 ```{r}
-jack_est <- function(data, func, conf = 0.95,
-                     inv = c("exp", "expit", "none"),
-                     evars = c("standard", "modifier", "logit"),
-                     ...) {
-  inv <- match.arg(inv)
-  evars <- match.arg(evars)
+message("This takes about 25 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.lin <- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,
+#                      inv = "none", evars = "standard",
+#                      outcome.name = "VL1", exposure.name = "A", 
+#                      instrument.name = "T")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap09_lin.rds")
+# saveRDS(dwhatif.lin, file = a_file)
+dwhatif.lin <- readRDS(file = a_file)
 
-  out <- jack_run(data = data, func = func, conf = conf, ...)
-
-  # inverse transform the result
-  vars <- effect_vars(evars = evars)
-  effect_inv(data = out, inv = inv, vars = vars)
-}
+dwhatif.lin
 ```
 
 
-```{r}
-out <- jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,
-                     inv = "none", evars = "standard",
-                     outcome.name = "VL1", exposure.name = "A", 
-                     instrument.name = "T")
-out
-```
-
-
-```{r}
-# boot_est <- function(data, func, R = 1000, conf = 0.95,
-#                      inv = c("exp", "expit", "none"),
-#                      evars = c("standard", "modifier", "logit"),
-#                      ...) {
-#   inv <- match.arg(inv)
-#   evars <- match.arg(evars)
-# 
-#   estimator <- function(data, ids) {
-#     dat <- data[ids, ]
-#     func(dat, ...)
-#   }
-# 
-#   out <- boot_run(data = data, statistic = estimator, R = R, conf = conf)
-# 
-#   # inverse transform the result
-#   vars <- effect_vars(evars = evars)
-#   effect_inv(data = out, inv = inv, vars = vars)
-# }
-```
+then the loglinear model
 
 
 
 ```{r}
-# the list of data with n-1 row
-dwhatif.lin <- rsample::loo_cv(dwhatif)
-
-dwhatif.lin$results <- purrr::map_dfr(.x = dwhatif.lin$splits, .f = function(x) {
-  df <- analysis(x)
-  fciR::instr_linear(df, outcome.name = "VL1", 
-                            exposure.name = "A", 
-                            instrument.name = "T")
-  })
-  # select(-`logRR*`) %>%
-  # as.data.frame()
-str(dwhatif.lin$results)
-
-# dwhatif.lin$out <- data.frame(matrix(ncol = 0, nrow = 0))
-out <- purrr::map_dfr(.x = dwhatif.lin$results, .f = ~jack.stats(.))
-out
-message("the difference in CI is because author uses 1.96 instead of qt()")
+message("This takes about 45 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.loglin <- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear, conf = 0.95,
+#                      inv = "none", evars = "standard",
+#                      outcome.name = "VL1", exposure.name = "A",
+#                      instrument.name = "T")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap09_loglin.rds")
+# saveRDS(dwhatif.loglin, file = a_file)
+dwhatif.loglin <- readRDS(file = a_file)
+dwhatif.loglin
 ```
 
+an the logistic model
 
 
 
+```{r}
+message("This takes about 40 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.logistic <- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic, conf = 0.95,
+#                      inv = "none", evars = "standard",
+#                      outcome.name = "VL1", exposure.name = "A",
+#                      instrument.name = "T")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap09_logistic.rds")
+# saveRDS(dwhatif.logistic, file = a_file)
+dwhatif.logistic <- readRDS(file = a_file)
+dwhatif.logistic
+```
+
+which gives us the following result,
+
+```{r}
+tbl_9.1 <- rbind(
+  data.frame(
+    method = "Linear",
+    dwhatif.lin),
+  data.frame(
+    method = "Loglinear",
+    dwhatif.loglin),
+  data.frame(
+    method = "Logistic",
+    dwhatif.logistic)) |>
+  filter(name %in% c("RD", "logRR", "logOR"))
+gt_measures_rowgrp(tbl_9.1,
+    rowgroup = "name",
+    rowname = "method",
+    conf = 0.95,
+    title = "Table 9.1<em>(by FL)</em>",
+    subtitle = paste("Double What-If Study",
+                     "Instrumental Variables Analysis",
+                     sep = "<br>")
+  )
+```
+
+The difference in confidence intervals is because the author uses 
+`1.96 = round(qnorm(0.95), 2)` as a
+whereas `fciR::jack_est` uses `qt(0.95, df = nrow(data)-1)`.
 
 ```{r}
 data("fci_tbl_09_01", package = "fciR")
 bb_dwhatif <- fci_tbl_09_01
-bb_dwhatif
+# bb_dwhatif
 gt_measures_rowgrp(
     bb_dwhatif, 
     rowgroup = "name",
