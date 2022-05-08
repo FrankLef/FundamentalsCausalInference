@@ -1,7 +1,10 @@
 # Conditional Probability and Expectation {#probability}
 
 ```{r include=FALSE}
+library(tidyr)
+library(dplyr)
 library(fciR)
+options(dplyr.summarise.inform = FALSE)
 ```
 
 
@@ -55,9 +58,86 @@ $$
 
 ## Conditional Expectation and the Law of Total expectation
 
+The conditional expectation is defined as
+
+$$
+E(Y \mid T) = \sum_y y P(Y=y \mid T)
+$$
+
+and one way that helps me usually understand it well is that conditioning is
+the same as *filtering* the data.
+
+For example the conditional expectation of mortality of US resident at the 
+beginning of 2019 $E(Y \mid T = 1) = 0.0088$
+
+```{r}
+data("mortality_long", package = "fciR")
+mortality_long |>
+  filter(`T` == 1) |>
+  mutate(prob = n / sum(n)) |>
+  group_by(Y) |>
+  summarize(EYT1 = sum(Y * prob)) |>
+  pull() |>
+  setNames(nm = c("EY0T1", "EY1T1"))
+```
+
+where $E(Y=0 \mid T=1) = 0$ because when $Y=0 \implies 0 \cdot P(Y=0) = 0$ and
+*since $Y$ is binary* $E(Y=1 \mid T=1) = P(Y=1 \mid T=1)$.
+
+> Analogous to the law of total probability is the law of ttal expectation,
+also called double expectation theorem.
+
+This law is *used extensively in this textbook*.
+
+
+$$
+\begin{align*}
+E(Y \mid T) &= E_{H \mid T}(E(Y \mid H, T)) \\
+&= \sum_h \left[ \sum_y y P(Y=y \mid H=h, T) \right] P(H=h \mid T)
+\end{align*}
+$$
+Also the following equivalence is used very often in this book.
+
+$$
+\begin{align*}
+E(H \mid T) = \sum_h h P(H=h \mid T) = E_{H \mid T} (H)
+\end{align*}
+$$
+
+### Mean independence and conditional mean independence
+
+> The random variable $Y$ is mean independent of $T$ if
+
+$$
+E(Y \mid T) = E(Y)
+$$
+
+> and is conditionally mean independent of $T$ given $H$ is
+
+$$
+E(Y \mid T, H) = E(Y \mid H)
+$$
+
+and the *conditional uncorrelation* and uncorrelation are
+
+$$
+E(YT \mid H) = E(Y \mid H)E(T \mid H) \implies \text{conditionally uncorrelated} \\
+E(YT) = E(Y)E(T) \implies \text{uncorrelated}
+$$
+
+### Regression model
+
+> A statistical model for a conditional expectation is called a 
+*regression model*.
+
+
+### Nonlinear parametric models
+
 The function `expit()` used by the author is actually the same as
 `gtools::inv.logit()`, `boot::inv.logit()` or `stats::plogis()`. In this project 
 we use `stats::plogis()` to minimize dependencies since it is in base R.
+
+
 
 ## Estimation
 

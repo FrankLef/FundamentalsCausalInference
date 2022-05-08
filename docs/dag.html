@@ -188,7 +188,12 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.1.1" data-path="probability.html"><a href="probability.html#law-of-total-probability"><i class="fa fa-check"></i><b>2.1.1</b> Law of total probability<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="probability.html"><a href="probability.html#mean-independence-and-conditional-mean-independence"><i class="fa fa-check"></i><b>2.2.1</b> Mean independence and conditional mean independence<span></span></a></li>
+<li class="chapter" data-level="2.2.2" data-path="probability.html"><a href="probability.html#regression-model"><i class="fa fa-check"></i><b>2.2.2</b> Regression model<span></span></a></li>
+<li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
 <li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
@@ -393,11 +398,11 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="dag" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Causal Directed Acyclic Graphs<a href="dag.html#dag" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="dag.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb95-2"><a href="dag.html#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb95-3"><a href="dag.html#cb95-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
-<span id="cb95-4"><a href="dag.html#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb95-5"><a href="dag.html#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="dag.html#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb97-2"><a href="dag.html#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb97-3"><a href="dag.html#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb97-4"><a href="dag.html#cb97-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb97-5"><a href="dag.html#cb97-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simstudy)</span></code></pre></div>
 <p>We use the <code>dagitty</code> and <code>ggdag</code> packages to analyse the DAG and plot them.
 We also sue the <code>simstudy</code> package from now on to perform the simulations.</p>
 <div id="theory" class="section level2 hasAnchor" number="5.1">
@@ -409,24 +414,24 @@ We also sue the <code>simstudy</code> package from now on to perform the simulat
 represent statistical ans causal dependence.</p>
 </blockquote>
 <p>For example</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="dag.html#cb96-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb96-2"><a href="dag.html#cb96-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.1</span>, {</span>
-<span id="cb96-3"><a href="dag.html#cb96-3" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;X1&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb96-4"><a href="dag.html#cb96-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X2&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb96-5"><a href="dag.html#cb96-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X3&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb96-6"><a href="dag.html#cb96-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X4&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb96-7"><a href="dag.html#cb96-7" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb96-8"><a href="dag.html#cb96-8" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> X1,</span>
-<span id="cb96-9"><a href="dag.html#cb96-9" aria-hidden="true" tabindex="-1"></a>    X3 <span class="sc">~</span> X2,</span>
-<span id="cb96-10"><a href="dag.html#cb96-10" aria-hidden="true" tabindex="-1"></a>    X4 <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
-<span id="cb96-11"><a href="dag.html#cb96-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
-<span id="cb96-12"><a href="dag.html#cb96-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb96-13"><a href="dag.html#cb96-13" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]),</span>
-<span id="cb96-14"><a href="dag.html#cb96-14" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(X[<span class="dv">3</span>]), <span class="fu">expression</span>(X[<span class="dv">4</span>]))</span>
-<span id="cb96-15"><a href="dag.html#cb96-15" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
-<span id="cb96-16"><a href="dag.html#cb96-16" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-66"></span>
-<img src="_main_files/figure-html/unnamed-chunk-66-1.png" alt="Example of a Directed Acyclic Graph" width="60%" />
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="dag.html#cb98-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb98-2"><a href="dag.html#cb98-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.1</span>, {</span>
+<span id="cb98-3"><a href="dag.html#cb98-3" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;X1&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb98-4"><a href="dag.html#cb98-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X2&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb98-5"><a href="dag.html#cb98-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X3&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb98-6"><a href="dag.html#cb98-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;X4&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb98-7"><a href="dag.html#cb98-7" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb98-8"><a href="dag.html#cb98-8" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> X1,</span>
+<span id="cb98-9"><a href="dag.html#cb98-9" aria-hidden="true" tabindex="-1"></a>    X3 <span class="sc">~</span> X2,</span>
+<span id="cb98-10"><a href="dag.html#cb98-10" aria-hidden="true" tabindex="-1"></a>    X4 <span class="sc">~</span> X1 <span class="sc">+</span> X2,</span>
+<span id="cb98-11"><a href="dag.html#cb98-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
+<span id="cb98-12"><a href="dag.html#cb98-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb98-13"><a href="dag.html#cb98-13" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]),</span>
+<span id="cb98-14"><a href="dag.html#cb98-14" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(X[<span class="dv">3</span>]), <span class="fu">expression</span>(X[<span class="dv">4</span>]))</span>
+<span id="cb98-15"><a href="dag.html#cb98-15" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
+<span id="cb98-16"><a href="dag.html#cb98-16" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-67"></span>
+<img src="_main_files/figure-html/unnamed-chunk-67-1.png" alt="Example of a Directed Acyclic Graph" width="60%" />
 <p class="caption">
 Figure 5.1: Example of a Directed Acyclic Graph
 </p>
@@ -449,56 +454,56 @@ fork, or <em>collider</em>, as in figure 5.2c such that the midlle variable <spa
 in <span class="math inline">\(C\)</span> and such that no descendant of a collider is in <span class="math inline">\(C\)</span>.</p>
 </blockquote>
 <p>and we illustrate the 3 basic graphical structures as follows</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="dag.html#cb97-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb97-2"><a href="dag.html#cb97-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.2</span>, {</span>
-<span id="cb97-3"><a href="dag.html#cb97-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb97-4"><a href="dag.html#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># CHAIN</span></span>
-<span id="cb97-5"><a href="dag.html#cb97-5" aria-hidden="true" tabindex="-1"></a>  dagChain <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb97-6"><a href="dag.html#cb97-6" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X1,</span>
-<span id="cb97-7"><a href="dag.html#cb97-7" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> Z)</span>
-<span id="cb97-8"><a href="dag.html#cb97-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb97-9"><a href="dag.html#cb97-9" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]), <span class="st">&quot;Z&quot;</span>)</span>
-<span id="cb97-10"><a href="dag.html#cb97-10" aria-hidden="true" tabindex="-1"></a>  plotChain <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagChain, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
-<span id="cb97-11"><a href="dag.html#cb97-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb97-12"><a href="dag.html#cb97-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Chain: Z is an intermediate variable&quot;</span>)</span>
-<span id="cb97-13"><a href="dag.html#cb97-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-14"><a href="dag.html#cb97-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-15"><a href="dag.html#cb97-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># FORK</span></span>
-<span id="cb97-16"><a href="dag.html#cb97-16" aria-hidden="true" tabindex="-1"></a>  dagFork <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb97-17"><a href="dag.html#cb97-17" aria-hidden="true" tabindex="-1"></a>    X1 <span class="sc">~</span> Z,</span>
-<span id="cb97-18"><a href="dag.html#cb97-18" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> Z)</span>
-<span id="cb97-19"><a href="dag.html#cb97-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb97-20"><a href="dag.html#cb97-20" aria-hidden="true" tabindex="-1"></a>  plotFork <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagFork, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
-<span id="cb97-21"><a href="dag.html#cb97-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb97-22"><a href="dag.html#cb97-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Fork: Z is a common cause&quot;</span>)</span>
-<span id="cb97-23"><a href="dag.html#cb97-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-24"><a href="dag.html#cb97-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb97-25"><a href="dag.html#cb97-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># COLLIDER</span></span>
-<span id="cb97-26"><a href="dag.html#cb97-26" aria-hidden="true" tabindex="-1"></a>  dagColl <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb97-27"><a href="dag.html#cb97-27" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X1,</span>
-<span id="cb97-28"><a href="dag.html#cb97-28" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X2)</span>
-<span id="cb97-29"><a href="dag.html#cb97-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-30"><a href="dag.html#cb97-30" aria-hidden="true" tabindex="-1"></a>  plotColl <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagColl, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
-<span id="cb97-31"><a href="dag.html#cb97-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb97-32"><a href="dag.html#cb97-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Collider: Z is a common effect&quot;</span>)</span>
-<span id="cb97-33"><a href="dag.html#cb97-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-34"><a href="dag.html#cb97-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb97-35"><a href="dag.html#cb97-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># DESCENDANT</span></span>
-<span id="cb97-36"><a href="dag.html#cb97-36" aria-hidden="true" tabindex="-1"></a>  dagDesc <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb97-37"><a href="dag.html#cb97-37" aria-hidden="true" tabindex="-1"></a>    W <span class="sc">~</span> X1,</span>
-<span id="cb97-38"><a href="dag.html#cb97-38" aria-hidden="true" tabindex="-1"></a>    W <span class="sc">~</span> X2,</span>
-<span id="cb97-39"><a href="dag.html#cb97-39" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> W)</span>
-<span id="cb97-40"><a href="dag.html#cb97-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-41"><a href="dag.html#cb97-41" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]), <span class="fu">expression</span>(X[<span class="dv">3</span>]), <span class="st">&quot;Z&quot;</span>)</span>
-<span id="cb97-42"><a href="dag.html#cb97-42" aria-hidden="true" tabindex="-1"></a>  plotDesc <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagDesc, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
-<span id="cb97-43"><a href="dag.html#cb97-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb97-44"><a href="dag.html#cb97-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Descendant: Z is an effect of a common effect&quot;</span>)</span>
-<span id="cb97-45"><a href="dag.html#cb97-45" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="dag.html#cb98-1" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(scm_5<span class="fl">.2</span><span class="sc">$</span>plotChain, scm_5<span class="fl">.2</span><span class="sc">$</span>plotFork, scm_5<span class="fl">.2</span><span class="sc">$</span>plotColl, </span>
-<span id="cb98-2"><a href="dag.html#cb98-2" aria-hidden="true" tabindex="-1"></a>                        scm_5<span class="fl">.2</span><span class="sc">$</span>plotDesc, </span>
-<span id="cb98-3"><a href="dag.html#cb98-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-68"></span>
-<img src="_main_files/figure-html/unnamed-chunk-68-1.png" alt="Graphical structures" width="672" />
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="dag.html#cb99-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb99-2"><a href="dag.html#cb99-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.2</span>, {</span>
+<span id="cb99-3"><a href="dag.html#cb99-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-4"><a href="dag.html#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># CHAIN</span></span>
+<span id="cb99-5"><a href="dag.html#cb99-5" aria-hidden="true" tabindex="-1"></a>  dagChain <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb99-6"><a href="dag.html#cb99-6" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X1,</span>
+<span id="cb99-7"><a href="dag.html#cb99-7" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> Z)</span>
+<span id="cb99-8"><a href="dag.html#cb99-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-9"><a href="dag.html#cb99-9" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]), <span class="st">&quot;Z&quot;</span>)</span>
+<span id="cb99-10"><a href="dag.html#cb99-10" aria-hidden="true" tabindex="-1"></a>  plotChain <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagChain, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
+<span id="cb99-11"><a href="dag.html#cb99-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb99-12"><a href="dag.html#cb99-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Chain: Z is an intermediate variable&quot;</span>)</span>
+<span id="cb99-13"><a href="dag.html#cb99-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-14"><a href="dag.html#cb99-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-15"><a href="dag.html#cb99-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># FORK</span></span>
+<span id="cb99-16"><a href="dag.html#cb99-16" aria-hidden="true" tabindex="-1"></a>  dagFork <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb99-17"><a href="dag.html#cb99-17" aria-hidden="true" tabindex="-1"></a>    X1 <span class="sc">~</span> Z,</span>
+<span id="cb99-18"><a href="dag.html#cb99-18" aria-hidden="true" tabindex="-1"></a>    X2 <span class="sc">~</span> Z)</span>
+<span id="cb99-19"><a href="dag.html#cb99-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-20"><a href="dag.html#cb99-20" aria-hidden="true" tabindex="-1"></a>  plotFork <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagFork, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
+<span id="cb99-21"><a href="dag.html#cb99-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb99-22"><a href="dag.html#cb99-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Fork: Z is a common cause&quot;</span>)</span>
+<span id="cb99-23"><a href="dag.html#cb99-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-24"><a href="dag.html#cb99-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-25"><a href="dag.html#cb99-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># COLLIDER</span></span>
+<span id="cb99-26"><a href="dag.html#cb99-26" aria-hidden="true" tabindex="-1"></a>  dagColl <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb99-27"><a href="dag.html#cb99-27" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X1,</span>
+<span id="cb99-28"><a href="dag.html#cb99-28" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> X2)</span>
+<span id="cb99-29"><a href="dag.html#cb99-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-30"><a href="dag.html#cb99-30" aria-hidden="true" tabindex="-1"></a>  plotColl <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagColl, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
+<span id="cb99-31"><a href="dag.html#cb99-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb99-32"><a href="dag.html#cb99-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Collider: Z is a common effect&quot;</span>)</span>
+<span id="cb99-33"><a href="dag.html#cb99-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-34"><a href="dag.html#cb99-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-35"><a href="dag.html#cb99-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># DESCENDANT</span></span>
+<span id="cb99-36"><a href="dag.html#cb99-36" aria-hidden="true" tabindex="-1"></a>  dagDesc <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb99-37"><a href="dag.html#cb99-37" aria-hidden="true" tabindex="-1"></a>    W <span class="sc">~</span> X1,</span>
+<span id="cb99-38"><a href="dag.html#cb99-38" aria-hidden="true" tabindex="-1"></a>    W <span class="sc">~</span> X2,</span>
+<span id="cb99-39"><a href="dag.html#cb99-39" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> W)</span>
+<span id="cb99-40"><a href="dag.html#cb99-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-41"><a href="dag.html#cb99-41" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">expression</span>(X[<span class="dv">1</span>]), <span class="fu">expression</span>(X[<span class="dv">2</span>]), <span class="fu">expression</span>(X[<span class="dv">3</span>]), <span class="st">&quot;Z&quot;</span>)</span>
+<span id="cb99-42"><a href="dag.html#cb99-42" aria-hidden="true" tabindex="-1"></a>  plotDesc <span class="ot">&lt;-</span> <span class="fu">ggp_dag</span>(dagDesc, <span class="at">text_size =</span> <span class="dv">5</span>, <span class="at">text_labels =</span> text_labels) <span class="sc">+</span></span>
+<span id="cb99-43"><a href="dag.html#cb99-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb99-44"><a href="dag.html#cb99-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Descendant: Z is an effect of a common effect&quot;</span>)</span>
+<span id="cb99-45"><a href="dag.html#cb99-45" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="dag.html#cb100-1" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(scm_5<span class="fl">.2</span><span class="sc">$</span>plotChain, scm_5<span class="fl">.2</span><span class="sc">$</span>plotFork, scm_5<span class="fl">.2</span><span class="sc">$</span>plotColl, </span>
+<span id="cb100-2"><a href="dag.html#cb100-2" aria-hidden="true" tabindex="-1"></a>                        scm_5<span class="fl">.2</span><span class="sc">$</span>plotDesc, </span>
+<span id="cb100-3"><a href="dag.html#cb100-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-69"></span>
+<img src="_main_files/figure-html/unnamed-chunk-69-1.png" alt="Graphical structures" width="672" />
 <p class="caption">
 Figure 5.2: Graphical structures
 </p>
@@ -507,20 +512,20 @@ Figure 5.2: Graphical structures
 <div id="causal-dag-with-collider" class="section level3 hasAnchor" number="5.1.3">
 <h3><span class="header-section-number">5.1.3</span> Causal DAG with collider<a href="dag.html#causal-dag-with-collider" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>and for our first practice of d-separation we have a DAG with a collider</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="dag.html#cb99-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb99-2"><a href="dag.html#cb99-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.3</span>, {</span>
-<span id="cb99-3"><a href="dag.html#cb99-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb99-4"><a href="dag.html#cb99-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> W1,</span>
-<span id="cb99-5"><a href="dag.html#cb99-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> W3,</span>
-<span id="cb99-6"><a href="dag.html#cb99-6" aria-hidden="true" tabindex="-1"></a>    W2 <span class="sc">~</span> W1 <span class="sc">+</span> W3,</span>
-<span id="cb99-7"><a href="dag.html#cb99-7" aria-hidden="true" tabindex="-1"></a>    W4 <span class="sc">~</span> W2)</span>
-<span id="cb99-8"><a href="dag.html#cb99-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb99-9"><a href="dag.html#cb99-9" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="fu">expression</span>(W[<span class="dv">1</span>]), <span class="fu">expression</span>(W[<span class="dv">2</span>]),</span>
-<span id="cb99-10"><a href="dag.html#cb99-10" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(W[<span class="dv">3</span>]), <span class="fu">expression</span>(W[<span class="dv">4</span>], <span class="st">&quot;Y&quot;</span>))</span>
-<span id="cb99-11"><a href="dag.html#cb99-11" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
-<span id="cb99-12"><a href="dag.html#cb99-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-70"></span>
-<img src="_main_files/figure-html/unnamed-chunk-70-1.png" alt="Causal DAG With Collider" width="60%" />
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="dag.html#cb101-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb101-2"><a href="dag.html#cb101-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.3</span>, {</span>
+<span id="cb101-3"><a href="dag.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb101-4"><a href="dag.html#cb101-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> W1,</span>
+<span id="cb101-5"><a href="dag.html#cb101-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> W3,</span>
+<span id="cb101-6"><a href="dag.html#cb101-6" aria-hidden="true" tabindex="-1"></a>    W2 <span class="sc">~</span> W1 <span class="sc">+</span> W3,</span>
+<span id="cb101-7"><a href="dag.html#cb101-7" aria-hidden="true" tabindex="-1"></a>    W4 <span class="sc">~</span> W2)</span>
+<span id="cb101-8"><a href="dag.html#cb101-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-9"><a href="dag.html#cb101-9" aria-hidden="true" tabindex="-1"></a>  text_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="fu">expression</span>(W[<span class="dv">1</span>]), <span class="fu">expression</span>(W[<span class="dv">2</span>]),</span>
+<span id="cb101-10"><a href="dag.html#cb101-10" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">expression</span>(W[<span class="dv">3</span>]), <span class="fu">expression</span>(W[<span class="dv">4</span>], <span class="st">&quot;Y&quot;</span>))</span>
+<span id="cb101-11"><a href="dag.html#cb101-11" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels)</span>
+<span id="cb101-12"><a href="dag.html#cb101-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-71"></span>
+<img src="_main_files/figure-html/unnamed-chunk-71-1.png" alt="Causal DAG With Collider" width="60%" />
 <p class="caption">
 Figure 5.3: Causal DAG With Collider
 </p>
@@ -529,12 +534,12 @@ Figure 5.3: Causal DAG With Collider
 from the<code>dagitty</code> package. You must ensure that you use the parameter
 <code>type = "all.pairs</code> explicitly. The default is <code>type = "missing.edge</code>.
 We will not list all of them, just their number, 93.</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="dag.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use type = &quot;all.pairs&quot; to get everything.</span></span>
-<span id="cb100-2"><a href="dag.html#cb100-2" aria-hidden="true" tabindex="-1"></a><span class="co"># impliedConditionalIndependencies uses type &quot;missing.edge&quot; by default.</span></span>
-<span id="cb100-3"><a href="dag.html#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">impliedConditionalIndependencies</span>(scm_5<span class="fl">.3</span><span class="sc">$</span>dag, <span class="at">type =</span> <span class="st">&quot;all.pairs&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="dag.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use type = &quot;all.pairs&quot; to get everything.</span></span>
+<span id="cb102-2"><a href="dag.html#cb102-2" aria-hidden="true" tabindex="-1"></a><span class="co"># impliedConditionalIndependencies uses type &quot;missing.edge&quot; by default.</span></span>
+<span id="cb102-3"><a href="dag.html#cb102-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">impliedConditionalIndependencies</span>(scm_5<span class="fl">.3</span><span class="sc">$</span>dag, <span class="at">type =</span> <span class="st">&quot;all.pairs&quot;</span>))</span></code></pre></div>
 <pre><code>## [1] 93</code></pre>
 <p>some of those independence are</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="dag.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">impliedConditionalIndependencies</span>(scm_5<span class="fl">.3</span><span class="sc">$</span>dag, <span class="at">type =</span> <span class="st">&quot;missing.edge&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="dag.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">impliedConditionalIndependencies</span>(scm_5<span class="fl">.3</span><span class="sc">$</span>dag, <span class="at">type =</span> <span class="st">&quot;missing.edge&quot;</span>)</span></code></pre></div>
 <pre><code>## A _||_ W2 | W1
 ## A _||_ W3
 ## A _||_ W4 | W2
@@ -555,16 +560,16 @@ We will not list all of them, just their number, 93.</p>
 <h3><span class="header-section-number">5.2.1</span> Causal DAG With Intermediate Value<a href="dag.html#causal-dag-with-intermediate-value" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Here we have <span class="math inline">\(A \not\!\perp\!\!\!\perp Y \mid M\)</span> because <span class="math inline">\(M\)</span> is a collider and
 conditioning on <span class="math inline">\(M\)</span> would open up the path.</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="dag.html#cb104-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb104-2"><a href="dag.html#cb104-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.4</span>, {</span>
-<span id="cb104-3"><a href="dag.html#cb104-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb104-4"><a href="dag.html#cb104-4" aria-hidden="true" tabindex="-1"></a>    M <span class="sc">~</span> A <span class="sc">+</span> H,</span>
-<span id="cb104-5"><a href="dag.html#cb104-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> H)</span>
-<span id="cb104-6"><a href="dag.html#cb104-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-7"><a href="dag.html#cb104-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb104-8"><a href="dag.html#cb104-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-74"></span>
-<img src="_main_files/figure-html/unnamed-chunk-74-1.png" alt="Causal DAG With Intermediate Variable" width="60%" />
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="dag.html#cb106-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb106-2"><a href="dag.html#cb106-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.4</span>, {</span>
+<span id="cb106-3"><a href="dag.html#cb106-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb106-4"><a href="dag.html#cb106-4" aria-hidden="true" tabindex="-1"></a>    M <span class="sc">~</span> A <span class="sc">+</span> H,</span>
+<span id="cb106-5"><a href="dag.html#cb106-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> M <span class="sc">+</span> H)</span>
+<span id="cb106-6"><a href="dag.html#cb106-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-7"><a href="dag.html#cb106-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb106-8"><a href="dag.html#cb106-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-75"></span>
+<img src="_main_files/figure-html/unnamed-chunk-75-1.png" alt="Causal DAG With Intermediate Variable" width="60%" />
 <p class="caption">
 Figure 5.4: Causal DAG With Intermediate Variable
 </p>
@@ -577,21 +582,21 @@ Figure 5.4: Causal DAG With Intermediate Variable
 <span class="math inline">\(A\)</span> on <span class="math inline">\(Y\)</span> that can be handled by conditioning on the measured variable <span class="math inline">\(Z\)</span>,
 even if <span class="math inline">\(Z\)</span> <em>occur after</em> <span class="math inline">\(A\)</span>.</p>
 </blockquote>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="dag.html#cb105-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb105-2"><a href="dag.html#cb105-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.5</span>, {</span>
-<span id="cb105-3"><a href="dag.html#cb105-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-4"><a href="dag.html#cb105-4" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb105-5"><a href="dag.html#cb105-5" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
-<span id="cb105-6"><a href="dag.html#cb105-6" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> U,</span>
-<span id="cb105-7"><a href="dag.html#cb105-7" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> Z,</span>
-<span id="cb105-8"><a href="dag.html#cb105-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
-<span id="cb105-9"><a href="dag.html#cb105-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
-<span id="cb105-10"><a href="dag.html#cb105-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>)</span>
-<span id="cb105-11"><a href="dag.html#cb105-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-12"><a href="dag.html#cb105-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb105-13"><a href="dag.html#cb105-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-76"></span>
-<img src="_main_files/figure-html/unnamed-chunk-76-1.png" alt="Confounder May Occur After the Exposure" width="80%" />
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="dag.html#cb107-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb107-2"><a href="dag.html#cb107-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.5</span>, {</span>
+<span id="cb107-3"><a href="dag.html#cb107-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-4"><a href="dag.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb107-5"><a href="dag.html#cb107-5" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb107-6"><a href="dag.html#cb107-6" aria-hidden="true" tabindex="-1"></a>    Z <span class="sc">~</span> U,</span>
+<span id="cb107-7"><a href="dag.html#cb107-7" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> Z,</span>
+<span id="cb107-8"><a href="dag.html#cb107-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
+<span id="cb107-9"><a href="dag.html#cb107-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb107-10"><a href="dag.html#cb107-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>)</span>
+<span id="cb107-11"><a href="dag.html#cb107-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb107-12"><a href="dag.html#cb107-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb107-13"><a href="dag.html#cb107-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-77"></span>
+<img src="_main_files/figure-html/unnamed-chunk-77-1.png" alt="Confounder May Occur After the Exposure" width="80%" />
 <p class="caption">
 Figure 5.5: Confounder May Occur After the Exposure
 </p>
@@ -606,62 +611,62 @@ counfounder <span class="math inline">\(U = \{Y(a)\}_{a \in A}\)</span> will alw
 from <span class="math inline">\(A\)</span> to <span class="math inline">\(Y\)</span>, because <span class="math inline">\(Y\)</span> is a deterministic function of <span class="math inline">\(A\)</span> and <span class="math inline">\(\{Y(a)\}_{a \in A}\)</span>;
 that is <span class="math inline">\(Y = Y(A)\)</span>, or, for binary <span class="math inline">\(Y\)</span>, <span class="math inline">\(Y = AY(1) + (1-A)Y(0)\)</span></p>
 </blockquote>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="dag.html#cb106-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb106-2"><a href="dag.html#cb106-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.6</span>, {</span>
-<span id="cb106-3"><a href="dag.html#cb106-3" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb106-4"><a href="dag.html#cb106-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
-<span id="cb106-5"><a href="dag.html#cb106-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;U&quot;</span> <span class="ot">=</span> <span class="st">&quot;(Y(0), y(1))&quot;</span>)</span>
-<span id="cb106-6"><a href="dag.html#cb106-6" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb106-7"><a href="dag.html#cb106-7" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
-<span id="cb106-8"><a href="dag.html#cb106-8" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> U,</span>
-<span id="cb106-9"><a href="dag.html#cb106-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
-<span id="cb106-10"><a href="dag.html#cb106-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
-<span id="cb106-11"><a href="dag.html#cb106-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb106-12"><a href="dag.html#cb106-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb106-13"><a href="dag.html#cb106-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-78"></span>
-<img src="_main_files/figure-html/unnamed-chunk-78-1.png" alt="One way to generate confounding" width="80%" />
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="dag.html#cb108-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb108-2"><a href="dag.html#cb108-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.6</span>, {</span>
+<span id="cb108-3"><a href="dag.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  the_nodes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb108-4"><a href="dag.html#cb108-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Y&quot;</span> <span class="ot">=</span> <span class="st">&quot;&quot;</span>, </span>
+<span id="cb108-5"><a href="dag.html#cb108-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;U&quot;</span> <span class="ot">=</span> <span class="st">&quot;(Y(0), y(1))&quot;</span>)</span>
+<span id="cb108-6"><a href="dag.html#cb108-6" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb108-7"><a href="dag.html#cb108-7" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb108-8"><a href="dag.html#cb108-8" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> U,</span>
+<span id="cb108-9"><a href="dag.html#cb108-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">latent =</span> <span class="st">&quot;U&quot;</span>,</span>
+<span id="cb108-10"><a href="dag.html#cb108-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> the_nodes)</span>
+<span id="cb108-11"><a href="dag.html#cb108-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb108-12"><a href="dag.html#cb108-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb108-13"><a href="dag.html#cb108-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-79"></span>
+<img src="_main_files/figure-html/unnamed-chunk-79-1.png" alt="One way to generate confounding" width="80%" />
 <p class="caption">
 Figure 5.6: One way to generate confounding
 </p>
 </div>
 <p>and lets do the simulation of figure 5.6 on p. 88 with <code>simstudy</code></p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="dag.html#cb107-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.6</span>, {</span>
-<span id="cb107-2"><a href="dag.html#cb107-2" aria-hidden="true" tabindex="-1"></a>  probY0 <span class="ot">&lt;-</span> <span class="fl">0.42</span></span>
-<span id="cb107-3"><a href="dag.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  probY1 <span class="ot">&lt;-</span> <span class="fl">0.62</span></span>
-<span id="cb107-4"><a href="dag.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;(1-Y0) * (1- Y1) * 0.6307 + (1 - Y0) * Y1 * 0.4867 +</span></span>
-<span id="cb107-5"><a href="dag.html#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="st">  Y0 * (1 - Y1) * 0.4699 + Y0 * Y1 * 0.4263&quot;</span></span>
-<span id="cb107-6"><a href="dag.html#cb107-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">111</span>)</span>
-<span id="cb107-7"><a href="dag.html#cb107-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the potential outcomes</span></span>
-<span id="cb107-8"><a href="dag.html#cb107-8" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;Y0&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb107-9"><a href="dag.html#cb107-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;..probY0&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb107-10"><a href="dag.html#cb107-10" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y1&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb107-11"><a href="dag.html#cb107-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;..probY1&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb107-12"><a href="dag.html#cb107-12" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;probA&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;nonrandom&quot;</span>, </span>
-<span id="cb107-13"><a href="dag.html#cb107-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA)</span>
-<span id="cb107-14"><a href="dag.html#cb107-14" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb107-15"><a href="dag.html#cb107-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;probA&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb107-16"><a href="dag.html#cb107-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y must depend on A, Y1, Y0 in this way</span></span>
-<span id="cb107-17"><a href="dag.html#cb107-17" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;nonrandom&quot;</span>, </span>
-<span id="cb107-18"><a href="dag.html#cb107-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;A * Y1 + (1 - A) * Y0&quot;</span>)</span>
-<span id="cb107-19"><a href="dag.html#cb107-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb107-20"><a href="dag.html#cb107-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
-<span id="cb107-21"><a href="dag.html#cb107-21" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
-<span id="cb107-22"><a href="dag.html#cb107-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb107-23"><a href="dag.html#cb107-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the tabletbl &lt;- sim_5.6$data %&gt;%</span></span>
-<span id="cb107-24"><a href="dag.html#cb107-24" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb107-25"><a href="dag.html#cb107-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(A, Y0, Y1, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb107-26"><a href="dag.html#cb107-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb107-27"><a href="dag.html#cb107-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb107-28"><a href="dag.html#cb107-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
-<span id="cb107-29"><a href="dag.html#cb107-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
-<span id="cb107-30"><a href="dag.html#cb107-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-31"><a href="dag.html#cb107-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb107-32"><a href="dag.html#cb107-32" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.1&quot;</span>,</span>
-<span id="cb107-33"><a href="dag.html#cb107-33" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim1.r`&quot;</span>)</span>
-<span id="cb107-34"><a href="dag.html#cb107-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb107-35"><a href="dag.html#cb107-35" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb107-36"><a href="dag.html#cb107-36" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span><span class="sc">$</span>summ</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="dag.html#cb109-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.6</span>, {</span>
+<span id="cb109-2"><a href="dag.html#cb109-2" aria-hidden="true" tabindex="-1"></a>  probY0 <span class="ot">&lt;-</span> <span class="fl">0.42</span></span>
+<span id="cb109-3"><a href="dag.html#cb109-3" aria-hidden="true" tabindex="-1"></a>  probY1 <span class="ot">&lt;-</span> <span class="fl">0.62</span></span>
+<span id="cb109-4"><a href="dag.html#cb109-4" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;(1-Y0) * (1- Y1) * 0.6307 + (1 - Y0) * Y1 * 0.4867 +</span></span>
+<span id="cb109-5"><a href="dag.html#cb109-5" aria-hidden="true" tabindex="-1"></a><span class="st">  Y0 * (1 - Y1) * 0.4699 + Y0 * Y1 * 0.4263&quot;</span></span>
+<span id="cb109-6"><a href="dag.html#cb109-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">111</span>)</span>
+<span id="cb109-7"><a href="dag.html#cb109-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the potential outcomes</span></span>
+<span id="cb109-8"><a href="dag.html#cb109-8" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;Y0&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb109-9"><a href="dag.html#cb109-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;..probY0&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb109-10"><a href="dag.html#cb109-10" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y1&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb109-11"><a href="dag.html#cb109-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;..probY1&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb109-12"><a href="dag.html#cb109-12" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;probA&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;nonrandom&quot;</span>, </span>
+<span id="cb109-13"><a href="dag.html#cb109-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA)</span>
+<span id="cb109-14"><a href="dag.html#cb109-14" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb109-15"><a href="dag.html#cb109-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;probA&quot;</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb109-16"><a href="dag.html#cb109-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y must depend on A, Y1, Y0 in this way</span></span>
+<span id="cb109-17"><a href="dag.html#cb109-17" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;nonrandom&quot;</span>, </span>
+<span id="cb109-18"><a href="dag.html#cb109-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="st">&quot;A * Y1 + (1 - A) * Y0&quot;</span>)</span>
+<span id="cb109-19"><a href="dag.html#cb109-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb109-20"><a href="dag.html#cb109-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
+<span id="cb109-21"><a href="dag.html#cb109-21" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
+<span id="cb109-22"><a href="dag.html#cb109-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb109-23"><a href="dag.html#cb109-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the tabletbl &lt;- sim_5.6$data %&gt;%</span></span>
+<span id="cb109-24"><a href="dag.html#cb109-24" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb109-25"><a href="dag.html#cb109-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(A, Y0, Y1, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb109-26"><a href="dag.html#cb109-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb109-27"><a href="dag.html#cb109-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb109-28"><a href="dag.html#cb109-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb109-29"><a href="dag.html#cb109-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb109-30"><a href="dag.html#cb109-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb109-31"><a href="dag.html#cb109-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
+<span id="cb109-32"><a href="dag.html#cb109-32" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.1&quot;</span>,</span>
+<span id="cb109-33"><a href="dag.html#cb109-33" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim1.r`&quot;</span>)</span>
+<span id="cb109-34"><a href="dag.html#cb109-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb109-35"><a href="dag.html#cb109-35" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb109-36"><a href="dag.html#cb109-36" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.6</span><span class="sc">$</span>summ</span></code></pre></div>
 <div id="derlplfuuo" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1134,28 +1139,28 @@ Figure 5.6: One way to generate confounding
 </table>
 </div>
 <p>we also do it in base <code>R</code> with the script on p.88</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="dag.html#cb108-1" aria-hidden="true" tabindex="-1"></a>sim1.r <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>) {</span>
-<span id="cb108-2"><a href="dag.html#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">111</span>)</span>
-<span id="cb108-3"><a href="dag.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  probY0 <span class="ot">&lt;-</span> <span class="fl">0.42</span></span>
-<span id="cb108-4"><a href="dag.html#cb108-4" aria-hidden="true" tabindex="-1"></a>  probY1 <span class="ot">&lt;-</span> <span class="fl">0.62</span></span>
-<span id="cb108-5"><a href="dag.html#cb108-5" aria-hidden="true" tabindex="-1"></a>  Y0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY0)</span>
-<span id="cb108-6"><a href="dag.html#cb108-6" aria-hidden="true" tabindex="-1"></a>  Y1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY1)</span>
-<span id="cb108-7"><a href="dag.html#cb108-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Y0) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> Y1) <span class="sc">*</span> <span class="fl">0.6307</span> <span class="sc">+</span> </span>
-<span id="cb108-8"><a href="dag.html#cb108-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">1</span> <span class="sc">-</span> Y0) <span class="sc">*</span> Y1 <span class="sc">*</span> <span class="fl">0.4867</span> <span class="sc">+</span></span>
-<span id="cb108-9"><a href="dag.html#cb108-9" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span> Y1) <span class="sc">*</span> <span class="fl">0.4699</span> <span class="sc">+</span></span>
-<span id="cb108-10"><a href="dag.html#cb108-10" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="sc">*</span> Y1 <span class="sc">*</span> <span class="fl">0.4263</span></span>
-<span id="cb108-11"><a href="dag.html#cb108-11" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
-<span id="cb108-12"><a href="dag.html#cb108-12" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> A <span class="sc">*</span> Y1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> Y0</span>
-<span id="cb108-13"><a href="dag.html#cb108-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, Y0, Y1, Y))</span>
-<span id="cb108-14"><a href="dag.html#cb108-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="dag.html#cb110-1" aria-hidden="true" tabindex="-1"></a>sim1.r <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>) {</span>
+<span id="cb110-2"><a href="dag.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">111</span>)</span>
+<span id="cb110-3"><a href="dag.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  probY0 <span class="ot">&lt;-</span> <span class="fl">0.42</span></span>
+<span id="cb110-4"><a href="dag.html#cb110-4" aria-hidden="true" tabindex="-1"></a>  probY1 <span class="ot">&lt;-</span> <span class="fl">0.62</span></span>
+<span id="cb110-5"><a href="dag.html#cb110-5" aria-hidden="true" tabindex="-1"></a>  Y0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY0)</span>
+<span id="cb110-6"><a href="dag.html#cb110-6" aria-hidden="true" tabindex="-1"></a>  Y1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY1)</span>
+<span id="cb110-7"><a href="dag.html#cb110-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Y0) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> Y1) <span class="sc">*</span> <span class="fl">0.6307</span> <span class="sc">+</span> </span>
+<span id="cb110-8"><a href="dag.html#cb110-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">1</span> <span class="sc">-</span> Y0) <span class="sc">*</span> Y1 <span class="sc">*</span> <span class="fl">0.4867</span> <span class="sc">+</span></span>
+<span id="cb110-9"><a href="dag.html#cb110-9" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span> Y1) <span class="sc">*</span> <span class="fl">0.4699</span> <span class="sc">+</span></span>
+<span id="cb110-10"><a href="dag.html#cb110-10" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="sc">*</span> Y1 <span class="sc">*</span> <span class="fl">0.4263</span></span>
+<span id="cb110-11"><a href="dag.html#cb110-11" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
+<span id="cb110-12"><a href="dag.html#cb110-12" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> A <span class="sc">*</span> Y1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> Y0</span>
+<span id="cb110-13"><a href="dag.html#cb110-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, Y0, Y1, Y))</span>
+<span id="cb110-14"><a href="dag.html#cb110-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>and we obtain the same results as with <code>simstudy</code></p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="dag.html#cb109-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> <span class="fu">sim1.r</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb109-2"><a href="dag.html#cb109-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y0, Y1, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb109-3"><a href="dag.html#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb109-4"><a href="dag.html#cb109-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb109-5"><a href="dag.html#cb109-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
-<span id="cb109-6"><a href="dag.html#cb109-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
-<span id="cb109-7"><a href="dag.html#cb109-7" aria-hidden="true" tabindex="-1"></a>tbl</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="dag.html#cb111-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> <span class="fu">sim1.r</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-2"><a href="dag.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y0, Y1, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb111-3"><a href="dag.html#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb111-4"><a href="dag.html#cb111-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-5"><a href="dag.html#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb111-6"><a href="dag.html#cb111-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb111-7"><a href="dag.html#cb111-7" aria-hidden="true" tabindex="-1"></a>tbl</span></code></pre></div>
 <pre><code>## # A tibble: 8 x 5
 ##       A    Y0    Y1     Y  prob
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -1168,14 +1173,14 @@ Figure 5.6: One way to generate confounding
 ## 7     1     1     0     0 0.079
 ## 8     1     1     1     1 0.105</code></pre>
 <p>but when compare with the author’s</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="dag.html#cb111-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb111-2"><a href="dag.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb111-3"><a href="dag.html#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y0 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb111-4"><a href="dag.html#cb111-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb111-5"><a href="dag.html#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb111-6"><a href="dag.html#cb111-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.0814</span>, <span class="fl">0.1846</span>, <span class="fl">0.0846</span>, <span class="fl">0.1494</span>, <span class="fl">0.139</span>, <span class="fl">0.175</span>, <span class="fl">0.075</span>, <span class="fl">0.111</span>)</span>
-<span id="cb111-7"><a href="dag.html#cb111-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb111-8"><a href="dag.html#cb111-8" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span></span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="dag.html#cb113-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb113-2"><a href="dag.html#cb113-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb113-3"><a href="dag.html#cb113-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y0 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb113-4"><a href="dag.html#cb113-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb113-5"><a href="dag.html#cb113-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb113-6"><a href="dag.html#cb113-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.0814</span>, <span class="fl">0.1846</span>, <span class="fl">0.0846</span>, <span class="fl">0.1494</span>, <span class="fl">0.139</span>, <span class="fl">0.175</span>, <span class="fl">0.075</span>, <span class="fl">0.111</span>)</span>
+<span id="cb113-7"><a href="dag.html#cb113-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb113-8"><a href="dag.html#cb113-8" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span></span></code></pre></div>
 <pre><code>##   A Y0 Y1 Y   prob
 ## 1 0  0  0 0 0.0814
 ## 2 0  0  1 0 0.1846
@@ -1188,8 +1193,8 @@ Figure 5.6: One way to generate confounding
 <p>it is different. Table 5.1 is entitled <em>Simulation probabilities for <code>sim1.r</code></em>
 because they are simulated probabilities. If the simulation size is increased
 10000 the results are more in line with the author’s.</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="dag.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="st">&quot;author&quot;</span> <span class="ot">=</span> bb_5<span class="fl">.6</span><span class="sc">$</span>prob, <span class="st">&quot;sim&quot;</span> <span class="ot">=</span> scm_5<span class="fl">.6</span><span class="sc">$</span>tbl<span class="sc">$</span>prob) <span class="sc">%&gt;%</span></span>
-<span id="cb113-2"><a href="dag.html#cb113-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff =</span> sim <span class="sc">-</span> author)</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="dag.html#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="st">&quot;author&quot;</span> <span class="ot">=</span> bb_5<span class="fl">.6</span><span class="sc">$</span>prob, <span class="st">&quot;sim&quot;</span> <span class="ot">=</span> scm_5<span class="fl">.6</span><span class="sc">$</span>tbl<span class="sc">$</span>prob) <span class="sc">%&gt;%</span></span>
+<span id="cb115-2"><a href="dag.html#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff =</span> sim <span class="sc">-</span> author)</span></code></pre></div>
 <pre><code>##   author   sim    diff
 ## 1 0.0814 0.077 -0.0044
 ## 2 0.1846 0.212  0.0274
@@ -1248,52 +1253,52 @@ P(Y = 0 \mid A = 0, Y1 = 0, Y0 = 0) P(A = 0 \mid Y1 = 0, Y0 = 0) \cdot P(Y1 = 0 
 <div id="structural-causal-model-5.7" class="section level3 hasAnchor" number="5.2.4">
 <h3><span class="header-section-number">5.2.4</span> Structural Causal Model 5.7<a href="dag.html#structural-causal-model-5.7" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The causal DAG is</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="dag.html#cb115-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb115-2"><a href="dag.html#cb115-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.7</span>, {</span>
-<span id="cb115-3"><a href="dag.html#cb115-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb115-4"><a href="dag.html#cb115-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> H,</span>
-<span id="cb115-5"><a href="dag.html#cb115-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> H)</span>
-<span id="cb115-6"><a href="dag.html#cb115-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb115-7"><a href="dag.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb115-8"><a href="dag.html#cb115-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-85"></span>
-<img src="_main_files/figure-html/unnamed-chunk-85-1.png" alt="Another way to generate confounding" width="60%" />
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="dag.html#cb117-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb117-2"><a href="dag.html#cb117-2" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.7</span>, {</span>
+<span id="cb117-3"><a href="dag.html#cb117-3" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb117-4"><a href="dag.html#cb117-4" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> H,</span>
+<span id="cb117-5"><a href="dag.html#cb117-5" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> A <span class="sc">+</span> H)</span>
+<span id="cb117-6"><a href="dag.html#cb117-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb117-7"><a href="dag.html#cb117-7" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb117-8"><a href="dag.html#cb117-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-86"></span>
+<img src="_main_files/figure-html/unnamed-chunk-86-1.png" alt="Another way to generate confounding" width="60%" />
 <p class="caption">
 Figure 5.7: Another way to generate confounding
 </p>
 </div>
 <p>and we simulate the model with <code>simstudy</code> (and with the author’s script after)</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="dag.html#cb116-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.7</span>, {</span>
-<span id="cb116-2"><a href="dag.html#cb116-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">222</span>)</span>
-<span id="cb116-3"><a href="dag.html#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the confounder H first</span></span>
-<span id="cb116-4"><a href="dag.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;H&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb116-5"><a href="dag.html#cb116-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.4</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb116-6"><a href="dag.html#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the treatment depend on the confounder</span></span>
-<span id="cb116-7"><a href="dag.html#cb116-7" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;H * 0.8 + (1 - H) * 0.3&quot;</span></span>
-<span id="cb116-8"><a href="dag.html#cb116-8" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb116-9"><a href="dag.html#cb116-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb116-10"><a href="dag.html#cb116-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the outcome depend on the treatment and the confounder</span></span>
-<span id="cb116-11"><a href="dag.html#cb116-11" aria-hidden="true" tabindex="-1"></a>  formulaY <span class="ot">&lt;-</span> <span class="st">&quot;A * (H * 0.5 + (1 - H) * 0.7) +</span></span>
-<span id="cb116-12"><a href="dag.html#cb116-12" aria-hidden="true" tabindex="-1"></a><span class="st">  (1 - A) * (H * 0.3 + (1 - H) * 0.5)&quot;</span></span>
-<span id="cb116-13"><a href="dag.html#cb116-13" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
-<span id="cb116-14"><a href="dag.html#cb116-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaY, <span class="at">variance =</span> <span class="dv">1</span>)</span>
-<span id="cb116-15"><a href="dag.html#cb116-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb116-16"><a href="dag.html#cb116-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
-<span id="cb116-17"><a href="dag.html#cb116-17" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
-<span id="cb116-18"><a href="dag.html#cb116-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb116-19"><a href="dag.html#cb116-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the tabletbl &lt;- sim_5.6$data %&gt;%</span></span>
-<span id="cb116-20"><a href="dag.html#cb116-20" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb116-21"><a href="dag.html#cb116-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(A, H, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb116-22"><a href="dag.html#cb116-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb116-23"><a href="dag.html#cb116-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb116-24"><a href="dag.html#cb116-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
-<span id="cb116-25"><a href="dag.html#cb116-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
-<span id="cb116-26"><a href="dag.html#cb116-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-27"><a href="dag.html#cb116-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
-<span id="cb116-28"><a href="dag.html#cb116-28" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.2&quot;</span>,</span>
-<span id="cb116-29"><a href="dag.html#cb116-29" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim2.r`&quot;</span>)</span>
-<span id="cb116-30"><a href="dag.html#cb116-30" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb116-31"><a href="dag.html#cb116-31" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span><span class="sc">$</span>summ</span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="dag.html#cb118-1" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_5<span class="fl">.7</span>, {</span>
+<span id="cb118-2"><a href="dag.html#cb118-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">222</span>)</span>
+<span id="cb118-3"><a href="dag.html#cb118-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the confounder H first</span></span>
+<span id="cb118-4"><a href="dag.html#cb118-4" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(<span class="at">varname =</span> <span class="st">&quot;H&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb118-5"><a href="dag.html#cb118-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> <span class="fl">0.4</span>, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb118-6"><a href="dag.html#cb118-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the treatment depend on the confounder</span></span>
+<span id="cb118-7"><a href="dag.html#cb118-7" aria-hidden="true" tabindex="-1"></a>  formulaA <span class="ot">&lt;-</span> <span class="st">&quot;H * 0.8 + (1 - H) * 0.3&quot;</span></span>
+<span id="cb118-8"><a href="dag.html#cb118-8" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;A&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb118-9"><a href="dag.html#cb118-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaA, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb118-10"><a href="dag.html#cb118-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let the outcome depend on the treatment and the confounder</span></span>
+<span id="cb118-11"><a href="dag.html#cb118-11" aria-hidden="true" tabindex="-1"></a>  formulaY <span class="ot">&lt;-</span> <span class="st">&quot;A * (H * 0.5 + (1 - H) * 0.7) +</span></span>
+<span id="cb118-12"><a href="dag.html#cb118-12" aria-hidden="true" tabindex="-1"></a><span class="st">  (1 - A) * (H * 0.3 + (1 - H) * 0.5)&quot;</span></span>
+<span id="cb118-13"><a href="dag.html#cb118-13" aria-hidden="true" tabindex="-1"></a>  defs <span class="ot">&lt;-</span> <span class="fu">defData</span>(defs, <span class="at">varname =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">dist =</span> <span class="st">&quot;binomial&quot;</span>, </span>
+<span id="cb118-14"><a href="dag.html#cb118-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">formula =</span> formulaY, <span class="at">variance =</span> <span class="dv">1</span>)</span>
+<span id="cb118-15"><a href="dag.html#cb118-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb118-16"><a href="dag.html#cb118-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the data</span></span>
+<span id="cb118-17"><a href="dag.html#cb118-17" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">genData</span>(<span class="dv">1000</span>, defs)</span>
+<span id="cb118-18"><a href="dag.html#cb118-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb118-19"><a href="dag.html#cb118-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the tabletbl &lt;- sim_5.6$data %&gt;%</span></span>
+<span id="cb118-20"><a href="dag.html#cb118-20" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb118-21"><a href="dag.html#cb118-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(A, H, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb118-22"><a href="dag.html#cb118-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-23"><a href="dag.html#cb118-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-24"><a href="dag.html#cb118-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb118-25"><a href="dag.html#cb118-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb118-26"><a href="dag.html#cb118-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-27"><a href="dag.html#cb118-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># format the tableau</span></span>
+<span id="cb118-28"><a href="dag.html#cb118-28" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_probs</span>(tbl, <span class="at">title =</span> <span class="st">&quot;Table 5.2&quot;</span>,</span>
+<span id="cb118-29"><a href="dag.html#cb118-29" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Simulation Probabilities for `sim2.r`&quot;</span>)</span>
+<span id="cb118-30"><a href="dag.html#cb118-30" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb118-31"><a href="dag.html#cb118-31" aria-hidden="true" tabindex="-1"></a>scm_5<span class="fl">.7</span><span class="sc">$</span>summ</span></code></pre></div>
 <div id="fpzmgpvcjo" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1757,24 +1762,24 @@ Figure 5.7: Another way to generate confounding
 </table>
 </div>
 <p>and with the script <code>sim2.r</code> in base R</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="dag.html#cb117-1" aria-hidden="true" tabindex="-1"></a>sim2.r <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>) {</span>
-<span id="cb117-2"><a href="dag.html#cb117-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">222</span>)</span>
-<span id="cb117-3"><a href="dag.html#cb117-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the confounder first</span></span>
-<span id="cb117-4"><a href="dag.html#cb117-4" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.4</span>)</span>
-<span id="cb117-5"><a href="dag.html#cb117-5" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> H <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.3</span></span>
-<span id="cb117-6"><a href="dag.html#cb117-6" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
-<span id="cb117-7"><a href="dag.html#cb117-7" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> A <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.7</span>) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.5</span>)</span>
-<span id="cb117-8"><a href="dag.html#cb117-8" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
-<span id="cb117-9"><a href="dag.html#cb117-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(H, A, Y))</span>
-<span id="cb117-10"><a href="dag.html#cb117-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="dag.html#cb119-1" aria-hidden="true" tabindex="-1"></a>sim2.r <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>) {</span>
+<span id="cb119-2"><a href="dag.html#cb119-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">222</span>)</span>
+<span id="cb119-3"><a href="dag.html#cb119-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate the confounder first</span></span>
+<span id="cb119-4"><a href="dag.html#cb119-4" aria-hidden="true" tabindex="-1"></a>  H <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.4</span>)</span>
+<span id="cb119-5"><a href="dag.html#cb119-5" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> H <span class="sc">*</span> <span class="fl">0.8</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.3</span></span>
+<span id="cb119-6"><a href="dag.html#cb119-6" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
+<span id="cb119-7"><a href="dag.html#cb119-7" aria-hidden="true" tabindex="-1"></a>  probY <span class="ot">&lt;-</span> A <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.7</span>) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> (H <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> <span class="fl">0.5</span>)</span>
+<span id="cb119-8"><a href="dag.html#cb119-8" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probY)</span>
+<span id="cb119-9"><a href="dag.html#cb119-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(H, A, Y))</span>
+<span id="cb119-10"><a href="dag.html#cb119-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>with the same probabilities as <code>simstudy</code></p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="dag.html#cb118-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> <span class="fu">sim2.r</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb118-2"><a href="dag.html#cb118-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, H, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb118-3"><a href="dag.html#cb118-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb118-4"><a href="dag.html#cb118-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb118-5"><a href="dag.html#cb118-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
-<span id="cb118-6"><a href="dag.html#cb118-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
-<span id="cb118-7"><a href="dag.html#cb118-7" aria-hidden="true" tabindex="-1"></a>tbl</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="dag.html#cb120-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> <span class="fu">sim2.r</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb120-2"><a href="dag.html#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, H, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb120-3"><a href="dag.html#cb120-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">name =</span> <span class="st">&quot;prob&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb120-4"><a href="dag.html#cb120-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb120-5"><a href="dag.html#cb120-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> prob <span class="sc">/</span> <span class="fu">sum</span>(prob))</span>
+<span id="cb120-6"><a href="dag.html#cb120-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">near</span>(<span class="fu">sum</span>(tbl<span class="sc">$</span>prob), <span class="dv">1</span>))</span>
+<span id="cb120-7"><a href="dag.html#cb120-7" aria-hidden="true" tabindex="-1"></a>tbl</span></code></pre></div>
 <pre><code>## # A tibble: 8 x 4
 ##       A     H     Y  prob
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
@@ -1787,13 +1792,13 @@ Figure 5.7: Another way to generate confounding
 ## 7     1     1     0 0.141
 ## 8     1     1     1 0.172</code></pre>
 <p>and the author provides the theoretical probability table</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="dag.html#cb120-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb120-2"><a href="dag.html#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb120-3"><a href="dag.html#cb120-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">H =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb120-4"><a href="dag.html#cb120-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb120-5"><a href="dag.html#cb120-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.21</span>, <span class="fl">0.21</span>, <span class="fl">0.056</span>, <span class="fl">0.024</span>, <span class="fl">0.024</span>, <span class="fl">0.126</span>, <span class="fl">0.16</span>, <span class="fl">0.16</span>)</span>
-<span id="cb120-6"><a href="dag.html#cb120-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb120-7"><a href="dag.html#cb120-7" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span></span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="dag.html#cb122-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb122-2"><a href="dag.html#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb122-3"><a href="dag.html#cb122-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">H =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb122-4"><a href="dag.html#cb122-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb122-5"><a href="dag.html#cb122-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.21</span>, <span class="fl">0.21</span>, <span class="fl">0.056</span>, <span class="fl">0.024</span>, <span class="fl">0.024</span>, <span class="fl">0.126</span>, <span class="fl">0.16</span>, <span class="fl">0.16</span>)</span>
+<span id="cb122-6"><a href="dag.html#cb122-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb122-7"><a href="dag.html#cb122-7" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span></span></code></pre></div>
 <pre><code>##   A H Y  prob
 ## 1 0 0 0 0.210
 ## 2 0 0 1 0.210
@@ -1844,11 +1849,9 @@ P(Y = 1, A = 0, H = 1) &amp;= P(Y = 1 \mid A = 0, H = 1)P(A = 0 \mid H = 1)P(H =
 \]</span></p>
 <p>Using either <code>sim1.r</code> or <code>sim2.r</code> we can get the joint probability of <span class="math inline">\(A\)</span> and
 <span class="math inline">\(Y\)</span> using the law of total probabilities.</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="dag.html#cb122-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span> <span class="sc">%&gt;%</span></span>
-<span id="cb122-2"><a href="dag.html#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb122-3"><a href="dag.html#cb122-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(prob))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;A&#39;. You can override using the `.groups`
-## argument.</code></pre>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="dag.html#cb124-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.6</span> <span class="sc">%&gt;%</span></span>
+<span id="cb124-2"><a href="dag.html#cb124-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb124-3"><a href="dag.html#cb124-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(prob))</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 3
 ## # Groups:   A [2]
 ##       A     Y  prob
@@ -1857,11 +1860,9 @@ P(Y = 1, A = 0, H = 1) &amp;= P(Y = 1 \mid A = 0, H = 1)P(A = 0 \mid H = 1)P(H =
 ## 2     0     1 0.234
 ## 3     1     0 0.214
 ## 4     1     1 0.286</code></pre>
-<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="dag.html#cb125-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span> <span class="sc">%&gt;%</span></span>
-<span id="cb125-2"><a href="dag.html#cb125-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y) <span class="sc">%&gt;%</span></span>
-<span id="cb125-3"><a href="dag.html#cb125-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(prob))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;A&#39;. You can override using the `.groups`
-## argument.</code></pre>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="dag.html#cb126-1" aria-hidden="true" tabindex="-1"></a>bb_5<span class="fl">.7</span> <span class="sc">%&gt;%</span></span>
+<span id="cb126-2"><a href="dag.html#cb126-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(A, Y) <span class="sc">%&gt;%</span></span>
+<span id="cb126-3"><a href="dag.html#cb126-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(prob))</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 3
 ## # Groups:   A [2]
 ##       A     Y  prob
@@ -1926,8 +1927,8 @@ for <span class="math inline">\(Y(0) = 0\)</span>.</p>
 <span id="cb128-12"><a href="dag.html#cb128-12" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb128-13"><a href="dag.html#cb128-13" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
 <span id="cb128-14"><a href="dag.html#cb128-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-93"></span>
-<img src="_main_files/figure-html/unnamed-chunk-93-1.png" alt="Potential Outcomes Behind the Scenes" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-94"></span>
+<img src="_main_files/figure-html/unnamed-chunk-94-1.png" alt="Potential Outcomes Behind the Scenes" width="80%" />
 <p class="caption">
 Figure 5.8: Potential Outcomes Behind the Scenes
 </p>
@@ -2546,8 +2547,8 @@ Figure 5.8: Potential Outcomes Behind the Scenes
 <span id="cb131-28"><a href="dag.html#cb131-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;T&quot;</span>, <span class="st">&quot;U&quot;</span>, <span class="fu">expression</span>(VL[<span class="dv">0</span>]), <span class="fu">expression</span>(VL[<span class="dv">1</span>]))</span>
 <span id="cb131-29"><a href="dag.html#cb131-29" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag, <span class="at">text_labels =</span> text_labels, <span class="at">text_size =</span> <span class="dv">5</span>)</span>
 <span id="cb131-30"><a href="dag.html#cb131-30" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-97"></span>
-<img src="_main_files/figure-html/unnamed-chunk-97-1.png" alt="The Double What-If? Study" width="80%" />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-98"></span>
+<img src="_main_files/figure-html/unnamed-chunk-98-1.png" alt="The Double What-If? Study" width="80%" />
 <p class="caption">
 Figure 5.9: The Double What-If? Study
 </p>

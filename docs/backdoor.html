@@ -188,7 +188,12 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.1.1" data-path="probability.html"><a href="probability.html#law-of-total-probability"><i class="fa fa-check"></i><b>2.1.1</b> Law of total probability<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="probability.html"><a href="probability.html#mean-independence-and-conditional-mean-independence"><i class="fa fa-check"></i><b>2.2.1</b> Mean independence and conditional mean independence<span></span></a></li>
+<li class="chapter" data-level="2.2.2" data-path="probability.html"><a href="probability.html#regression-model"><i class="fa fa-check"></i><b>2.2.2</b> Regression model<span></span></a></li>
+<li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
 <li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
@@ -1030,7 +1035,7 @@ works exactly as the function <code>standr</code> in the book.</p>
 <span id="cb153-7"><a href="backdoor.html#cb153-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mort_out_npr.rds&quot;</span>)</span>
 <span id="cb153-8"><a href="backdoor.html#cb153-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mort.out.npr, file = a_file)</span></span>
 <span id="cb153-9"><a href="backdoor.html#cb153-9" aria-hidden="true" tabindex="-1"></a>mort.out.npr <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-112-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-113-1.png" width="100%" /></p>
 <p>and the results are the same again. In conclusion pretty much any of the
 function. The function <code>fciR::backdr_out_npr</code> seems faster. The function
 <code>fciR::backdr_out_np</code> is actually useful as a double check and it actually
@@ -1054,7 +1059,7 @@ uses a “pure” application of probabilities.</p>
 <span id="cb156-5"><a href="backdoor.html#cb156-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb156-6"><a href="backdoor.html#cb156-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.1</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-116-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-117-1.png" width="100%" /></p>
 <p>where we observe a reduction of the viral load but the difference is not
 statistically significant.</p>
 </div>
@@ -1071,7 +1076,7 @@ statistically significant.</p>
 <span id="cb159-7"><a href="backdoor.html#cb159-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_np.rds&quot;</span>)</span>
 <span id="cb159-8"><a href="backdoor.html#cb159-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.np, file = a_file)</span></span>
 <span id="cb159-9"><a href="backdoor.html#cb159-9" aria-hidden="true" tabindex="-1"></a>whatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-118-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-119-1.png" width="100%" /></p>
 <p><em>T0.he results are different when we don’t use linear regression!</em>. Not
 a very large difference but a significant one.</p>
 </div>
@@ -1084,7 +1089,7 @@ a very large difference but a significant one.</p>
 <div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="backdoor.html#cb161-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
 <span id="cb161-2"><a href="backdoor.html#cb161-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
 <span id="cb161-3"><a href="backdoor.html#cb161-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-121-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-122-1.png" width="100%" /></p>
 </div>
 <div id="non-parametric-without-regression-backdr_out_np-1" class="section level5 unnumbered hasAnchor">
 <h5>Non-parametric Without Regression <code>backdr_out_np</code><a href="backdoor.html#non-parametric-without-regression-backdr_out_np-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
@@ -1099,7 +1104,7 @@ a very large difference but a significant one.</p>
 <span id="cb164-7"><a href="backdoor.html#cb164-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_doublewhatif_out_np.rds&quot;</span>)</span>
 <span id="cb164-8"><a href="backdoor.html#cb164-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(doublewhatif.out.np, file = a_file)</span></span>
 <span id="cb164-9"><a href="backdoor.html#cb164-9" aria-hidden="true" tabindex="-1"></a>doublewhatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-123-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-124-1.png" width="100%" /></p>
 <p>and the results are the same</p>
 <blockquote>
 <p>For comparisons, we repeat the standardization with <span class="math inline">\(H = VL_0\)</span></p>
@@ -1107,7 +1112,7 @@ a very large difference but a significant one.</p>
 <div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="backdoor.html#cb165-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
 <span id="cb165-2"><a href="backdoor.html#cb165-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
 <span id="cb165-3"><a href="backdoor.html#cb165-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-125-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-126-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1143,7 +1148,7 @@ addition of the argument <code>att</code>.</p>
 <span id="cb168-11"><a href="backdoor.html#cb168-11" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> tbl <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">&quot;What-If Study&quot;</span>,</span>
 <span id="cb168-12"><a href="backdoor.html#cb168-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">subtitle =</span> <span class="st">&quot;Standardized ATT Estimates, 95% confidence interval&quot;</span>) <span class="sc">&amp;</span></span>
 <span id="cb168-13"><a href="backdoor.html#cb168-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>, <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.9</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-128-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-129-1.png" width="100%" /></p>
 <p>It can also be done using a non-parametric method without regression. That
 is following pure probabilities from the data.</p>
 <div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="backdoor.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 sec.. Load from file.&quot;</span>)</span></code></pre></div>
@@ -1157,7 +1162,7 @@ is following pure probabilities from the data.</p>
 <span id="cb171-7"><a href="backdoor.html#cb171-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_att_np.rds&quot;</span>)</span>
 <span id="cb171-8"><a href="backdoor.html#cb171-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.att.np, file = a_file)</span></span>
 <span id="cb171-9"><a href="backdoor.html#cb171-9" aria-hidden="true" tabindex="-1"></a>whatif.out.att.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-130-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-131-1.png" width="100%" /></p>
 </div>
 <div id="double-what-if-study-1" class="section level4 unnumbered hasAnchor">
 <h4>Double What-if? Study<a href="backdoor.html#double-what-if-study-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1165,12 +1170,12 @@ is following pure probabilities from the data.</p>
 <span id="cb172-2"><a href="backdoor.html#cb172-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
 <span id="cb172-3"><a href="backdoor.html#cb172-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)),</span>
 <span id="cb172-4"><a href="backdoor.html#cb172-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-132-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-133-1.png" width="100%" /></p>
 <div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="backdoor.html#cb173-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
 <span id="cb173-2"><a href="backdoor.html#cb173-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
 <span id="cb173-3"><a href="backdoor.html#cb173-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)),</span>
 <span id="cb173-4"><a href="backdoor.html#cb173-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-134-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-135-1.png" width="100%" /></p>
 </div>
 </div>
 <div id="standardization-with-a-parametric-outcome-model" class="section level3 hasAnchor" number="6.1.2">
@@ -1191,7 +1196,7 @@ is following pure probabilities from the data.</p>
 <span id="cb175-6"><a href="backdoor.html#cb175-6" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span>
 <span id="cb175-7"><a href="backdoor.html#cb175-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.1</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-137-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-138-1.png" width="100%" /></p>
 </div>
 <div id="general-social-survey-1" class="section level4 unnumbered hasAnchor">
 <h4>General Social Survey<a href="backdoor.html#general-social-survey-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -1219,7 +1224,7 @@ is following pure probabilities from the data.</p>
 <span id="cb180-5"><a href="backdoor.html#cb180-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb180-6"><a href="backdoor.html#cb180-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.8</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-141-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-142-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1417,7 +1422,7 @@ more informative and avoid mix up with the much-used base R function <code>exp.<
 <span id="cb193-4"><a href="backdoor.html#cb193-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.exp<span class="sc">$</span>est[whatif2.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
 <span id="cb193-5"><a href="backdoor.html#cb193-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-148-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-149-1.png" width="100%" /></p>
 <p>then we use the <code>geeglm</code> from the <code>geepack</code> package fit for risk difference</p>
 <div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="backdoor.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 6 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 6 sec.. Load from file.</code></pre>
@@ -1910,7 +1915,7 @@ to run it as follows</p>
 <span id="cb200-4"><a href="backdoor.html#cb200-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.exp<span class="sc">$</span>est[gssrcc.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
 <span id="cb200-5"><a href="backdoor.html#cb200-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-153-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-154-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1934,7 +1939,7 @@ robust standardization with a misspecified outcome model.</p>
 <span id="cb202-4"><a href="backdoor.html#cb202-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.bad<span class="sc">$</span>est[whatif2.bad<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
 <span id="cb202-5"><a href="backdoor.html#cb202-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-156-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-157-1.png" width="100%" /></p>
 <div id="doubly-robust-standardization-simulation" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Doubly Robust Standardization Simulation<a href="backdoor.html#doubly-robust-standardization-simulation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="with-simdr" class="section level4 hasAnchor" number="6.3.1.1">
@@ -3023,7 +3028,7 @@ The script is in the appendix at <a href="mc_standdr.html#mc_standdr">mc_standdr
 just above confirm them.</p>
 <p>A plot can however illustrate Brumback’s main points. This ones shows the
 estimates’ mean with their 5% and 95% quantiles from the simulation.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-162-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
 </div>
 </div>
 </div>

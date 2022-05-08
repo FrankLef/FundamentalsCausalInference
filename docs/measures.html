@@ -188,7 +188,12 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.1.1" data-path="probability.html"><a href="probability.html#law-of-total-probability"><i class="fa fa-check"></i><b>2.1.1</b> Law of total probability<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="probability.html"><a href="probability.html#conditional-expectation-and-the-law-of-total-expectation"><i class="fa fa-check"></i><b>2.2</b> Conditional Expectation and the Law of Total expectation<span></span></a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="probability.html"><a href="probability.html#mean-independence-and-conditional-mean-independence"><i class="fa fa-check"></i><b>2.2.1</b> Mean independence and conditional mean independence<span></span></a></li>
+<li class="chapter" data-level="2.2.2" data-path="probability.html"><a href="probability.html#regression-model"><i class="fa fa-check"></i><b>2.2.2</b> Regression model<span></span></a></li>
+<li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
 <li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
@@ -393,46 +398,46 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="measures" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Effect-Measure Modification and Causal Interaction<a href="measures.html#measures" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="measures.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb25-2"><a href="measures.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb25-3"><a href="measures.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="measures.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb27-2"><a href="measures.html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb27-3"><a href="measures.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggvenn, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <div id="effect-measure-modification-and-statistical-interaction" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Effect-Measure Modification and Statistical Interaction<a href="measures.html#effect-measure-modification-and-statistical-interaction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="recovery-trial" class="section level3 hasAnchor" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> RECOVERY trial<a href="measures.html#recovery-trial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Get the data.frame for <em>RECOVERY</em> trial</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="measures.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;recovery&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="measures.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;recovery&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
 <p>run <code>boot()</code>, alias <code>meas_effect_modif()</code> with the RECOVERY data set</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="measures.html#cb27-1" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> recovery, <span class="at">func =</span> meas_effect_modif,</span>
-<span id="cb27-2"><a href="measures.html#cb27-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb27-3"><a href="measures.html#cb27-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
-<span id="cb27-4"><a href="measures.html#cb27-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
-<span id="cb27-5"><a href="measures.html#cb27-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;M&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="measures.html#cb29-1" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> recovery, <span class="at">func =</span> meas_effect_modif,</span>
+<span id="cb29-2"><a href="measures.html#cb29-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb29-3"><a href="measures.html#cb29-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
+<span id="cb29-4"><a href="measures.html#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
+<span id="cb29-5"><a href="measures.html#cb29-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;M&quot;</span>)</span></code></pre></div>
 <p>verify the results with the author’s on p. 65.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="measures.html#cb28-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb28-2"><a href="measures.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
-<span id="cb28-3"><a href="measures.html#cb28-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>,</span>
-<span id="cb28-4"><a href="measures.html#cb28-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
-<span id="cb28-5"><a href="measures.html#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>,</span>
-<span id="cb28-6"><a href="measures.html#cb28-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>,</span>
-<span id="cb28-7"><a href="measures.html#cb28-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>),</span>
-<span id="cb28-8"><a href="measures.html#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.784</span>, <span class="fl">0.593</span>, <span class="fl">0.793</span>, <span class="fl">0.735</span>, <span class="fl">0.01</span>, <span class="fl">0.142</span>,</span>
-<span id="cb28-9"><a href="measures.html#cb28-9" aria-hidden="true" tabindex="-1"></a>          <span class="sc">-</span><span class="fl">0.191</span>, <span class="sc">-</span><span class="fl">0.059</span>, <span class="fl">0.132</span>, <span class="fl">1.012</span>, <span class="fl">1.239</span>, <span class="fl">1.224</span>,</span>
-<span id="cb28-10"><a href="measures.html#cb28-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">1.046</span>, <span class="fl">1.533</span>, <span class="fl">1.466</span>, <span class="fl">1.059</span>, <span class="fl">1.9</span>, <span class="fl">1.794</span>)</span>
-<span id="cb28-11"><a href="measures.html#cb28-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb28-12"><a href="measures.html#cb28-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), recovery.out<span class="sc">$</span>name)</span>
-<span id="cb28-13"><a href="measures.html#cb28-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb,</span>
-<span id="cb28-14"><a href="measures.html#cb28-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d =</span> recovery.out[ids, <span class="st">&quot;est&quot;</span>])</span>
-<span id="cb28-15"><a href="measures.html#cb28-15" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
-<span id="cb28-16"><a href="measures.html#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span>
-<span id="cb28-17"><a href="measures.html#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="measures.html#cb30-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb30-2"><a href="measures.html#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
+<span id="cb30-3"><a href="measures.html#cb30-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>,</span>
+<span id="cb30-4"><a href="measures.html#cb30-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
+<span id="cb30-5"><a href="measures.html#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>,</span>
+<span id="cb30-6"><a href="measures.html#cb30-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>,</span>
+<span id="cb30-7"><a href="measures.html#cb30-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>),</span>
+<span id="cb30-8"><a href="measures.html#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.784</span>, <span class="fl">0.593</span>, <span class="fl">0.793</span>, <span class="fl">0.735</span>, <span class="fl">0.01</span>, <span class="fl">0.142</span>,</span>
+<span id="cb30-9"><a href="measures.html#cb30-9" aria-hidden="true" tabindex="-1"></a>          <span class="sc">-</span><span class="fl">0.191</span>, <span class="sc">-</span><span class="fl">0.059</span>, <span class="fl">0.132</span>, <span class="fl">1.012</span>, <span class="fl">1.239</span>, <span class="fl">1.224</span>,</span>
+<span id="cb30-10"><a href="measures.html#cb30-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">1.046</span>, <span class="fl">1.533</span>, <span class="fl">1.466</span>, <span class="fl">1.059</span>, <span class="fl">1.9</span>, <span class="fl">1.794</span>)</span>
+<span id="cb30-11"><a href="measures.html#cb30-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-12"><a href="measures.html#cb30-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), recovery.out<span class="sc">$</span>name)</span>
+<span id="cb30-13"><a href="measures.html#cb30-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb,</span>
+<span id="cb30-14"><a href="measures.html#cb30-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d =</span> recovery.out[ids, <span class="st">&quot;est&quot;</span>])</span>
+<span id="cb30-15"><a href="measures.html#cb30-15" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
+<span id="cb30-16"><a href="measures.html#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span>
+<span id="cb30-17"><a href="measures.html#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span></code></pre></div>
 <p>and we communicate the results in a table</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="measures.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
-<span id="cb29-2"><a href="measures.html#cb29-2" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> recovery.out <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="measures.html#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb29-4"><a href="measures.html#cb29-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(recovery.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
-<span id="cb29-5"><a href="measures.html#cb29-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.2 RECOVERY Trial&quot;</span>,</span>
-<span id="cb29-6"><a href="measures.html#cb29-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="measures.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
+<span id="cb31-2"><a href="measures.html#cb31-2" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> recovery.out <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="measures.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-4"><a href="measures.html#cb31-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(recovery.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb31-5"><a href="measures.html#cb31-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.2 RECOVERY Trial&quot;</span>,</span>
+<span id="cb31-6"><a href="measures.html#cb31-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
 <div id="ptphparmag" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -929,8 +934,8 @@ between the 2 strata.</p>
 <p>It supports the observation in the text concerning the
 lack of effect of dexamethasone without intrusive mechanical ventilation (M0)
 vs its use with intrusive mechanical ventilation (M1) which is significant.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="measures.html#cb30-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(recovery.out, <span class="at">title =</span> <span class="st">&quot;RECOVERY trial&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="measures.html#cb32-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(recovery.out, <span class="at">title =</span> <span class="st">&quot;RECOVERY trial&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <p>The <code>gee::gee()</code> function is used to find information on the coefficients
 and see if they are statistically significant. The same could be done
 withe <code>glm::glm()</code> but <code>gee</code> offers results with robust statistics which
@@ -940,15 +945,15 @@ extractor functions <code>coefficients()</code>, <code>effects()</code>, etc. Se
 of <code>lm</code> with <code>?lm</code> for more details.</p>
 <p>We are going through an example just below to illustrate how tthe extractor
 functions are used which is not shown in the textbook.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="measures.html#cb31-1" aria-hidden="true" tabindex="-1"></a>linmod <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> M,</span>
-<span id="cb31-2"><a href="measures.html#cb31-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id,</span>
-<span id="cb31-3"><a href="measures.html#cb31-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> recovery,</span>
-<span id="cb31-4"><a href="measures.html#cb31-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> gaussian)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="measures.html#cb33-1" aria-hidden="true" tabindex="-1"></a>linmod <span class="ot">&lt;-</span> gee<span class="sc">::</span><span class="fu">gee</span>(Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> M,</span>
+<span id="cb33-2"><a href="measures.html#cb33-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">id =</span> id,</span>
+<span id="cb33-3"><a href="measures.html#cb33-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> recovery,</span>
+<span id="cb33-4"><a href="measures.html#cb33-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> gaussian)</span></code></pre></div>
 <pre><code>## Beginning Cgee S-function, @(#) geeformula.q 4.13 98/01/27</code></pre>
 <pre><code>## running glm to get initial regression estimate</code></pre>
 <pre><code>## (Intercept)           T           M         T:M 
 ##  0.78367235  0.00958608 -0.19070017  0.13200964</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="measures.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(linmod)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="measures.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(linmod)</span></code></pre></div>
 <pre><code>## 
 ##  GEE:  GENERALIZED LINEAR MODELS FOR DEPENDENT DATA
 ##  gee S-function, version 4.13 modified 98/01/27 (1998) 
@@ -982,12 +987,12 @@ functions are used which is not shown in the textbook.</p>
 ## [1,]    1</code></pre>
 <p>To extract the coefficients from the <code>gee</code> object we use the extractor function
 <code>coefficients()</code> or its alias <code>coef()</code></p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="measures.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(linmod)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="measures.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(linmod)</span></code></pre></div>
 <pre><code>## (Intercept)           T           M         T:M 
 ##  0.78367235  0.00958608 -0.19070017  0.13200964</code></pre>
 <p>and to extract the entire coefficient data to work
 with it, just use <code>coefficients()</code> with <code>summary()</code></p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="measures.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(linmod))</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="measures.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(linmod))</span></code></pre></div>
 <pre><code>##                Estimate  Naive S.E.     Naive z Robust S.E.    Robust z
 ## (Intercept)  0.78367235 0.006975704 112.3431253 0.006826403 114.8001855
 ## T            0.00958608 0.012170195   0.7876686 0.011778554   0.8138588
@@ -995,47 +1000,47 @@ with it, just use <code>coefficients()</code> with <code>summary()</code></p>
 ## T:M          0.13200964 0.030881745   4.2746820 0.033074076   3.9913327</code></pre>
 <p>and in this case we are concerned about how significant the interaction is.
 Therefore the <em>Robust z</em> is extracted with <code>coefficients()</code> alias <code>coef()</code></p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="measures.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(linmod))[, <span class="st">&quot;Robust z&quot;</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="measures.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(linmod))[, <span class="st">&quot;Robust z&quot;</span>]</span></code></pre></div>
 <pre><code>## (Intercept)           T           M         T:M 
 ## 114.8001855   0.8138588  -9.5352906   3.9913327</code></pre>
 <p>we see that <span class="math inline">\(T:M\)</span> is 3.99 standard deviations away from zero which will give
 us the 2-sided p-value that is significant</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="measures.html#cb43-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(linmod))[<span class="st">&quot;T:M&quot;</span>, <span class="st">&quot;Robust z&quot;</span>]</span>
-<span id="cb43-2"><a href="measures.html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="measures.html#cb45-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(linmod))[<span class="st">&quot;T:M&quot;</span>, <span class="st">&quot;Robust z&quot;</span>]</span>
+<span id="cb45-2"><a href="measures.html#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))</span></code></pre></div>
 <pre><code>## [1] 6.570304e-05</code></pre>
 </div>
 <div id="nces" class="section level3 hasAnchor" number="4.1.2">
 <h3><span class="header-section-number">4.1.2</span> NCES<a href="measures.html#nces" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We process the <code>NCES</code> data the same way we did for the RECOVERY trial.</p>
 <p>Run the bootsrap</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="measures.html#cb45-1" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> nces, <span class="at">func =</span> meas_effect_modif,</span>
-<span id="cb45-2"><a href="measures.html#cb45-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb45-3"><a href="measures.html#cb45-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
-<span id="cb45-4"><a href="measures.html#cb45-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;highmathsat&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;female&quot;</span>,</span>
-<span id="cb45-5"><a href="measures.html#cb45-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;selective&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="measures.html#cb47-1" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> nces, <span class="at">func =</span> meas_effect_modif,</span>
+<span id="cb47-2"><a href="measures.html#cb47-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb47-3"><a href="measures.html#cb47-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
+<span id="cb47-4"><a href="measures.html#cb47-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;highmathsat&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;female&quot;</span>,</span>
+<span id="cb47-5"><a href="measures.html#cb47-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;selective&quot;</span>)</span></code></pre></div>
 <p>verify the results with the author’s on p. 70.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="measures.html#cb46-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb46-2"><a href="measures.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
-<span id="cb46-3"><a href="measures.html#cb46-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>,</span>
-<span id="cb46-4"><a href="measures.html#cb46-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
-<span id="cb46-5"><a href="measures.html#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>,</span>
-<span id="cb46-6"><a href="measures.html#cb46-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>,</span>
-<span id="cb46-7"><a href="measures.html#cb46-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>),</span>
-<span id="cb46-8"><a href="measures.html#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.167</span>, <span class="fl">0.675</span>, <span class="fl">0.081</span>, <span class="fl">0.345</span>, <span class="sc">-</span><span class="fl">0.086</span>, <span class="sc">-</span><span class="fl">0.33</span>,</span>
-<span id="cb46-9"><a href="measures.html#cb46-9" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.509</span>, <span class="fl">0.264</span>, <span class="sc">-</span><span class="fl">0.244</span>, <span class="fl">0.486</span>, <span class="fl">0.511</span>, <span class="fl">1.052</span>,</span>
-<span id="cb46-10"><a href="measures.html#cb46-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.907</span>, <span class="fl">0.496</span>, <span class="fl">0.547</span>, <span class="fl">0.44</span>, <span class="fl">0.254</span>, <span class="fl">0.576</span>)</span>
-<span id="cb46-11"><a href="measures.html#cb46-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb46-12"><a href="measures.html#cb46-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), nces.out<span class="sc">$</span>name)</span>
-<span id="cb46-13"><a href="measures.html#cb46-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb, <span class="at">d =</span> nces.out[ids, <span class="st">&quot;est&quot;</span>])</span>
-<span id="cb46-14"><a href="measures.html#cb46-14" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
-<span id="cb46-15"><a href="measures.html#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="measures.html#cb48-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb48-2"><a href="measures.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimator =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
+<span id="cb48-3"><a href="measures.html#cb48-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR&quot;</span>,</span>
+<span id="cb48-4"><a href="measures.html#cb48-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
+<span id="cb48-5"><a href="measures.html#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">c</span>(<span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>,</span>
+<span id="cb48-6"><a href="measures.html#cb48-6" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>,</span>
+<span id="cb48-7"><a href="measures.html#cb48-7" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>, <span class="st">&quot;M0&quot;</span>, <span class="st">&quot;M1&quot;</span>, <span class="st">&quot;diff&quot;</span>),</span>
+<span id="cb48-8"><a href="measures.html#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.167</span>, <span class="fl">0.675</span>, <span class="fl">0.081</span>, <span class="fl">0.345</span>, <span class="sc">-</span><span class="fl">0.086</span>, <span class="sc">-</span><span class="fl">0.33</span>,</span>
+<span id="cb48-9"><a href="measures.html#cb48-9" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.509</span>, <span class="fl">0.264</span>, <span class="sc">-</span><span class="fl">0.244</span>, <span class="fl">0.486</span>, <span class="fl">0.511</span>, <span class="fl">1.052</span>,</span>
+<span id="cb48-10"><a href="measures.html#cb48-10" aria-hidden="true" tabindex="-1"></a>          <span class="fl">0.907</span>, <span class="fl">0.496</span>, <span class="fl">0.547</span>, <span class="fl">0.44</span>, <span class="fl">0.254</span>, <span class="fl">0.576</span>)</span>
+<span id="cb48-11"><a href="measures.html#cb48-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb48-12"><a href="measures.html#cb48-12" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">paste</span>(bb<span class="sc">$</span>estimator, bb<span class="sc">$</span>group, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>), nces.out<span class="sc">$</span>name)</span>
+<span id="cb48-13"><a href="measures.html#cb48-13" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> bb, <span class="at">d =</span> nces.out[ids, <span class="st">&quot;est&quot;</span>])</span>
+<span id="cb48-14"><a href="measures.html#cb48-14" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(comp<span class="sc">$</span>bb.est <span class="sc">-</span> comp<span class="sc">$</span>d)</span>
+<span id="cb48-15"><a href="measures.html#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(comp<span class="sc">$</span>dev) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the table is</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="measures.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
-<span id="cb47-2"><a href="measures.html#cb47-2" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> nces.out <span class="sc">%&gt;%</span></span>
-<span id="cb47-3"><a href="measures.html#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-4"><a href="measures.html#cb47-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(nces.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
-<span id="cb47-5"><a href="measures.html#cb47-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.3 NCES data&quot;</span>,</span>
-<span id="cb47-6"><a href="measures.html#cb47-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="measures.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reformat to use for table and plot</span></span>
+<span id="cb49-2"><a href="measures.html#cb49-2" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> nces.out <span class="sc">%&gt;%</span></span>
+<span id="cb49-3"><a href="measures.html#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(<span class="at">col =</span> <span class="st">&quot;name&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;estimator&quot;</span>, <span class="st">&quot;group&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;[.]&quot;</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-4"><a href="measures.html#cb49-4" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">gt_measures_colgrp</span>(nces.out, <span class="at">var_grp =</span> <span class="st">&quot;group&quot;</span>,</span>
+<span id="cb49-5"><a href="measures.html#cb49-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="st">&quot;Table 4.3 NCES data&quot;</span>,</span>
+<span id="cb49-6"><a href="measures.html#cb49-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="st">&quot;Effect-measure Modification&quot;</span>)</span></code></pre></div>
 <div id="mtrqdxzicm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1527,8 +1532,8 @@ us the 2-sided p-value that is significant</p>
 </table>
 </div>
 <p>and we plot the results</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="measures.html#cb48-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(nces.out, <span class="at">title =</span> <span class="st">&quot;NCES data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="measures.html#cb50-1" aria-hidden="true" tabindex="-1"></a>fciR<span class="sc">::</span><span class="fu">ggp_measures_modif</span>(nces.out, <span class="at">title =</span> <span class="st">&quot;NCES data&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p>We observe that</p>
 <ul>
 <li>RD: Risk difference shows that using selection to accept more women
@@ -1560,17 +1565,17 @@ distribution used in <span class="citation"><a href="#ref-shanninbrumback2021" r
 <h3><span class="header-section-number">4.2.1</span> Simulate the effect measures<a href="measures.html#simulate-the-effect-measures" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We run the Monte-Carlo simulation without constraint and with <span class="math inline">\(Beta(1,1)\)</span> which
 is equivalent to <span class="math inline">\(Uniform(0,1)\)</span> used by <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span>.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="measures.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="measures.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 1 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="measures.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb51-2"><a href="measures.html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gridsim &lt;- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)</span></span>
-<span id="cb51-3"><a href="measures.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb51-4"><a href="measures.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb51-5"><a href="measures.html#cb51-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_gridsim.rds&quot;</span>)</span>
-<span id="cb51-6"><a href="measures.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gridsim, file = a_file)</span></span>
-<span id="cb51-7"><a href="measures.html#cb51-7" aria-hidden="true" tabindex="-1"></a>gridsim <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="measures.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb53-2"><a href="measures.html#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gridsim &lt;- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000)</span></span>
+<span id="cb53-3"><a href="measures.html#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb53-4"><a href="measures.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb53-5"><a href="measures.html#cb53-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_gridsim.rds&quot;</span>)</span>
+<span id="cb53-6"><a href="measures.html#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gridsim, file = a_file)</span></span>
+<span id="cb53-7"><a href="measures.html#cb53-7" aria-hidden="true" tabindex="-1"></a>gridsim <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <p>which gives the vector of percentages</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="measures.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="measures.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim)</span></code></pre></div>
 <pre><code>##              RD_RR          RD_RRstar              RD_OR          RR_RRstar 
 ##             0.0000             0.0000             0.0000             0.0000 
 ##              RR_OR          RRstar_OR RD_RR_vs_RRstar_OR RD_RRstar_vs_RR_OR 
@@ -1608,16 +1613,16 @@ measures move in the same direction. It is impossible and represents the empty s
 <p>The event definitions above ensure that the sample space is actually a <span class="math inline">\(\sigma-field\)</span>.
 See <span class="citation"><a href="#ref-grimmett" role="doc-biblioref">Geoffrey R. Grimmet</a> (<a href="#ref-grimmett" role="doc-biblioref">2001</a>)</span>, section 1.2.</p>
 <p>then we compare with the author’s results</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="measures.html#cb54-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD_RR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RD_RRstar&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RD_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, </span>
-<span id="cb54-2"><a href="measures.html#cb54-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>,</span>
-<span id="cb54-3"><a href="measures.html#cb54-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb54-4"><a href="measures.html#cb54-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb54-5"><a href="measures.html#cb54-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb54-6"><a href="measures.html#cb54-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RD_RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.057</span>, </span>
-<span id="cb54-7"><a href="measures.html#cb54-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.057</span>, <span class="st">&quot;RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb54-8"><a href="measures.html#cb54-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.833</span>, <span class="st">&quot;NONE&quot;</span> <span class="ot">=</span> <span class="dv">0</span>)</span>
-<span id="cb54-9"><a href="measures.html#cb54-9" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> <span class="fu">round</span>(bb, <span class="dv">4</span>), <span class="at">sim =</span> <span class="fu">round</span>(<span class="fu">unlist</span>(gridsim), <span class="dv">4</span>))</span>
-<span id="cb54-10"><a href="measures.html#cb54-10" aria-hidden="true" tabindex="-1"></a>comp</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="measures.html#cb56-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD_RR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RD_RRstar&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RD_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, </span>
+<span id="cb56-2"><a href="measures.html#cb56-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>, <span class="st">&quot;RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.026</span>,</span>
+<span id="cb56-3"><a href="measures.html#cb56-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb56-4"><a href="measures.html#cb56-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb56-5"><a href="measures.html#cb56-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb56-6"><a href="measures.html#cb56-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RD_RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.057</span>, </span>
+<span id="cb56-7"><a href="measures.html#cb56-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.057</span>, <span class="st">&quot;RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb56-8"><a href="measures.html#cb56-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.833</span>, <span class="st">&quot;NONE&quot;</span> <span class="ot">=</span> <span class="dv">0</span>)</span>
+<span id="cb56-9"><a href="measures.html#cb56-9" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> <span class="fu">round</span>(bb, <span class="dv">4</span>), <span class="at">sim =</span> <span class="fu">round</span>(<span class="fu">unlist</span>(gridsim), <span class="dv">4</span>))</span>
+<span id="cb56-10"><a href="measures.html#cb56-10" aria-hidden="true" tabindex="-1"></a>comp</span></code></pre></div>
 <pre><code>##                       bb    sim
 ## RD_RR              0.026 0.0000
 ## RD_RRstar          0.026 0.0000
@@ -1636,15 +1641,15 @@ See <span class="citation"><a href="#ref-grimmett" role="doc-biblioref">Geoffrey
 ## NONE               0.000 0.0000</code></pre>
 <p>The results from the Monte Carlo simulation above confirm the main conclusion
 from <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span> that all effect measures move together 84% of the time.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="measures.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(gridsim[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), </span>
-<span id="cb56-2"><a href="measures.html#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="measures.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(gridsim[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), </span>
+<span id="cb58-2"><a href="measures.html#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]))</span></code></pre></div>
 <pre><code>## simulation   author&#39;s 
 ##     0.8298     0.8330</code></pre>
 <p>We note that the sim adds up correctly to 1 but not the author’s which adds up
 to 1.051. This is explained on p. 72 as a bit of arbitrary allocations. The
 <span class="citation"><a href="#ref-shanninbrumback2021" role="doc-biblioref">Jake Shannin</a> (<a href="#ref-shanninbrumback2021" role="doc-biblioref">2021</a>)</span> paper (caption figure 1) mentions that they do not
 add to 1 because they include events that <em>are not mutually exclusive</em>.</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="measures.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">unlist</span>(gridsim)), <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(bb))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="measures.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">unlist</span>(gridsim)), <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(bb))</span></code></pre></div>
 <pre><code>## simulation   author&#39;s 
 ##      1.000      1.051</code></pre>
 <p>Actually, this is caused by the <strong>Opposite pairwise events</strong> which cannot be
@@ -1652,30 +1657,30 @@ represented in the 4-set Venn diagram. For the purpose of this
 books we will simply split them between the events that makes them up without
 consequence on the conclusion.</p>
 <p>The <strong>Opposite pairwise events</strong> are the following</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="measures.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The events that pair of measures move together but in opposite</span></span>
-<span id="cb60-2"><a href="measures.html#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co"># direction of another pair who also move together</span></span>
-<span id="cb60-3"><a href="measures.html#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim[<span class="fu">c</span>(<span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span>, <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span>, <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span>)])</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="measures.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The events that pair of measures move together but in opposite</span></span>
+<span id="cb62-2"><a href="measures.html#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="co"># direction of another pair who also move together</span></span>
+<span id="cb62-3"><a href="measures.html#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim[<span class="fu">c</span>(<span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span>, <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span>, <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span>)])</span></code></pre></div>
 <pre><code>## RD_RR_vs_RRstar_OR RD_RRstar_vs_RR_OR RD_OR_vs_RR_RRstar 
 ##             0.0260             0.0296             0.0000</code></pre>
 <p>and when we split them between their 2 sub-events we can generate the
 Venn diagram as follows</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="measures.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim, <span class="at">n =</span> <span class="dv">1000</span>, </span>
-<span id="cb62-2"><a href="measures.html#cb62-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>),</span>
-<span id="cb62-3"><a href="measures.html#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram of effect measure modifications&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="measures.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim, <span class="at">n =</span> <span class="dv">1000</span>, </span>
+<span id="cb64-2"><a href="measures.html#cb64-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>),</span>
+<span id="cb64-3"><a href="measures.html#cb64-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram of effect measure modifications&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
 <p>now for <strong>constrained data</strong></p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="measures.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="measures.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 1 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 1 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="measures.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb65-2"><a href="measures.html#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gridsim_const &lt;- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,</span></span>
-<span id="cb65-3"><a href="measures.html#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                       constrained = TRUE)</span></span>
-<span id="cb65-4"><a href="measures.html#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb65-5"><a href="measures.html#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb65-6"><a href="measures.html#cb65-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_gridsim_const.rds&quot;</span>)</span>
-<span id="cb65-7"><a href="measures.html#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gridsim_const, file = a_file)</span></span>
-<span id="cb65-8"><a href="measures.html#cb65-8" aria-hidden="true" tabindex="-1"></a>gridsim_const <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="measures.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb67-2"><a href="measures.html#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gridsim_const &lt;- fciR::mc_beta_effect_measures(shape1 = 1, shape2 = 1, nrep = 5000,</span></span>
+<span id="cb67-3"><a href="measures.html#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                       constrained = TRUE)</span></span>
+<span id="cb67-4"><a href="measures.html#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb67-5"><a href="measures.html#cb67-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb67-6"><a href="measures.html#cb67-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_gridsim_const.rds&quot;</span>)</span>
+<span id="cb67-7"><a href="measures.html#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gridsim_const, file = a_file)</span></span>
+<span id="cb67-8"><a href="measures.html#cb67-8" aria-hidden="true" tabindex="-1"></a>gridsim_const <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <p>which gives the vector of percentages</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="measures.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim_const)</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="measures.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim_const)</span></code></pre></div>
 <pre><code>##              RD_RR          RD_RRstar              RD_OR          RR_RRstar 
 ##         0.00000000         0.00000000         0.00000000         0.00000000 
 ##              RR_OR          RRstar_OR RD_RR_vs_RRstar_OR RD_RRstar_vs_RR_OR 
@@ -1685,19 +1690,19 @@ Venn diagram as follows</p>
 ##       RR_RRstar_OR    RD_RR_RRstar_OR               NONE 
 ##         0.00000000         0.66773676         0.00000000</code></pre>
 <p>and comparing to the author’s results</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="measures.html#cb68-1" aria-hidden="true" tabindex="-1"></a>bb_const <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD_RR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RD_RRstar&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RD_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, </span>
-<span id="cb68-2"><a href="measures.html#cb68-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.0</span>,</span>
-<span id="cb68-3"><a href="measures.html#cb68-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb68-4"><a href="measures.html#cb68-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb68-5"><a href="measures.html#cb68-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb68-6"><a href="measures.html#cb68-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RD_RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.114</span>, </span>
-<span id="cb68-7"><a href="measures.html#cb68-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.114</span>, <span class="st">&quot;RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
-<span id="cb68-8"><a href="measures.html#cb68-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.667</span>, <span class="st">&quot;NONE&quot;</span> <span class="ot">=</span> <span class="dv">0</span>)</span>
-<span id="cb68-9"><a href="measures.html#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(bb_const)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="measures.html#cb70-1" aria-hidden="true" tabindex="-1"></a>bb_const <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RD_RR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RD_RRstar&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RD_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, </span>
+<span id="cb70-2"><a href="measures.html#cb70-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.053</span>, <span class="st">&quot;RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.0</span>,</span>
+<span id="cb70-3"><a href="measures.html#cb70-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb70-4"><a href="measures.html#cb70-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb70-5"><a href="measures.html#cb70-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb70-6"><a href="measures.html#cb70-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar&quot;</span> <span class="ot">=</span> <span class="dv">0</span>, <span class="st">&quot;RD_RR_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.114</span>, </span>
+<span id="cb70-7"><a href="measures.html#cb70-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.114</span>, <span class="st">&quot;RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="dv">0</span>,</span>
+<span id="cb70-8"><a href="measures.html#cb70-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;RD_RR_RRstar_OR&quot;</span> <span class="ot">=</span> <span class="fl">0.667</span>, <span class="st">&quot;NONE&quot;</span> <span class="ot">=</span> <span class="dv">0</span>)</span>
+<span id="cb70-9"><a href="measures.html#cb70-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(bb_const)</span></code></pre></div>
 <pre><code>## [1] 1.107</code></pre>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="measures.html#cb70-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> <span class="fu">round</span>(bb_const, <span class="dv">4</span>), </span>
-<span id="cb70-2"><a href="measures.html#cb70-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sim =</span> <span class="fu">round</span>(<span class="fu">unlist</span>(gridsim_const), <span class="dv">4</span>))</span>
-<span id="cb70-3"><a href="measures.html#cb70-3" aria-hidden="true" tabindex="-1"></a>comp</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="measures.html#cb72-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">bb =</span> <span class="fu">round</span>(bb_const, <span class="dv">4</span>), </span>
+<span id="cb72-2"><a href="measures.html#cb72-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sim =</span> <span class="fu">round</span>(<span class="fu">unlist</span>(gridsim_const), <span class="dv">4</span>))</span>
+<span id="cb72-3"><a href="measures.html#cb72-3" aria-hidden="true" tabindex="-1"></a>comp</span></code></pre></div>
 <pre><code>##                       bb    sim
 ## RD_RR              0.053 0.0000
 ## RD_RRstar          0.053 0.0000
@@ -1716,23 +1721,23 @@ Venn diagram as follows</p>
 ## NONE               0.000 0.0000</code></pre>
 <p>The results from the Monte Carlo simulation with the constrained data
 agree the author’s result.</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="measures.html#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(gridsim_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])),</span>
-<span id="cb72-2"><a href="measures.html#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="measures.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(gridsim_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])),</span>
+<span id="cb74-2"><a href="measures.html#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]))</span></code></pre></div>
 <pre><code>## simulation   author&#39;s 
 ##  0.6677368  0.6670000</code></pre>
 <p>Again the <strong>Opposite pairwise events</strong> cannot be represented
 in the 4-set Venn diagram.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="measures.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The events that pair of measures move together but in opposite</span></span>
-<span id="cb74-2"><a href="measures.html#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="co"># direction of another pair who also move together</span></span>
-<span id="cb74-3"><a href="measures.html#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim_const[<span class="fu">c</span>(<span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span>, <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span>, <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span>)])</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="measures.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The events that pair of measures move together but in opposite</span></span>
+<span id="cb76-2"><a href="measures.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="co"># direction of another pair who also move together</span></span>
+<span id="cb76-3"><a href="measures.html#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(gridsim_const[<span class="fu">c</span>(<span class="st">&quot;RD_RR_vs_RRstar_OR&quot;</span>, <span class="st">&quot;RD_RRstar_vs_RR_OR&quot;</span>, <span class="st">&quot;RD_OR_vs_RR_RRstar&quot;</span>)])</span></code></pre></div>
 <pre><code>## RD_RR_vs_RRstar_OR RD_RRstar_vs_RR_OR RD_OR_vs_RR_RRstar 
 ##         0.06260032         0.04975923         0.00000000</code></pre>
 <p>but if we do it as mentioned above then we can show a Venn diagram as follows</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="measures.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a custom function using the venn package</span></span>
-<span id="cb76-2"><a href="measures.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim_const,</span>
-<span id="cb76-3"><a href="measures.html#cb76-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;cyan&quot;</span>, <span class="st">&quot;gold&quot;</span>, <span class="st">&quot;springgreen&quot;</span>, <span class="st">&quot;hotpink&quot;</span>),</span>
-<span id="cb76-4"><a href="measures.html#cb76-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram for constrained data&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="measures.html#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a custom function using the venn package</span></span>
+<span id="cb78-2"><a href="measures.html#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_venn_sim</span>(gridsim_const,</span>
+<span id="cb78-3"><a href="measures.html#cb78-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill_colr =</span> <span class="fu">c</span>(<span class="st">&quot;cyan&quot;</span>, <span class="st">&quot;gold&quot;</span>, <span class="st">&quot;springgreen&quot;</span>, <span class="st">&quot;hotpink&quot;</span>),</span>
+<span id="cb78-4"><a href="measures.html#cb78-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">&quot;Venn diagram for constrained data&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
 </div>
 <div id="applications" class="section level3 hasAnchor" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> Applications<a href="measures.html#applications" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1744,17 +1749,17 @@ modifications.</p>
 <p>We run the Monte-Carlo simulation with 5000 repetitions, a grid of
 <code>shape1</code> and <code>shape2</code> parameters for the Beta distribution and no
 constraint. Namely <code>mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7), shape2 = c(0.5, 1, 3, 5, 7), nrep = 5000)</code></p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="measures.html#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 25 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="measures.html#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 25 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 25 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="measures.html#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb79-2"><a href="measures.html#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="co"># priorsim &lt;- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),</span></span>
-<span id="cb79-3"><a href="measures.html#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                   shape2 = c(0.5, 1, 3, 5, 7),</span></span>
-<span id="cb79-4"><a href="measures.html#cb79-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                   nrep = 5000)</span></span>
-<span id="cb79-5"><a href="measures.html#cb79-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb79-6"><a href="measures.html#cb79-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb79-7"><a href="measures.html#cb79-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_priorsim.rds&quot;</span>)</span>
-<span id="cb79-8"><a href="measures.html#cb79-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(priorsim, file = a_file)</span></span>
-<span id="cb79-9"><a href="measures.html#cb79-9" aria-hidden="true" tabindex="-1"></a>priorsim <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="measures.html#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb81-2"><a href="measures.html#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="co"># priorsim &lt;- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),</span></span>
+<span id="cb81-3"><a href="measures.html#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                   shape2 = c(0.5, 1, 3, 5, 7),</span></span>
+<span id="cb81-4"><a href="measures.html#cb81-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                   nrep = 5000)</span></span>
+<span id="cb81-5"><a href="measures.html#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb81-6"><a href="measures.html#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb81-7"><a href="measures.html#cb81-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_priorsim.rds&quot;</span>)</span>
+<span id="cb81-8"><a href="measures.html#cb81-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(priorsim, file = a_file)</span></span>
+<span id="cb81-9"><a href="measures.html#cb81-9" aria-hidden="true" tabindex="-1"></a>priorsim <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <p>and we look at the matrix for the event <code>RD_RR_RRstar_OR</code> which represents the
 event that all effect measures move in the same direction.</p>
 <p>The matrix elements correspond to the percentage frequency of the event given
@@ -1772,7 +1777,7 @@ same directions is nearing 100%. See for example when <span class="math inline">
 the matrix of results from the sim.</p>
 <p>here is the matrix of percentage of times that all measures move in the same
 direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="measures.html#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]], <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="measures.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]], <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##        s1=0.5 s1=1 s1=3 s1=5 s1=7
 ## s2=0.5   0.78 0.81 0.82 0.83 0.83
 ## s2=1     0.81 0.84 0.86 0.87 0.86
@@ -1780,40 +1785,40 @@ direction, i.e. the event <code>RD_RR_RRstar_OR</code></p>
 ## s2=5     0.83 0.86 0.91 0.92 0.92
 ## s2=7     0.83 0.87 0.91 0.93 0.93</code></pre>
 <p>and to show as a heatmap</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="measures.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>, </span>
-<span id="cb82-2"><a href="measures.html#cb82-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue4&quot;</span>))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="measures.html#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>, </span>
+<span id="cb84-2"><a href="measures.html#cb84-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;deepskyblue4&quot;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <p>and comparing with the author</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="measures.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
-<span id="cb83-2"><a href="measures.html#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="measures.html#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
+<span id="cb85-2"><a href="measures.html#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## simulation   author&#39;s 
 ##      0.835      0.833</code></pre>
 <p>We can see that the range is wide and should be considered.</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="measures.html#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="measures.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(priorsim[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]])</span></code></pre></div>
 <pre><code>## [1] 0.7842 0.9310</code></pre>
 <p>Now we do it with constrained data</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="measures.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="measures.html#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 30 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 30 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="measures.html#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb89-2"><a href="measures.html#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="co"># priorsim_const &lt;- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),</span></span>
-<span id="cb89-3"><a href="measures.html#cb89-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         shape2 = c(0.5, 1, 3, 5, 7),</span></span>
-<span id="cb89-4"><a href="measures.html#cb89-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         nrep = 5000, constrained = TRUE)</span></span>
-<span id="cb89-5"><a href="measures.html#cb89-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb89-6"><a href="measures.html#cb89-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb89-7"><a href="measures.html#cb89-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_priorsim_const.rds&quot;</span>)</span>
-<span id="cb89-8"><a href="measures.html#cb89-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(priorsim_const, file = a_file)</span></span>
-<span id="cb89-9"><a href="measures.html#cb89-9" aria-hidden="true" tabindex="-1"></a>priorsim_const <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="measures.html#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim_const, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>,</span>
-<span id="cb90-2"><a href="measures.html#cb90-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon4&quot;</span>),</span>
-<span id="cb90-3"><a href="measures.html#cb90-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">title =</span> <span class="st">&quot;Monte Carlo simulation. Constrained data.&quot;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="measures.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb91-2"><a href="measures.html#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="co"># priorsim_const &lt;- fciR::mc_beta_effect_measures(shape1 = c(0.5, 1, 3, 5, 7),</span></span>
+<span id="cb91-3"><a href="measures.html#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         shape2 = c(0.5, 1, 3, 5, 7),</span></span>
+<span id="cb91-4"><a href="measures.html#cb91-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         nrep = 5000, constrained = TRUE)</span></span>
+<span id="cb91-5"><a href="measures.html#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb91-6"><a href="measures.html#cb91-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb91-7"><a href="measures.html#cb91-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap04_priorsim_const.rds&quot;</span>)</span>
+<span id="cb91-8"><a href="measures.html#cb91-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(priorsim_const, file = a_file)</span></span>
+<span id="cb91-9"><a href="measures.html#cb91-9" aria-hidden="true" tabindex="-1"></a>priorsim_const <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="measures.html#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggp_betasim</span>(priorsim_const, <span class="at">var =</span> <span class="st">&quot;RD_RR_RRstar_OR&quot;</span>,</span>
+<span id="cb92-2"><a href="measures.html#cb92-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">colr =</span> <span class="fu">list</span>(<span class="st">&quot;low&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon1&quot;</span>, <span class="st">&quot;high&quot;</span> <span class="ot">=</span> <span class="st">&quot;lightsalmon4&quot;</span>),</span>
+<span id="cb92-3"><a href="measures.html#cb92-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">title =</span> <span class="st">&quot;Monte Carlo simulation. Constrained data.&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
 <p>and comparing with the author</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="measures.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
-<span id="cb91-2"><a href="measures.html#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="measures.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="st">&quot;simulation&quot;</span> <span class="ot">=</span> priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]][<span class="st">&quot;s2=1&quot;</span>, <span class="st">&quot;s1=1&quot;</span>], </span>
+<span id="cb93-2"><a href="measures.html#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;author&#39;s&quot;</span> <span class="ot">=</span> <span class="fu">unname</span>(bb_const[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>])), <span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## simulation   author&#39;s 
 ##      0.662      0.667</code></pre>
 <p>and the range is even larger and therefore more significant.</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="measures.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="measures.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(priorsim_const[[<span class="st">&quot;RD_RR_RRstar_OR&quot;</span>]])</span></code></pre></div>
 <pre><code>## [1] 0.5710824 0.8565217</code></pre>
 </div>
 <div id="application-data-pre-processing-data-cleaning" class="section level4 hasAnchor" number="4.2.2.2">
