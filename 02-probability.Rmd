@@ -16,13 +16,6 @@ dir_lib <- file.path(getwd(), "lib")
 ```
 
 
-The mortality data was given in chapter 1, section 1.2.1.
-
-```{r}
-data("mortality", package = "fciR")
-dataMortality <- mortality
-```
-
 
 ## Conditional Probability
 
@@ -73,10 +66,14 @@ beginning of 2019 $E(Y \mid T = 1) = 0.0088$
 ```{r}
 data("mortality_long", package = "fciR")
 mortality_long |>
+  # condition on T = 1
   filter(`T` == 1) |>
+  # compute probabilties
   mutate(prob = n / sum(n)) |>
+  # compute expectation for each possible value of Y
   group_by(Y) |>
   summarize(EYT1 = sum(Y * prob)) |>
+  # output results in a named vector
   pull() |>
   setNames(nm = c("EY0T1", "EY1T1"))
 ```
@@ -125,46 +122,203 @@ E(YT \mid H) = E(Y \mid H)E(T \mid H) \implies \text{conditionally uncorrelated}
 E(YT) = E(Y)E(T) \implies \text{uncorrelated}
 $$
 
+> It happens that conditional mean independence implies conditional 
+uncorrelation, but not the other way around.
+
+We prove it as follows
+
+$$
+\begin{align*}
+\text{assume Y is conditionally independent of T given H then} \\
+E(Y \mid T, H) &= E(Y \mid H) \\ \\
+\text{using double expectation theorem} \\
+E(TY \mid H) &= E_{T \mid H}(E(TY \mid H, T)) \\
+\text{expectation is a linear operator} \\
+&= E_{T \mid H}(TE(Y \mid H, T)) \\
+\text{by conditional mean independence from above} \\
+&= E_{T \mid H}(TE(Y \mid H)) \\
+\text{expectation is a linear operator} \\
+&= E_{T \mid H}(T)E_{T \mid H}(E(Y \mid H)) \\
+\text{which proves the conditional uncorrelation} \\
+&= E(T \mid H)E(Y \mid H)
+\end{align*}
+$$
+
+
 ### Regression model
 
 > A statistical model for a conditional expectation is called a 
 *regression model*.
 
+For a binary dataset the regression model is said to be *saturated* or 
+*nonparametric* because the 4 proportions, or coefficients, cover all 
+possibilities.
+
+
+$$
+E(Y \mid T, H) = \beta_0 + \beta_1 H + \beta_2 T + \beta_3 H * T
+$$
+
+When *unsaturated* or *parametric* the model makes an assumption. For example
+the following model assumes no interaction.
+
+
+
+$$
+E(Y \mid T, H) = \beta_0 + \beta_1 H + \beta_2 T
+$$
+
 
 ### Nonlinear parametric models
+
+The three parametric models, also the most well-known, used in the book are
+
+$$
+\begin{align*}
+\text{linear: } \: E(Y \mid X_1, \ldots, X_p) &= \beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p \\
+\text{loglinear: } \: E(Y \mid X_1, \ldots, X_p) &= \exp{(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p)} \\
+\text{logistic: } \: E(Y \mid X_1, \ldots, X_p) &= \text{expit}(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p)
+\end{align*}
+$$
 
 The function `expit()` used by the author is actually the same as
 `gtools::inv.logit()`, `boot::inv.logit()` or `stats::plogis()`. In this project 
 we use `stats::plogis()` to minimize dependencies since it is in base R.
 
-
-
 ## Estimation
 
-Using the *What-if* example we have
+This section is extremely important as it is used extensively, especially from
+the chapter 6 on.
+
+Lets use the *What-if* example to illustrate the mathematics of it. In that case,
+we have 3 covariates, $T$ for naltrexone, $A$ for reduced drinking and $H$ for
+unsuppressed viral load. In the data set we have 165 inobservations, therefore 
+$i=165$.
+
+Let $X_i$ denote the collection of $X_{ij}$ for $j=1, \ldots, p$ where $p$ is 
+the number of covariates which is 3 in the What-if dataset. $X_i$ is a 
+**horizontal** vector.
+
+So for the What-if study
+
+$$
+X_i = \begin{bmatrix}A_i & T_i & H_1 \end{bmatrix}
+$$
+and $\beta$ is a **vertical** vector.
+
+$$
+\beta = \begin{bmatrix}\beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix}
+$$
+therefore
 
 $$
 \begin{align*}
-X_i \beta &= X_{i,1} \beta_i +\ldots+X_{i, p}\beta_p \\
-&\therefore \\
-X_i \beta &= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i \\
+X_i \beta &= \begin{bmatrix}A_i & T_i & H_1 \end{bmatrix} \times \begin{bmatrix}\beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix} \\
+&= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i
 \end{align*}
 $$
 
-and 
+we also have
 
 $$
-X_i^T(Y_i - X_i \beta) \\
-\therefore \\
-\begin{bmatrix}
-1 \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
-A_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
-T_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)\\
-H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
+\begin{align*}
+X_i^T (Y_i - X_i \beta) &= \begin{bmatrix}A_i \\ T_i \\ H_1 \end{bmatrix}(Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\
+&= \begin{bmatrix}
+A_i (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\ 
+T_i (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\ 
+H_1 (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) 
 \end{bmatrix}
+\end{align*}
+$$
+Also, we can estimate the unconditional expectation  of the binary outcome $Y$
+as
+
+$$
+\hat{E}(Y) = \frac{1}{n} \sum_{i=1}^n Y_i
+$$
+which returns the proportion of participants with unsuppressed viral load after
+4 months
+
+```{r}
+data("whatifdat", package = "fciR")
+mean(whatifdat$Y)
+```
+This is an unbiased estimator for $E(Y)$ because $E(\hat{E}(Y)) = E(Y)$
+
+Now let the saturated model for $E(Y)$ be
+
+$$
+E(Y) = \beta
 $$
 
+with the following *estimating equation*
 
+$$
+U(\beta) = \sum_{i=1}^n (Y_i - \beta) = 0
+$$
+and simple algebra, using the estimate of $\hat{E}(Y)$ from above gives
+$\beta = \hat{E}(Y)$ and we use the notation $\hat{E}(Y) = E(Y \mid X, \beta)$
+to show its dependency on the data and $\beta$.
+
+
+$$
+\begin{align*}
+U(\beta) &= \sum_{i=1}^n (Y_i - \beta) \\
+&= \sum_{i=1}^n \left[ Y_i - E(Y \mid X, \beta) \right] \\
+&= 0
+\end{align*}
+$$
+and to do the actual calculations we use a variation of the estimating equation
+as follows
+
+$$
+\begin{align*}
+U(\beta) = \sum_{i=1}^n X_i^T \left[ Y_i - E(Y \mid X, \beta) \right] = 0
+\end{align*}
+$$
+As an example, we fit the logistic regression model with the *What-if* dataset
+
+$$
+E(Y \mid A,T,H) = expit(\beta_0 + \beta_A A + \beta_T T + \beta_H H)
+$$
+```{r}
+whatif.mod <- glm(Y ~ A + `T` + H, family = "binomial", data = whatifdat)
+summary(whatif.mod)
+```
+
+The coefficients, $\beta_0, \beta_A, \beta_T, \beta_H$ are obtained with 
+`coef()` which is an alias for 
+`coefficient()`. The example in the book uses `lmod$coef` which is a bad
+coding practice.  The data should be obtained with an extractor function such as
+`coef()`.
+
+```{r}
+coef(whatif.mod)
+```
+
+and since the model is binomial then the inverse function to convert from the
+logit scale to the natural scale is `stats::plogis()`.
+
+Therefore the parametric estimate is
+
+$$
+E(Y \mid A=1, T=1, H=1) = \beta_0 + \beta_A \cdot 1 + \beta_T \cdot 1 + \beta_H \cdot 1
+$$
+
+```{r}
+stats::plogis(sum(coef(whatif.mod)))
+```
+and we can validate the result directly with a nonparametric estimate using
+the dataset
+
+```{r}
+whatifdat |>
+  filter(A == 1, `T` == 1, H == 1) |>
+  summarize(mean(Y)) |>
+  pull()
+```
+
+which is a close to the parametric estimate.
 
 ## Sampling Distributions and the Bootstrap
 

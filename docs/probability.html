@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-08" />
+<meta name="date" content="2022-05-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -398,9 +398,6 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="probability" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Conditional Probability and Expectation<a href="probability.html#probability" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The mortality data was given in chapter 1, section 1.2.1.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb7-2"><a href="probability.html#cb7-2" aria-hidden="true" tabindex="-1"></a>dataMortality <span class="ot">&lt;-</span> mortality</span></code></pre></div>
 <div id="conditional-probability" class="section level2 hasAnchor" number="2.1">
 <h2><span class="header-section-number">2.1</span> Conditional Probability<a href="probability.html#conditional-probability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="law-of-total-probability" class="section level3 hasAnchor" number="2.1.1">
@@ -436,14 +433,18 @@ E(Y \mid T) = \sum_y y P(Y=y \mid T)
 the same as <em>filtering</em> the data.</p>
 <p>For example the conditional expectation of mortality of US resident at the
 beginning of 2019 <span class="math inline">\(E(Y \mid T = 1) = 0.0088\)</span></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="probability.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb8-2"><a href="probability.html#cb8-2" aria-hidden="true" tabindex="-1"></a>mortality_long <span class="sc">|&gt;</span></span>
-<span id="cb8-3"><a href="probability.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-4"><a href="probability.html#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="probability.html#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Y) <span class="sc">|&gt;</span></span>
-<span id="cb8-6"><a href="probability.html#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT1 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> prob)) <span class="sc">|&gt;</span></span>
-<span id="cb8-7"><a href="probability.html#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-8"><a href="probability.html#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> <span class="fu">c</span>(<span class="st">&quot;EY0T1&quot;</span>, <span class="st">&quot;EY1T1&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="probability.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb7-2"><a href="probability.html#cb7-2" aria-hidden="true" tabindex="-1"></a>mortality_long <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="probability.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># condition on T = 1</span></span>
+<span id="cb7-4"><a href="probability.html#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="probability.html#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute probabilties</span></span>
+<span id="cb7-6"><a href="probability.html#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="probability.html#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute expectation for each possible value of Y</span></span>
+<span id="cb7-8"><a href="probability.html#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Y) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="probability.html#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT1 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> prob)) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="probability.html#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output results in a named vector</span></span>
+<span id="cb7-11"><a href="probability.html#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="probability.html#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> <span class="fu">c</span>(<span class="st">&quot;EY0T1&quot;</span>, <span class="st">&quot;EY1T1&quot;</span>))</span></code></pre></div>
 <pre><code>##  EY0T1  EY1T1 
 ## 0.0000 0.0088</code></pre>
 <p>where <span class="math inline">\(E(Y=0 \mid T=1) = 0\)</span> because when <span class="math inline">\(Y=0 \implies 0 \cdot P(Y=0) = 0\)</span> and
@@ -484,6 +485,27 @@ E(Y \mid T, H) = E(Y \mid H)
 E(YT \mid H) = E(Y \mid H)E(T \mid H) \implies \text{conditionally uncorrelated} \\
 E(YT) = E(Y)E(T) \implies \text{uncorrelated}
 \]</span></p>
+<blockquote>
+<p>It happens that conditional mean independence implies conditional
+uncorrelation, but not the other way around.</p>
+</blockquote>
+<p>We prove it as follows</p>
+<p><span class="math display">\[
+\begin{align*}
+\text{assume Y is conditionally independent of T given H then} \\
+E(Y \mid T, H) &amp;= E(Y \mid H) \\ \\
+\text{using double expectation theorem} \\
+E(TY \mid H) &amp;= E_{T \mid H}(E(TY \mid H, T)) \\
+\text{expectation is a linear operator} \\
+&amp;= E_{T \mid H}(TE(Y \mid H, T)) \\
+\text{by conditional mean independence from above} \\
+&amp;= E_{T \mid H}(TE(Y \mid H)) \\
+\text{expectation is a linear operator} \\
+&amp;= E_{T \mid H}(T)E_{T \mid H}(E(Y \mid H)) \\
+\text{which proves the conditional uncorrelation} \\
+&amp;= E(T \mid H)E(Y \mid H)
+\end{align*}
+\]</span></p>
 </div>
 <div id="regression-model" class="section level3 hasAnchor" number="2.2.2">
 <h3><span class="header-section-number">2.2.2</span> Regression model<a href="probability.html#regression-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -491,9 +513,28 @@ E(YT) = E(Y)E(T) \implies \text{uncorrelated}
 <p>A statistical model for a conditional expectation is called a
 <em>regression model</em>.</p>
 </blockquote>
+<p>For a binary dataset the regression model is said to be <em>saturated</em> or
+<em>nonparametric</em> because the 4 proportions, or coefficients, cover all
+possibilities.</p>
+<p><span class="math display">\[
+E(Y \mid T, H) = \beta_0 + \beta_1 H + \beta_2 T + \beta_3 H * T
+\]</span></p>
+<p>When <em>unsaturated</em> or <em>parametric</em> the model makes an assumption. For example
+the following model assumes no interaction.</p>
+<p><span class="math display">\[
+E(Y \mid T, H) = \beta_0 + \beta_1 H + \beta_2 T
+\]</span></p>
 </div>
 <div id="nonlinear-parametric-models" class="section level3 hasAnchor" number="2.2.3">
 <h3><span class="header-section-number">2.2.3</span> Nonlinear parametric models<a href="probability.html#nonlinear-parametric-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The three parametric models, also the most well-known, used in the book are</p>
+<p><span class="math display">\[
+\begin{align*}
+\text{linear: } \: E(Y \mid X_1, \ldots, X_p) &amp;= \beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p \\
+\text{loglinear: } \: E(Y \mid X_1, \ldots, X_p) &amp;= \exp{(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p)} \\
+\text{logistic: } \: E(Y \mid X_1, \ldots, X_p) &amp;= \text{expit}(\beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p)
+\end{align*}
+\]</span></p>
 <p>The function <code>expit()</code> used by the author is actually the same as
 <code>gtools::inv.logit()</code>, <code>boot::inv.logit()</code> or <code>stats::plogis()</code>. In this project
 we use <code>stats::plogis()</code> to minimize dependencies since it is in base R.</p>
@@ -501,35 +542,141 @@ we use <code>stats::plogis()</code> to minimize dependencies since it is in base
 </div>
 <div id="estimation" class="section level2 hasAnchor" number="2.3">
 <h2><span class="header-section-number">2.3</span> Estimation<a href="probability.html#estimation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Using the <em>What-if</em> example we have</p>
+<p>This section is extremely important as it is used extensively, especially from
+the chapter 6 on.</p>
+<p>Lets use the <em>What-if</em> example to illustrate the mathematics of it. In that case,
+we have 3 covariates, <span class="math inline">\(T\)</span> for naltrexone, <span class="math inline">\(A\)</span> for reduced drinking and <span class="math inline">\(H\)</span> for
+unsuppressed viral load. In the data set we have 165 inobservations, therefore
+<span class="math inline">\(i=165\)</span>.</p>
+<p>Let <span class="math inline">\(X_i\)</span> denote the collection of <span class="math inline">\(X_{ij}\)</span> for <span class="math inline">\(j=1, \ldots, p\)</span> where <span class="math inline">\(p\)</span> is
+the number of covariates which is 3 in the What-if dataset. <span class="math inline">\(X_i\)</span> is a
+<strong>horizontal</strong> vector.</p>
+<p>So for the What-if study</p>
+<p><span class="math display">\[
+X_i = \begin{bmatrix}A_i &amp; T_i &amp; H_1 \end{bmatrix}
+\]</span>
+and <span class="math inline">\(\beta\)</span> is a <strong>vertical</strong> vector.</p>
+<p><span class="math display">\[
+\beta = \begin{bmatrix}\beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix}
+\]</span>
+therefore</p>
 <p><span class="math display">\[
 \begin{align*}
-X_i \beta &amp;= X_{i,1} \beta_i +\ldots+X_{i, p}\beta_p \\
-&amp;\therefore \\
-X_i \beta &amp;= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i \\
+X_i \beta &amp;= \begin{bmatrix}A_i &amp; T_i &amp; H_1 \end{bmatrix} \times \begin{bmatrix}\beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix} \\
+&amp;= \beta_1 A_i + \beta_2 T_i + \beta_3 H_i
 \end{align*}
 \]</span></p>
-<p>and</p>
+<p>we also have</p>
 <p><span class="math display">\[
-X_i^T(Y_i - X_i \beta) \\
-\therefore \\
-\begin{bmatrix}
-1 \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
-A_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4) \\
-T_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)\\
-H_i \cdot(Y_i - \beta_1 - A_i \beta_2 - T_i \beta_3 - H_i \beta_4)
+\begin{align*}
+X_i^T (Y_i - X_i \beta) &amp;= \begin{bmatrix}A_i \\ T_i \\ H_1 \end{bmatrix}(Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\
+&amp;= \begin{bmatrix}
+A_i (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\ 
+T_i (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) \\ 
+H_1 (Y_i - \beta_1 A_i + \beta_2 T_i + \beta_3 H_i) 
 \end{bmatrix}
+\end{align*}
+\]</span>
+Also, we can estimate the unconditional expectation of the binary outcome <span class="math inline">\(Y\)</span>
+as</p>
+<p><span class="math display">\[
+\hat{E}(Y) = \frac{1}{n} \sum_{i=1}^n Y_i
+\]</span>
+which returns the proportion of participants with unsuppressed viral load after
+4 months</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="probability.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb9-2"><a href="probability.html#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(whatifdat<span class="sc">$</span>Y)</span></code></pre></div>
+<pre><code>## [1] 0.3212121</code></pre>
+<p>This is an unbiased estimator for <span class="math inline">\(E(Y)\)</span> because <span class="math inline">\(E(\hat{E}(Y)) = E(Y)\)</span></p>
+<p>Now let the saturated model for <span class="math inline">\(E(Y)\)</span> be</p>
+<p><span class="math display">\[
+E(Y) = \beta
 \]</span></p>
+<p>with the following <em>estimating equation</em></p>
+<p><span class="math display">\[
+U(\beta) = \sum_{i=1}^n (Y_i - \beta) = 0
+\]</span>
+and simple algebra, using the estimate of <span class="math inline">\(\hat{E}(Y)\)</span> from above gives
+<span class="math inline">\(\beta = \hat{E}(Y)\)</span> and we use the notation <span class="math inline">\(\hat{E}(Y) = E(Y \mid X, \beta)\)</span>
+to show its dependency on the data and <span class="math inline">\(\beta\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+U(\beta) &amp;= \sum_{i=1}^n (Y_i - \beta) \\
+&amp;= \sum_{i=1}^n \left[ Y_i - E(Y \mid X, \beta) \right] \\
+&amp;= 0
+\end{align*}
+\]</span>
+and to do the actual calculations we use a variation of the estimating equation
+as follows</p>
+<p><span class="math display">\[
+\begin{align*}
+U(\beta) = \sum_{i=1}^n X_i^T \left[ Y_i - E(Y \mid X, \beta) \right] = 0
+\end{align*}
+\]</span>
+As an example, we fit the logistic regression model with the <em>What-if</em> dataset</p>
+<p><span class="math display">\[
+E(Y \mid A,T,H) = expit(\beta_0 + \beta_A A + \beta_T T + \beta_H H)
+\]</span></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="probability.html#cb11-1" aria-hidden="true" tabindex="-1"></a>whatif.mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> A <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> H, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> whatifdat)</span>
+<span id="cb11-2"><a href="probability.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(whatif.mod)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = Y ~ A + T + H, family = &quot;binomial&quot;, data = whatifdat)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.7199  -0.5664  -0.4834   0.7932   2.1944  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -1.5234     0.4125  -3.693 0.000222 ***
+## A            -0.5647     0.4214  -1.340 0.180248    
+## T            -0.2254     0.4147  -0.543 0.586790    
+## H             2.7438     0.4158   6.600 4.12e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 207.17  on 164  degrees of freedom
+## Residual deviance: 150.83  on 161  degrees of freedom
+## AIC: 158.83
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>The coefficients, <span class="math inline">\(\beta_0, \beta_A, \beta_T, \beta_H\)</span> are obtained with
+<code>coef()</code> which is an alias for
+<code>coefficient()</code>. The example in the book uses <code>lmod$coef</code> which is a bad
+coding practice. The data should be obtained with an extractor function such as
+<code>coef()</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="probability.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(whatif.mod)</span></code></pre></div>
+<pre><code>## (Intercept)           A           T           H 
+##  -1.5233530  -0.5647068  -0.2254112   2.7438245</code></pre>
+<p>and since the model is binomial then the inverse function to convert from the
+logit scale to the natural scale is <code>stats::plogis()</code>.</p>
+<p>Therefore the parametric estimate is</p>
+<p><span class="math display">\[
+E(Y \mid A=1, T=1, H=1) = \beta_0 + \beta_A \cdot 1 + \beta_T \cdot 1 + \beta_H \cdot 1
+\]</span></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="probability.html#cb15-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">plogis</span>(<span class="fu">sum</span>(<span class="fu">coef</span>(whatif.mod)))</span></code></pre></div>
+<pre><code>## [1] 0.6059581</code></pre>
+<p>and we can validate the result directly with a nonparametric estimate using
+the dataset</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="probability.html#cb17-1" aria-hidden="true" tabindex="-1"></a>whatifdat <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="probability.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A <span class="sc">==</span> <span class="dv">1</span>, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, H <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="probability.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(Y)) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="probability.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<pre><code>## [1] 0.5909091</code></pre>
+<p>which is a close to the parametric estimate.</p>
 </div>
 <div id="sampling-distributions-and-the-bootstrap" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Sampling Distributions and the Bootstrap<a href="probability.html#sampling-distributions-and-the-bootstrap" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The <code>sim()</code> function in section 2.4, p. 31 is coded in <code>fciR::sim_intervals()</code>
 and its alias <code>fciR::sim()</code>.</p>
 <p>Run and verify with author’s results on p. 32</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="probability.html#cb10-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
-<span id="cb10-2"><a href="probability.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, </span>
-<span id="cb10-3"><a href="probability.html#cb10-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
-<span id="cb10-4"><a href="probability.html#cb10-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="probability.html#cb19-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
+<span id="cb19-2"><a href="probability.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, </span>
+<span id="cb19-3"><a href="probability.html#cb19-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
+<span id="cb19-4"><a href="probability.html#cb19-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>## $bad
 ## [1] 0.85
 ## 
@@ -537,24 +684,24 @@ and its alias <code>fciR::sim()</code>.</p>
 ## [1] 0.954</code></pre>
 <p>and <code>lmodboot()</code> is <code>fciR::boot_lmod()</code> with the alias <code>fciR::lmodboot()</code></p>
 <p>Run and verify against the author’s results on p.34</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="probability.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb12-2"><a href="probability.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="probability.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb21-2"><a href="probability.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="probability.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb14-2"><a href="probability.html#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># out &lt;- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,</span></span>
-<span id="cb14-3"><a href="probability.html#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                 inv = &quot;expit&quot;, evars = &quot;logit&quot;,</span></span>
-<span id="cb14-4"><a href="probability.html#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                 outcome.name = &quot;Y&quot;,</span></span>
-<span id="cb14-5"><a href="probability.html#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                 input.names = c(&quot;T&quot;, &quot;A&quot;, &quot;H&quot;))</span></span>
-<span id="cb14-6"><a href="probability.html#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb14-7"><a href="probability.html#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb14-8"><a href="probability.html#cb14-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap02_lmodboot.rds&quot;</span>)</span>
-<span id="cb14-9"><a href="probability.html#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(out, file = a_file)</span></span>
-<span id="cb14-10"><a href="probability.html#cb14-10" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb14-11"><a href="probability.html#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="probability.html#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
-<span id="cb14-13"><a href="probability.html#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(out[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb14-14"><a href="probability.html#cb14-14" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb14-15"><a href="probability.html#cb14-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="probability.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb23-2"><a href="probability.html#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># out &lt;- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,</span></span>
+<span id="cb23-3"><a href="probability.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                 inv = &quot;expit&quot;, evars = &quot;logit&quot;,</span></span>
+<span id="cb23-4"><a href="probability.html#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                 outcome.name = &quot;Y&quot;,</span></span>
+<span id="cb23-5"><a href="probability.html#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                 input.names = c(&quot;T&quot;, &quot;A&quot;, &quot;H&quot;))</span></span>
+<span id="cb23-6"><a href="probability.html#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb23-7"><a href="probability.html#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb23-8"><a href="probability.html#cb23-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap02_lmodboot.rds&quot;</span>)</span>
+<span id="cb23-9"><a href="probability.html#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(out, file = a_file)</span></span>
+<span id="cb23-10"><a href="probability.html#cb23-10" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb23-11"><a href="probability.html#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="probability.html#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
+<span id="cb23-13"><a href="probability.html#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(out[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb23-14"><a href="probability.html#cb23-14" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb23-15"><a href="probability.html#cb23-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
 </div>
 <div id="exercises-1" class="section level2 hasAnchor" number="2.5">
 <h2><span class="header-section-number">2.5</span> Exercises<a href="probability.html#exercises-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>

@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-08" />
+<meta name="date" content="2022-05-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -463,19 +463,19 @@ E_H E(Y \mid do(T=t), H) = E(Y \mid do(T=t), H = 0) P(H = 0) + E(Y \mid do(T=t),
 \]</span></p>
 <p>and using the example on p. 100 with the mortality data we first load the
 data set</p>
-<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="backdoor.html#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb132-2"><a href="backdoor.html#cb132-2" aria-hidden="true" tabindex="-1"></a>mortality <span class="ot">&lt;-</span> mortality_long</span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="backdoor.html#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb141-2"><a href="backdoor.html#cb141-2" aria-hidden="true" tabindex="-1"></a>mortality <span class="ot">&lt;-</span> mortality_long</span></code></pre></div>
 <p>and we begin by calculating <span class="math inline">\(\hat{E}(Y \mid T=0, H=0)\)</span></p>
-<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="backdoor.html#cb133-1" aria-hidden="true" tabindex="-1"></a>mortality <span class="sc">%&gt;%</span></span>
-<span id="cb133-2"><a href="backdoor.html#cb133-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, H <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb133-3"><a href="backdoor.html#cb133-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">weighted.mean</span>(Y, n))</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="backdoor.html#cb142-1" aria-hidden="true" tabindex="-1"></a>mortality <span class="sc">%&gt;%</span></span>
+<span id="cb142-2"><a href="backdoor.html#cb142-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, H <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb142-3"><a href="backdoor.html#cb142-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">weighted.mean</span>(Y, n))</span></code></pre></div>
 <pre><code>##            EY
 ## 1 0.002253583</code></pre>
 <p>and for all permutations of <span class="math inline">\(T\)</span> and <span class="math inline">\(H\)</span> we have</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="backdoor.html#cb135-1" aria-hidden="true" tabindex="-1"></a>EYcondTH <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
-<span id="cb135-2"><a href="backdoor.html#cb135-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) <span class="sc">%&gt;%</span></span>
-<span id="cb135-3"><a href="backdoor.html#cb135-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYcond =</span> <span class="fu">weighted.mean</span>(Y, n))</span>
-<span id="cb135-4"><a href="backdoor.html#cb135-4" aria-hidden="true" tabindex="-1"></a>EYcondTH</span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="backdoor.html#cb144-1" aria-hidden="true" tabindex="-1"></a>EYcondTH <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
+<span id="cb144-2"><a href="backdoor.html#cb144-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) <span class="sc">%&gt;%</span></span>
+<span id="cb144-3"><a href="backdoor.html#cb144-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYcond =</span> <span class="fu">weighted.mean</span>(Y, n))</span>
+<span id="cb144-4"><a href="backdoor.html#cb144-4" aria-hidden="true" tabindex="-1"></a>EYcondTH</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 3
 ## # Groups:   T [2]
 ##       T     H  EYcond
@@ -485,19 +485,19 @@ data set</p>
 ## 3     1     0 0.00268
 ## 4     1     1 0.0446</code></pre>
 <p>and then we multiply the conditional expectations by the probabilities of <span class="math inline">\(H\)</span>.</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="backdoor.html#cb137-1" aria-hidden="true" tabindex="-1"></a>PH <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
-<span id="cb137-2"><a href="backdoor.html#cb137-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(H) <span class="sc">%&gt;%</span></span>
-<span id="cb137-3"><a href="backdoor.html#cb137-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(p))</span>
-<span id="cb137-4"><a href="backdoor.html#cb137-4" aria-hidden="true" tabindex="-1"></a>PH</span></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="backdoor.html#cb146-1" aria-hidden="true" tabindex="-1"></a>PH <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
+<span id="cb146-2"><a href="backdoor.html#cb146-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(H) <span class="sc">%&gt;%</span></span>
+<span id="cb146-3"><a href="backdoor.html#cb146-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(p))</span>
+<span id="cb146-4"><a href="backdoor.html#cb146-4" aria-hidden="true" tabindex="-1"></a>PH</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##       H  prob
 ##   &lt;dbl&gt; &lt;dbl&gt;
 ## 1     0 0.897
 ## 2     1 0.103</code></pre>
 <p>and the multiplication</p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="backdoor.html#cb139-1" aria-hidden="true" tabindex="-1"></a>EYH <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(EYcondTH, PH, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;H&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb139-2"><a href="backdoor.html#cb139-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EYH =</span> EYcond <span class="sc">*</span> prob)</span>
-<span id="cb139-3"><a href="backdoor.html#cb139-3" aria-hidden="true" tabindex="-1"></a>EYH</span></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="backdoor.html#cb148-1" aria-hidden="true" tabindex="-1"></a>EYH <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(EYcondTH, PH, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;H&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb148-2"><a href="backdoor.html#cb148-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EYH =</span> EYcond <span class="sc">*</span> prob)</span>
+<span id="cb148-3"><a href="backdoor.html#cb148-3" aria-hidden="true" tabindex="-1"></a>EYH</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 5
 ## # Groups:   T [2]
 ##       T     H  EYcond  prob     EYH
@@ -507,10 +507,10 @@ data set</p>
 ## 3     1     0 0.00268 0.897 0.00240
 ## 4     1     1 0.0446  0.103 0.00459</code></pre>
 <p>and the final results are</p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="backdoor.html#cb141-1" aria-hidden="true" tabindex="-1"></a>EYout <span class="ot">&lt;-</span> EYH <span class="sc">%&gt;%</span></span>
-<span id="cb141-2"><a href="backdoor.html#cb141-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb141-3"><a href="backdoor.html#cb141-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYout =</span> <span class="fu">sum</span>(EYH))</span>
-<span id="cb141-4"><a href="backdoor.html#cb141-4" aria-hidden="true" tabindex="-1"></a>EYout</span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="backdoor.html#cb150-1" aria-hidden="true" tabindex="-1"></a>EYout <span class="ot">&lt;-</span> EYH <span class="sc">%&gt;%</span></span>
+<span id="cb150-2"><a href="backdoor.html#cb150-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb150-3"><a href="backdoor.html#cb150-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYout =</span> <span class="fu">sum</span>(EYH))</span>
+<span id="cb150-4"><a href="backdoor.html#cb150-4" aria-hidden="true" tabindex="-1"></a>EYout</span></code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##       T   EYout
 ##   &lt;dbl&gt;   &lt;dbl&gt;
@@ -518,59 +518,59 @@ data set</p>
 ## 2     1 0.00700</code></pre>
 <p>Now, lets do it with raw data. For that we convert the mortality data to have
 1 line per 10000 observations.</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="backdoor.html#cb143-1" aria-hidden="true" tabindex="-1"></a>mort <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
-<span id="cb143-2"><a href="backdoor.html#cb143-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(H, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, Y, n) <span class="sc">%&gt;%</span></span>
-<span id="cb143-3"><a href="backdoor.html#cb143-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.integer</span>(n <span class="sc">/</span> <span class="dv">10000</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb143-4"><a href="backdoor.html#cb143-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncount</span>(n)</span>
-<span id="cb143-5"><a href="backdoor.html#cb143-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mort)</span></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="backdoor.html#cb152-1" aria-hidden="true" tabindex="-1"></a>mort <span class="ot">&lt;-</span> mortality <span class="sc">%&gt;%</span></span>
+<span id="cb152-2"><a href="backdoor.html#cb152-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(H, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, Y, n) <span class="sc">%&gt;%</span></span>
+<span id="cb152-3"><a href="backdoor.html#cb152-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.integer</span>(n <span class="sc">/</span> <span class="dv">10000</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb152-4"><a href="backdoor.html#cb152-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncount</span>(n)</span>
+<span id="cb152-5"><a href="backdoor.html#cb152-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mort)</span></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    176080 obs. of  3 variables:
 ##  $ H: num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ T: num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ Y: num  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <p>and the function used to automate the process described above is as follows</p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="backdoor.html#cb145-1" aria-hidden="true" tabindex="-1"></a>est_out_np <span class="ot">&lt;-</span> <span class="cf">function</span>(data, outcome, exposure, confound) {</span>
-<span id="cb145-2"><a href="backdoor.html#cb145-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the frequencies</span></span>
-<span id="cb145-3"><a href="backdoor.html#cb145-3" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb145-4"><a href="backdoor.html#cb145-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>({{outcome}}, {{exposure}}, {{confound}}) <span class="sc">%&gt;%</span></span>
-<span id="cb145-5"><a href="backdoor.html#cb145-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">freq =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
-<span id="cb145-6"><a href="backdoor.html#cb145-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb145-7"><a href="backdoor.html#cb145-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the expected value of the outcome given the exposure and confounds</span></span>
-<span id="cb145-8"><a href="backdoor.html#cb145-8" aria-hidden="true" tabindex="-1"></a>  EYcond <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb145-9"><a href="backdoor.html#cb145-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{exposure}}, {{confound}}) <span class="sc">%&gt;%</span></span>
-<span id="cb145-10"><a href="backdoor.html#cb145-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EYcond =</span> <span class="fu">weighted.mean</span>(<span class="at">x =</span> {{outcome}}, <span class="at">w =</span> n))</span>
-<span id="cb145-11"><a href="backdoor.html#cb145-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb145-12"><a href="backdoor.html#cb145-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the probabilities of the confound</span></span>
-<span id="cb145-13"><a href="backdoor.html#cb145-13" aria-hidden="true" tabindex="-1"></a>  PH <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb145-14"><a href="backdoor.html#cb145-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{confound}}) <span class="sc">%&gt;%</span></span>
-<span id="cb145-15"><a href="backdoor.html#cb145-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(freq))</span>
-<span id="cb145-16"><a href="backdoor.html#cb145-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb145-17"><a href="backdoor.html#cb145-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># multiply the conditional expectation by the confound probabilities</span></span>
-<span id="cb145-18"><a href="backdoor.html#cb145-18" aria-hidden="true" tabindex="-1"></a>  cnf <span class="ot">&lt;-</span> <span class="fu">enquo</span>(confound)</span>
-<span id="cb145-19"><a href="backdoor.html#cb145-19" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(EYcond, PH, <span class="at">by =</span> <span class="fu">quo_name</span>(cnf)) <span class="sc">%&gt;%</span></span>
-<span id="cb145-20"><a href="backdoor.html#cb145-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">EY =</span> EYcond <span class="sc">*</span> prob) <span class="sc">%&gt;%</span></span>
-<span id="cb145-21"><a href="backdoor.html#cb145-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{exposure}}) <span class="sc">%&gt;%</span></span>
-<span id="cb145-22"><a href="backdoor.html#cb145-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">sum</span>(EY)) <span class="sc">%&gt;%</span></span>
-<span id="cb145-23"><a href="backdoor.html#cb145-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>({{exposure}}) <span class="sc">%&gt;%</span></span>
-<span id="cb145-24"><a href="backdoor.html#cb145-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(EY) <span class="sc">%&gt;%</span></span>
-<span id="cb145-25"><a href="backdoor.html#cb145-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>))</span>
-<span id="cb145-26"><a href="backdoor.html#cb145-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="backdoor.html#cb146-1" aria-hidden="true" tabindex="-1"></a>mort.out.est <span class="ot">&lt;-</span> <span class="fu">est_out_np</span>(mort, <span class="at">outcome =</span> Y, <span class="at">exposure =</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">confound =</span> H)</span>
-<span id="cb146-2"><a href="backdoor.html#cb146-2" aria-hidden="true" tabindex="-1"></a>mort.out.est</span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="backdoor.html#cb154-1" aria-hidden="true" tabindex="-1"></a>est_out_np <span class="ot">&lt;-</span> <span class="cf">function</span>(data, outcome, exposure, confound) {</span>
+<span id="cb154-2"><a href="backdoor.html#cb154-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the frequencies</span></span>
+<span id="cb154-3"><a href="backdoor.html#cb154-3" aria-hidden="true" tabindex="-1"></a>  summ <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb154-4"><a href="backdoor.html#cb154-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>({{outcome}}, {{exposure}}, {{confound}}) <span class="sc">%&gt;%</span></span>
+<span id="cb154-5"><a href="backdoor.html#cb154-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">freq =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb154-6"><a href="backdoor.html#cb154-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb154-7"><a href="backdoor.html#cb154-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the expected value of the outcome given the exposure and confounds</span></span>
+<span id="cb154-8"><a href="backdoor.html#cb154-8" aria-hidden="true" tabindex="-1"></a>  EYcond <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb154-9"><a href="backdoor.html#cb154-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{exposure}}, {{confound}}) <span class="sc">%&gt;%</span></span>
+<span id="cb154-10"><a href="backdoor.html#cb154-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EYcond =</span> <span class="fu">weighted.mean</span>(<span class="at">x =</span> {{outcome}}, <span class="at">w =</span> n))</span>
+<span id="cb154-11"><a href="backdoor.html#cb154-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb154-12"><a href="backdoor.html#cb154-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the probabilities of the confound</span></span>
+<span id="cb154-13"><a href="backdoor.html#cb154-13" aria-hidden="true" tabindex="-1"></a>  PH <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb154-14"><a href="backdoor.html#cb154-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{confound}}) <span class="sc">%&gt;%</span></span>
+<span id="cb154-15"><a href="backdoor.html#cb154-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">prob =</span> <span class="fu">sum</span>(freq))</span>
+<span id="cb154-16"><a href="backdoor.html#cb154-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb154-17"><a href="backdoor.html#cb154-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># multiply the conditional expectation by the confound probabilities</span></span>
+<span id="cb154-18"><a href="backdoor.html#cb154-18" aria-hidden="true" tabindex="-1"></a>  cnf <span class="ot">&lt;-</span> <span class="fu">enquo</span>(confound)</span>
+<span id="cb154-19"><a href="backdoor.html#cb154-19" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(EYcond, PH, <span class="at">by =</span> <span class="fu">quo_name</span>(cnf)) <span class="sc">%&gt;%</span></span>
+<span id="cb154-20"><a href="backdoor.html#cb154-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">EY =</span> EYcond <span class="sc">*</span> prob) <span class="sc">%&gt;%</span></span>
+<span id="cb154-21"><a href="backdoor.html#cb154-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{exposure}}) <span class="sc">%&gt;%</span></span>
+<span id="cb154-22"><a href="backdoor.html#cb154-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">sum</span>(EY)) <span class="sc">%&gt;%</span></span>
+<span id="cb154-23"><a href="backdoor.html#cb154-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>({{exposure}}) <span class="sc">%&gt;%</span></span>
+<span id="cb154-24"><a href="backdoor.html#cb154-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(EY) <span class="sc">%&gt;%</span></span>
+<span id="cb154-25"><a href="backdoor.html#cb154-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>))</span>
+<span id="cb154-26"><a href="backdoor.html#cb154-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="backdoor.html#cb155-1" aria-hidden="true" tabindex="-1"></a>mort.out.est <span class="ot">&lt;-</span> <span class="fu">est_out_np</span>(mort, <span class="at">outcome =</span> Y, <span class="at">exposure =</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">confound =</span> H)</span>
+<span id="cb155-2"><a href="backdoor.html#cb155-2" aria-hidden="true" tabindex="-1"></a>mort.out.est</span></code></pre></div>
 <pre><code>##         EY0         EY1 
 ## 0.007831933 0.006969437</code></pre>
 <p>and we can see it gives the same results (the function is also found in
 <code>fciR::backdr_out_np</code>)</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="backdoor.html#cb148-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 2 min. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="backdoor.html#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 2 min. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 2 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="backdoor.html#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb150-2"><a href="backdoor.html#cb150-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mort.out.np &lt;- fciR::boot_est(</span></span>
-<span id="cb150-3"><a href="backdoor.html#cb150-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mort, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;, </span></span>
-<span id="cb150-4"><a href="backdoor.html#cb150-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;T&quot;, confound.names = &quot;H&quot;)</span></span>
-<span id="cb150-5"><a href="backdoor.html#cb150-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb150-6"><a href="backdoor.html#cb150-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb150-7"><a href="backdoor.html#cb150-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mort_out_np.rds&quot;</span>)</span>
-<span id="cb150-8"><a href="backdoor.html#cb150-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mort.out.np, file = a_file)</span></span>
-<span id="cb150-9"><a href="backdoor.html#cb150-9" aria-hidden="true" tabindex="-1"></a>mort.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="backdoor.html#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb159-2"><a href="backdoor.html#cb159-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mort.out.np &lt;- fciR::boot_est(</span></span>
+<span id="cb159-3"><a href="backdoor.html#cb159-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mort, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;, </span></span>
+<span id="cb159-4"><a href="backdoor.html#cb159-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;T&quot;, confound.names = &quot;H&quot;)</span></span>
+<span id="cb159-5"><a href="backdoor.html#cb159-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb159-6"><a href="backdoor.html#cb159-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb159-7"><a href="backdoor.html#cb159-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mort_out_np.rds&quot;</span>)</span>
+<span id="cb159-8"><a href="backdoor.html#cb159-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mort.out.np, file = a_file)</span></span>
+<span id="cb159-9"><a href="backdoor.html#cb159-9" aria-hidden="true" tabindex="-1"></a>mort.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
 <div id="gxdvuyotxm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1024,18 +1024,18 @@ data set</p>
 </div>
 <p>and we now do it with the function <code>fciR::backdr_out_npr</code>. That function
 works exactly as the function <code>standr</code> in the book.</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="backdoor.html#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="backdoor.html#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 3 min. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 3 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="backdoor.html#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb153-2"><a href="backdoor.html#cb153-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mort.out.npr &lt;- fciR::boot_est(</span></span>
-<span id="cb153-3"><a href="backdoor.html#cb153-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mort, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
-<span id="cb153-4"><a href="backdoor.html#cb153-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;T&quot;, confound.names = &quot;H&quot;, interactions = list(c(&quot;T&quot;, &quot;H&quot;)))</span></span>
-<span id="cb153-5"><a href="backdoor.html#cb153-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb153-6"><a href="backdoor.html#cb153-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb153-7"><a href="backdoor.html#cb153-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mort_out_npr.rds&quot;</span>)</span>
-<span id="cb153-8"><a href="backdoor.html#cb153-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mort.out.npr, file = a_file)</span></span>
-<span id="cb153-9"><a href="backdoor.html#cb153-9" aria-hidden="true" tabindex="-1"></a>mort.out.npr <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-113-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="backdoor.html#cb162-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb162-2"><a href="backdoor.html#cb162-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mort.out.npr &lt;- fciR::boot_est(</span></span>
+<span id="cb162-3"><a href="backdoor.html#cb162-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mort, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
+<span id="cb162-4"><a href="backdoor.html#cb162-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;T&quot;, confound.names = &quot;H&quot;, interactions = list(c(&quot;T&quot;, &quot;H&quot;)))</span></span>
+<span id="cb162-5"><a href="backdoor.html#cb162-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb162-6"><a href="backdoor.html#cb162-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb162-7"><a href="backdoor.html#cb162-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mort_out_npr.rds&quot;</span>)</span>
+<span id="cb162-8"><a href="backdoor.html#cb162-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mort.out.npr, file = a_file)</span></span>
+<span id="cb162-9"><a href="backdoor.html#cb162-9" aria-hidden="true" tabindex="-1"></a>mort.out.npr <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-117-1.png" width="100%" /></p>
 <p>and the results are the same again. In conclusion pretty much any of the
 function. The function <code>fciR::backdr_out_npr</code> seems faster. The function
 <code>fciR::backdr_out_np</code> is actually useful as a double check and it actually
@@ -1044,75 +1044,75 @@ uses a “pure” application of probabilities.</p>
 <h3>Examples<a href="backdoor.html#examples-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="what-if-study" class="section level4 unnumbered hasAnchor">
 <h4>What-if? Study<a href="backdoor.html#what-if-study" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="backdoor.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="backdoor.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
 <div id="non-parametric-with-regression-backdr_out_npr" class="section level5 unnumbered hasAnchor">
 <h5>Non-parametric With Regression <code>backdr_out_npr</code><a href="backdoor.html#non-parametric-with-regression-backdr_out_npr" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="backdoor.html#cb155-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb155-2"><a href="backdoor.html#cb155-2" aria-hidden="true" tabindex="-1"></a>  whatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
-<span id="cb155-3"><a href="backdoor.html#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>)))</span>
-<span id="cb155-4"><a href="backdoor.html#cb155-4" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="backdoor.html#cb164-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb164-2"><a href="backdoor.html#cb164-2" aria-hidden="true" tabindex="-1"></a>  whatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb164-3"><a href="backdoor.html#cb164-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>)))</span>
+<span id="cb164-4"><a href="backdoor.html#cb164-4" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out</span></span></code></pre></div>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="backdoor.html#cb156-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb156-2"><a href="backdoor.html#cb156-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb156-3"><a href="backdoor.html#cb156-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.375</span>, <span class="fl">0.289</span>, <span class="sc">-</span><span class="fl">0.086</span>, <span class="fl">0.77</span>),</span>
-<span id="cb156-4"><a href="backdoor.html#cb156-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif.out<span class="sc">$</span>est[whatif.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
-<span id="cb156-5"><a href="backdoor.html#cb156-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb156-6"><a href="backdoor.html#cb156-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="backdoor.html#cb165-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb165-2"><a href="backdoor.html#cb165-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb165-3"><a href="backdoor.html#cb165-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.375</span>, <span class="fl">0.289</span>, <span class="sc">-</span><span class="fl">0.086</span>, <span class="fl">0.77</span>),</span>
+<span id="cb165-4"><a href="backdoor.html#cb165-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif.out<span class="sc">$</span>est[whatif.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
+<span id="cb165-5"><a href="backdoor.html#cb165-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb165-6"><a href="backdoor.html#cb165-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.1</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-117-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-121-1.png" width="100%" /></p>
 <p>where we observe a reduction of the viral load but the difference is not
 statistically significant.</p>
 </div>
 <div id="non-parametric-without-regression-backdr_out_np" class="section level5 unnumbered hasAnchor">
 <h5>Non-parametric Without Regression <code>backdr_out_np</code><a href="backdoor.html#non-parametric-without-regression-backdr_out_np" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="backdoor.html#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="backdoor.html#cb166-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 15 sec.. Load from file.</code></pre>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="backdoor.html#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb159-2"><a href="backdoor.html#cb159-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out.np &lt;- fciR::boot_est(</span></span>
-<span id="cb159-3"><a href="backdoor.html#cb159-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   whatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
-<span id="cb159-4"><a href="backdoor.html#cb159-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;H&quot;)</span></span>
-<span id="cb159-5"><a href="backdoor.html#cb159-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb159-6"><a href="backdoor.html#cb159-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb159-7"><a href="backdoor.html#cb159-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_np.rds&quot;</span>)</span>
-<span id="cb159-8"><a href="backdoor.html#cb159-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.np, file = a_file)</span></span>
-<span id="cb159-9"><a href="backdoor.html#cb159-9" aria-hidden="true" tabindex="-1"></a>whatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-119-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="backdoor.html#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb168-2"><a href="backdoor.html#cb168-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out.np &lt;- fciR::boot_est(</span></span>
+<span id="cb168-3"><a href="backdoor.html#cb168-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   whatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
+<span id="cb168-4"><a href="backdoor.html#cb168-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;H&quot;)</span></span>
+<span id="cb168-5"><a href="backdoor.html#cb168-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb168-6"><a href="backdoor.html#cb168-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb168-7"><a href="backdoor.html#cb168-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_np.rds&quot;</span>)</span>
+<span id="cb168-8"><a href="backdoor.html#cb168-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.np, file = a_file)</span></span>
+<span id="cb168-9"><a href="backdoor.html#cb168-9" aria-hidden="true" tabindex="-1"></a>whatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-123-1.png" width="100%" /></p>
 <p><em>T0.he results are different when we don’t use linear regression!</em>. Not
 a very large difference but a significant one.</p>
 </div>
 </div>
 <div id="double-what-if-study" class="section level4 unnumbered hasAnchor">
 <h4>Double What-if? Study<a href="backdoor.html#double-what-if-study" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="backdoor.html#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="backdoor.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span></code></pre></div>
 <div id="non-parametric-with-regression-backdr_out_npr-1" class="section level5 unnumbered hasAnchor">
 <h5>Non-parametric With Regression <code>backdr_out_npr</code><a href="backdoor.html#non-parametric-with-regression-backdr_out_npr-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="backdoor.html#cb161-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb161-2"><a href="backdoor.html#cb161-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb161-3"><a href="backdoor.html#cb161-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-122-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="backdoor.html#cb170-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb170-2"><a href="backdoor.html#cb170-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb170-3"><a href="backdoor.html#cb170-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-126-1.png" width="100%" /></p>
 </div>
 <div id="non-parametric-without-regression-backdr_out_np-1" class="section level5 unnumbered hasAnchor">
 <h5>Non-parametric Without Regression <code>backdr_out_np</code><a href="backdoor.html#non-parametric-without-regression-backdr_out_np-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="backdoor.html#cb162-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="backdoor.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 15 sec.. Load from file.</code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="backdoor.html#cb164-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb164-2"><a href="backdoor.html#cb164-2" aria-hidden="true" tabindex="-1"></a><span class="co"># doublewhatif.out.np &lt;- fciR::boot_est(</span></span>
-<span id="cb164-3"><a href="backdoor.html#cb164-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   doublewhatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;VL1&quot;,</span></span>
-<span id="cb164-4"><a href="backdoor.html#cb164-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;AD0&quot;)</span></span>
-<span id="cb164-5"><a href="backdoor.html#cb164-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb164-6"><a href="backdoor.html#cb164-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb164-7"><a href="backdoor.html#cb164-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_doublewhatif_out_np.rds&quot;</span>)</span>
-<span id="cb164-8"><a href="backdoor.html#cb164-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(doublewhatif.out.np, file = a_file)</span></span>
-<span id="cb164-9"><a href="backdoor.html#cb164-9" aria-hidden="true" tabindex="-1"></a>doublewhatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-124-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="backdoor.html#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb173-2"><a href="backdoor.html#cb173-2" aria-hidden="true" tabindex="-1"></a><span class="co"># doublewhatif.out.np &lt;- fciR::boot_est(</span></span>
+<span id="cb173-3"><a href="backdoor.html#cb173-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   doublewhatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = &quot;VL1&quot;,</span></span>
+<span id="cb173-4"><a href="backdoor.html#cb173-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;AD0&quot;)</span></span>
+<span id="cb173-5"><a href="backdoor.html#cb173-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb173-6"><a href="backdoor.html#cb173-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb173-7"><a href="backdoor.html#cb173-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_doublewhatif_out_np.rds&quot;</span>)</span>
+<span id="cb173-8"><a href="backdoor.html#cb173-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(doublewhatif.out.np, file = a_file)</span></span>
+<span id="cb173-9"><a href="backdoor.html#cb173-9" aria-hidden="true" tabindex="-1"></a>doublewhatif.out.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-128-1.png" width="100%" /></p>
 <p>and the results are the same</p>
 <blockquote>
 <p>For comparisons, we repeat the standardization with <span class="math inline">\(H = VL_0\)</span></p>
 </blockquote>
-<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="backdoor.html#cb165-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb165-2"><a href="backdoor.html#cb165-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb165-3"><a href="backdoor.html#cb165-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-126-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="backdoor.html#cb174-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb174-2"><a href="backdoor.html#cb174-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb174-3"><a href="backdoor.html#cb174-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-130-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1123,59 +1123,59 @@ see the function <code>bootstand</code> in the previous section which can do it 
 addition of the argument <code>att</code>.</p>
 <div id="what-if-study-1" class="section level4 unnumbered hasAnchor">
 <h4>What-if? Study<a href="backdoor.html#what-if-study-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="backdoor.html#cb166-1" aria-hidden="true" tabindex="-1"></a>whatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb166-2"><a href="backdoor.html#cb166-2" aria-hidden="true" tabindex="-1"></a>  whatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
-<span id="cb166-3"><a href="backdoor.html#cb166-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>)),</span>
-<span id="cb166-4"><a href="backdoor.html#cb166-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="backdoor.html#cb175-1" aria-hidden="true" tabindex="-1"></a>whatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb175-2"><a href="backdoor.html#cb175-2" aria-hidden="true" tabindex="-1"></a>  whatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb175-3"><a href="backdoor.html#cb175-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>)),</span>
+<span id="cb175-4"><a href="backdoor.html#cb175-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="backdoor.html#cb167-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb167-2"><a href="backdoor.html#cb167-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb167-3"><a href="backdoor.html#cb167-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.361</span>, <span class="fl">0.276</span>, <span class="sc">-</span><span class="fl">0.085</span>, <span class="fl">0.765</span>),</span>
-<span id="cb167-4"><a href="backdoor.html#cb167-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif.att<span class="sc">$</span>est[whatif.att<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
-<span id="cb167-5"><a href="backdoor.html#cb167-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb167-6"><a href="backdoor.html#cb167-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="backdoor.html#cb176-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb176-2"><a href="backdoor.html#cb176-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb176-3"><a href="backdoor.html#cb176-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.361</span>, <span class="fl">0.276</span>, <span class="sc">-</span><span class="fl">0.085</span>, <span class="fl">0.765</span>),</span>
+<span id="cb176-4"><a href="backdoor.html#cb176-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif.att<span class="sc">$</span>est[whatif.att<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
+<span id="cb176-5"><a href="backdoor.html#cb176-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb176-6"><a href="backdoor.html#cb176-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.1</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="backdoor.html#cb168-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> whatif.att</span>
-<span id="cb168-2"><a href="backdoor.html#cb168-2" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_measures</span>(df, </span>
-<span id="cb168-3"><a href="backdoor.html#cb168-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.4&quot;</span>, </span>
-<span id="cb168-4"><a href="backdoor.html#cb168-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;What-If Study&quot;</span>, <span class="st">&quot;Standardized ATT estimates&quot;</span>,</span>
-<span id="cb168-5"><a href="backdoor.html#cb168-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;Non Parametric With Regression&quot;</span>,</span>
-<span id="cb168-6"><a href="backdoor.html#cb168-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span>
-<span id="cb168-7"><a href="backdoor.html#cb168-7" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_measures</span>(df,</span>
-<span id="cb168-8"><a href="backdoor.html#cb168-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="cn">NULL</span>,</span>
-<span id="cb168-9"><a href="backdoor.html#cb168-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="cn">NULL</span>)</span>
-<span id="cb168-10"><a href="backdoor.html#cb168-10" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt2ggp</span>(tbl)</span>
-<span id="cb168-11"><a href="backdoor.html#cb168-11" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> tbl <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">&quot;What-If Study&quot;</span>,</span>
-<span id="cb168-12"><a href="backdoor.html#cb168-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">subtitle =</span> <span class="st">&quot;Standardized ATT Estimates, 95% confidence interval&quot;</span>) <span class="sc">&amp;</span></span>
-<span id="cb168-13"><a href="backdoor.html#cb168-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>, <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.9</span>)))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-129-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="backdoor.html#cb177-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> whatif.att</span>
+<span id="cb177-2"><a href="backdoor.html#cb177-2" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt_measures</span>(df, </span>
+<span id="cb177-3"><a href="backdoor.html#cb177-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 6.4&quot;</span>, </span>
+<span id="cb177-4"><a href="backdoor.html#cb177-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;What-If Study&quot;</span>, <span class="st">&quot;Standardized ATT estimates&quot;</span>,</span>
+<span id="cb177-5"><a href="backdoor.html#cb177-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">&quot;Non Parametric With Regression&quot;</span>,</span>
+<span id="cb177-6"><a href="backdoor.html#cb177-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span>
+<span id="cb177-7"><a href="backdoor.html#cb177-7" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_measures</span>(df,</span>
+<span id="cb177-8"><a href="backdoor.html#cb177-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">title =</span> <span class="cn">NULL</span>,</span>
+<span id="cb177-9"><a href="backdoor.html#cb177-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">subtitle =</span> <span class="cn">NULL</span>)</span>
+<span id="cb177-10"><a href="backdoor.html#cb177-10" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">gt2ggp</span>(tbl)</span>
+<span id="cb177-11"><a href="backdoor.html#cb177-11" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> tbl <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">&quot;What-If Study&quot;</span>,</span>
+<span id="cb177-12"><a href="backdoor.html#cb177-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">subtitle =</span> <span class="st">&quot;Standardized ATT Estimates, 95% confidence interval&quot;</span>) <span class="sc">&amp;</span></span>
+<span id="cb177-13"><a href="backdoor.html#cb177-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;midnightblue&quot;</span>, <span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.9</span>)))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-133-1.png" width="100%" /></p>
 <p>It can also be done using a non-parametric method without regression. That
 is following pure probabilities from the data.</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="backdoor.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="backdoor.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 8 sec.. Load from file.</code></pre>
-<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="backdoor.html#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb171-2"><a href="backdoor.html#cb171-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out.att.np &lt;- fciR::boot_est(</span></span>
-<span id="cb171-3"><a href="backdoor.html#cb171-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   whatifdat, fciR::backdr_out_np, R = 250, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
-<span id="cb171-4"><a href="backdoor.html#cb171-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;H&quot;, att = TRUE)</span></span>
-<span id="cb171-5"><a href="backdoor.html#cb171-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb171-6"><a href="backdoor.html#cb171-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb171-7"><a href="backdoor.html#cb171-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_att_np.rds&quot;</span>)</span>
-<span id="cb171-8"><a href="backdoor.html#cb171-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.att.np, file = a_file)</span></span>
-<span id="cb171-9"><a href="backdoor.html#cb171-9" aria-hidden="true" tabindex="-1"></a>whatif.out.att.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-131-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="backdoor.html#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb180-2"><a href="backdoor.html#cb180-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif.out.att.np &lt;- fciR::boot_est(</span></span>
+<span id="cb180-3"><a href="backdoor.html#cb180-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   whatifdat, fciR::backdr_out_np, R = 250, conf = 0.95, outcome.name = &quot;Y&quot;,</span></span>
+<span id="cb180-4"><a href="backdoor.html#cb180-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   exposure.name = &quot;A&quot;, confound.names = &quot;H&quot;, att = TRUE)</span></span>
+<span id="cb180-5"><a href="backdoor.html#cb180-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb180-6"><a href="backdoor.html#cb180-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb180-7"><a href="backdoor.html#cb180-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif_out_att_np.rds&quot;</span>)</span>
+<span id="cb180-8"><a href="backdoor.html#cb180-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif.out.att.np, file = a_file)</span></span>
+<span id="cb180-9"><a href="backdoor.html#cb180-9" aria-hidden="true" tabindex="-1"></a>whatif.out.att.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-135-1.png" width="100%" /></p>
 </div>
 <div id="double-what-if-study-1" class="section level4 unnumbered hasAnchor">
 <h4>Double What-if? Study<a href="backdoor.html#double-what-if-study-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="backdoor.html#cb172-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb172-2"><a href="backdoor.html#cb172-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb172-3"><a href="backdoor.html#cb172-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)),</span>
-<span id="cb172-4"><a href="backdoor.html#cb172-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-133-1.png" width="100%" /></p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="backdoor.html#cb173-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb173-2"><a href="backdoor.html#cb173-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb173-3"><a href="backdoor.html#cb173-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)),</span>
-<span id="cb173-4"><a href="backdoor.html#cb173-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-135-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="backdoor.html#cb181-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb181-2"><a href="backdoor.html#cb181-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb181-3"><a href="backdoor.html#cb181-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;AD0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;AD0&quot;</span>)),</span>
+<span id="cb181-4"><a href="backdoor.html#cb181-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-137-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="backdoor.html#cb182-1" aria-hidden="true" tabindex="-1"></a>doublewhatif.att <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb182-2"><a href="backdoor.html#cb182-2" aria-hidden="true" tabindex="-1"></a>  doublewhatifdat, fciR<span class="sc">::</span>backdr_out_npr, <span class="at">R =</span> <span class="dv">500</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
+<span id="cb182-3"><a href="backdoor.html#cb182-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;VL0&quot;</span>, <span class="at">interactions =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;VL0&quot;</span>)),</span>
+<span id="cb182-4"><a href="backdoor.html#cb182-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">att =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-139-1.png" width="100%" /></p>
 </div>
 </div>
 <div id="standardization-with-a-parametric-outcome-model" class="section level3 hasAnchor" number="6.1.2">
@@ -1183,48 +1183,48 @@ is following pure probabilities from the data.</p>
 <p>For a the parametric outcome model <code>fciR::backdr_out()</code> is used</p>
 <div id="what-if-study-2" class="section level4 unnumbered hasAnchor">
 <h4>What-if? Study<a href="backdoor.html#what-if-study-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="backdoor.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatif2dat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb174-2"><a href="backdoor.html#cb174-2" aria-hidden="true" tabindex="-1"></a>whatif2.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb174-3"><a href="backdoor.html#cb174-3" aria-hidden="true" tabindex="-1"></a>  whatif2dat, fciR<span class="sc">::</span>backdr_out, <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>,</span>
-<span id="cb174-4"><a href="backdoor.html#cb174-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;lvlcont0&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="backdoor.html#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatif2dat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb183-2"><a href="backdoor.html#cb183-2" aria-hidden="true" tabindex="-1"></a>whatif2.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb183-3"><a href="backdoor.html#cb183-3" aria-hidden="true" tabindex="-1"></a>  whatif2dat, fciR<span class="sc">::</span>backdr_out, <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>,</span>
+<span id="cb183-4"><a href="backdoor.html#cb183-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">confound.names =</span> <span class="st">&quot;lvlcont0&quot;</span>)</span></code></pre></div>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="backdoor.html#cb175-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb175-2"><a href="backdoor.html#cb175-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb175-3"><a href="backdoor.html#cb175-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.360</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.061</span>, <span class="fl">0.831</span>),</span>
-<span id="cb175-4"><a href="backdoor.html#cb175-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.out<span class="sc">$</span>est[whatif2.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
-<span id="cb175-5"><a href="backdoor.html#cb175-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb175-6"><a href="backdoor.html#cb175-6" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span>
-<span id="cb175-7"><a href="backdoor.html#cb175-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="backdoor.html#cb184-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb184-2"><a href="backdoor.html#cb184-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb184-3"><a href="backdoor.html#cb184-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.360</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.061</span>, <span class="fl">0.831</span>),</span>
+<span id="cb184-4"><a href="backdoor.html#cb184-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.out<span class="sc">$</span>est[whatif2.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
+<span id="cb184-5"><a href="backdoor.html#cb184-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb184-6"><a href="backdoor.html#cb184-6" aria-hidden="true" tabindex="-1"></a><span class="co"># comp</span></span>
+<span id="cb184-7"><a href="backdoor.html#cb184-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.1</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-138-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-142-1.png" width="100%" /></p>
 </div>
 <div id="general-social-survey-1" class="section level4 unnumbered hasAnchor">
 <h4>General Social Survey<a href="backdoor.html#general-social-survey-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="backdoor.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb176-2"><a href="backdoor.html#cb176-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
-<span id="cb176-3"><a href="backdoor.html#cb176-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gssrcc[<span class="fu">complete.cases</span>(gssrcc), ]</span></code></pre></div>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="backdoor.html#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="backdoor.html#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb185-2"><a href="backdoor.html#cb185-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb185-3"><a href="backdoor.html#cb185-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gssrcc[<span class="fu">complete.cases</span>(gssrcc), ]</span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="backdoor.html#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 15 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 15 sec.. Load from file.</code></pre>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="backdoor.html#cb179-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb179-2"><a href="backdoor.html#cb179-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out &lt;- boot_est(data = gssrcc, func = backdr_out,</span></span>
-<span id="cb179-3"><a href="backdoor.html#cb179-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 100, conf = 0.95,</span></span>
-<span id="cb179-4"><a href="backdoor.html#cb179-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
-<span id="cb179-5"><a href="backdoor.html#cb179-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
-<span id="cb179-6"><a href="backdoor.html#cb179-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb179-7"><a href="backdoor.html#cb179-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb179-8"><a href="backdoor.html#cb179-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_gssrcc_out.rds&quot;</span>)</span>
-<span id="cb179-9"><a href="backdoor.html#cb179-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gssrcc.out, file = a_file)</span></span>
-<span id="cb179-10"><a href="backdoor.html#cb179-10" aria-hidden="true" tabindex="-1"></a>gssrcc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb179-11"><a href="backdoor.html#cb179-11" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="backdoor.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb188-2"><a href="backdoor.html#cb188-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out &lt;- boot_est(data = gssrcc, func = backdr_out,</span></span>
+<span id="cb188-3"><a href="backdoor.html#cb188-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 100, conf = 0.95,</span></span>
+<span id="cb188-4"><a href="backdoor.html#cb188-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
+<span id="cb188-5"><a href="backdoor.html#cb188-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
+<span id="cb188-6"><a href="backdoor.html#cb188-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb188-7"><a href="backdoor.html#cb188-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb188-8"><a href="backdoor.html#cb188-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_gssrcc_out.rds&quot;</span>)</span>
+<span id="cb188-9"><a href="backdoor.html#cb188-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gssrcc.out, file = a_file)</span></span>
+<span id="cb188-10"><a href="backdoor.html#cb188-10" aria-hidden="true" tabindex="-1"></a>gssrcc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb188-11"><a href="backdoor.html#cb188-11" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.out</span></span></code></pre></div>
 <p>and we compare with the author’s</p>
-<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="backdoor.html#cb180-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb180-2"><a href="backdoor.html#cb180-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb180-3"><a href="backdoor.html#cb180-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.233</span>, <span class="fl">0.271</span>, <span class="fl">0.038</span>, <span class="fl">1.164</span>),</span>
-<span id="cb180-4"><a href="backdoor.html#cb180-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.out<span class="sc">$</span>est[gssrcc.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
-<span id="cb180-5"><a href="backdoor.html#cb180-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb180-6"><a href="backdoor.html#cb180-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="backdoor.html#cb189-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb189-2"><a href="backdoor.html#cb189-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb189-3"><a href="backdoor.html#cb189-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.233</span>, <span class="fl">0.271</span>, <span class="fl">0.038</span>, <span class="fl">1.164</span>),</span>
+<span id="cb189-4"><a href="backdoor.html#cb189-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.out<span class="sc">$</span>est[gssrcc.out<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)]</span>
+<span id="cb189-5"><a href="backdoor.html#cb189-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb189-6"><a href="backdoor.html#cb189-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.8</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-142-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-146-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1266,24 +1266,24 @@ E \left( \frac{t \cdot y}{e(H)} \right) &amp;= \sum_{y,t,h} \frac{TY}{e(H)} P(Y=
 <div id="mortality-rates-by-country-1" class="section level4 unnumbered hasAnchor">
 <h4>Mortality Rates by Country<a href="backdoor.html#mortality-rates-by-country-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>See section 1.2.1 in chapter 1 for details on <code>data_mortability_exp</code>.</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="backdoor.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb181-2"><a href="backdoor.html#cb181-2" aria-hidden="true" tabindex="-1"></a>mortdat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(mortality_long)</span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="backdoor.html#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mortality_long&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb190-2"><a href="backdoor.html#cb190-2" aria-hidden="true" tabindex="-1"></a>mortdat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(mortality_long)</span></code></pre></div>
 <p>Compute the standardized estimates using exposure modeling with <code>fciR::backdr_exp_np</code></p>
-<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="backdoor.html#cb182-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">backdr_exp_bb</span>(mortdat, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
-<span id="cb182-2"><a href="backdoor.html#cb182-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>)</span>
-<span id="cb182-3"><a href="backdoor.html#cb182-3" aria-hidden="true" tabindex="-1"></a>mortdat.out[<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="backdoor.html#cb191-1" aria-hidden="true" tabindex="-1"></a>mortdat.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">backdr_exp_bb</span>(mortdat, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
+<span id="cb191-2"><a href="backdoor.html#cb191-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="st">&quot;H&quot;</span>, <span class="at">weights =</span> <span class="st">&quot;n&quot;</span>)</span>
+<span id="cb191-3"><a href="backdoor.html#cb191-3" aria-hidden="true" tabindex="-1"></a>mortdat.out[<span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>)]</span></code></pre></div>
 <pre><code>## $EY0
 ## [1] 0.007839904
 ## 
 ## $EY1
 ## [1] 0.006995183</code></pre>
-<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="backdoor.html#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify with the author&#39;s</span></span>
-<span id="cb184-2"><a href="backdoor.html#cb184-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0 <span class="sc">-</span> <span class="fl">0.0078399</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>,</span>
-<span id="cb184-3"><a href="backdoor.html#cb184-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY1 <span class="sc">-</span> <span class="fl">0.0069952</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="backdoor.html#cb185-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> mort <span class="sc">%&gt;%</span></span>
-<span id="cb185-2"><a href="backdoor.html#cb185-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, H, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb185-3"><a href="backdoor.html#cb185-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">freq =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
-<span id="cb185-4"><a href="backdoor.html#cb185-4" aria-hidden="true" tabindex="-1"></a>summ</span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="backdoor.html#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify with the author&#39;s</span></span>
+<span id="cb193-2"><a href="backdoor.html#cb193-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0 <span class="sc">-</span> <span class="fl">0.0078399</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>,</span>
+<span id="cb193-3"><a href="backdoor.html#cb193-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY1 <span class="sc">-</span> <span class="fl">0.0069952</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="backdoor.html#cb194-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> mort <span class="sc">%&gt;%</span></span>
+<span id="cb194-2"><a href="backdoor.html#cb194-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Y, <span class="st">`</span><span class="at">T</span><span class="st">`</span>, H, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb194-3"><a href="backdoor.html#cb194-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">freq =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb194-4"><a href="backdoor.html#cb194-4" aria-hidden="true" tabindex="-1"></a>summ</span></code></pre></div>
 <pre><code>##   Y T H      n         freq
 ## 1 0 0 0 129433 0.7350806452
 ## 2 0 0 1  12549 0.0712687415
@@ -1293,61 +1293,61 @@ E \left( \frac{t \cdot y}{e(H)} \right) &amp;= \sum_{y,t,h} \frac{TY}{e(H)} P(Y=
 ## 6 1 0 1    751 0.0042651068
 ## 7 1 1 0     75 0.0004259428
 ## 8 1 1 1    215 0.0012210359</code></pre>
-<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="backdoor.html#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(summ<span class="sc">$</span>freq) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb187-2"><a href="backdoor.html#cb187-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-3"><a href="backdoor.html#cb187-3" aria-hidden="true" tabindex="-1"></a>eH <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb187-4"><a href="backdoor.html#cb187-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) <span class="sc">%&gt;%</span></span>
-<span id="cb187-5"><a href="backdoor.html#cb187-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-6"><a href="backdoor.html#cb187-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(H) <span class="sc">%&gt;%</span></span>
-<span id="cb187-7"><a href="backdoor.html#cb187-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-8"><a href="backdoor.html#cb187-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb187-9"><a href="backdoor.html#cb187-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(H) <span class="sc">%&gt;%</span></span>
-<span id="cb187-10"><a href="backdoor.html#cb187-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(prob)</span>
-<span id="cb187-11"><a href="backdoor.html#cb187-11" aria-hidden="true" tabindex="-1"></a><span class="co"># eH</span></span>
-<span id="cb187-12"><a href="backdoor.html#cb187-12" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(eH <span class="sc">&gt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>))</span>
-<span id="cb187-13"><a href="backdoor.html#cb187-13" aria-hidden="true" tabindex="-1"></a>eH0 <span class="ot">&lt;-</span> eH[<span class="dv">1</span>]</span>
-<span id="cb187-14"><a href="backdoor.html#cb187-14" aria-hidden="true" tabindex="-1"></a>eH1 <span class="ot">&lt;-</span> eH[<span class="dv">2</span>]</span>
-<span id="cb187-15"><a href="backdoor.html#cb187-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-16"><a href="backdoor.html#cb187-16" aria-hidden="true" tabindex="-1"></a>is_att <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
-<span id="cb187-17"><a href="backdoor.html#cb187-17" aria-hidden="true" tabindex="-1"></a>e0 <span class="ot">&lt;-</span> 1L</span>
-<span id="cb187-18"><a href="backdoor.html#cb187-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (is_att) {</span>
-<span id="cb187-19"><a href="backdoor.html#cb187-19" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb187-20"><a href="backdoor.html#cb187-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb187-21"><a href="backdoor.html#cb187-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sum</span>(freq)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-22"><a href="backdoor.html#cb187-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
-<span id="cb187-23"><a href="backdoor.html#cb187-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb187-24"><a href="backdoor.html#cb187-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-25"><a href="backdoor.html#cb187-25" aria-hidden="true" tabindex="-1"></a><span class="co"># create the  eH variable</span></span>
-<span id="cb187-26"><a href="backdoor.html#cb187-26" aria-hidden="true" tabindex="-1"></a>EY <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb187-27"><a href="backdoor.html#cb187-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">eH =</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> eH0 <span class="sc">+</span> H <span class="sc">*</span> eH1)</span>
-<span id="cb187-28"><a href="backdoor.html#cb187-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-29"><a href="backdoor.html#cb187-29" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the summand of the estimating equations</span></span>
-<span id="cb187-30"><a href="backdoor.html#cb187-30" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>is_att) {</span>
-<span id="cb187-31"><a href="backdoor.html#cb187-31" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
-<span id="cb187-32"><a href="backdoor.html#cb187-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">s =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> eH) <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> Y <span class="sc">/</span> eH)</span>
-<span id="cb187-33"><a href="backdoor.html#cb187-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb187-34"><a href="backdoor.html#cb187-34" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
-<span id="cb187-35"><a href="backdoor.html#cb187-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">s =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> Y <span class="sc">*</span> eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> eH)) <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> Y <span class="sc">/</span> eH)</span>
-<span id="cb187-36"><a href="backdoor.html#cb187-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># E(Y|T=1) is estimated as before (see very last paragraph of section 6.2.1)</span></span>
-<span id="cb187-37"><a href="backdoor.html#cb187-37" aria-hidden="true" tabindex="-1"></a>  EYT <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
-<span id="cb187-38"><a href="backdoor.html#cb187-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb187-39"><a href="backdoor.html#cb187-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Y) <span class="sc">%&gt;%</span></span>
-<span id="cb187-40"><a href="backdoor.html#cb187-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-41"><a href="backdoor.html#cb187-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-42"><a href="backdoor.html#cb187-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EYT =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> prob))</span>
-<span id="cb187-43"><a href="backdoor.html#cb187-43" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb187-44"><a href="backdoor.html#cb187-44" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb187-45"><a href="backdoor.html#cb187-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-46"><a href="backdoor.html#cb187-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the value of the potential outcome</span></span>
-<span id="cb187-47"><a href="backdoor.html#cb187-47" aria-hidden="true" tabindex="-1"></a>EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
-<span id="cb187-48"><a href="backdoor.html#cb187-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb187-49"><a href="backdoor.html#cb187-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">sum</span>(s <span class="sc">*</span> freq)) <span class="sc">%&gt;%</span></span>
-<span id="cb187-50"><a href="backdoor.html#cb187-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb187-51"><a href="backdoor.html#cb187-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(EY)</span>
-<span id="cb187-52"><a href="backdoor.html#cb187-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-53"><a href="backdoor.html#cb187-53" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (is_att) EY[<span class="dv">2</span>] <span class="ot">&lt;-</span> EYT</span>
-<span id="cb187-54"><a href="backdoor.html#cb187-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb187-55"><a href="backdoor.html#cb187-55" aria-hidden="true" tabindex="-1"></a>EY</span></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="backdoor.html#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(summ<span class="sc">$</span>freq) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb196-2"><a href="backdoor.html#cb196-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-3"><a href="backdoor.html#cb196-3" aria-hidden="true" tabindex="-1"></a>eH <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb196-4"><a href="backdoor.html#cb196-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>, H) <span class="sc">%&gt;%</span></span>
+<span id="cb196-5"><a href="backdoor.html#cb196-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-6"><a href="backdoor.html#cb196-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(H) <span class="sc">%&gt;%</span></span>
+<span id="cb196-7"><a href="backdoor.html#cb196-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-8"><a href="backdoor.html#cb196-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb196-9"><a href="backdoor.html#cb196-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(H) <span class="sc">%&gt;%</span></span>
+<span id="cb196-10"><a href="backdoor.html#cb196-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(prob)</span>
+<span id="cb196-11"><a href="backdoor.html#cb196-11" aria-hidden="true" tabindex="-1"></a><span class="co"># eH</span></span>
+<span id="cb196-12"><a href="backdoor.html#cb196-12" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(eH <span class="sc">&gt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>))</span>
+<span id="cb196-13"><a href="backdoor.html#cb196-13" aria-hidden="true" tabindex="-1"></a>eH0 <span class="ot">&lt;-</span> eH[<span class="dv">1</span>]</span>
+<span id="cb196-14"><a href="backdoor.html#cb196-14" aria-hidden="true" tabindex="-1"></a>eH1 <span class="ot">&lt;-</span> eH[<span class="dv">2</span>]</span>
+<span id="cb196-15"><a href="backdoor.html#cb196-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-16"><a href="backdoor.html#cb196-16" aria-hidden="true" tabindex="-1"></a>is_att <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb196-17"><a href="backdoor.html#cb196-17" aria-hidden="true" tabindex="-1"></a>e0 <span class="ot">&lt;-</span> 1L</span>
+<span id="cb196-18"><a href="backdoor.html#cb196-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (is_att) {</span>
+<span id="cb196-19"><a href="backdoor.html#cb196-19" aria-hidden="true" tabindex="-1"></a>  e0 <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb196-20"><a href="backdoor.html#cb196-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb196-21"><a href="backdoor.html#cb196-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sum</span>(freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-22"><a href="backdoor.html#cb196-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
+<span id="cb196-23"><a href="backdoor.html#cb196-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb196-24"><a href="backdoor.html#cb196-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-25"><a href="backdoor.html#cb196-25" aria-hidden="true" tabindex="-1"></a><span class="co"># create the  eH variable</span></span>
+<span id="cb196-26"><a href="backdoor.html#cb196-26" aria-hidden="true" tabindex="-1"></a>EY <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb196-27"><a href="backdoor.html#cb196-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">eH =</span> (<span class="dv">1</span> <span class="sc">-</span> H) <span class="sc">*</span> eH0 <span class="sc">+</span> H <span class="sc">*</span> eH1)</span>
+<span id="cb196-28"><a href="backdoor.html#cb196-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-29"><a href="backdoor.html#cb196-29" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the summand of the estimating equations</span></span>
+<span id="cb196-30"><a href="backdoor.html#cb196-30" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>is_att) {</span>
+<span id="cb196-31"><a href="backdoor.html#cb196-31" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
+<span id="cb196-32"><a href="backdoor.html#cb196-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">s =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> eH) <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> Y <span class="sc">/</span> eH)</span>
+<span id="cb196-33"><a href="backdoor.html#cb196-33" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb196-34"><a href="backdoor.html#cb196-34" aria-hidden="true" tabindex="-1"></a>  EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
+<span id="cb196-35"><a href="backdoor.html#cb196-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">s =</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">*</span> Y <span class="sc">*</span> eH <span class="sc">/</span> (e0 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> eH)) <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">*</span> Y <span class="sc">/</span> eH)</span>
+<span id="cb196-36"><a href="backdoor.html#cb196-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># E(Y|T=1) is estimated as before (see very last paragraph of section 6.2.1)</span></span>
+<span id="cb196-37"><a href="backdoor.html#cb196-37" aria-hidden="true" tabindex="-1"></a>  EYT <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span></span>
+<span id="cb196-38"><a href="backdoor.html#cb196-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb196-39"><a href="backdoor.html#cb196-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Y) <span class="sc">%&gt;%</span></span>
+<span id="cb196-40"><a href="backdoor.html#cb196-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-41"><a href="backdoor.html#cb196-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prob =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-42"><a href="backdoor.html#cb196-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">EYT =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> prob))</span>
+<span id="cb196-43"><a href="backdoor.html#cb196-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb196-44"><a href="backdoor.html#cb196-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb196-45"><a href="backdoor.html#cb196-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-46"><a href="backdoor.html#cb196-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the value of the potential outcome</span></span>
+<span id="cb196-47"><a href="backdoor.html#cb196-47" aria-hidden="true" tabindex="-1"></a>EY <span class="ot">&lt;-</span> EY <span class="sc">%&gt;%</span></span>
+<span id="cb196-48"><a href="backdoor.html#cb196-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb196-49"><a href="backdoor.html#cb196-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EY =</span> <span class="fu">sum</span>(s <span class="sc">*</span> freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb196-50"><a href="backdoor.html#cb196-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb196-51"><a href="backdoor.html#cb196-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(EY)</span>
+<span id="cb196-52"><a href="backdoor.html#cb196-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-53"><a href="backdoor.html#cb196-53" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (is_att) EY[<span class="dv">2</span>] <span class="ot">&lt;-</span> EYT</span>
+<span id="cb196-54"><a href="backdoor.html#cb196-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-55"><a href="backdoor.html#cb196-55" aria-hidden="true" tabindex="-1"></a>EY</span></code></pre></div>
 <pre><code>## [[1]]
 ## [1] 0.01016629
 ## 
@@ -1393,9 +1393,9 @@ E(Y(0) \mid T=1) &amp;= \sum_{y,h} y P(Y=y \mid T=0, H=h) \frac{P(T=1 \mid H=h) 
 \]</span></p>
 <p>See previous section for calculation with mortality data for the function with
 the flag <code>is_att = TRUE</code></p>
-<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="backdoor.html#cb189-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="backdoor.html#cb198-1" aria-hidden="true" tabindex="-1"></a>mortdat.out[[<span class="st">&quot;EY0T1&quot;</span>]]</span></code></pre></div>
 <pre><code>## [1] 0.01017592</code></pre>
-<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="backdoor.html#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0T1 <span class="sc">-</span> <span class="fl">0.010176</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="backdoor.html#cb200-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(mortdat.out<span class="sc">$</span>EY0T1 <span class="sc">-</span> <span class="fl">0.010176</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div>
 </div>
 <div id="standardization-with-a-parametric-exposure-model" class="section level3 hasAnchor" number="6.2.2">
 <h3><span class="header-section-number">6.2.2</span> Standardization with a Parametric Exposure Model<a href="backdoor.html#standardization-with-a-parametric-exposure-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1410,37 +1410,37 @@ more informative and avoid mix up with the much-used base R function <code>exp.<
 <div id="what-if-study-3" class="section level4 unnumbered hasAnchor">
 <h4>What-if? Study<a href="backdoor.html#what-if-study-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>First we do it using the <code>glm</code> fit</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="backdoor.html#cb192-1" aria-hidden="true" tabindex="-1"></a>whatif2.exp <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> whatif2dat, <span class="at">func =</span> backdr_exp,</span>
-<span id="cb192-2"><a href="backdoor.html#cb192-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">R =</span> <span class="dv">250</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb192-3"><a href="backdoor.html#cb192-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
-<span id="cb192-4"><a href="backdoor.html#cb192-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="fu">c</span>(<span class="st">&quot;lvlcont0&quot;</span>))</span>
-<span id="cb192-5"><a href="backdoor.html#cb192-5" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.exp</span></span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="backdoor.html#cb201-1" aria-hidden="true" tabindex="-1"></a>whatif2.exp <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> whatif2dat, <span class="at">func =</span> backdr_exp,</span>
+<span id="cb201-2"><a href="backdoor.html#cb201-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">R =</span> <span class="dv">250</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb201-3"><a href="backdoor.html#cb201-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb201-4"><a href="backdoor.html#cb201-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="fu">c</span>(<span class="st">&quot;lvlcont0&quot;</span>))</span>
+<span id="cb201-5"><a href="backdoor.html#cb201-5" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.exp</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="backdoor.html#cb193-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb193-2"><a href="backdoor.html#cb193-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb193-3"><a href="backdoor.html#cb193-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="fl">0.834</span>),</span>
-<span id="cb193-4"><a href="backdoor.html#cb193-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.exp<span class="sc">$</span>est[whatif2.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb193-5"><a href="backdoor.html#cb193-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="backdoor.html#cb202-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb202-2"><a href="backdoor.html#cb202-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb202-3"><a href="backdoor.html#cb202-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.36</span>, <span class="fl">0.30</span>, <span class="sc">-</span><span class="fl">0.06</span>, <span class="fl">0.834</span>),</span>
+<span id="cb202-4"><a href="backdoor.html#cb202-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.exp<span class="sc">$</span>est[whatif2.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb202-5"><a href="backdoor.html#cb202-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-149-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-153-1.png" width="100%" /></p>
 <p>then we use the <code>geeglm</code> from the <code>geepack</code> package fit for risk difference</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="backdoor.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 6 sec.. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="backdoor.html#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 6 sec.. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 6 sec.. Load from file.</code></pre>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="backdoor.html#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb196-2"><a href="backdoor.html#cb196-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee &lt;- boot_est(data = whatif2dat, func = backdr_exp_gee,</span></span>
-<span id="cb196-3"><a href="backdoor.html#cb196-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 250, conf = 0.95,</span></span>
-<span id="cb196-4"><a href="backdoor.html#cb196-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;vl4&quot;, exposure.name = &quot;A&quot;,</span></span>
-<span id="cb196-5"><a href="backdoor.html#cb196-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = &quot;lvlcont0&quot;)</span></span>
-<span id="cb196-6"><a href="backdoor.html#cb196-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb196-7"><a href="backdoor.html#cb196-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb196-8"><a href="backdoor.html#cb196-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb196-9"><a href="backdoor.html#cb196-9" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif2gee.rds&quot;</span>)</span>
-<span id="cb196-10"><a href="backdoor.html#cb196-10" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif2.expgee, file = a_file)</span></span>
-<span id="cb196-11"><a href="backdoor.html#cb196-11" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span>
-<span id="cb196-12"><a href="backdoor.html#cb196-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb196-13"><a href="backdoor.html#cb196-13" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t use the risk ratio measures with this function</span></span>
-<span id="cb196-14"><a href="backdoor.html#cb196-14" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> whatif2.expgee[<span class="sc">!</span>(whatif2.expgee<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>)), ]</span>
-<span id="cb196-15"><a href="backdoor.html#cb196-15" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee</span></span></code></pre></div>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="backdoor.html#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb205-2"><a href="backdoor.html#cb205-2" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee &lt;- boot_est(data = whatif2dat, func = backdr_exp_gee,</span></span>
+<span id="cb205-3"><a href="backdoor.html#cb205-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 250, conf = 0.95,</span></span>
+<span id="cb205-4"><a href="backdoor.html#cb205-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;vl4&quot;, exposure.name = &quot;A&quot;,</span></span>
+<span id="cb205-5"><a href="backdoor.html#cb205-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = &quot;lvlcont0&quot;)</span></span>
+<span id="cb205-6"><a href="backdoor.html#cb205-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb205-7"><a href="backdoor.html#cb205-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb205-8"><a href="backdoor.html#cb205-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-9"><a href="backdoor.html#cb205-9" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_whatif2gee.rds&quot;</span>)</span>
+<span id="cb205-10"><a href="backdoor.html#cb205-10" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(whatif2.expgee, file = a_file)</span></span>
+<span id="cb205-11"><a href="backdoor.html#cb205-11" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(a_file)</span>
+<span id="cb205-12"><a href="backdoor.html#cb205-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-13"><a href="backdoor.html#cb205-13" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t use the risk ratio measures with this function</span></span>
+<span id="cb205-14"><a href="backdoor.html#cb205-14" aria-hidden="true" tabindex="-1"></a>whatif2.expgee <span class="ot">&lt;-</span> whatif2.expgee[<span class="sc">!</span>(whatif2.expgee<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>)), ]</span>
+<span id="cb205-15"><a href="backdoor.html#cb205-15" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.expgee</span></span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
 <div id="ucreoxvmws" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
@@ -1895,27 +1895,27 @@ complete cases only.</p>
 <p>The <code>standexp</code> function on page 119-120 of section 6.2.2 is not needed anymore
 as <code>standexp</code> was created with parameters in the previous section. We just need
 to run it as follows</p>
-<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="backdoor.html#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 10 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="backdoor.html#cb206-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 10 sec. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 10 sec. Load from file.</code></pre>
-<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="backdoor.html#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb199-2"><a href="backdoor.html#cb199-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp &lt;- boot_est(data = gssrcc, func = backdr_exp,</span></span>
-<span id="cb199-3"><a href="backdoor.html#cb199-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 250, conf = 0.95,</span></span>
-<span id="cb199-4"><a href="backdoor.html#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
-<span id="cb199-5"><a href="backdoor.html#cb199-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
-<span id="cb199-6"><a href="backdoor.html#cb199-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb199-7"><a href="backdoor.html#cb199-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb199-8"><a href="backdoor.html#cb199-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_gssrcc_exp.rds&quot;</span>)</span>
-<span id="cb199-9"><a href="backdoor.html#cb199-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gssrcc.exp, file = a_file)</span></span>
-<span id="cb199-10"><a href="backdoor.html#cb199-10" aria-hidden="true" tabindex="-1"></a>gssrcc.exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb199-11"><a href="backdoor.html#cb199-11" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp</span></span></code></pre></div>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="backdoor.html#cb208-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb208-2"><a href="backdoor.html#cb208-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp &lt;- boot_est(data = gssrcc, func = backdr_exp,</span></span>
+<span id="cb208-3"><a href="backdoor.html#cb208-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   R = 250, conf = 0.95,</span></span>
+<span id="cb208-4"><a href="backdoor.html#cb208-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
+<span id="cb208-5"><a href="backdoor.html#cb208-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
+<span id="cb208-6"><a href="backdoor.html#cb208-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb208-7"><a href="backdoor.html#cb208-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb208-8"><a href="backdoor.html#cb208-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_gssrcc_exp.rds&quot;</span>)</span>
+<span id="cb208-9"><a href="backdoor.html#cb208-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(gssrcc.exp, file = a_file)</span></span>
+<span id="cb208-10"><a href="backdoor.html#cb208-10" aria-hidden="true" tabindex="-1"></a>gssrcc.exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb208-11"><a href="backdoor.html#cb208-11" aria-hidden="true" tabindex="-1"></a><span class="co"># gssrcc.exp</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="backdoor.html#cb200-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb200-2"><a href="backdoor.html#cb200-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb200-3"><a href="backdoor.html#cb200-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.231</span>, <span class="fl">0.272</span>, <span class="fl">0.041</span>, <span class="fl">1.176</span>),</span>
-<span id="cb200-4"><a href="backdoor.html#cb200-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.exp<span class="sc">$</span>est[gssrcc.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb200-5"><a href="backdoor.html#cb200-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="backdoor.html#cb209-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb209-2"><a href="backdoor.html#cb209-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb209-3"><a href="backdoor.html#cb209-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.231</span>, <span class="fl">0.272</span>, <span class="fl">0.041</span>, <span class="fl">1.176</span>),</span>
+<span id="cb209-4"><a href="backdoor.html#cb209-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> gssrcc.exp<span class="sc">$</span>est[gssrcc.exp<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb209-5"><a href="backdoor.html#cb209-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-154-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-158-1.png" width="100%" /></p>
 </div>
 </div>
 </div>
@@ -1927,19 +1927,19 @@ to <code>badstanddr</code>.</p>
 <p>The function <code>badstanddr</code> is replaced by <code>backdr_dr_bad</code>, used for doubly
 robust standardization with a misspecified outcome model.</p>
 <p>and using the What-if Study we obtain</p>
-<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="backdoor.html#cb201-1" aria-hidden="true" tabindex="-1"></a>whatif2.bad <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> whatif2dat, <span class="at">func =</span> fciR<span class="sc">::</span>backdr_dr_bad,</span>
-<span id="cb201-2"><a href="backdoor.html#cb201-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb201-3"><a href="backdoor.html#cb201-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
-<span id="cb201-4"><a href="backdoor.html#cb201-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="st">&quot;lvlcont0&quot;</span>)</span>
-<span id="cb201-5"><a href="backdoor.html#cb201-5" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.bad</span></span></code></pre></div>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="backdoor.html#cb210-1" aria-hidden="true" tabindex="-1"></a>whatif2.bad <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> whatif2dat, <span class="at">func =</span> fciR<span class="sc">::</span>backdr_dr_bad,</span>
+<span id="cb210-2"><a href="backdoor.html#cb210-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">R =</span> <span class="dv">100</span>, <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
+<span id="cb210-3"><a href="backdoor.html#cb210-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">outcome.name =</span> <span class="st">&quot;vl4&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb210-4"><a href="backdoor.html#cb210-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">confound.names =</span> <span class="st">&quot;lvlcont0&quot;</span>)</span>
+<span id="cb210-5"><a href="backdoor.html#cb210-5" aria-hidden="true" tabindex="-1"></a><span class="co"># whatif2.bad</span></span></code></pre></div>
 <p>and compare with the author’s</p>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="backdoor.html#cb202-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb202-2"><a href="backdoor.html#cb202-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
-<span id="cb202-3"><a href="backdoor.html#cb202-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.362</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.062</span>, <span class="fl">0.830</span>),</span>
-<span id="cb202-4"><a href="backdoor.html#cb202-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.bad<span class="sc">$</span>est[whatif2.bad<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
-<span id="cb202-5"><a href="backdoor.html#cb202-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="backdoor.html#cb211-1" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb211-2"><a href="backdoor.html#cb211-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>),</span>
+<span id="cb211-3"><a href="backdoor.html#cb211-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">auth =</span> <span class="fu">c</span>(<span class="fl">0.362</span>, <span class="fl">0.300</span>, <span class="sc">-</span><span class="fl">0.062</span>, <span class="fl">0.830</span>),</span>
+<span id="cb211-4"><a href="backdoor.html#cb211-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> whatif2.bad<span class="sc">$</span>est[whatif2.bad<span class="sc">$</span>name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;EY0&quot;</span>, <span class="st">&quot;EY1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>)])</span>
+<span id="cb211-5"><a href="backdoor.html#cb211-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(comp<span class="sc">$</span>auth <span class="sc">-</span> comp<span class="sc">$</span>est)) <span class="sc">&lt;</span> <span class="fl">0.01</span>)</span></code></pre></div>
 <p>and the results are presented in table 6.9</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-157-1.png" width="100%" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-161-1.png" width="100%" /></p>
 <div id="doubly-robust-standardization-simulation" class="section level3 hasAnchor" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Doubly Robust Standardization Simulation<a href="backdoor.html#doubly-robust-standardization-simulation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="with-simdr" class="section level4 hasAnchor" number="6.3.1.1">
@@ -2478,26 +2478,26 @@ Here is a tableau of her results</p>
 <p>We perform the simulation using a Monte Carlo simulation called <code>mc_standdr</code>.
 The script is in the appendix at <a href="mc_standdr.html#mc_standdr">mc_standdr</a>.</p>
 <p>We use a sample size of only 1000 as in the book.</p>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="backdoor.html#cb204-1" aria-hidden="true" tabindex="-1"></a>nrep <span class="ot">&lt;-</span> <span class="dv">1000</span></span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="backdoor.html#cb213-1" aria-hidden="true" tabindex="-1"></a>nrep <span class="ot">&lt;-</span> <span class="dv">1000</span></span></code></pre></div>
 <p>So here the simulation with <span class="math inline">\(ss \in \{40, 100\}\)</span></p>
-<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="backdoor.html#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 min. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="backdoor.html#cb214-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 8 min. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 8 min. Load from file.</code></pre>
-<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="backdoor.html#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb207-2"><a href="backdoor.html#cb207-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out &lt;- fciR::mc_standdr(ss = c(40, 100), nrep = nrep)</span></span>
-<span id="cb207-3"><a href="backdoor.html#cb207-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb207-4"><a href="backdoor.html#cb207-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb207-5"><a href="backdoor.html#cb207-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out.rds&quot;</span>)</span>
-<span id="cb207-6"><a href="backdoor.html#cb207-6" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb207-7"><a href="backdoor.html#cb207-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out, file = a_file)</span></span></code></pre></div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="backdoor.html#cb216-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb216-2"><a href="backdoor.html#cb216-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out &lt;- fciR::mc_standdr(ss = c(40, 100), nrep = nrep)</span></span>
+<span id="cb216-3"><a href="backdoor.html#cb216-3" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb216-4"><a href="backdoor.html#cb216-4" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb216-5"><a href="backdoor.html#cb216-5" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap06_mc_out.rds&quot;</span>)</span>
+<span id="cb216-6"><a href="backdoor.html#cb216-6" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb216-7"><a href="backdoor.html#cb216-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(mc.out, file = a_file)</span></span></code></pre></div>
 <p>and we compute the p-values</p>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="backdoor.html#cb208-1" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> mc.out <span class="sc">%&gt;%</span></span>
-<span id="cb208-2"><a href="backdoor.html#cb208-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb208-3"><a href="backdoor.html#cb208-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
-<span id="cb208-4"><a href="backdoor.html#cb208-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
-<span id="cb208-5"><a href="backdoor.html#cb208-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
-<span id="cb208-6"><a href="backdoor.html#cb208-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))) <span class="sc">%&gt;%</span></span>
-<span id="cb208-7"><a href="backdoor.html#cb208-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z)</span>
-<span id="cb208-8"><a href="backdoor.html#cb208-8" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out</span></span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="backdoor.html#cb217-1" aria-hidden="true" tabindex="-1"></a>mc.out <span class="ot">&lt;-</span> mc.out <span class="sc">%&gt;%</span></span>
+<span id="cb217-2"><a href="backdoor.html#cb217-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="at">pattern =</span> <span class="st">&quot;0&quot;</span>, estimator), <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb217-3"><a href="backdoor.html#cb217-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">h0 =</span> <span class="fu">ifelse</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>),</span>
+<span id="cb217-4"><a href="backdoor.html#cb217-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">sdp =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(n),</span>
+<span id="cb217-5"><a href="backdoor.html#cb217-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">z =</span> <span class="fu">abs</span>((mean <span class="sc">-</span> h0) <span class="sc">/</span> sdp),</span>
+<span id="cb217-6"><a href="backdoor.html#cb217-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">pval =</span> <span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(z))) <span class="sc">%&gt;%</span></span>
+<span id="cb217-7"><a href="backdoor.html#cb217-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>sdp, <span class="sc">-</span>z)</span>
+<span id="cb217-8"><a href="backdoor.html#cb217-8" aria-hidden="true" tabindex="-1"></a><span class="co"># mc.out</span></span></code></pre></div>
 <p>and show the results in a table</p>
 <div id="agjtxedchv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
@@ -3028,7 +3028,7 @@ The script is in the appendix at <a href="mc_standdr.html#mc_standdr">mc_standdr
 just above confirm them.</p>
 <p>A plot can however illustrate Brumback’s main points. This ones shows the
 estimates’ mean with their 5% and 95% quantiles from the simulation.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-167-1.png" width="672" /></p>
 </div>
 </div>
 </div>
