@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-09" />
+<meta name="date" content="2022-05-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -195,7 +195,10 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
-<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
+<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="probability.html"><a href="probability.html#bootstrapping"><i class="fa fa-check"></i><b>2.4.1</b> Bootstrapping<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference<span></span></a>
@@ -302,7 +305,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="A.3" data-path="errata.html"><a href="errata.html#chapter-2"><i class="fa fa-check"></i><b>A.3</b> Chapter 2<span></span></a>
 <ul>
-<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.1</b> Figure 2.1, p. 30<span></span></a></li>
+<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#section-2.4-compute-the-standard-error"><i class="fa fa-check"></i><b>A.3.1</b> section 2.4 Compute the standard error<span></span></a></li>
+<li class="chapter" data-level="A.3.2" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.2</b> Figure 2.1, p. 30<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="A.4" data-path="errata.html"><a href="errata.html#chapter-3"><i class="fa fa-check"></i><b>A.4</b> Chapter 3<span></span></a>
 <ul>
@@ -398,7 +402,7 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="outcomes" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Potential Outcomes and the Fundamental Problem of Causal Inference<a href="outcomes.html#outcomes" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="outcomes.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="outcomes.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span></code></pre></div>
 <div id="potential-outcomes-and-the-consistency-assumption" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Potential Outcomes and the Consistency Assumption<a href="outcomes.html#potential-outcomes-and-the-consistency-assumption" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 </div>
@@ -408,30 +412,30 @@ div.csl-indent {
 <div id="effect-measures" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Effect Measures<a href="outcomes.html#effect-measures" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Run the function to get the association measures</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="outcomes.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb25-2"><a href="outcomes.html#cb25-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
-<span id="cb25-3"><a href="outcomes.html#cb25-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(gssrcc), ]</span>
-<span id="cb25-4"><a href="outcomes.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(gssrcc) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="outcomes.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="outcomes.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb45-2"><a href="outcomes.html#cb45-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb45-3"><a href="outcomes.html#cb45-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(gssrcc), ]</span>
+<span id="cb45-4"><a href="outcomes.html#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(gssrcc) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="outcomes.html#cb28-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb28-2"><a href="outcomes.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,</span></span>
-<span id="cb28-3"><a href="outcomes.html#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, input.names = &quot;gthsedu&quot;)</span></span>
-<span id="cb28-4"><a href="outcomes.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb28-5"><a href="outcomes.html#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb28-6"><a href="outcomes.html#cb28-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
-<span id="cb28-7"><a href="outcomes.html#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
-<span id="cb28-8"><a href="outcomes.html#cb28-8" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="outcomes.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
-<span id="cb29-2"><a href="outcomes.html#cb29-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
-<span id="cb29-3"><a href="outcomes.html#cb29-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Association Measures Relating&lt;br&gt;&lt;em&gt;More than High School</span></span>
-<span id="cb29-4"><a href="outcomes.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
-<div id="rrkiiyrqsn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="outcomes.html#cb48-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb48-2"><a href="outcomes.html#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,</span></span>
+<span id="cb48-3"><a href="outcomes.html#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, input.names = &quot;gthsedu&quot;)</span></span>
+<span id="cb48-4"><a href="outcomes.html#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb48-5"><a href="outcomes.html#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb48-6"><a href="outcomes.html#cb48-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
+<span id="cb48-7"><a href="outcomes.html#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
+<span id="cb48-8"><a href="outcomes.html#cb48-8" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="outcomes.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
+<span id="cb49-2"><a href="outcomes.html#cb49-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
+<span id="cb49-3"><a href="outcomes.html#cb49-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Association Measures Relating&lt;br&gt;&lt;em&gt;More than High School</span></span>
+<span id="cb49-4"><a href="outcomes.html#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div id="cuzhpwoqnb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#rrkiiyrqsn .gt_table {
+#cuzhpwoqnb .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -456,7 +460,7 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_heading {
+#cuzhpwoqnb .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -468,7 +472,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_title {
+#cuzhpwoqnb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -480,7 +484,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#rrkiiyrqsn .gt_subtitle {
+#cuzhpwoqnb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -492,13 +496,13 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#rrkiiyrqsn .gt_bottom_border {
+#cuzhpwoqnb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_col_headings {
+#cuzhpwoqnb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -513,7 +517,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_col_heading {
+#cuzhpwoqnb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -533,7 +537,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#rrkiiyrqsn .gt_column_spanner_outer {
+#cuzhpwoqnb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -545,15 +549,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#rrkiiyrqsn .gt_column_spanner_outer:first-child {
+#cuzhpwoqnb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rrkiiyrqsn .gt_column_spanner_outer:last-child {
+#cuzhpwoqnb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rrkiiyrqsn .gt_column_spanner {
+#cuzhpwoqnb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -565,7 +569,7 @@ div.csl-indent {
   width: 100%;
 }
 
-#rrkiiyrqsn .gt_group_heading {
+#cuzhpwoqnb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -590,7 +594,7 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#rrkiiyrqsn .gt_empty_group_heading {
+#cuzhpwoqnb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -605,15 +609,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#rrkiiyrqsn .gt_from_md > :first-child {
+#cuzhpwoqnb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rrkiiyrqsn .gt_from_md > :last-child {
+#cuzhpwoqnb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rrkiiyrqsn .gt_row {
+#cuzhpwoqnb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -632,7 +636,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#rrkiiyrqsn .gt_stub {
+#cuzhpwoqnb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -645,7 +649,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#rrkiiyrqsn .gt_stub_row_group {
+#cuzhpwoqnb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -659,11 +663,11 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#rrkiiyrqsn .gt_row_group_first td {
+#cuzhpwoqnb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rrkiiyrqsn .gt_summary_row {
+#cuzhpwoqnb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -673,16 +677,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#rrkiiyrqsn .gt_first_summary_row {
+#cuzhpwoqnb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_first_summary_row.thick {
+#cuzhpwoqnb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rrkiiyrqsn .gt_last_summary_row {
+#cuzhpwoqnb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -692,7 +696,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_grand_summary_row {
+#cuzhpwoqnb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -702,7 +706,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#rrkiiyrqsn .gt_first_grand_summary_row {
+#cuzhpwoqnb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -712,11 +716,11 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_striped {
+#cuzhpwoqnb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rrkiiyrqsn .gt_table_body {
+#cuzhpwoqnb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -725,7 +729,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_footnotes {
+#cuzhpwoqnb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -739,7 +743,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_footnote {
+#cuzhpwoqnb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -748,7 +752,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#rrkiiyrqsn .gt_sourcenotes {
+#cuzhpwoqnb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -762,7 +766,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#rrkiiyrqsn .gt_sourcenote {
+#cuzhpwoqnb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -770,60 +774,60 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#rrkiiyrqsn .gt_left {
+#cuzhpwoqnb .gt_left {
   text-align: left;
 }
 
-#rrkiiyrqsn .gt_center {
+#cuzhpwoqnb .gt_center {
   text-align: center;
 }
 
-#rrkiiyrqsn .gt_right {
+#cuzhpwoqnb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rrkiiyrqsn .gt_font_normal {
+#cuzhpwoqnb .gt_font_normal {
   font-weight: normal;
 }
 
-#rrkiiyrqsn .gt_font_bold {
+#cuzhpwoqnb .gt_font_bold {
   font-weight: bold;
 }
 
-#rrkiiyrqsn .gt_font_italic {
+#cuzhpwoqnb .gt_font_italic {
   font-style: italic;
 }
 
-#rrkiiyrqsn .gt_super {
+#cuzhpwoqnb .gt_super {
   font-size: 65%;
 }
 
-#rrkiiyrqsn .gt_footnote_marks {
+#cuzhpwoqnb .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#rrkiiyrqsn .gt_asterisk {
+#cuzhpwoqnb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rrkiiyrqsn .gt_slash_mark {
+#cuzhpwoqnb .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#rrkiiyrqsn .gt_fraction_numerator {
+#cuzhpwoqnb .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#rrkiiyrqsn .gt_fraction_denominator {
+#cuzhpwoqnb .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -879,15 +883,15 @@ div.csl-indent {
 </table>
 </div>
 <p>verify with author’s results, p. 48-49</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="outcomes.html#cb30-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb30-2"><a href="outcomes.html#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
-<span id="cb30-3"><a href="outcomes.html#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.23338</span>, <span class="fl">0.27117</span>, <span class="fl">0.037782</span>, <span class="fl">1.1619</span>, <span class="fl">1.0518</span>, <span class="fl">1.221</span>),</span>
-<span id="cb30-4"><a href="outcomes.html#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
-<span id="cb30-5"><a href="outcomes.html#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
-<span id="cb30-6"><a href="outcomes.html#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb30-7"><a href="outcomes.html#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb30-8"><a href="outcomes.html#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb30-9"><a href="outcomes.html#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="outcomes.html#cb50-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb50-2"><a href="outcomes.html#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
+<span id="cb50-3"><a href="outcomes.html#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.23338</span>, <span class="fl">0.27117</span>, <span class="fl">0.037782</span>, <span class="fl">1.1619</span>, <span class="fl">1.0518</span>, <span class="fl">1.221</span>),</span>
+<span id="cb50-4"><a href="outcomes.html#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
+<span id="cb50-5"><a href="outcomes.html#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
+<span id="cb50-6"><a href="outcomes.html#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb50-7"><a href="outcomes.html#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb50-8"><a href="outcomes.html#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb50-9"><a href="outcomes.html#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 <p>Now we estimate the four effect measures using <em>conditional</em> association
 measures. We notice that</p>
 <ul>
@@ -921,28 +925,28 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 \text{trump} &amp;\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="outcomes.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="outcomes.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="outcomes.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb33-2"><a href="outcomes.html#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,</span></span>
-<span id="cb33-3"><a href="outcomes.html#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
-<span id="cb33-4"><a href="outcomes.html#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
-<span id="cb33-5"><a href="outcomes.html#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb33-6"><a href="outcomes.html#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb33-7"><a href="outcomes.html#cb33-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
-<span id="cb33-8"><a href="outcomes.html#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
-<span id="cb33-9"><a href="outcomes.html#cb33-9" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="outcomes.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
-<span id="cb34-2"><a href="outcomes.html#cb34-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
-<span id="cb34-3"><a href="outcomes.html#cb34-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Conditional Association or Effect Measures&lt;br&gt;</span></span>
-<span id="cb34-4"><a href="outcomes.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
-<span id="cb34-5"><a href="outcomes.html#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
-<div id="wxppasnrtp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="outcomes.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb53-2"><a href="outcomes.html#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,</span></span>
+<span id="cb53-3"><a href="outcomes.html#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
+<span id="cb53-4"><a href="outcomes.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
+<span id="cb53-5"><a href="outcomes.html#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb53-6"><a href="outcomes.html#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb53-7"><a href="outcomes.html#cb53-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
+<span id="cb53-8"><a href="outcomes.html#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
+<span id="cb53-9"><a href="outcomes.html#cb53-9" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="outcomes.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
+<span id="cb54-2"><a href="outcomes.html#cb54-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
+<span id="cb54-3"><a href="outcomes.html#cb54-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Conditional Association or Effect Measures&lt;br&gt;</span></span>
+<span id="cb54-4"><a href="outcomes.html#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
+<span id="cb54-5"><a href="outcomes.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div id="yobbrxhwtn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#wxppasnrtp .gt_table {
+#yobbrxhwtn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -967,7 +971,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-left-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_heading {
+#yobbrxhwtn .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -979,7 +983,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_title {
+#yobbrxhwtn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -991,7 +995,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-bottom-width: 0;
 }
 
-#wxppasnrtp .gt_subtitle {
+#yobbrxhwtn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -1003,13 +1007,13 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-top-width: 0;
 }
 
-#wxppasnrtp .gt_bottom_border {
+#yobbrxhwtn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_col_headings {
+#yobbrxhwtn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1024,7 +1028,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_col_heading {
+#yobbrxhwtn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1044,7 +1048,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   overflow-x: hidden;
 }
 
-#wxppasnrtp .gt_column_spanner_outer {
+#yobbrxhwtn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1056,15 +1060,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 4px;
 }
 
-#wxppasnrtp .gt_column_spanner_outer:first-child {
+#yobbrxhwtn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wxppasnrtp .gt_column_spanner_outer:last-child {
+#yobbrxhwtn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wxppasnrtp .gt_column_spanner {
+#yobbrxhwtn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1076,7 +1080,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   width: 100%;
 }
 
-#wxppasnrtp .gt_group_heading {
+#yobbrxhwtn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1101,7 +1105,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   vertical-align: middle;
 }
 
-#wxppasnrtp .gt_empty_group_heading {
+#yobbrxhwtn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1116,15 +1120,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   vertical-align: middle;
 }
 
-#wxppasnrtp .gt_from_md > :first-child {
+#yobbrxhwtn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wxppasnrtp .gt_from_md > :last-child {
+#yobbrxhwtn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wxppasnrtp .gt_row {
+#yobbrxhwtn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1143,7 +1147,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   overflow-x: hidden;
 }
 
-#wxppasnrtp .gt_stub {
+#yobbrxhwtn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1156,7 +1160,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#wxppasnrtp .gt_stub_row_group {
+#yobbrxhwtn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1170,11 +1174,11 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   vertical-align: top;
 }
 
-#wxppasnrtp .gt_row_group_first td {
+#yobbrxhwtn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wxppasnrtp .gt_summary_row {
+#yobbrxhwtn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1184,16 +1188,16 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#wxppasnrtp .gt_first_summary_row {
+#yobbrxhwtn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_first_summary_row.thick {
+#yobbrxhwtn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wxppasnrtp .gt_last_summary_row {
+#yobbrxhwtn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1203,7 +1207,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-bottom-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_grand_summary_row {
+#yobbrxhwtn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1213,7 +1217,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#wxppasnrtp .gt_first_grand_summary_row {
+#yobbrxhwtn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1223,11 +1227,11 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-top-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_striped {
+#yobbrxhwtn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wxppasnrtp .gt_table_body {
+#yobbrxhwtn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1236,7 +1240,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-bottom-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_footnotes {
+#yobbrxhwtn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1250,7 +1254,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_footnote {
+#yobbrxhwtn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1259,7 +1263,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#wxppasnrtp .gt_sourcenotes {
+#yobbrxhwtn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1273,7 +1277,7 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   border-right-color: #D3D3D3;
 }
 
-#wxppasnrtp .gt_sourcenote {
+#yobbrxhwtn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1281,60 +1285,60 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
   padding-right: 5px;
 }
 
-#wxppasnrtp .gt_left {
+#yobbrxhwtn .gt_left {
   text-align: left;
 }
 
-#wxppasnrtp .gt_center {
+#yobbrxhwtn .gt_center {
   text-align: center;
 }
 
-#wxppasnrtp .gt_right {
+#yobbrxhwtn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wxppasnrtp .gt_font_normal {
+#yobbrxhwtn .gt_font_normal {
   font-weight: normal;
 }
 
-#wxppasnrtp .gt_font_bold {
+#yobbrxhwtn .gt_font_bold {
   font-weight: bold;
 }
 
-#wxppasnrtp .gt_font_italic {
+#yobbrxhwtn .gt_font_italic {
   font-style: italic;
 }
 
-#wxppasnrtp .gt_super {
+#yobbrxhwtn .gt_super {
   font-size: 65%;
 }
 
-#wxppasnrtp .gt_footnote_marks {
+#yobbrxhwtn .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#wxppasnrtp .gt_asterisk {
+#yobbrxhwtn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wxppasnrtp .gt_slash_mark {
+#yobbrxhwtn .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#wxppasnrtp .gt_fraction_numerator {
+#yobbrxhwtn .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#wxppasnrtp .gt_fraction_denominator {
+#yobbrxhwtn .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1391,15 +1395,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 </table>
 </div>
 <p>verify with author’s results, p.52</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="outcomes.html#cb35-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb35-2"><a href="outcomes.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
-<span id="cb35-3"><a href="outcomes.html#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
-<span id="cb35-4"><a href="outcomes.html#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
-<span id="cb35-5"><a href="outcomes.html#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
-<span id="cb35-6"><a href="outcomes.html#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb35-7"><a href="outcomes.html#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb35-8"><a href="outcomes.html#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb35-9"><a href="outcomes.html#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="outcomes.html#cb55-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb55-2"><a href="outcomes.html#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
+<span id="cb55-3"><a href="outcomes.html#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
+<span id="cb55-4"><a href="outcomes.html#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
+<span id="cb55-5"><a href="outcomes.html#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
+<span id="cb55-6"><a href="outcomes.html#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb55-7"><a href="outcomes.html#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb55-8"><a href="outcomes.html#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb55-9"><a href="outcomes.html#cb55-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 </div>
 <div id="exercises-2" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Exercises<a href="outcomes.html#exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>

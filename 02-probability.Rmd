@@ -3,6 +3,8 @@
 ```{r include=FALSE}
 library(tidyr)
 library(dplyr)
+library(purrr)
+library(rsample)
 library(fciR)
 options(dplyr.summarise.inform = FALSE)
 ```
@@ -288,9 +290,9 @@ summary(whatif.mod)
 
 The coefficients, $\beta_0, \beta_A, \beta_T, \beta_H$ are obtained with 
 `coef()` which is an alias for 
-`coefficient()`. The example in the book uses `lmod$coef` which is a bad
-coding practice.  The data should be obtained with an extractor function such as
-`coef()`.
+`coefficient()`. The example in the book uses `lmod$coef` which is not a 
+recommended coding practice.  The data should be obtained with an extractor 
+function such as `coef()`.
 
 ```{r}
 coef(whatif.mod)
@@ -308,19 +310,81 @@ $$
 ```{r}
 stats::plogis(sum(coef(whatif.mod)))
 ```
-and we can validate the result directly with a nonparametric estimate using
-the dataset
+we can also use the linear model directly, thus avoiding a call to `plogis`
+and making the code a little more robust. This technique is used quite often in
+the book, especially starting from chapter 6 on.
 
 ```{r}
-whatifdat |>
+whatif.newdata <- whatifdat |>
+  filter(A == 1, `T` == 1, H == 1)
+whatif.EYT1 <- predict(whatif.mod, newdata = whatif.newdata, 
+                            type = "response") |>
+  mean()
+whatif.EYT1
+```
+
+
+and we can validate the result directly using the dataset
+
+```{r}
+whatifdat.est <- whatifdat |>
   filter(A == 1, `T` == 1, H == 1) |>
-  summarize(mean(Y)) |>
-  pull()
+  pull(Y) |>
+  mean()
+whatifdat.est
 ```
 
 which is a close to the parametric estimate.
 
 ## Sampling Distributions and the Bootstrap
+
+The previous section prived and estimate. But how variable is this estimator?
+One way would be to report the standard error 
+$\sigma_{\hat{x}} = \frac{\sigma}{\sqrt{n}}$. Therefore, since $\sigma^2 = p(1-p)$
+for a binomial distribution
+
+```{r}
+# the sample size
+whatifdat.n <- sum(whatifdat$A == 1 & whatifdat$`T` == 1 & whatifdat$H == 1)
+# whatifdat.n
+
+# the standard deviation
+whatifdat.sd <- sqrt(whatifdat.est * (1- whatifdat.est))
+# whatifdat.sd
+
+# the standard error
+whatifdat.se <- whatifdat.sd / sqrt(whatifdat.n)
+whatifdat.se
+```
+
+Note that the formula used by B. Brumback is using the standrd deviaiton of the
+population $p(1-p)$ whcih is not entirely the right way since the standrd error
+of the mean is defined using the *standard deviaiton of the sample*.
+
+That is Brumback uses
+
+```{r}
+x <- whatifdat$Y[whatifdat$A == 1 & whatifdat$`T` == 1 & whatifdat$H ==1]
+n <- length(x)
+sd(x) * sqrt(n-1) / n
+```
+
+when the correct definition is
+
+
+```{r}
+x <- whatifdat$Y[whatifdat$A == 1 & whatifdat$`T` == 1 & whatifdat$H ==1]
+sd(x) / sqrt(length(x))
+```
+
+> Another way would be by reporting the *sampling distribution* of our estimator.
+
+> the sampling distribution is centered at the true value of our estimand and 
+it has a standard deviation equal to the true standard error of our estimator.
+
+The section 2.4 will not be repeated here, yet it is very instructive and cover
+a topic that we end to forget. We will just repeat the calculations below. They
+
 
 The `sim()` function in section 2.4, p. 31 is coded in `fciR::sim_intervals()`
 and its alias `fciR::sim()`.
@@ -330,16 +394,136 @@ Run and verify with author's results on p. 32
 
 
 ```{r}
-d <- sim(nsim = 500, n = 500)
-stopifnot(abs(d$bad - 0.8374) < 0.03, 
-          abs(d$good - 0.948) < 0.03)
+d <- fciR::sim_intervals(nsim = 500, n = 500)
+stopifnot(abs(d$bad - 0.8374) < 0.03, abs(d$good - 0.948) < 0.03)
 d
 ```
+
+### Bootstrapping
+
+> As we have seen, replacing $\mu$ and $\sigma$ with estimates leads to some
+problems, but we can still form an interpretable 95% confidence interval. In many
+situations, we do not have a good estimate of $\sigma$. In those cases, 
+we often can turn to *bootstrap*.
+
+Bootstrapping in base R is done with the `boot` from the `boot` package. Another
+option is the `rsample` package which isthe tidyverse way of doing it.  Both
+methods will be used in this project.  In the package `fciR`, the functions 
+`boot_run` and `boot_est` use the classic R package `boot`. The functions
+`bootidy_run` and `bootidy_est` are similar but use the `rsample` package.
+
+#### `boot` package
+
+We use `boot::boot()` for boostrapping and `boot::boot.ci()` to compute
+the confidence interval of the estimand using the logistic model as done by the
+`lmodboot` function in section 2.4. We only run 100 boot samples since it is
+only an example. The default value is 1000.
+
+The first 3 arguments `data`, `statistic` and `R` are specific to `boot`, the
+`...` is for extra arguments used by `lmodboot`. The details of `lmdboots` can be
+found in the package `fciR` or in its alias `fciR::prob_lmod`.
+
+
+```{r}
+prob_lmod(whatifdat, outcome.name = "Y", input.names = c("T", "A", "H"))
+```
+
+and we show the details on how to do the bootstrapping with the `boot` package
+as follows.
+
+
+```{r}
+boot_ci <- function(x, conf = 0.95) {
+  # critical value
+  cv <- qt(conf, df = length(x) - 1)
+  # mean value
+  est <- mean(x)
+  sd <- sd(x)
+  c("est" = mean(conf), conf = conf, lci = est - cv * sd, uci = est + cv * sd)
+}
+```
+
+
+```{r}
+# define the function used by boot
+whatifdat.fnc <- function(data, ids, outcome.name = "Y", 
+                          input.names = c("T", "A", "H")) {
+  dat <- data[ids, ]
+  prob_lmod(data = dat, outcome.name = outcome.name, input.names = input.names)
+}
+# run the bootstrapping
+whatifdat.boot <- boot::boot(data = whatifdat, statistic = whatifdat.fnc, 
+                             R = 100, outcome.name = "Y",
+                             input.names = c("T", "A", "H"))
+# get the confidence interval using the boostrap object
+whatifdat.ci <- sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
+    est <- whatifdat.boot$t0[i]
+    ci <- boot::boot.ci(whatifdat.boot, conf = 0.95, type = "norm", 
+                        index = i)$normal
+    out <- c(est, ci)
+    names(out) <- c("est", "conf", "lci", "uci")
+    plogis(out[c("est", "lci", "uci")])
+  })
+whatifdat.ci
+```
+
+#### `rsample` package
+
+Another way package that could be used for boostrapping is `rsample::bootstrap` 
+which uses the tidyverse way of R programming. The following function is 
+inspired from [rsample bootstrap](https://rsample.tidymodels.org/articles/Applications/Intervals.html).
+
+```{r}
+prob_lmod_td <- function(data, outcome.name = "Y", input.names = c("T", "A", "H"),
+                     condition.names = input.names) {
+  stopifnot(all(condition.names %in% input.names))
+  # add intercept to conditions
+  x0 <- "(Intercept)"  # name of intercept used by lm, glm, etc.
+  condition.names <- c(x0, condition.names)
+  
+  
+  a_formula <- formulaic::create.formula(outcome.name = outcome.name,
+                              input.names = input.names,
+                              dat = data)
+  fit <- glm(formula = a_formula, family = "binomial", data = data) |>
+    tidy()
+  fit |>
+    filter(term %in% condition.names) |>
+    summarize(term = "logitP",
+              estimate = sum(estimate),
+              # don't know the std.err so no t-intervals
+              std.err = NA_real_)
+}
+```
+
+```{r}
+prob_lmod_td(whatifdat, outcome.name = "Y", input.names = c("T", "A", "H"))
+```
+
+and we obtain the confidence interval using `rsample`.
+
+```{r}
+whatifdat |>
+  rsample::bootstraps(times = 100, apparent = FALSE) |>
+  mutate(results = map_dfr(splits, function(x) {
+    dat <- analysis(x)
+    prob_lmod_td(dat, outcome.name = "Y", input.names = c("T", "A", "H"))
+  })) |>
+  rsample::int_pctl(results, alpha = 0.05) |>
+  mutate(term = "P",
+         .lower = plogis(.lower),
+         .estimate = plogis(.estimate),
+         .upper = plogis(.upper))
+```
+
+
+
 
 and `lmodboot()` is `fciR::boot_lmod()` with the alias `fciR::lmodboot()`
 
 
-Run and verify against the author's results on p.34
+Finally we run `fciR::boot_lmod()` and verify against the author's results 
+on p.34
 
 ```{r}
 data("whatifdat", package = "fciR")
@@ -354,6 +538,7 @@ message("this takes 10 sec.: we load a saved file instead")
 a_file <- file.path(dir_data, "chap02_lmodboot.rds")
 # saveRDS(out, file = a_file)
 out <- readRDS(file = a_file)
+# out
 
 # check results with book
 stopifnot(abs(out["est"] - 0.60596) < 0.02,

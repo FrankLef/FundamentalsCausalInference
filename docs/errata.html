@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-09" />
+<meta name="date" content="2022-05-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -195,7 +195,10 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
-<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
+<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="probability.html"><a href="probability.html#bootstrapping"><i class="fa fa-check"></i><b>2.4.1</b> Bootstrapping<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference<span></span></a>
@@ -302,7 +305,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="A.3" data-path="errata.html"><a href="errata.html#chapter-2"><i class="fa fa-check"></i><b>A.3</b> Chapter 2<span></span></a>
 <ul>
-<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.1</b> Figure 2.1, p. 30<span></span></a></li>
+<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#section-2.4-compute-the-standard-error"><i class="fa fa-check"></i><b>A.3.1</b> section 2.4 Compute the standard error<span></span></a></li>
+<li class="chapter" data-level="A.3.2" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.2</b> Figure 2.1, p. 30<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="A.4" data-path="errata.html"><a href="errata.html#chapter-3"><i class="fa fa-check"></i><b>A.4</b> Chapter 3<span></span></a>
 <ul>
@@ -416,8 +420,22 @@ s/b <em>standardization</em></p>
 </div>
 <div id="chapter-2" class="section level2 hasAnchor" number="10.3">
 <h2><span class="header-section-number">A.3</span> Chapter 2<a href="errata.html#chapter-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div id="figure-2.1-p.-30" class="section level3 hasAnchor" number="10.3.1">
-<h3><span class="header-section-number">A.3.1</span> Figure 2.1, p. 30<a href="errata.html#figure-2.1-p.-30" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="section-2.4-compute-the-standard-error" class="section level3 hasAnchor" number="10.3.1">
+<h3><span class="header-section-number">A.3.1</span> section 2.4 Compute the standard error<a href="errata.html#section-2.4-compute-the-standard-error" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The standard error formula used is with the standard deviaiton of the population
+and equivalent to</p>
+<div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="errata.html#cb281-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> whatifdat<span class="sc">$</span>Y[whatifdat<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span>H <span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb281-2"><a href="errata.html#cb281-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb281-3"><a href="errata.html#cb281-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(x) <span class="sc">*</span> <span class="fu">sqrt</span>(n<span class="dv">-1</span>) <span class="sc">/</span> n</span></code></pre></div>
+<pre><code>## [1] 0.1048236</code></pre>
+<p>when the correct definition is with the standard deviaiton of the sample</p>
+<div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="errata.html#cb283-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> whatifdat<span class="sc">$</span>Y[whatifdat<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span>H <span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb283-2"><a href="errata.html#cb283-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb283-3"><a href="errata.html#cb283-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(x) <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span></code></pre></div>
+<pre><code>## [1] 0.1072903</code></pre>
+</div>
+<div id="figure-2.1-p.-30" class="section level3 hasAnchor" number="10.3.2">
+<h3><span class="header-section-number">A.3.2</span> Figure 2.1, p. 30<a href="errata.html#figure-2.1-p.-30" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>This is really a small detail. The caption of the bottom plot is
 <span class="math inline">\(\hat{E_{np}}(Y \mid A= 1, H =1, T = 1)\)</span>, s/b <span class="math inline">\(\hat{E}_{np}\)</span></p>
 </div>

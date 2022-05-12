@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-09" />
+<meta name="date" content="2022-05-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -195,7 +195,10 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.3" data-path="probability.html"><a href="probability.html#nonlinear-parametric-models"><i class="fa fa-check"></i><b>2.2.3</b> Nonlinear parametric models<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="2.3" data-path="probability.html"><a href="probability.html#estimation"><i class="fa fa-check"></i><b>2.3</b> Estimation<span></span></a></li>
-<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a></li>
+<li class="chapter" data-level="2.4" data-path="probability.html"><a href="probability.html#sampling-distributions-and-the-bootstrap"><i class="fa fa-check"></i><b>2.4</b> Sampling Distributions and the Bootstrap<span></span></a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="probability.html"><a href="probability.html#bootstrapping"><i class="fa fa-check"></i><b>2.4.1</b> Bootstrapping<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="2.5" data-path="probability.html"><a href="probability.html#exercises-1"><i class="fa fa-check"></i><b>2.5</b> Exercises<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="outcomes.html"><a href="outcomes.html"><i class="fa fa-check"></i><b>3</b> Potential Outcomes and the Fundamental Problem of Causal Inference<span></span></a>
@@ -302,7 +305,8 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="A.3" data-path="errata.html"><a href="errata.html#chapter-2"><i class="fa fa-check"></i><b>A.3</b> Chapter 2<span></span></a>
 <ul>
-<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.1</b> Figure 2.1, p. 30<span></span></a></li>
+<li class="chapter" data-level="A.3.1" data-path="errata.html"><a href="errata.html#section-2.4-compute-the-standard-error"><i class="fa fa-check"></i><b>A.3.1</b> section 2.4 Compute the standard error<span></span></a></li>
+<li class="chapter" data-level="A.3.2" data-path="errata.html"><a href="errata.html#figure-2.1-p.-30"><i class="fa fa-check"></i><b>A.3.2</b> Figure 2.1, p. 30<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="A.4" data-path="errata.html"><a href="errata.html#chapter-3"><i class="fa fa-check"></i><b>A.4</b> Chapter 3<span></span></a>
 <ul>
@@ -645,9 +649,9 @@ E(Y \mid A,T,H) = expit(\beta_0 + \beta_A A + \beta_T T + \beta_H H)
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <p>The coefficients, <span class="math inline">\(\beta_0, \beta_A, \beta_T, \beta_H\)</span> are obtained with
 <code>coef()</code> which is an alias for
-<code>coefficient()</code>. The example in the book uses <code>lmod$coef</code> which is a bad
-coding practice. The data should be obtained with an extractor function such as
-<code>coef()</code>.</p>
+<code>coefficient()</code>. The example in the book uses <code>lmod$coef</code> which is not a
+recommended coding practice. The data should be obtained with an extractor
+function such as <code>coef()</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="probability.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(whatif.mod)</span></code></pre></div>
 <pre><code>## (Intercept)           A           T           H 
 ##  -1.5233530  -0.5647068  -0.2254112   2.7438245</code></pre>
@@ -659,49 +663,208 @@ E(Y \mid A=1, T=1, H=1) = \beta_0 + \beta_A \cdot 1 + \beta_T \cdot 1 + \beta_H 
 \]</span></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="probability.html#cb15-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">plogis</span>(<span class="fu">sum</span>(<span class="fu">coef</span>(whatif.mod)))</span></code></pre></div>
 <pre><code>## [1] 0.6059581</code></pre>
-<p>and we can validate the result directly with a nonparametric estimate using
-the dataset</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="probability.html#cb17-1" aria-hidden="true" tabindex="-1"></a>whatifdat <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="probability.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A <span class="sc">==</span> <span class="dv">1</span>, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, H <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-3"><a href="probability.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(Y)) <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a href="probability.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<p>we can also use the linear model directly, thus avoiding a call to <code>plogis</code>
+and making the code a little more robust. This technique is used quite often in
+the book, especially starting from chapter 6 on.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="probability.html#cb17-1" aria-hidden="true" tabindex="-1"></a>whatif.newdata <span class="ot">&lt;-</span> whatifdat <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="probability.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A <span class="sc">==</span> <span class="dv">1</span>, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, H <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb17-3"><a href="probability.html#cb17-3" aria-hidden="true" tabindex="-1"></a>whatif.EYT1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(whatif.mod, <span class="at">newdata =</span> whatif.newdata, </span>
+<span id="cb17-4"><a href="probability.html#cb17-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">type =</span> <span class="st">&quot;response&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="probability.html#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span>
+<span id="cb17-6"><a href="probability.html#cb17-6" aria-hidden="true" tabindex="-1"></a>whatif.EYT1</span></code></pre></div>
+<pre><code>## [1] 0.6059581</code></pre>
+<p>and we can validate the result directly using the dataset</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="probability.html#cb19-1" aria-hidden="true" tabindex="-1"></a>whatifdat.est <span class="ot">&lt;-</span> whatifdat <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="probability.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(A <span class="sc">==</span> <span class="dv">1</span>, <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>, H <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="probability.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(Y) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="probability.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span>
+<span id="cb19-5"><a href="probability.html#cb19-5" aria-hidden="true" tabindex="-1"></a>whatifdat.est</span></code></pre></div>
 <pre><code>## [1] 0.5909091</code></pre>
 <p>which is a close to the parametric estimate.</p>
 </div>
 <div id="sampling-distributions-and-the-bootstrap" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Sampling Distributions and the Bootstrap<a href="probability.html#sampling-distributions-and-the-bootstrap" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The previous section prived and estimate. But how variable is this estimator?
+One way would be to report the standard error
+<span class="math inline">\(\sigma_{\hat{x}} = \frac{\sigma}{\sqrt{n}}\)</span>. Therefore, since <span class="math inline">\(\sigma^2 = p(1-p)\)</span>
+for a binomial distribution</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="probability.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the sample size</span></span>
+<span id="cb21-2"><a href="probability.html#cb21-2" aria-hidden="true" tabindex="-1"></a>whatifdat.n <span class="ot">&lt;-</span> <span class="fu">sum</span>(whatifdat<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span>H <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb21-3"><a href="probability.html#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># whatifdat.n</span></span>
+<span id="cb21-4"><a href="probability.html#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="probability.html#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># the standard deviation</span></span>
+<span id="cb21-6"><a href="probability.html#cb21-6" aria-hidden="true" tabindex="-1"></a>whatifdat.sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(whatifdat.est <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span> whatifdat.est))</span>
+<span id="cb21-7"><a href="probability.html#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># whatifdat.sd</span></span>
+<span id="cb21-8"><a href="probability.html#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="probability.html#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># the standard error</span></span>
+<span id="cb21-10"><a href="probability.html#cb21-10" aria-hidden="true" tabindex="-1"></a>whatifdat.se <span class="ot">&lt;-</span> whatifdat.sd <span class="sc">/</span> <span class="fu">sqrt</span>(whatifdat.n)</span>
+<span id="cb21-11"><a href="probability.html#cb21-11" aria-hidden="true" tabindex="-1"></a>whatifdat.se</span></code></pre></div>
+<pre><code>## [1] 0.1048236</code></pre>
+<p>Note that the formula used by B. Brumback is using the standrd deviaiton of the
+population <span class="math inline">\(p(1-p)\)</span> whcih is not entirely the right way since the standrd error
+of the mean is defined using the <em>standard deviaiton of the sample</em>.</p>
+<p>That is Brumback uses</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="probability.html#cb23-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> whatifdat<span class="sc">$</span>Y[whatifdat<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span>H <span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb23-2"><a href="probability.html#cb23-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb23-3"><a href="probability.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(x) <span class="sc">*</span> <span class="fu">sqrt</span>(n<span class="dv">-1</span>) <span class="sc">/</span> n</span></code></pre></div>
+<pre><code>## [1] 0.1048236</code></pre>
+<p>when the correct definition is</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="probability.html#cb25-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> whatifdat<span class="sc">$</span>Y[whatifdat<span class="sc">$</span>A <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span><span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> whatifdat<span class="sc">$</span>H <span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb25-2"><a href="probability.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(x) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(x))</span></code></pre></div>
+<pre><code>## [1] 0.1072903</code></pre>
+<blockquote>
+<p>Another way would be by reporting the <em>sampling distribution</em> of our estimator.</p>
+</blockquote>
+<blockquote>
+<p>the sampling distribution is centered at the true value of our estimand and
+it has a standard deviation equal to the true standard error of our estimator.</p>
+</blockquote>
+<p>The section 2.4 will not be repeated here, yet it is very instructive and cover
+a topic that we end to forget. We will just repeat the calculations below. They</p>
 <p>The <code>sim()</code> function in section 2.4, p. 31 is coded in <code>fciR::sim_intervals()</code>
 and its alias <code>fciR::sim()</code>.</p>
 <p>Run and verify with author’s results on p. 32</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="probability.html#cb19-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">sim</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
-<span id="cb19-2"><a href="probability.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, </span>
-<span id="cb19-3"><a href="probability.html#cb19-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
-<span id="cb19-4"><a href="probability.html#cb19-4" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="probability.html#cb27-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">sim_intervals</span>(<span class="at">nsim =</span> <span class="dv">500</span>, <span class="at">n =</span> <span class="dv">500</span>)</span>
+<span id="cb27-2"><a href="probability.html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(d<span class="sc">$</span>bad <span class="sc">-</span> <span class="fl">0.8374</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>, <span class="fu">abs</span>(d<span class="sc">$</span>good <span class="sc">-</span> <span class="fl">0.948</span>) <span class="sc">&lt;</span> <span class="fl">0.03</span>)</span>
+<span id="cb27-3"><a href="probability.html#cb27-3" aria-hidden="true" tabindex="-1"></a>d</span></code></pre></div>
 <pre><code>## $bad
 ## [1] 0.85
 ## 
 ## $good
 ## [1] 0.954</code></pre>
+<div id="bootstrapping" class="section level3 hasAnchor" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> Bootstrapping<a href="probability.html#bootstrapping" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<blockquote>
+<p>As we have seen, replacing <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> with estimates leads to some
+problems, but we can still form an interpretable 95% confidence interval. In many
+situations, we do not have a good estimate of <span class="math inline">\(\sigma\)</span>. In those cases,
+we often can turn to <em>bootstrap</em>.</p>
+</blockquote>
+<p>Bootstrapping in base R is done with the <code>boot</code> from the <code>boot</code> package. Another
+option is the <code>rsample</code> package which isthe tidyverse way of doing it. Both
+methods will be used in this project. In the package <code>fciR</code>, the functions
+<code>boot_run</code> and <code>boot_est</code> use the classic R package <code>boot</code>. The functions
+<code>bootidy_run</code> and <code>bootidy_est</code> are similar but use the <code>rsample</code> package.</p>
+<div id="boot-package" class="section level4 hasAnchor" number="2.4.1.1">
+<h4><span class="header-section-number">2.4.1.1</span> <code>boot</code> package<a href="probability.html#boot-package" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>We use <code>boot::boot()</code> for boostrapping and <code>boot::boot.ci()</code> to compute
+the confidence interval of the estimand using the logistic model as done by the
+<code>lmodboot</code> function in section 2.4. We only run 100 boot samples since it is
+only an example. The default value is 1000.</p>
+<p>The first 3 arguments <code>data</code>, <code>statistic</code> and <code>R</code> are specific to <code>boot</code>, the
+<code>...</code> is for extra arguments used by <code>lmodboot</code>. The details of <code>lmdboots</code> can be
+found in the package <code>fciR</code> or in its alias <code>fciR::prob_lmod</code>.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="probability.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prob_lmod</span>(whatifdat, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>))</span></code></pre></div>
+<pre><code>##    logitP 
+## 0.4303535</code></pre>
+<p>and we show the details on how to do the bootstrapping with the <code>boot</code> package
+as follows.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="probability.html#cb31-1" aria-hidden="true" tabindex="-1"></a>boot_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
+<span id="cb31-2"><a href="probability.html#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># critical value</span></span>
+<span id="cb31-3"><a href="probability.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  cv <span class="ot">&lt;-</span> <span class="fu">qt</span>(conf, <span class="at">df =</span> <span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb31-4"><a href="probability.html#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mean value</span></span>
+<span id="cb31-5"><a href="probability.html#cb31-5" aria-hidden="true" tabindex="-1"></a>  est <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb31-6"><a href="probability.html#cb31-6" aria-hidden="true" tabindex="-1"></a>  sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(x)</span>
+<span id="cb31-7"><a href="probability.html#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;est&quot;</span> <span class="ot">=</span> <span class="fu">mean</span>(conf), <span class="at">conf =</span> conf, <span class="at">lci =</span> est <span class="sc">-</span> cv <span class="sc">*</span> sd, <span class="at">uci =</span> est <span class="sc">+</span> cv <span class="sc">*</span> sd)</span>
+<span id="cb31-8"><a href="probability.html#cb31-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="probability.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the function used by boot</span></span>
+<span id="cb32-2"><a href="probability.html#cb32-2" aria-hidden="true" tabindex="-1"></a>whatifdat.fnc <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ids, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, </span>
+<span id="cb32-3"><a href="probability.html#cb32-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>)) {</span>
+<span id="cb32-4"><a href="probability.html#cb32-4" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> data[ids, ]</span>
+<span id="cb32-5"><a href="probability.html#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prob_lmod</span>(<span class="at">data =</span> dat, <span class="at">outcome.name =</span> outcome.name, <span class="at">input.names =</span> input.names)</span>
+<span id="cb32-6"><a href="probability.html#cb32-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-7"><a href="probability.html#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># run the bootstrapping</span></span>
+<span id="cb32-8"><a href="probability.html#cb32-8" aria-hidden="true" tabindex="-1"></a>whatifdat.boot <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot</span>(<span class="at">data =</span> whatifdat, <span class="at">statistic =</span> whatifdat.fnc, </span>
+<span id="cb32-9"><a href="probability.html#cb32-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">R =</span> <span class="dv">100</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb32-10"><a href="probability.html#cb32-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>))</span>
+<span id="cb32-11"><a href="probability.html#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the confidence interval using the boostrap object</span></span>
+<span id="cb32-12"><a href="probability.html#cb32-12" aria-hidden="true" tabindex="-1"></a>whatifdat.ci <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="at">X =</span> <span class="fu">seq_along</span>(whatifdat.boot<span class="sc">$</span>t0), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb32-13"><a href="probability.html#cb32-13" aria-hidden="true" tabindex="-1"></a>    est <span class="ot">&lt;-</span> whatifdat.boot<span class="sc">$</span>t0[i]</span>
+<span id="cb32-14"><a href="probability.html#cb32-14" aria-hidden="true" tabindex="-1"></a>    ci <span class="ot">&lt;-</span> boot<span class="sc">::</span><span class="fu">boot.ci</span>(whatifdat.boot, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">type =</span> <span class="st">&quot;norm&quot;</span>, </span>
+<span id="cb32-15"><a href="probability.html#cb32-15" aria-hidden="true" tabindex="-1"></a>                        <span class="at">index =</span> i)<span class="sc">$</span>normal</span>
+<span id="cb32-16"><a href="probability.html#cb32-16" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(est, ci)</span>
+<span id="cb32-17"><a href="probability.html#cb32-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;conf&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)</span>
+<span id="cb32-18"><a href="probability.html#cb32-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plogis</span>(out[<span class="fu">c</span>(<span class="st">&quot;est&quot;</span>, <span class="st">&quot;lci&quot;</span>, <span class="st">&quot;uci&quot;</span>)])</span>
+<span id="cb32-19"><a href="probability.html#cb32-19" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb32-20"><a href="probability.html#cb32-20" aria-hidden="true" tabindex="-1"></a>whatifdat.ci</span></code></pre></div>
+<pre><code>##          [,1]
+## est 0.6059581
+## lci 0.4184519
+## uci 0.7646174</code></pre>
+</div>
+<div id="rsample-package" class="section level4 hasAnchor" number="2.4.1.2">
+<h4><span class="header-section-number">2.4.1.2</span> <code>rsample</code> package<a href="probability.html#rsample-package" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Another way package that could be used for boostrapping is <code>rsample::bootstrap</code>
+which uses the tidyverse way of R programming. The following function is
+inspired from <a href="https://rsample.tidymodels.org/articles/Applications/Intervals.html">rsample bootstrap</a>.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="probability.html#cb34-1" aria-hidden="true" tabindex="-1"></a>prob_lmod_td <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>),</span>
+<span id="cb34-2"><a href="probability.html#cb34-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">condition.names =</span> input.names) {</span>
+<span id="cb34-3"><a href="probability.html#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">all</span>(condition.names <span class="sc">%in%</span> input.names))</span>
+<span id="cb34-4"><a href="probability.html#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add intercept to conditions</span></span>
+<span id="cb34-5"><a href="probability.html#cb34-5" aria-hidden="true" tabindex="-1"></a>  x0 <span class="ot">&lt;-</span> <span class="st">&quot;(Intercept)&quot;</span>  <span class="co"># name of intercept used by lm, glm, etc.</span></span>
+<span id="cb34-6"><a href="probability.html#cb34-6" aria-hidden="true" tabindex="-1"></a>  condition.names <span class="ot">&lt;-</span> <span class="fu">c</span>(x0, condition.names)</span>
+<span id="cb34-7"><a href="probability.html#cb34-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-8"><a href="probability.html#cb34-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-9"><a href="probability.html#cb34-9" aria-hidden="true" tabindex="-1"></a>  a_formula <span class="ot">&lt;-</span> formulaic<span class="sc">::</span><span class="fu">create.formula</span>(<span class="at">outcome.name =</span> outcome.name,</span>
+<span id="cb34-10"><a href="probability.html#cb34-10" aria-hidden="true" tabindex="-1"></a>                              <span class="at">input.names =</span> input.names,</span>
+<span id="cb34-11"><a href="probability.html#cb34-11" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dat =</span> data)</span>
+<span id="cb34-12"><a href="probability.html#cb34-12" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">formula =</span> a_formula, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> data) <span class="sc">|&gt;</span></span>
+<span id="cb34-13"><a href="probability.html#cb34-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tidy</span>()</span>
+<span id="cb34-14"><a href="probability.html#cb34-14" aria-hidden="true" tabindex="-1"></a>  fit <span class="sc">|&gt;</span></span>
+<span id="cb34-15"><a href="probability.html#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(term <span class="sc">%in%</span> condition.names) <span class="sc">|&gt;</span></span>
+<span id="cb34-16"><a href="probability.html#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">term =</span> <span class="st">&quot;logitP&quot;</span>,</span>
+<span id="cb34-17"><a href="probability.html#cb34-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">estimate =</span> <span class="fu">sum</span>(estimate),</span>
+<span id="cb34-18"><a href="probability.html#cb34-18" aria-hidden="true" tabindex="-1"></a>              <span class="co"># don&#39;t know the std.err so no t-intervals</span></span>
+<span id="cb34-19"><a href="probability.html#cb34-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">std.err =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb34-20"><a href="probability.html#cb34-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="probability.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prob_lmod_td</span>(whatifdat, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>))</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 3
+##   term   estimate std.err
+##   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 logitP    0.430      NA</code></pre>
+<p>and we obtain the confidence interval using <code>rsample</code>.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="probability.html#cb37-1" aria-hidden="true" tabindex="-1"></a>whatifdat.splits <span class="ot">&lt;-</span> whatifdat <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="probability.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  rsample<span class="sc">::</span><span class="fu">bootstraps</span>(<span class="at">times =</span> <span class="dv">100</span>, <span class="at">apparent =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="probability.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">results =</span> <span class="fu">map_dfr</span>(splits, <span class="cf">function</span>(x) {</span>
+<span id="cb37-4"><a href="probability.html#cb37-4" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> <span class="fu">analysis</span>(x)</span>
+<span id="cb37-5"><a href="probability.html#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">prob_lmod_td</span>(dat, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">input.names =</span> <span class="fu">c</span>(<span class="st">&quot;T&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;H&quot;</span>))</span>
+<span id="cb37-6"><a href="probability.html#cb37-6" aria-hidden="true" tabindex="-1"></a>  })) <span class="sc">|&gt;</span></span>
+<span id="cb37-7"><a href="probability.html#cb37-7" aria-hidden="true" tabindex="-1"></a>  rsample<span class="sc">::</span><span class="fu">int_pctl</span>(results, <span class="at">alpha =</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-8"><a href="probability.html#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="st">&quot;P&quot;</span>,</span>
+<span id="cb37-9"><a href="probability.html#cb37-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">.lower =</span> <span class="fu">plogis</span>(.lower),</span>
+<span id="cb37-10"><a href="probability.html#cb37-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">.estimate =</span> <span class="fu">plogis</span>(.estimate),</span>
+<span id="cb37-11"><a href="probability.html#cb37-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">.upper =</span> <span class="fu">plogis</span>(.upper))</span></code></pre></div>
+<pre><code>## Warning: Recommend at least 1000 non-missing bootstrap resamples for term
+## `logitP`.</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="probability.html#cb39-1" aria-hidden="true" tabindex="-1"></a>whatifdat.splits</span></code></pre></div>
+<pre><code>## # A tibble: 1 x 6
+##   term  .lower .estimate .upper .alpha .method   
+##   &lt;chr&gt;  &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     
+## 1 P      0.461     0.606  0.758   0.05 percentile</code></pre>
 <p>and <code>lmodboot()</code> is <code>fciR::boot_lmod()</code> with the alias <code>fciR::lmodboot()</code></p>
-<p>Run and verify against the author’s results on p.34</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="probability.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb21-2"><a href="probability.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<p>Finally we run <code>fciR::boot_lmod()</code> and verify against the author’s results
+on p.34</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="probability.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb41-2"><a href="probability.html#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 10 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
 <pre><code>## this takes 10 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="probability.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb23-2"><a href="probability.html#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># out &lt;- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,</span></span>
-<span id="cb23-3"><a href="probability.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                 inv = &quot;expit&quot;, evars = &quot;logit&quot;,</span></span>
-<span id="cb23-4"><a href="probability.html#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                 outcome.name = &quot;Y&quot;,</span></span>
-<span id="cb23-5"><a href="probability.html#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                 input.names = c(&quot;T&quot;, &quot;A&quot;, &quot;H&quot;))</span></span>
-<span id="cb23-6"><a href="probability.html#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb23-7"><a href="probability.html#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb23-8"><a href="probability.html#cb23-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap02_lmodboot.rds&quot;</span>)</span>
-<span id="cb23-9"><a href="probability.html#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(out, file = a_file)</span></span>
-<span id="cb23-10"><a href="probability.html#cb23-10" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb23-11"><a href="probability.html#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="probability.html#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
-<span id="cb23-13"><a href="probability.html#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(out[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb23-14"><a href="probability.html#cb23-14" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
-<span id="cb23-15"><a href="probability.html#cb23-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="probability.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb43-2"><a href="probability.html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co"># out &lt;- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,</span></span>
+<span id="cb43-3"><a href="probability.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                 inv = &quot;expit&quot;, evars = &quot;logit&quot;,</span></span>
+<span id="cb43-4"><a href="probability.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                 outcome.name = &quot;Y&quot;,</span></span>
+<span id="cb43-5"><a href="probability.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                 input.names = c(&quot;T&quot;, &quot;A&quot;, &quot;H&quot;))</span></span>
+<span id="cb43-6"><a href="probability.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb43-7"><a href="probability.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb43-8"><a href="probability.html#cb43-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap02_lmodboot.rds&quot;</span>)</span>
+<span id="cb43-9"><a href="probability.html#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(out, file = a_file)</span></span>
+<span id="cb43-10"><a href="probability.html#cb43-10" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb43-11"><a href="probability.html#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="co"># out</span></span>
+<span id="cb43-12"><a href="probability.html#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="probability.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="co"># check results with book</span></span>
+<span id="cb43-14"><a href="probability.html#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(out[<span class="st">&quot;est&quot;</span>] <span class="sc">-</span> <span class="fl">0.60596</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb43-15"><a href="probability.html#cb43-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;lci&quot;</span>] <span class="sc">-</span> <span class="fl">0.41638</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>,</span>
+<span id="cb43-16"><a href="probability.html#cb43-16" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(out[<span class="st">&quot;uci&quot;</span>] <span class="sc">-</span> <span class="fl">0.76823</span>) <span class="sc">&lt;</span> <span class="fl">0.02</span>)</span></code></pre></div>
+</div>
+</div>
 </div>
 <div id="exercises-1" class="section level2 hasAnchor" number="2.5">
 <h2><span class="header-section-number">2.5</span> Exercises<a href="probability.html#exercises-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
