@@ -1,6 +1,6 @@
 # Conditional Probability and Expectation {#probability}
 
-```{r include=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(tidyr)
 library(dplyr)
 library(purrr)
@@ -456,7 +456,7 @@ whatifdat.boot <- boot::boot(data = whatifdat, statistic = whatifdat.fnc,
                              R = 100, outcome.name = "Y",
                              input.names = c("T", "A", "H"))
 # get the confidence interval using the boostrap object
-whatifdat.ci <- sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
+sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
     est <- whatifdat.boot$t0[i]
     ci <- boot::boot.ci(whatifdat.boot, conf = 0.95, type = "norm", 
                         index = i)$normal
@@ -464,7 +464,6 @@ whatifdat.ci <- sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
     names(out) <- c("est", "conf", "lci", "uci")
     plogis(out[c("est", "lci", "uci")])
   })
-whatifdat.ci
 ```
 
 #### `rsample` package
@@ -500,7 +499,9 @@ prob_lmod_td <- function(data, outcome.name = "Y", input.names = c("T", "A", "H"
 prob_lmod_td(whatifdat, outcome.name = "Y", input.names = c("T", "A", "H"))
 ```
 
-and we obtain the confidence interval using `rsample`.
+and we obtain the confidence interval using `rsample::int_pctl` which uses
+a percentile interval instead of assuming a normal distribution as Ms Brumback
+does.  The result are not materially different in the current case.
 
 ```{r}
 whatifdat |>
@@ -517,10 +518,7 @@ whatifdat |>
 ```
 
 
-
-
 and `lmodboot()` is `fciR::boot_lmod()` with the alias `fciR::lmodboot()`
-
 
 Finally we run `fciR::boot_lmod()` and verify against the author's results 
 on p.34

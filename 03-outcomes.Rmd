@@ -1,7 +1,12 @@
 # Potential Outcomes and the Fundamental Problem of Causal Inference {#outcomes}
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(rsample)
 library(fciR)
+options(dplyr.summarise.inform = FALSE)
 ```
 
 
@@ -12,11 +17,119 @@ dir_data <- file.path(getwd(), "data")
 dir_lib <- file.path(getwd(), "lib")
 ```
 
+The results from the preliminary report on June 22, 20202 
+(RECOVERY Collaborative Group) (2020)) are as follows
+
+
+```{r}
+dataRecovery <- data.frame(
+  `T` = c(0, 0, 1, 1),
+  Y = c(0, 1, 0, 1),
+  n = c(1065, 3256, 454, 2104)
+)
+```
+
+and the estimate of survival $Y=1$ with treatment is
+
+```{r}
+p1 <- dataRecovery |>
+  filter(`T` == 1) |>
+  mutate(p = n / sum(n)) |>
+  summarize(EYT1 = sum(Y * p))
+p1
+```
+
+whereas the estimate of survial with treatment is
+
+
+```{r}
+p0 <- dataRecovery |>
+  filter(`T` == 0) |>
+  mutate(p = n / sum(n)) |>
+  summarize(EYT0 = sum(Y * p))
+p0
+```
+
+and the chi-square test of difference can be calculated as follows
+
+```{r}
+# create the data table
+dataRecoveryChi <- data.frame(
+  Y0 = c(T0 = 1065, T1 = 454),
+  Y1 = c(T0 = 3256, T1 = 2104)
+)
+# perform the chi-square test
+chisq <- chisq.test(dataRecoveryChi)
+chisq
+```
+The p-value is small enough (<0.05) to allow us to reject the null hypothesis that
+the treatment $T$ and the outcome $Y$ are independent.
+
+*The author's chi-square test gives a p-value of 0.032 whereas the chi-square 
+above gives 3.207e-11.* **Why the difference?**
+
+If we use a *t-test* to also test the difference in means
+
+```{r}
+# we don't have the raw data, so we simulate
+YT1 <- rbinom(n = 454 + 2104, size = 1, prob = 0.823)
+YT0 <- rbinom(n = 1065 + 3256, size = 1, prob = 0.754)
+ttest <- t.test(x = YT1, YT0, var.equal = FALSE)
+ttest
+```
+
+and again the p-value are quite different with the same conclusion.
 
 ## Potential Outcomes and the Consistency Assumption
 
 
+> The utility of the potential outcome framework hinges on the validity of a
+*consistency assumption* that links potential outcome to obe=served outcomes.
+
+> It is worth emphasizing that the consistency assumption requires the potential
+outcomes to be well-defined.
+
+> A major problem for causal inference is that we can only observe *one potential
+outcome per participant*.  This is the *Fundamental Problem of Causal Inference*
+(FPCI).
+
+We can therefore classify 4 causal types
+
+$$
+\text{Doomed:} \: Y(0) = Y(1) = 0 \\
+\text{Responsive:} \: Y(0) = 0,  Y(1) = 1 \\
+\text{Harmed:} \: Y(0) = 1,  Y(1) = 0 \\
+\text{Immune:} \: Y(0) = Y(1) = 1 \\
+$$
+
+If we consider that the treatment cannot be harmful, in that case a patient
+with $Y=0$ must be doomed and an untreated patient with $Y=0$ must be immune.
+
+
+$$
+\text{Assuming the treatment cannot be harmful} \\ \\
+\text{Doomed:} \: Y(0) = Y(1) = 0 \\
+\text{Responsive:} \: Y(0) = 0,  Y(1) = 1 \\
+\text{Immune:} \: Y(0) = 1 \\
+$$
+
+
 ## Circumventing the Fundamental Problem of Causal Inference
+
+There are 2 solutions to the FPCI
+
+* Scientific solution: We use scientific theory to measure both potential
+outcomes. For example by using 2 different participants that are considered
+identical for the purpose of the scientific study.
+
+* Statistical solution: The treatment is randomized independently of any 
+existing data. As a result we obtain mean independence and the mean can
+be used to draw inference. This approach has some issues
+  - The difference between the outcome with or without treatment can still
+  be caused by chance.
+  - The study populaiton may not be relevant anymore.
+  - Extrapolating an average result to an individdual might be problematic.
+
 
 
 ## Effect Measures
