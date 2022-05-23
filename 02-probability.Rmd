@@ -334,7 +334,7 @@ whatifdat.est <- whatifdat |>
 whatifdat.est
 ```
 
-which is a close to the parametric estimate.
+which is close to the parametric estimate.
 
 ## Sampling Distributions and the Bootstrap
 
@@ -357,9 +357,9 @@ whatifdat.se <- whatifdat.sd / sqrt(whatifdat.n)
 whatifdat.se
 ```
 
-Note that the formula used by B. Brumback is using the standrd deviaiton of the
-population $p(1-p)$ whcih is not entirely the right way since the standrd error
-of the mean is defined using the *standard deviaiton of the sample*.
+Note that the formula used by B. Brumback is using the standard deviation of the
+population $p(1-p)$ which is not entirely the right way since the standard error
+of the mean is defined using the *standard deviation of the sample*.
 
 That is Brumback uses
 
@@ -425,7 +425,7 @@ found in the package `fciR` or in its alias `fciR::prob_lmod`.
 
 
 ```{r}
-prob_lmod(whatifdat, outcome.name = "Y", input.names = c("T", "A", "H"))
+prob_lmod(whatifdat, formula = Y ~ `T` + A + H)
 ```
 
 and we show the details on how to do the bootstrapping with the `boot` package
@@ -446,15 +446,13 @@ boot_ci <- function(x, conf = 0.95) {
 
 ```{r}
 # define the function used by boot
-whatifdat.fnc <- function(data, ids, outcome.name = "Y", 
-                          input.names = c("T", "A", "H")) {
+whatifdat.fnc <- function(data, ids, formula = Y ~ `T` + A + H) {
   dat <- data[ids, ]
-  prob_lmod(data = dat, outcome.name = outcome.name, input.names = input.names)
+  prob_lmod(data = dat, formula = formula)
 }
 # run the bootstrapping
 whatifdat.boot <- boot::boot(data = whatifdat, statistic = whatifdat.fnc, 
-                             R = 100, outcome.name = "Y",
-                             input.names = c("T", "A", "H"))
+                             R = 100, formula = Y ~ `T` + A + H)
 # get the confidence interval using the boostrap object
 sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
     est <- whatifdat.boot$t0[i]
@@ -469,22 +467,29 @@ sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
 #### `rsample` package
 
 Another way package that could be used for boostrapping is `rsample::bootstrap` 
-which uses the tidyverse way of R programming. The following function is 
-inspired from [rsample bootstrap](https://rsample.tidymodels.org/articles/Applications/Intervals.html).
+which uses the tidyverse way of R programming.
+
+To be fully tidyverse-like we recode the `prob_lmod` function from above and
+call it `prob_lmod_td` where the `td` suffix stands for `tidyverse`. Note the
+use of a formula as an argument to the function and the `rlang` package which
+is a great tool to learn for quality code in R.
 
 ```{r}
-prob_lmod_td <- function(data, outcome.name = "Y", input.names = c("T", "A", "H"),
-                     condition.names = input.names) {
-  stopifnot(all(condition.names %in% input.names))
+prob_lmod_td <- function(data, formula = Y ~ `T` + A + H,
+                         condition.names = NULL) {
+  # independent variables from the formula
+  f_vars <- all.vars(rlang::f_rhs(formula))
+  # if condition.names is NULL then use all independent variables
+  # which is the same as saying there is no condition
+  if (is.null(condition.names)) condition.names <- f_vars
+  stopifnot(all(condition.names %in% f_vars))
+
   # add intercept to conditions
   x0 <- "(Intercept)"  # name of intercept used by lm, glm, etc.
   condition.names <- c(x0, condition.names)
   
   
-  a_formula <- formulaic::create.formula(outcome.name = outcome.name,
-                              input.names = input.names,
-                              dat = data)
-  fit <- glm(formula = a_formula, family = "binomial", data = data) |>
+  fit <- glm(formula = formula, family = "binomial", data = data) |>
     tidy()
   fit |>
     filter(term %in% condition.names) |>
@@ -496,10 +501,13 @@ prob_lmod_td <- function(data, outcome.name = "Y", input.names = c("T", "A", "H"
 ```
 
 ```{r}
-prob_lmod_td(whatifdat, outcome.name = "Y", input.names = c("T", "A", "H"))
+prob_lmod_td(whatifdat, formula = Y ~ `T` + A + H)
 ```
 
-and we obtain the confidence interval using `rsample::int_pctl` which uses
+The following function is 
+inspired from [rsample bootstrap](https://rsample.tidymodels.org/articles/Applications/Intervals.html).
+
+We obtain the confidence interval using `rsample::int_pctl` which uses
 a percentile interval instead of assuming a normal distribution as Ms Brumback
 does.  The result are not materially different in the current case.
 
@@ -508,7 +516,7 @@ whatifdat |>
   rsample::bootstraps(times = 100, apparent = FALSE) |>
   mutate(results = map_dfr(splits, function(x) {
     dat <- analysis(x)
-    prob_lmod_td(dat, outcome.name = "Y", input.names = c("T", "A", "H"))
+    prob_lmod_td(dat, formula = Y ~ `T` + A + H)
   })) |>
   rsample::int_pctl(results, alpha = 0.05) |>
   mutate(term = "P",
@@ -525,12 +533,10 @@ on p.34
 
 ```{r}
 data("whatifdat", package = "fciR")
-message("this takes 10 sec.: we load a saved file instead")
+message("this takes 1 sec.: we load a saved file instead")
 # startTime <- Sys.time()
 # out <- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,
-#                 inv = "expit", evars = "logit",
-#                 outcome.name = "Y",
-#                 input.names = c("T", "A", "H"))
+#                 inv = "expit", evars = "logit", formula = Y ~ `T` + A + H)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap02_lmodboot.rds")

@@ -134,7 +134,12 @@ be used to draw inference. This approach has some issues
 
 ## Effect Measures
 
-Run the function to get the association measures
+To estimate the association measures we use the parametric method with
+the `glm` function.
+
+> We certainly do not believe that our binary outcomes the distributional 
+assumtptions for the gaussian and poisson models, but we are only using the 
+`glm` function to solve estimating equations.
 
 ```{r}
 data("gss", package = "fciR")
@@ -144,11 +149,14 @@ stopifnot(nrow(gssrcc) == 2348 - 180)  # see comment on p. 46
 ```
 
 
+
+
+
 ```{r}
 message("this takes 20 sec.: we load a saved file instead")
-startTime <- Sys.time()
+# startTime <- Sys.time()
 # uncond <- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,
-#                   outcome.name = "trump", input.names = "gthsedu")
+#                   formula = trump ~ gthsedu)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
@@ -161,8 +169,9 @@ uncond <- readRDS(file = a_file)
 ```{r}
 gt_measures(uncond, 
             title = "Table 3.2", 
-            subtitle = "4 Association Measures Relating<br><em>More than High School
-            Education</em> to <em>Voting for Trump</em>")
+            subtitle = paste("4 Association Measures Relating", 
+            "<em>More than High School Education</em> to <em>Voting for Trump</em>", 
+            sep = "<br>"))
 ```
 
 verify with author's results, p. 48-49
@@ -222,11 +231,11 @@ $$
 
 
 ```{r}
-message("this takes 20 sec.: we load a saved file instead")
+message("this takes 6 sec.: we load a saved file instead")
 # startTime <- Sys.time()
 # condit <- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,
-#                   outcome.name = "trump", exposure.name = "gthsedu",
-#                   confound.names = c("magthsedu", "white", "female", "gt65"))
+#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65, 
+#                   exposure.name = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootc.rds")
@@ -239,9 +248,9 @@ condit <- readRDS(file = a_file)
 ```{r}
 gt_measures(condit, 
             title = "Table 3.3", 
-            subtitle = "4 Conditional Association or Effect Measures<br>
-            Relating <em>More than High School Education</em> 
-            to <em>Voting for Trump</em>")
+            subtitle = paste("4 Conditional Association or Effect Measures",
+            "Relating <em>More than High School Education</em> 
+            to <em>Voting for Trump</em>", sep = "<br>"))
 ```
 
 
