@@ -433,14 +433,14 @@ as follows.
 
 
 ```{r}
-boot_ci <- function(x, conf = 0.95) {
-  # critical value
-  cv <- qt(conf, df = length(x) - 1)
-  # mean value
-  est <- mean(x)
-  sd <- sd(x)
-  c("est" = mean(conf), conf = conf, lci = est - cv * sd, uci = est + cv * sd)
-}
+# boot_ci <- function(x, alpha = 0.05) {
+#   # critical value using t distribution
+#   cv <- qt(1 - alpha, df = length(x) - 1)
+#   # mean value
+#   est <- mean(x)
+#   sd <- sd(x)
+#   c("est" = mean(conf), conf = conf, lci = est - cv * sd, uci = est + cv * sd)
+# }
 ```
 
 
@@ -454,14 +454,19 @@ whatifdat.fnc <- function(data, ids, formula = Y ~ `T` + A + H) {
 whatifdat.boot <- boot::boot(data = whatifdat, statistic = whatifdat.fnc, 
                              R = 100, formula = Y ~ `T` + A + H)
 # get the confidence interval using the boostrap object
-sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i) {
+sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i, alpha = 0.05, method = "norm") {
     est <- whatifdat.boot$t0[i]
-    ci <- boot::boot.ci(whatifdat.boot, conf = 0.95, type = "norm", 
+    ci <- boot::boot.ci(whatifdat.boot, conf = 1 - alpha, type = method, 
                         index = i)$normal
-    out <- c(est, ci)
-    names(out) <- c("est", "conf", "lci", "uci")
-    plogis(out[c("est", "lci", "uci")])
-  })
+    c(".lower" = plogis(ci[2]),
+      ".estimate" = plogis(unname(est)),
+      ".upper" = plogis(ci[3]),
+      ".alpha" = alpha)
+  }) |>
+  t() |>
+  as_tibble() |>
+  mutate("term" = "P", ".method" = "norm") |>
+  relocate(term)
 ```
 
 #### `rsample` package
