@@ -433,40 +433,39 @@ as follows.
 
 
 ```{r}
-# boot_ci <- function(x, alpha = 0.05) {
-#   # critical value using t distribution
-#   cv <- qt(1 - alpha, df = length(x) - 1)
-#   # mean value
-#   est <- mean(x)
-#   sd <- sd(x)
-#   c("est" = mean(conf), conf = conf, lci = est - cv * sd, uci = est + cv * sd)
-# }
-```
-
-
-```{r}
 # define the function used by boot
-whatifdat.fnc <- function(data, ids, formula = Y ~ `T` + A + H) {
+whatifdat.fnc <- function(data, ids, ...) {
   dat <- data[ids, ]
-  prob_lmod(data = dat, formula = formula)
+  df <- prob_lmod(data = dat, ...)
+  # create the named vector
+  out <- c(df$estimate)
+  names(out) <- df$term
+  out
 }
 # run the bootstrapping
 whatifdat.boot <- boot::boot(data = whatifdat, statistic = whatifdat.fnc, 
                              R = 100, formula = Y ~ `T` + A + H)
-# get the confidence interval using the boostrap object
-sapply(X = seq_along(whatifdat.boot$t0), FUN = function(i, alpha = 0.05, method = "norm") {
-    est <- whatifdat.boot$t0[i]
-    ci <- boot::boot.ci(whatifdat.boot, conf = 1 - alpha, type = method, 
-                        index = i)$normal
-    c(".lower" = plogis(ci[2]),
-      ".estimate" = plogis(unname(est)),
-      ".upper" = plogis(ci[3]),
-      ".alpha" = alpha)
-  }) |>
-  t() |>
-  as_tibble() |>
-  mutate("term" = "P", ".method" = "norm") |>
-  relocate(term)
+# get the confidence interval for every term in the bootstrap object
+whatifdat.out <- lapply(X = seq_along(whatifdat.boot$t0), FUN = function(i, alpha = 0.05) {
+  est <- whatifdat.boot$t0[i]
+  # the method used to find the interval
+  the_method <- "norm"
+  # extract the interval from the boot object
+  ci <- boot::boot.ci(whatifdat.boot, conf = 1 - alpha, type = the_method, 
+                      index = i)$normal
+  # the dataframe of results, follow the format from rsample package
+  data.frame("term" = names(est),
+    ".lower" = plogis(ci[2]),
+    ".estimate" = plogis(unname(est)),
+    ".upper" = plogis(ci[3]),
+    ".alpha" = alpha,
+    ".method" = the_method)
+  })
+# bind the data.frame in one.
+# In this case it makes no difference as there is only one.
+# and we just want to show how it works in case of several items
+whatifdat.out <- do.call(rbind, whatifdat.out)
+whatifdat.out
 ```
 
 #### `rsample` package
@@ -506,7 +505,8 @@ prob_lmod_td <- function(data, formula = Y ~ `T` + A + H,
 ```
 
 ```{r}
-prob_lmod_td(whatifdat, formula = Y ~ `T` + A + H)
+t <- prob_lmod_td(whatifdat, formula = Y ~ `T` + A + H)
+t
 ```
 
 The following function is 
@@ -540,19 +540,19 @@ on p.34
 data("whatifdat", package = "fciR")
 message("this takes 1 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# out <- fciR::boot_est(whatifdat, func = fciR::prob_lmod, R = 500, conf = 0.95,
+# out <- fciR::boot_est(whatifdat, func = fciR::prob_lmod, times = 500, alpha = 0.05,
 #                 inv = "expit", evars = "logit", formula = Y ~ `T` + A + H)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap02_lmodboot.rds")
 # saveRDS(out, file = a_file)
 out <- readRDS(file = a_file)
-# out
+out
 
 # check results with book
-stopifnot(abs(out["est"] - 0.60596) < 0.02,
-          abs(out["lci"] - 0.41638) < 0.02,
-          abs(out["uci"] - 0.76823) < 0.02)
+stopifnot(abs(out[".estimate"] - 0.60596) < 0.02,
+          abs(out[".lower"] - 0.41638) < 0.02,
+          abs(out[".upper"] - 0.76823) < 0.02)
 ```
 
 

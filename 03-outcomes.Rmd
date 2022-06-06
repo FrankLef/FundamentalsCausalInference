@@ -56,8 +56,7 @@ and the chi-square test of difference can be calculated as follows
 # create the data table
 dataRecoveryChi <- data.frame(
   Y0 = c(T0 = 1065, T1 = 454),
-  Y1 = c(T0 = 3256, T1 = 2104)
-)
+  Y1 = c(T0 = 3256, T1 = 2104))
 # perform the chi-square test
 chisq <- chisq.test(dataRecoveryChi)
 chisq
@@ -153,10 +152,10 @@ stopifnot(nrow(gssrcc) == 2348 - 180)  # see comment on p. 46
 
 
 ```{r}
-message("this takes 20 sec.: we load a saved file instead")
+message("this takes 12 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# uncond <- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,
-#                   formula = trump ~ gthsedu)
+# uncond <- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, times = 500, 
+#                          alpha = 0.05, formula = trump ~ gthsedu)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap03_bootu.rds")
@@ -178,31 +177,20 @@ verify with author's results, p. 48-49
 
 ```{r}
 bb <- data.frame(
-  name = c("p0", "p1", "rd", "rr", "rrstar", "or"),
-  est = c(0.23338, 0.27117, 0.037782, 1.1619, 1.0518, 1.221),
-  lci = c(0.21030, 0.24095, 0.00078085, 1.0047, 1.0006, 1.0056),
-  uci = c(0.25647, 0.30139, 0.07478354, 1.3437, 1.1057, 1.4853))
+  term = c("P0", "P1", "RD", "RR", "RR*", "OR"),
+  .estimate = c(0.23338, 0.27117, 0.037782, 1.1619, 1.0518, 1.221),
+  .lower = c(0.21030, 0.24095, 0.00078085, 1.0047, 1.0006, 1.0056),
+  .upper = c(0.25647, 0.30139, 0.07478354, 1.3437, 1.1057, 1.4853))
 stopifnot(
-  all(abs(uncond$est - bb$est) < 0.01),
-  all(abs(uncond$lci - bb$lci) < 0.015),
-  all(abs(uncond$uci - bb$uci) < 0.02))
+  all(abs(uncond$.estimate - bb$.estimate) < 0.01),
+  all(abs(uncond$.lower - bb$.lower) < 0.015),
+  all(abs(uncond$.upper - bb$.upper) < 0.02))
 ```
 
 
 
 Now we estimate the four effect measures using *conditional* association
-measures. We notice that
-
-* The function used in chapter 3 on p. 50-52 is called `lmodboot.r()`. 
-* The same name is used in chapter 2 on p.33-34 for a function computing only 
-the estimand  (sampling distribution) but *not the association measures*
-
-**We therefore rename the `lmodboot.r()` of chapter 3 as `bootc`** to
-
-* show it relates to `bootu` with the `c` meaning **conditional** and
-* avoid conflicting function names with `lmodboot.r()` of chapter 2
-
-
+measures.
 
 To use the function with conditioning on variables, i.e. filtering on variables,
 we note that
@@ -233,8 +221,8 @@ $$
 ```{r}
 message("this takes 6 sec.: we load a saved file instead")
 # startTime <- Sys.time()
-# condit <- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,
-#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65, 
+# condit <- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, times = 500, alpha = 0.05,
+#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65,
 #                   exposure.name = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -259,14 +247,14 @@ verify with author's results, p.52
 
 ```{r}
 bb <- data.frame(
-  name = c("p0", "p1", "rd", "rr", "rrstar", "or"),
-  est = c(0.25458, 0.30101, 0.046438, 1.1824, 1.0664, 1.261),
-  lci = c(0.18518, 0.22995, 0.0022706, 1.0039, 1.0018, 1.0091),
-  uci = c(0.32397, 0.37208, 0.0906057, 1.3927, 1.1352, 1.5758))
+  term = c("P0", "P1", "RD", "RR", "RR*", "OR"),
+  .estimate = c(0.25458, 0.30101, 0.046438, 1.1824, 1.0664, 1.261),
+  .lower = c(0.18518, 0.22995, 0.0022706, 1.0039, 1.0018, 1.0091),
+  .upper = c(0.32397, 0.37208, 0.0906057, 1.3927, 1.1352, 1.5758))
 stopifnot(
-  all(abs(condit$est - bb$est) < 0.01),
-  all(abs(condit$lci - bb$lci) < 0.015),
-  all(abs(condit$uci - bb$uci) < 0.02))
+  all(abs(condit$.estimate - bb$.estimate) < 0.01),
+  all(abs(condit$.lower - bb$.lower) < 0.015),
+  all(abs(condit$.upper - bb$.upper) < 0.02))
 ```
 
 

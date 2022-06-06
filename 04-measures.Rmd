@@ -42,10 +42,11 @@ run `boot()`, alias `meas_effect_modif()` with the RECOVERY data set
 
 ```{r}
 recovery.out <- boot_est(data = recovery, func = meas_effect_modif,
-                         R = 100, conf = 0.95,
+                         times = 100, alpha = 0.05,
                          inv = "exp", evars = "modifier",
                          outcome.name = "Y", exposure.name = "T",
                          modifier.name = "M")
+recovery.out
 ```
 
 
@@ -53,22 +54,21 @@ verify the results with the author's on p. 65.
 
 ```{r}
 bb <- data.frame(
-  estimator = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
+  term = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
            "EYT0", "EYT1", "RD", "RR", "RR", "RR",
            "RR*", "RR*", "RR*", "OR", "OR", "OR"),
   group = c("M0", "M1", "M0", "M1", "M0", "M1",
            "diff", "diff", "diff", "M0", "M1", "diff",
            "M0", "M1", "diff", "M0", "M1", "diff"),
-  est = c(0.784, 0.593, 0.793, 0.735, 0.01, 0.142,
+  estimate = c(0.784, 0.593, 0.793, 0.735, 0.01, 0.142,
           -0.191, -0.059, 0.132, 1.012, 1.239, 1.224,
           1.046, 1.533, 1.466, 1.059, 1.9, 1.794)
   )
-ids <- match(paste(bb$estimator, bb$group, sep = "."), recovery.out$name)
+ids <- match(paste(bb$term, bb$group, sep = "."), recovery.out$term)
 comp <- data.frame(bb = bb,
-                   d = recovery.out[ids, "est"])
-comp$dev <- abs(comp$bb.est - comp$d)
+                   d = recovery.out[ids, ".estimate"])
+comp$dev <- abs(comp$bb.estimate - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
-# comp
 ```
 
 and we communicate the results in a table
@@ -77,7 +77,7 @@ and we communicate the results in a table
 ```{r}
 # reformat to use for table and plot
 recovery.out <- recovery.out %>%
-  separate(col = "name", into = c("estimator", "group"), sep = "[.]", remove = TRUE)
+  separate(col = "term", into = c("term", "group"), sep = "[.]", remove = TRUE)
 fciR::gt_measures_colgrp(recovery.out, var_grp = "group",
                    title = "Table 4.2 RECOVERY Trial",
                    subtitle = "Effect-measure Modification")
@@ -157,7 +157,7 @@ Run the bootsrap
 
 ```{r}
 nces.out <- boot_est(data = nces, func = meas_effect_modif,
-                         R = 100, conf = 0.95,
+                         times = 100, alpha = 0.05,
                          inv = "exp", evars = "modifier",
                          outcome.name = "highmathsat", exposure.name = "female",
                          modifier.name = "selective")
@@ -167,19 +167,19 @@ verify the results with the author's on p. 70.
 
 ```{r}
 bb <- data.frame(
-  estimator = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
+  term = c("EYT0", "EYT0", "EYT1", "EYT1", "RD", "RD",
            "EYT0", "EYT1", "RD", "RR", "RR", "RR",
            "RR*", "RR*", "RR*", "OR", "OR", "OR"),
   group = c("M0", "M1", "M0", "M1", "M0", "M1",
            "diff", "diff", "diff", "M0", "M1", "diff",
            "M0", "M1", "diff", "M0", "M1", "diff"),
-  est = c(0.167, 0.675, 0.081, 0.345, -0.086, -0.33,
+  estimate = c(0.167, 0.675, 0.081, 0.345, -0.086, -0.33,
           0.509, 0.264, -0.244, 0.486, 0.511, 1.052,
           0.907, 0.496, 0.547, 0.44, 0.254, 0.576)
   )
-ids <- match(paste(bb$estimator, bb$group, sep = "."), nces.out$name)
-comp <- data.frame(bb = bb, d = nces.out[ids, "est"])
-comp$dev <- abs(comp$bb.est - comp$d)
+ids <- match(paste(bb$term, bb$group, sep = "."), nces.out$term)
+comp <- data.frame(bb = bb, d = nces.out[ids, ".estimate"])
+comp$dev <- abs(comp$bb.estimate - comp$d)
 stopifnot(sum(comp$dev) < 0.01)
 ```
 
@@ -189,7 +189,7 @@ and the table is
 ```{r}
 # reformat to use for table and plot
 nces.out <- nces.out %>%
-  separate(col = "name", into = c("estimator", "group"), sep = "[.]", remove = TRUE)
+  separate(col = "term", into = c("term", "group"), sep = "[.]", remove = TRUE)
 fciR::gt_measures_colgrp(nces.out, var_grp = "group",
                    title = "Table 4.3 NCES data",
                    subtitle = "Effect-measure Modification")

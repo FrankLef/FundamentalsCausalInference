@@ -168,49 +168,59 @@ str(mort)
 and the function used to automate the process described above is as follows
 
 ```{r}
-est_out_np <- function(data, outcome, exposure, confound) {
-  # compute the frequencies
-  summ <- data %>%
-    count({{outcome}}, {{exposure}}, {{confound}}) %>%
+func_out_np <- function(data, formula, exposure.name, confound.names) {
+  # the name of the outcome variable
+  outcome.name <- all.vars(rlang::f_lhs(formula))
+  
+  # compute the frequencies, this table is then used for all computations
+  summ <- data |>
+    count(.data[[outcome.name]], .data[[exposure.name]], .data[[confound.names]]) |>
     mutate(freq = n / sum(n))
+  stopifnot(abs(sum(summ$freq) - 1) < .Machine$double.eps^0.5)
   
   # the expected value of the outcome given the exposure and confounds
-  EYcond <- summ %>%
-    group_by({{exposure}}, {{confound}}) %>%
-    summarize(EYcond = weighted.mean(x = {{outcome}}, w = n))
+  # i.e. the outcome conditional mean
+  out_cond_mean <- summ |>
+    group_by(.data[[exposure.name]], .data[[confound.names]]) |>
+    summarize(EY = weighted.mean(.data[[outcome.name]], w = n)) |>
+    # add and id column to be able to join the confounds variables later
+    unite(col = "id", .data[[confound.names]], remove = FALSE)
   
-  # the probabilities of the confound
-  PH <- summ %>%
-    group_by({{confound}}) %>%
-    summarize(prob = sum(freq))
+  # the confounds' distribution
+  confound_dist <- summ %>%
+    group_by(.data[[confound.names]]) |>
+    summarize(prob = sum(freq)) |>
+    # add and id column to be able to join the confounds variables later
+    unite(col = "id", .data[[confound.names]], remove = FALSE)
   
   # multiply the conditional expectation by the confound probabilities
-  cnf <- enquo(confound)
-  EY <- dplyr::inner_join(EYcond, PH, by = quo_name(cnf)) %>%
-    mutate(EY = EYcond * prob) %>%
-    group_by({{exposure}}) %>%
-    summarize(EY = sum(EY)) %>%
-    arrange({{exposure}}) %>%
-    pull(EY) %>%
+  EY <- dplyr::inner_join(out_cond_mean, confound_dist, by = "id") |>
+    group_by(.data[[exposure.name]]) |>
+    summarize(EY = sum(EY * prob)) |>
+    # create the output vector
+    arrange(.data[[exposure.name]]) |>
+    pull(EY) |>
     setNames(c("EY0", "EY1"))
+  EY
 }
 ```
 
 
 
 ```{r}
-mort.out.est <- est_out_np(mort, outcome = Y, exposure = `T`, confound = H)
+mort.out.est <- func_out_np(mort, formula = Y ~ `T` + H, exposure.name = "T", 
+                           confound.names = "H")
 mort.out.est
 ```
 
-and we can see it gives the same results (the function is also found in 
+and we can see it gives the same results with the `fciR` package with
 `fciR::backdr_out_np`)
 
 ```{r}
 message("This takes about 2 min. Load from file.")
 # startTime <- Sys.time()
 # mort.out.np <- fciR::boot_est(
-#   mort, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "Y", 
+#   mort, fciR::backdr_out_np, times = 500, alpha = 0.05, formula = Y ~ `T` + H,
 #   exposure.name = "T", confound.names = "H")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -222,42 +232,98 @@ mort.out.np <- readRDS(file = a_file)
 ```{r echo=FALSE}
 fciR::gt_measures(mort.out.np,  digits = 6,
             title = "Mortality", 
-            subtitle = paste("Mortality", 
-                              "Standardized Estimates via Outcome Modeling",
+            subtitle = paste("Standardized Estimates via Outcome Modeling",
                               "Non Parametric Without Regression",
                              sep = "<br>"))
 ```
+
+Section 6.1, p. 101, also give the function `stand.r` to standardize via outcome
+modeling. This function uses regression with a saturated model, also called non-
+parametric, see last paragraph of section 2.2 on p. 25 regarding the saturated 
+model.
+
+The `stand.r` is called `fciR::backdr_out_sat`, the suffix `sat` means it is
+with a saturated regression model. Here we show it using the tidyverse way.
+
+```{r}
+func_out_sat <- function(data, formula, exposure.name, confound.names) {
+  # this function works when there is only one confound
+  stopifnot(length(confound.names) == 1)
+  
+  x0 <- "(Intercept)"  # name of intercept used by lm, glm, etc.
+  
+  # marginal expected value of the outcome
+  mean_confound <- mean(data[, confound.names])
+  
+  # fit the outcome model
+  fit <- glm(formula = formula, data = data) |>
+    broom::tidy()
+  
+  # add distribution marginal expected potential outcomes
+  # marginal computaiton only for terms including the confound
+  fit <- fit |>
+    mutate(
+      # find the terms that includes the confound
+      marg_exp = grepl(pattern = confound.names, x = term),
+      # multiply the terms inlcuding the confound
+      marg_exp = ifelse(marg_exp, estimate * mean_confound, estimate)
+    )
+  
+  # E(Y(0))
+  EY0 <- fit |>
+    filter(term %in% c(x0, confound.names)) |>
+    summarize(EY = sum(marg_exp)) |>
+    pull()
+  # E(Y(1))
+  EY1 <- fit |>
+    summarize(EY = sum(marg_exp)) |>
+    pull()
+  
+  c("EY0" = EY0, "EY1" = EY1)
+}
+```
+
+Here we use it again with the `mort` dataset. It is important to note that the
+formula *inlcudes all interactions* since the model is saturated
+
+
+```{r}
+mort.out <- func_out_sat(mort, formula = Y ~ `T` * H, 
+                        exposure.name = "T",  confound.names = "H")
+mort.out
+```
+
 
 
 and we now do it with the function `fciR::backdr_out_npr`. That function
 works exactly as the function `standr` in the book.
 
 ```{r}
-message("This takes about 3 min. Load from file.")
+message("This takes about 4 min. Load from file.")
 # startTime <- Sys.time()
-# mort.out.npr <- fciR::boot_est(
-#   mort, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
-#   exposure.name = "T", confound.names = "H", interactions = list(c("T", "H")))
+# mort.out.sat <- fciR::boot_est(
+#   mort, func = fciR::backdr_out_sat, times = 500, alpha = 0.05,
+#   inv = "none", evars = "standard", formula = Y ~ `T` * H,
+#   exposure.name = "T", confound.names = "H")
 # endTime <- Sys.time()
 # print(endTime - startTime)
-a_file <- file.path(dir_data, "chap06_mort_out_npr.rds")
-# saveRDS(mort.out.npr, file = a_file)
-mort.out.npr <- readRDS(file = a_file)
+a_file <- file.path(dir_data, "chap06_mort_out_sat.rds")
+# saveRDS(mort.out.sat, file = a_file)
+mort.out.sat <- readRDS(file = a_file)
 ```
 
 
 
 ```{r echo=FALSE, out.width="100%"}
-df <- mort.out.npr
+df <- mort.out.sat
 tbl <- fciR::gt_measures(df,  digits = 6,
             title = "Mortality", 
-            subtitle = paste("Mortality", 
-                              "Standardized Estimates",
+            subtitle = paste("Standardized Estimates",
                               "Non Parametric With Regression",
                               sep = "<br>"))
-p <- ggp_format(df, type = "measures_tbl")
-p <- do.call(what = fciR::ggp_measures, args = p)
-
+p <- fciR::ggp_measures(df,
+                   title = NULL,
+                   subtitle = NULL)
 tbl <- fciR::gt2ggp(tbl)
 p + tbl + plot_annotation(title = "Mortality Data Effect Measures",
                           subtitle = "Standardized Estimates, 95% confidence interval") &
@@ -280,24 +346,25 @@ data("whatifdat", package = "fciR")
 ```
 
 
-##### Non-parametric With Regression `backdr_out_npr` {-}
+##### Saturated model with `backdr_out_sat` {-}
 
 ```{r}
 whatif.out <- fciR::boot_est(
-  whatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
-  exposure.name = "A", confound.names = "H", interactions = list(c("A", "H")))
-# whatif.out
+  whatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
+  inv = "none", evars = "standard",
+  formula = Y ~ A * H, exposure.name = "A", confound.names = "H")
+whatif.out
 ```
 
 and we compare with the author's
 
 ```{r}
 comp <- data.frame(
-  name = c("EY0", "EY1", "RD", "RR"),
-  auth = c(0.375, 0.289, -0.086, 0.77),
-  est = whatif.out$est[whatif.out$name %in% c("EY0", "EY1", "RD", "RR")]
+  term = c("EY0", "EY1", "RD", "RR"),
+  .estimate.auth = c(0.375, 0.289, -0.086, 0.77),
+  .estimate = whatif.out$.estimat[whatif.out$term %in% c("EY0", "EY1", "RD", "RR")]
 )
-stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+stopifnot(sum(abs(comp$.estimate.auth - comp$.estimate)) < 0.01)
 ```
 
 and the results are presented in table 6.1
@@ -305,8 +372,9 @@ and the results are presented in table 6.1
 ```{r echo=FALSE, out.width="100%"}
 df <- whatif.out
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.1", 
-            subtitle = paste("What-If Study", "Standardized Estimates",
+            title = paste("Table 6.1", "What-If Study"), 
+            subtitle = paste("Standardized Estimates",
+                             "Saturated Model With Regression",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -321,29 +389,29 @@ p + tbl + plot_annotation(title = "What-If Study",
 where we observe a reduction of the viral load but the difference is not
 statistically significant.
 
-##### Non-parametric Without Regression `backdr_out_np` {-}
+##### Non-parametric With `backdr_out_np` {-}
 
 
 ```{r}
-message("This takes about 15 sec.. Load from file.")
+message("This takes about 20 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.np <- fciR::boot_est(
-#   whatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "Y",
-#   exposure.name = "A", confound.names = "H")
+#   whatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05,
+#   formula = Y ~ A + H, exposure.name = "A", confound.names = "H")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_whatif_out_np.rds")
 # saveRDS(whatif.out.np, file = a_file)
 whatif.out.np <- readRDS(file = a_file)
+# whatif.out.np
 ```
 
 ```{r echo=FALSE, out.width="100%"}
 df <- whatif.out.np
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.1", 
-            subtitle = paste("What-If Study", 
-                              "Standardized Estimates",
-                              "Non Parametric Without Regression",
+            title = paste("Table 6.1", "What-If Study"), 
+            subtitle = paste("Standardized Estimates",
+                              "Non Parametric",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -354,10 +422,8 @@ p + tbl + plot_annotation(title = "What-If Study",
   theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
-
-
-*T0.he results are different when we don't use linear regression!*. Not
-a very large difference but a significant one.
+and the results are the same with both non-parametric and with the saturated 
+model.
 
 
 #### Double What-if? Study {-}
@@ -367,22 +433,29 @@ a very large difference but a significant one.
 data("doublewhatifdat", package = "fciR")
 ```
 
-##### Non-parametric With Regression `backdr_out_npr` {-}
+##### Saturated model with `backdr_out_sat` {-}
 
 ```{r}
-doublewhatif.out <- fciR::boot_est(
-  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "AD0", interactions = list(c("A", "AD0")))
+message("This takes about 10 sec.. Load from file.")
+# startTime <- Sys.time()
+# doublewhatif.out.sat <- fciR::boot_est(
+#   doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
+#   inv = "none", evars = "standard",
+#   formula = VL1 ~ A * AD0, exposure.name = "A", confound.names = "AD0")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_doublewhatif_out_sat.rds")
+# saveRDS(doublewhatif.out.sat, file = a_file)
+doublewhatif.out.sat <- readRDS(file = a_file)
 ```
 
 
 ```{r echo=FALSE, out.width="100%"}
-df <- doublewhatif.out
+df <- doublewhatif.out.sat
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.2", 
-            subtitle = paste("Double What-If Study", 
-                             "Standardized Estimates with <em>H = AD0</em>",
-                             "Non Parametric With Regression",
+            title = paste("Table 6.2", "Double What-If Study"), 
+            subtitle = paste("Standardized Estimates with <em>H = AD0</em>",
+                             "Saturated Model With regression",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -394,15 +467,15 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 ```
 
 
-##### Non-parametric Without Regression `backdr_out_np` {-}
+##### Non-parametric With `backdr_out_np` {-}
 
 
 ```{r}
-message("This takes about 15 sec.. Load from file.")
+message("This takes about 20 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.out.np <- fciR::boot_est(
-#   doublewhatifdat, fciR::backdr_out_np, R = 500, conf = 0.95, outcome.name = "VL1",
-#   exposure.name = "A", confound.names = "AD0")
+#   doublewhatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05, 
+#   formula = VL1 ~ A + AD0, exposure.name = "A", confound.names = "AD0")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_doublewhatif_out_np.rds")
@@ -413,10 +486,9 @@ doublewhatif.out.np <- readRDS(file = a_file)
 ```{r echo=FALSE, out.width="100%"}
 df <- doublewhatif.out.np
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.1", 
-            subtitle = paste("Double What-If Study", 
-                              "Standardized Estimates",
-                              "Non Parametric Without Regression",
+            title = paste("Table 6.1", "Double What-If Study"), 
+            subtitle = paste("Standardized Estimates",
+                              "Non Parametric",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -428,27 +500,27 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 ```
 
 
-and the results are the same
+and the results are the same wether one uses non-parametric or a fully saturated
+regression model.
 
 
 > For comparisons, we repeat the standardization with $H = VL_0$
 
 
-
 ```{r}
 doublewhatif.out <- fciR::boot_est(
-  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "VL0", interactions = list(c("A", "VL0")))
+  doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
+  inv = "none", evars = "standard", 
+  formula = VL1 ~ A * VL0, exposure.name = "A", confound.names = "VL0")
 ```
 
 
 ```{r echo=FALSE, out.width="100%"}
 df <- doublewhatif.out
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.3", 
-            subtitle = paste("Double What-If Study", 
-                             "Standardized Estimates with <em>H = VL0</em>",
-                             "Non Parametric With Regression",
+            title = paste("Table 6.3", "Double What-If Study"), 
+            subtitle = paste("Standardized Estimates with <em>H = VL0</em>",
+                             "Saturated Model With Regression",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -463,40 +535,50 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 ### Average Effect of Treatment on the Treated
 
 
-The function `bootstandatt` described in section 6.1.1 is not necessary,
-see the function `bootstand` in the previous section which can do it with the 
-addition of the argument `att`.
+The function `bootstandatt` described in section 6.1.1 is not really necessary
+in the sense that the change is so little that we can simply set the argument
+`att = TRUE` in `backdr_out_sat`. The less coding we do, the better off we are!
 
 
 #### What-if? Study {-}
 
 
+See the argument `att = TRUE` for `fciR::backdr_out_sat`.
+
 ```{r}
-whatif.att <- fciR::boot_est(
-  whatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "Y",
-  exposure.name = "A", confound.names = "H", interactions = list(c("A", "H")),
-  att = TRUE)
+message("This takes about 10 sec.. Load from file.")
+# startTime <- Sys.time()
+# whatif.out.att.sat <- fciR::boot_est(
+#   whatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
+#   inv = "none", evars = "standard",
+#   formula = Y ~ A * H, exposure.name = "A", confound.names = "H",
+#   att = TRUE)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_whatif_out_att_sat.rds")
+# saveRDS(whatif.out.att.sat, file = a_file)
+whatif.out.att.sat <- readRDS(file = a_file)
 ```
 
 and we compare with the author's
 
 ```{r}
 comp <- data.frame(
-  name = c("EY0", "EY1", "RD", "RR"),
-  auth = c(0.361, 0.276, -0.085, 0.765),
-  est = whatif.att$est[whatif.att$name %in% c("EY0", "EY1", "RD", "RR")]
+  term = c("EY0", "EY1", "RD", "RR"),
+  .estimate.auth = c(0.361, 0.276, -0.085, 0.765),
+  .estimate = whatif.out.att.sat$.estimate[whatif.out.att.sat$term %in% c("EY0", "EY1", "RD", "RR")]
 )
-stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+stopifnot(sum(abs(comp$.estimate.auth - comp$.estimate)) < 0.01)
 ```
 
 and the results are presented in table 6.1
 
 ```{r, out.width="100%"}
-df <- whatif.att
+df <- whatif.out.att.sat
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.4", 
-            subtitle = paste("What-If Study", "Standardized ATT estimates",
-                             "Non Parametric With Regression",
+            title = paste("Table 6.4", "What-If Study"), 
+            subtitle = paste("Standardized ATT estimates",
+                             "Saturated model With Regression",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -512,11 +594,12 @@ is following pure probabilities from the data.
 
 
 ```{r}
-message("This takes about 8 sec.. Load from file.")
+message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.att.np <- fciR::boot_est(
-#   whatifdat, fciR::backdr_out_np, R = 250, conf = 0.95, outcome.name = "Y",
-#   exposure.name = "A", confound.names = "H", att = TRUE)
+#   whatifdat, fciR::backdr_out_np, times = 250, alpha = 0.05,
+#   formula = Y ~ A + H, exposure.name = "A", confound.names = "H",
+#   att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_whatif_out_att_np.rds")
@@ -527,10 +610,9 @@ whatif.out.att.np <- readRDS(file = a_file)
 ```{r echo=FALSE, out.width="100%"}
 df <- whatif.out.att.np
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.4", 
-            subtitle = paste("What-If Study", 
-                              "Standardized ATT Estimates",
-                              "Non Parametric Without Regression",
+            title = paste("Table 6.4", "What-If Study"), 
+            subtitle = paste("Standardized ATT Estimates",
+                              "Non Parametric",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -541,26 +623,33 @@ p + tbl + plot_annotation(title = "What-If Study",
   theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
 
-
+and again both saturated and non-parametric methods give the same results.
 
 #### Double What-if? Study {-}
 
 
 ```{r}
-doublewhatif.att <- fciR::boot_est(
-  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "AD0", interactions = list(c("A", "AD0")),
-  att = TRUE)
+message("This takes about 10 sec.. Load from file.")
+# startTime <- Sys.time()
+# doublewhatif.out.att.sat <- fciR::boot_est(
+#   doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
+#   inv = "none", evars = "standard",
+#   formula = VL1 ~ A * AD0, exposure.name = "A", confound.names = "AD0",
+#   att = TRUE)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_doublewhatif_out_att_sat.rds")
+# saveRDS(doublewhatif.out.att.sat, file = a_file)
+doublewhatif.out.att.sat <- readRDS(file = a_file)
 ```
 
 
 ```{r echo=FALSE, out.width="100%"}
-df <- doublewhatif.att
+df <- doublewhatif.out.att.sat
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.5", 
-            subtitle = paste("Double What-If Study", 
-                             "Standardized ATT Estimates with <em>H = AD0</em>",
-                             "Non Parametric With Regression",
+            title = paste("Table 6.5", "Double What-If Study"), 
+            subtitle = paste("Standardized ATT Estimates with <em>H = AD0</em>",
+                             "Saturated Model With Regression",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -575,20 +664,26 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 
 
 ```{r}
-doublewhatif.att <- fciR::boot_est(
-  doublewhatifdat, fciR::backdr_out_npr, R = 500, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "VL0", interactions = list(c("A", "VL0")),
-  att = TRUE)
+message("This takes about 25 sec.. Load from file.")
+# startTime <- Sys.time()
+# doublewhatif.out.att.np <- fciR::boot_est(
+#   doublewhatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05,
+#   formula = VL1 ~ A * VL0, exposure.name = "A", confound.names = "VL0",
+#   att = TRUE)
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap06_doublewhatif_out_att_np.rds")
+# saveRDS(doublewhatif.out.att.np, file = a_file)
+doublewhatif.out.att.np <- readRDS(file = a_file)
 ```
 
 
 ```{r echo=FALSE, out.width="100%"}
-df <- doublewhatif.att
+df <- doublewhatif.out.att.np
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.6", 
-            subtitle = paste("Double What-If Study", 
-                             "Standardized ATT Estimates with <em>H = VL0</em>",
-                             "Non Parametric With Regression",
+            title = paste("Table 6.6", "Double What-If Study"), 
+            subtitle = paste("Standardized ATT Estimates with <em>H = VL0</em>",
+                             "Non Parametric",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -598,6 +693,7 @@ p + tbl + plot_annotation(title = "Double What-If Study",
                           subtitle = "Standardized ATT Estimates, 95% confidence interval") &
   theme(title = element_text(color = "midnightblue", size = rel(0.9)))
 ```
+
 
 ### Standardization with a Parametric Outcome Model
 
@@ -609,21 +705,20 @@ For a the parametric outcome model `fciR::backdr_out()` is used
 ```{r}
 data("whatif2dat", package = "fciR")
 whatif2.out <- fciR::boot_est(
-  whatif2dat, fciR::backdr_out, R = 100, conf = 0.95, outcome.name = "vl4",
-  exposure.name = "A", confound.names = "lvlcont0")
-
+  whatif2dat, fciR::backdr_out, times = 100, alpha = 0.05,
+  formula = vl4 ~ A + lvlcont0, exposure.name = "A")
 ```
 
 and we compare with the author's
 
 ```{r}
 comp <- data.frame(
-  name = c("EY0", "EY1", "RD", "RR"),
-  auth = c(0.360, 0.300, -0.061, 0.831),
-  est = whatif2.out$est[whatif2.out$name %in% c("EY0", "EY1", "RD", "RR")]
+  term = c("EY0", "EY1", "RD", "RR"),
+  .estimate.auth = c(0.360, 0.300, -0.061, 0.831),
+  .estimate = whatif2.out$.estimate[whatif2.out$term %in% c("EY0", "EY1", "RD", "RR")]
 )
 # comp
-stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+stopifnot(sum(abs(comp$.estimate.auth - comp$.estimate)) < 0.01)
 ```
 
 and the results are presented in table 6.1
@@ -631,9 +726,8 @@ and the results are presented in table 6.1
 ```{r echo=FALSE, out.width="100%"}
 df <- whatif2.out
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.7", 
-            subtitle = paste("What-If Study", 
-                             "Outcome-model Standardization with <em>H = lvlcont0</ems>",
+            title = paste("Table 6.7", "What-If Study"),
+            subtitle = paste("Outcome-model Standardization with <em>H = lvlcont0</ems>",
                              sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -660,9 +754,9 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
 # gssrcc.out <- boot_est(data = gssrcc, func = backdr_out,
-#                   R = 100, conf = 0.95,
-#                   outcome.name = "trump", exposure.name = "gthsedu",
-#                   confound.names = c("magthsedu", "white", "female", "gt65"))
+#                   times = 100, alpha = 0.05,
+#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65,
+#                   exposure.name = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_gssrcc_out.rds")
@@ -675,11 +769,11 @@ and we compare with the author's
 
 ```{r}
 comp <- data.frame(
-  name = c("EY0", "EY1", "RD", "RR"),
-  auth = c(0.233, 0.271, 0.038, 1.164),
-  est = gssrcc.out$est[gssrcc.out$name %in% c("EY0", "EY1", "RD", "RR")]
+  term = c("EY0", "EY1", "RD", "RR"),
+  .estimate.auth = c(0.233, 0.271, 0.038, 1.164),
+  .estimate = gssrcc.out$.estimate[gssrcc.out$term %in% c("EY0", "EY1", "RD", "RR")]
 )
-stopifnot(sum(abs(comp$auth - comp$est)) < 0.01)
+stopifnot(sum(abs(comp$.estimate.auth - comp$.estimate)) < 0.01)
 ```
 
 and the results are presented in table 6.8
@@ -687,9 +781,8 @@ and the results are presented in table 6.8
 ```{r echo=FALSE, out.width="100%"}
 df <- gssrcc.out
 tbl <- fciR::gt_measures(df, 
-            title = "Table 6.8", 
-            subtitle = paste("General Social Survey",
-            "Outcome-model Standardization",
+            title = paste("Table 6.8", "General Social Survey"), 
+            subtitle = paste("Outcome-model Standardization",
             "Effect of <em>More than High School Education</em> on <em>
             Voting for Trump</em>",
             sep = "<br>"))
