@@ -259,7 +259,7 @@ and the  function as found on p. 164 is modified to allow the bootstrapping
 with many iterations by setting IV to `NA` where the denominator is too small.
 
 ```{r}
-instr_vars <- function(data, outcome.name = "Y", exposure.name = "A",
+func_instr_vars <- function(data, outcome.name = "Y", exposure.name = "A",
                        instrument.name = "T", tol = .Machine$double.eps^0.5) {
   
   # estimate the ITT
@@ -283,18 +283,19 @@ instr_vars <- function(data, outcome.name = "Y", exposure.name = "A",
 with the results
 
 ```{r}
-whatif.est <- instr_vars(whatif, outcome.name = "Y", exposure.name = "A", instrument.name = "T")
+whatif.est <- func_instr_vars(whatif, outcome.name = "Y", exposure.name = "A", instrument.name = "T")
 stopifnot(sum(abs(whatif.est - c(0.007352941, 0.27777778))) < .Machine$double.eps^0.5)
 whatif.est
 ```
 
-and using only 100 boots to estimate the CI
+and using only 100 boots to estimate the CI we can use `instr_vars` from `fciR`
+to 
 
 ```{r}
+# fciR::instr_vars(whatif, formula = Y ~ A + `T`, exposure.name = "A")
 whatif.out <- fciR::boot_est(
-  whatif, instr_vars, R = 1000, conf = 0.95, inv = "none", outcome.name = "Y",
-  exposure.name = "A", instrument.name = "T", tol = 1e-6) %>%
-  mutate(across(.cols = where(is.numeric), .fns = round, digits = 4))
+  whatif, fciR::instr_vars, times = 100, alpha = 0.05, inv = "none", 
+  formula = Y ~ A + `T`, exposure.name = "A", tol = 1e-6)
 whatif.out
 ```
 
@@ -332,85 +333,91 @@ standard error of a jackknife.
 
 
 ```{r}
-dwhatif.lininstr <- fciR::instr_linear(dwhatif, outcome.name = "VL1",
-                                       exposure.name = "A", 
-                                       instrument.name = "T")
-dwhatif.lininstr
+dwhatif.instr.lin <- fciR::instr_linear(dwhatif, formula = VL1 ~ A + `T`,
+                                       exposure.name = "A")
+dwhatif.instr.lin
 ```
-and we use a jackknife as discussed above. Since the jacknife is custom-made,
-we test it with the `mtcars` data set as follows.
+
+and we use a jackknife as discussed above. Since the confidence interval for
+the standard error is custom-made, we test it with the `mtcars` data set 
+as follows.
 
 
 ```{r}
 # the function to compute the standard error and confidence interval
-jack_ci <- function(x, conf = 0.95) {
+func_jack_ci <- function(x, alpha = 0.05) {
   n <- length(x)
   nsample <- n - 1
   m <- mean(x)
   v <- (nsample / n) * sum((x - m)^2)
   se <- sqrt(v)
-  ci <- qt(conf, df = nsample)
-  c("est" = m, "se" = sqrt(v), "conf" = conf, 
-    "lci" = m - ci * se, "uci" = m + ci * se)
+  ci <- qt(1 - alpha, df = nsample)
+  c(".lower" = m - ci * se, ".estimate" = m, ".upper" = m + ci * se)
 }
 
 mtcars.jack <- sapply(seq_along(mtcars$mpg), FUN = function(i) {
   x <- mtcars$mpg[-i]
-  mean(x)
+  func_jack_ci(x)
 })
-mtcars.out <- jack_ci(mtcars.jack)
-
-stopifnot(mean(mtcars$mpg) == mtcars.out["est"],
-          # the standard error
-          abs(sd(mtcars$mpg) / sqrt(nrow(mtcars)) - mtcars.out["se"]) < 
-            .Machine$double.eps^0.5)
 ```
 
-
+The functions are found in the `fciR` package as `jack_run` and `jack_est`.
+`fciR::jack_run` is the workhorse, just like `fciR::boot_run`. `jack_est` 
+compute the inverse just like `boot_est` does.
 
 ```{r}
-jack_run <- function(data, func, conf = 0.95, ...) {
+func_jack_run <- function(data, func, alpha = 0.05, ...) {
+  
   # get the leave-one-out samples
   the_samples <- rsample::loo_cv(data)
-  
+
   # estimates the effect measures
   the_results <- purrr::map_dfr(.x = the_samples$splits, .f = function(x) {
-    df <- analysis(x)
-    func(df, ...)
-    })
+    dat <- rsample::analysis(x)
+    df <- func(dat, ...)
+    out <- c(df$estimate)
+    names(out) <- df$term
+    out
+  })
   
-  # compute the confidence intervals
-  purrr::map_dfr(.x = the_results, .f = ~jack_ci(., conf = conf), 
-                 .id = "name")
+  # compute the confidence interval for each term
+  out <- purrr::map_dfr(.x = the_results, .f = ~func_jack_ci(., alpha = alpha), .id = "term")
+  
+  # create the output dataframe
+  data.frame(
+    out,
+    ".alpha" = alpha,
+    ".method" = "qt"
+  )
 }
 ```
 
 ```{r}
-df <- jack_run(data = dwhatif, conf = 0.95, func = fciR::instr_linear,
-               outcome.name = "VL1", exposure.name = "A", instrument.name = "T")
+df <- func_jack_run(data = dwhatif, 
+                    func = fciR::instr_linear, alpha = 0.05,
+                    formula = VL1 ~ A + `T`, exposure.name = "A")
 df
 ```
 
 
 
-and the function to do the full jackknife in one function is included in the 
-`fci` package and cn be used as follows.
+The `jack_est` function to do the full jackknife in one function is included in the 
+`fci` package and can be used as follows.
 
 First with the linear model
 
 ```{r}
 message("This takes about 25 sec. Load from file.")
 # startTime <- Sys.time()
-# dwhatif.lin <- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,
-#                      inv = "none", evars = "standard",
-#                      outcome.name = "VL1", exposure.name = "A", 
-#                      instrument.name = "T")
+# dwhatif.instr.lin <- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, 
+#                               alpha = 0.05, inv = "none", evars = "standard",
+#                               VL1 ~ A + `T`, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
-a_file <- file.path(dir_data, "chap09_lin.rds")
-# saveRDS(dwhatif.lin, file = a_file)
-dwhatif.lin <- readRDS(file = a_file)
-dwhatif.lin
+a_file <- file.path(dir_data, "chap09_dwatif_instr_lin.rds")
+# saveRDS(dwhatif.instr.lin, file = a_file)
+dwhatif.instr.lin <- readRDS(file = a_file)
+dwhatif.instr.lin
 ```
 
 
@@ -419,18 +426,17 @@ then the loglinear model
 
 
 ```{r}
-message("This takes about 45 sec. Load from file.")
+message("This takes about 30 sec. Load from file.")
 # startTime <- Sys.time()
-# dwhatif.loglin <- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear, conf = 0.95,
-#                      inv = "none", evars = "standard",
-#                      outcome.name = "VL1", exposure.name = "A",
-#                      instrument.name = "T")
+# dwhatif.instr.loglin <- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear,
+#                               alpha = 0.05, inv = "none", evars = "standard",
+#                               VL1 ~ A + `T`, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
-a_file <- file.path(dir_data, "chap09_loglin.rds")
-# saveRDS(dwhatif.loglin, file = a_file)
-dwhatif.loglin <- readRDS(file = a_file)
-dwhatif.loglin
+a_file <- file.path(dir_data, "chap09_dwatif_instr_loglin.rds")
+# saveRDS(dwhatif.instr.loglin, file = a_file)
+dwhatif.instr.loglin <- readRDS(file = a_file)
+dwhatif.instr.loglin
 ```
 
 an the logistic model
@@ -438,18 +444,17 @@ an the logistic model
 
 
 ```{r}
-message("This takes about 40 sec. Load from file.")
+message("This takes about 30 sec. Load from file.")
 # startTime <- Sys.time()
-# dwhatif.logistic <- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic, conf = 0.95,
-#                      inv = "none", evars = "standard",
-#                      outcome.name = "VL1", exposure.name = "A",
-#                      instrument.name = "T")
+# dwhatif.instr.logit <- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic,
+#                               alpha = 0.05, inv = "none", evars = "standard",
+#                               VL1 ~ A + `T`, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
-a_file <- file.path(dir_data, "chap09_logistic.rds")
-# saveRDS(dwhatif.logistic, file = a_file)
-dwhatif.logistic <- readRDS(file = a_file)
-dwhatif.logistic
+a_file <- file.path(dir_data, "chap09_dwatif_instr_logit.rds")
+# saveRDS(dwhatif.instr.logit, file = a_file)
+dwhatif.instr.logit <- readRDS(file = a_file)
+dwhatif.instr.logit
 ```
 
 which gives us the following result,
@@ -457,29 +462,29 @@ which gives us the following result,
 ```{r}
 tbl_9.1 <- rbind(
   data.frame(
-    method = "Linear",
-    dwhatif.lin),
+    model = "Linear",
+    dwhatif.instr.lin),
   data.frame(
-    method = "Loglinear",
-    dwhatif.loglin),
+    model = "Loglinear",
+    dwhatif.instr.loglin),
   data.frame(
-    method = "Logistic",
-    dwhatif.logistic)) |>
-  filter(name %in% c("RD", "logRR", "logOR"))
+    model = "Logistic",
+    dwhatif.instr.logit)) |>
+  filter(term %in% c("RD", "logRR", "logOR"))
 gt_measures_rowgrp(tbl_9.1,
-    rowgroup = "name",
-    rowname = "method",
-    conf = 0.95,
-    title = "Table 9.1<em>(by FL)</em>",
-    subtitle = paste("Double What-If Study",
-                     "Instrumental Variables Analysis",
+    rowgroup = "term",
+    rowname = "model",
+    title = paste("Table 9.1<em>(by FL)</em>", "Double What-If Study", 
+                  sep = "<br>"),
+    subtitle = paste("Instrumental Variables Analysis",
                      sep = "<br>")
   )
 ```
 
 The difference in confidence intervals is because the author uses 
-`1.96 = round(qnorm(0.95), 2)` as a
-whereas `fciR::jack_est` uses `qt(0.95, df = nrow(data)-1)`.
+`1.96 = round(qnorm(0.95), 2)`
+whereas `fciR::jack_est` uses an estimate confidence interval. See `jack_ci`
+code for details.
 
 ```{r}
 data("fci_tbl_09_01", package = "fciR")
@@ -487,12 +492,10 @@ bb_dwhatif <- fci_tbl_09_01
 # bb_dwhatif
 gt_measures_rowgrp(
     bb_dwhatif, 
-    rowgroup = "name",
-    rowname = "method",
-    conf = 0.95,
-    title = "Table 9.1", 
-    subtitle = paste("Double What-If Study",
-                     "Instrumental Variables Analysis",
+    rowgroup = "term",
+    rowname = "model",
+    title = paste("Table 9.1", "Double What-If Study", "<br>"), 
+    subtitle = paste("Instrumental Variables Analysis",
                      sep = "<br>"))
 ```
 

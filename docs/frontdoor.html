@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-22" />
+<meta name="date" content="2022-06-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -404,29 +404,29 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="frontdoor" class="section level1 hasAnchor" number="8">
 <h1><span class="header-section-number">Chapter 8</span> Front-Door Method<a href="frontdoor.html#frontdoor" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="frontdoor.html#cb255-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb255-2"><a href="frontdoor.html#cb255-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb255-3"><a href="frontdoor.html#cb255-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb255-4"><a href="frontdoor.html#cb255-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb255-5"><a href="frontdoor.html#cb255-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb255-6"><a href="frontdoor.html#cb255-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="frontdoor.html#cb291-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb291-2"><a href="frontdoor.html#cb291-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb291-3"><a href="frontdoor.html#cb291-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb291-4"><a href="frontdoor.html#cb291-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb291-5"><a href="frontdoor.html#cb291-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb291-6"><a href="frontdoor.html#cb291-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <div id="motivation" class="section level2 hasAnchor" number="8.1">
 <h2><span class="header-section-number">8.1</span> Motivation<a href="frontdoor.html#motivation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="frontdoor.html#cb256-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb256-2"><a href="frontdoor.html#cb256-2" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.1</span>, {</span>
-<span id="cb256-3"><a href="frontdoor.html#cb256-3" aria-hidden="true" tabindex="-1"></a>  coords <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb256-4"><a href="frontdoor.html#cb256-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">2</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">3</span>),</span>
-<span id="cb256-5"><a href="frontdoor.html#cb256-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">1</span>))</span>
-<span id="cb256-6"><a href="frontdoor.html#cb256-6" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
-<span id="cb256-7"><a href="frontdoor.html#cb256-7" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
-<span id="cb256-8"><a href="frontdoor.html#cb256-8" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A,</span>
-<span id="cb256-9"><a href="frontdoor.html#cb256-9" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U,</span>
-<span id="cb256-10"><a href="frontdoor.html#cb256-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">coords =</span> coords)</span>
-<span id="cb256-11"><a href="frontdoor.html#cb256-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb256-12"><a href="frontdoor.html#cb256-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
-<span id="cb256-13"><a href="frontdoor.html#cb256-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-194"></span>
-<img src="_main_files/figure-html/unnamed-chunk-194-1.png" alt="Front-door Causal DAG" width="60%" />
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="frontdoor.html#cb292-1" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb292-2"><a href="frontdoor.html#cb292-2" aria-hidden="true" tabindex="-1"></a>scm_8<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">within</span>(scm_8<span class="fl">.1</span>, {</span>
+<span id="cb292-3"><a href="frontdoor.html#cb292-3" aria-hidden="true" tabindex="-1"></a>  coords <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb292-4"><a href="frontdoor.html#cb292-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">2</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">3</span>),</span>
+<span id="cb292-5"><a href="frontdoor.html#cb292-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">Y =</span> <span class="dv">1</span>))</span>
+<span id="cb292-6"><a href="frontdoor.html#cb292-6" aria-hidden="true" tabindex="-1"></a>  dag <span class="ot">&lt;-</span> <span class="fu">dagify</span>(</span>
+<span id="cb292-7"><a href="frontdoor.html#cb292-7" aria-hidden="true" tabindex="-1"></a>    A <span class="sc">~</span> U,</span>
+<span id="cb292-8"><a href="frontdoor.html#cb292-8" aria-hidden="true" tabindex="-1"></a>    S <span class="sc">~</span> A,</span>
+<span id="cb292-9"><a href="frontdoor.html#cb292-9" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> S <span class="sc">+</span> U,</span>
+<span id="cb292-10"><a href="frontdoor.html#cb292-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">coords =</span> coords)</span>
+<span id="cb292-11"><a href="frontdoor.html#cb292-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb292-12"><a href="frontdoor.html#cb292-12" aria-hidden="true" tabindex="-1"></a>  plot <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">ggp_dag</span>(dag)</span>
+<span id="cb292-13"><a href="frontdoor.html#cb292-13" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-196"></span>
+<img src="_main_files/figure-html/unnamed-chunk-196-1.png" alt="Front-door Causal DAG" width="60%" />
 <p class="caption">
 Figure 8.1: Front-door Causal DAG
 </p>
@@ -462,30 +462,52 @@ E(Y(a)) = E(Y \mid A=a) &amp;=  \sum_s P(S=s \mid A=a) \left[ \sum_{a^\prime} E(
 </div>
 <div id="simulated-example" class="section level2 hasAnchor" number="8.3">
 <h2><span class="header-section-number">8.3</span> Simulated Example<a href="frontdoor.html#simulated-example" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="frontdoor.html#cb257-1" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">seed =</span> <span class="dv">555</span>) {</span>
-<span id="cb257-2"><a href="frontdoor.html#cb257-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
-<span id="cb257-3"><a href="frontdoor.html#cb257-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome Y(.,0) and Y(.,1)</span></span>
-<span id="cb257-4"><a href="frontdoor.html#cb257-4" aria-hidden="true" tabindex="-1"></a>  Ydot0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb257-5"><a href="frontdoor.html#cb257-5" aria-hidden="true" tabindex="-1"></a>  Ydot1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
-<span id="cb257-6"><a href="frontdoor.html#cb257-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let A depend on Y(.,1)</span></span>
-<span id="cb257-7"><a href="frontdoor.html#cb257-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Ydot1) <span class="sc">*</span> <span class="fl">0.1</span> <span class="sc">+</span> Ydot1 <span class="sc">*</span> <span class="fl">0.8</span></span>
-<span id="cb257-8"><a href="frontdoor.html#cb257-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
-<span id="cb257-9"><a href="frontdoor.html#cb257-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome S(0) and S(1)</span></span>
-<span id="cb257-10"><a href="frontdoor.html#cb257-10" aria-hidden="true" tabindex="-1"></a>  S0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb257-11"><a href="frontdoor.html#cb257-11" aria-hidden="true" tabindex="-1"></a>  S1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span>
-<span id="cb257-12"><a href="frontdoor.html#cb257-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># S is a function of S0, S1 and A</span></span>
-<span id="cb257-13"><a href="frontdoor.html#cb257-13" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> S0 <span class="sc">+</span> A <span class="sc">*</span> S1</span>
-<span id="cb257-14"><a href="frontdoor.html#cb257-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y is a function of Y(., 0) and Y(., 1) and S</span></span>
-<span id="cb257-15"><a href="frontdoor.html#cb257-15" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> S) <span class="sc">*</span> Ydot0 <span class="sc">+</span> S <span class="sc">*</span> Ydot1</span>
-<span id="cb257-16"><a href="frontdoor.html#cb257-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, S, Y, Ydot0, Ydot1))</span>
-<span id="cb257-17"><a href="frontdoor.html#cb257-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="frontdoor.html#cb258-1" aria-hidden="true" tabindex="-1"></a>sim1_df <span class="ot">&lt;-</span> <span class="fu">sim1</span>()</span>
-<span id="cb258-2"><a href="frontdoor.html#cb258-2" aria-hidden="true" tabindex="-1"></a>sim1.front <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">frontdr_np</span>(sim1_df, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">surrogate.name =</span> <span class="st">&quot;S&quot;</span>)</span>
-<span id="cb258-3"><a href="frontdoor.html#cb258-3" aria-hidden="true" tabindex="-1"></a>sim1.front</span></code></pre></div>
-<pre><code>##        EY0        EY1         RD         RR        RR*         OR 
-## 0.05584704 0.18536722 0.12952018 3.31919505 1.15899210 3.84692084</code></pre>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="frontdoor.html#cb293-1" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">seed =</span> <span class="dv">555</span>) {</span>
+<span id="cb293-2"><a href="frontdoor.html#cb293-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb293-3"><a href="frontdoor.html#cb293-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome Y(.,0) and Y(.,1)</span></span>
+<span id="cb293-4"><a href="frontdoor.html#cb293-4" aria-hidden="true" tabindex="-1"></a>  Ydot0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb293-5"><a href="frontdoor.html#cb293-5" aria-hidden="true" tabindex="-1"></a>  Ydot1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.2</span>)</span>
+<span id="cb293-6"><a href="frontdoor.html#cb293-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># let A depend on Y(.,1)</span></span>
+<span id="cb293-7"><a href="frontdoor.html#cb293-7" aria-hidden="true" tabindex="-1"></a>  probA <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> Ydot1) <span class="sc">*</span> <span class="fl">0.1</span> <span class="sc">+</span> Ydot1 <span class="sc">*</span> <span class="fl">0.8</span></span>
+<span id="cb293-8"><a href="frontdoor.html#cb293-8" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> probA)</span>
+<span id="cb293-9"><a href="frontdoor.html#cb293-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate the potential outcome S(0) and S(1)</span></span>
+<span id="cb293-10"><a href="frontdoor.html#cb293-10" aria-hidden="true" tabindex="-1"></a>  S0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb293-11"><a href="frontdoor.html#cb293-11" aria-hidden="true" tabindex="-1"></a>  S1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)</span>
+<span id="cb293-12"><a href="frontdoor.html#cb293-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># S is a function of S0, S1 and A</span></span>
+<span id="cb293-13"><a href="frontdoor.html#cb293-13" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> A) <span class="sc">*</span> S0 <span class="sc">+</span> A <span class="sc">*</span> S1</span>
+<span id="cb293-14"><a href="frontdoor.html#cb293-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Y is a function of Y(., 0) and Y(., 1) and S</span></span>
+<span id="cb293-15"><a href="frontdoor.html#cb293-15" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> S) <span class="sc">*</span> Ydot0 <span class="sc">+</span> S <span class="sc">*</span> Ydot1</span>
+<span id="cb293-16"><a href="frontdoor.html#cb293-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="fu">cbind</span>(A, S, Y, Ydot0, Ydot1))</span>
+<span id="cb293-17"><a href="frontdoor.html#cb293-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="frontdoor.html#cb294-1" aria-hidden="true" tabindex="-1"></a>sim1_df <span class="ot">&lt;-</span> <span class="fu">sim1</span>()</span>
+<span id="cb294-2"><a href="frontdoor.html#cb294-2" aria-hidden="true" tabindex="-1"></a>sim1.front <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">frontdr_np</span>(sim1_df, <span class="at">formula =</span> Y <span class="sc">~</span> A <span class="sc">+</span> S)</span>
+<span id="cb294-3"><a href="frontdoor.html#cb294-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sim1.front &lt;- fciR::frontdr_np(sim1_df, outcome.name = &quot;Y&quot;, exposure.name = &quot;A&quot;, surrogate.name = &quot;S&quot;)</span></span>
+<span id="cb294-4"><a href="frontdoor.html#cb294-4" aria-hidden="true" tabindex="-1"></a>sim1.front</span></code></pre></div>
+<pre><code>##   term   estimate std.err
+## 1  EY0 0.05584704      NA
+## 2  EY1 0.18536722      NA
+## 3   RD 0.12952018      NA
+## 4   RR 3.31919505      NA
+## 5  RR* 1.15899210      NA
+## 6   OR 3.84692084      NA</code></pre>
+<p>and we compare the results to the author’s</p>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="frontdoor.html#cb296-1" aria-hidden="true" tabindex="-1"></a>sim1.EY0 <span class="ot">&lt;-</span> sim1.front<span class="sc">$</span>estimate[sim1.front<span class="sc">$</span>term <span class="sc">==</span> <span class="st">&quot;EY0&quot;</span>]</span>
+<span id="cb296-2"><a href="frontdoor.html#cb296-2" aria-hidden="true" tabindex="-1"></a>sim1.EY1 <span class="ot">&lt;-</span> sim1.front<span class="sc">$</span>estimate[sim1.front<span class="sc">$</span>term <span class="sc">==</span> <span class="st">&quot;EY1&quot;</span>]</span>
+<span id="cb296-3"><a href="frontdoor.html#cb296-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">abs</span>(sim1.EY0 <span class="sc">-</span> <span class="fl">0.055847</span>) <span class="sc">&lt;</span> <span class="fl">1e-4</span>,</span>
+<span id="cb296-4"><a href="frontdoor.html#cb296-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(sim1.EY1 <span class="sc">-</span> <span class="fl">0.18537</span>) <span class="sc">&lt;</span> <span class="fl">1e-4</span>)</span></code></pre></div>
 <p>and we can estimates the confidence intervals using the usual bootstrapping.</p>
-<p><img src="_main_files/figure-html/unnamed-chunk-197-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="frontdoor.html#cb297-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 1 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 1 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="frontdoor.html#cb299-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb299-2"><a href="frontdoor.html#cb299-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sim1.np &lt;- fciR::boot_est(</span></span>
+<span id="cb299-3"><a href="frontdoor.html#cb299-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   sim1_df, fciR::frontdr_np, times = 100, alpha = 0.05, inv = &quot;none&quot;, </span></span>
+<span id="cb299-4"><a href="frontdoor.html#cb299-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   formula = Y ~ A + S, exposure.name = &quot;A&quot;)</span></span>
+<span id="cb299-5"><a href="frontdoor.html#cb299-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb299-6"><a href="frontdoor.html#cb299-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb299-7"><a href="frontdoor.html#cb299-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap08_sim1_np.rds&quot;</span>)</span>
+<span id="cb299-8"><a href="frontdoor.html#cb299-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(sim1.np, file = a_file)</span></span>
+<span id="cb299-9"><a href="frontdoor.html#cb299-9" aria-hidden="true" tabindex="-1"></a>sim1.np <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-201-1.png" width="100%" /></p>
 
 </div>
 </div>

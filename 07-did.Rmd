@@ -142,11 +142,16 @@ The functions used for DID estimations are `fciR::did_linear()`,
 The DiD estimator with the linear model
 
 ```{r}
-dwhatif.lindid <- fciR::boot_est(
-  doublewhatifdat, fciR::did_linear, R = 100, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "VL0")
-
-# dwhatif.lindid
+message("This takes about 1 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.did.lin <- fciR::boot_est(
+#   doublewhatifdat, fciR::did_linear, times = 100, alpha = 0.05, 
+#   formula = VL1 ~ A + VL0, exposure.name = "A")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap07_dwhatif_did_lin.rds")
+# saveRDS(dwhatif.did.lin, file = a_file)
+dwhatif.did.lin <- readRDS(file = a_file)
 ```
 
 
@@ -154,20 +159,32 @@ dwhatif.lindid <- fciR::boot_est(
 The DiD estimator with the loglinear model
 
 ```{r}
-dwhatif.loglindid <- fciR::boot_est(
-  doublewhatifdat, fciR::did_loglinear, R = 100, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "VL0")
-# dwhatif.loglindid
+message("This takes about 1 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.did.loglin <- fciR::boot_est(
+#   doublewhatifdat, fciR::did_loglinear, times = 100, alpha = 0.05, 
+#   formula = VL1 ~ A + VL0, exposure.name = "A")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap07_dwhatif_did_loglin.rds")
+# saveRDS(dwhatif.did.loglin, file = a_file)
+dwhatif.did.loglin <- readRDS(file = a_file)
 ```
 
 
 The DiD estimator with the logistic model
 
 ```{r}
-dwhatif.logisticdid <- fciR::boot_est(
-  doublewhatifdat, fciR::did_logistic, R = 100, conf = 0.95, outcome.name = "VL1",
-  exposure.name = "A", confound.names = "VL0")
-# dwhatif.logisticdid
+message("This takes about 1 sec. Load from file.")
+# startTime <- Sys.time()
+# dwhatif.did.logit <- fciR::boot_est(
+#   doublewhatifdat, fciR::did_logistic, times = 100, alpha = 0.05, 
+#   formula = VL1 ~ A + VL0, exposure.name = "A")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap07_dwhatif_did_logit.rds")
+# saveRDS(dwhatif.did.logit, file = a_file)
+dwhatif.did.logit <- readRDS(file = a_file)
 ```
 
 
@@ -178,19 +195,17 @@ verify the results
 ```{r}
 data("fci_tbl_07_02", package = "fciR")
 bb_dwhatif <- fci_tbl_07_02
-# bb_dwhatif
+bb_dwhatif
 ```
 
 
 ```{r}
 gt_measures_rowgrp(
     bb_dwhatif, 
-    rowgroup = "name",
-    rowname = "method",
-    conf = 0.95,
-    title = "Table 7.2", 
-    subtitle = paste("Double What-If Study", 
-                     "Difference-in-Differences Estimation of the ATT",
+    rowgroup = "term",
+    rowname = "model",
+    title = paste("Table 7.2", "Double What-If Study"), 
+    subtitle = paste("Difference-in-Differences Estimation of the ATT",
                      sep = "<br>")
     )
 ```
@@ -200,27 +215,25 @@ and the results using the `fciR` package are identical.
 ```{r}
 tbl_7.2 <- rbind(
   data.frame(
-    method = "Linear",
-    dwhatif.lindid), 
+    model = "Linear",
+    dwhatif.did.lin), 
   data.frame(
-    method = "Loglinear",
-    dwhatif.loglindid),
+    model = "Loglinear",
+    dwhatif.did.loglin),
   data.frame(
-    method = "Logistic",
-    dwhatif.logisticdid))
+    model = "Logistic",
+    dwhatif.did.logit))
 gt_measures_rowgrp(tbl_7.2,
-    rowgroup = "name",
-    rowname = "method",
-    conf = 0.95,
-    title = "Table 7.2<em>(by FL)</em>", 
-    subtitle = paste("Double What-If Study", 
-                     "Difference-in-Differences Estimation of the ATT",
+    rowgroup = "term",
+    rowname = "model",
+    title = paste("Table 7.2<em>(by FL)</em>", "Double What-If Study", sep = "<br>"), 
+    subtitle = paste("Difference-in-Differences Estimation of the ATT",
                      sep = "<br>")
   )
-fciR::ggp_measures_groups(tbl_7.2, title = "Table 7.2",
-                    subtitle = paste("Double What-If Study", 
-                                     "Difference-in-Differences Estimation of the ATT",
-                                     "<br>"))
+fciR::ggp_measures_groups(tbl_7.2, group = "model", 
+                          title = paste("Table 7.2", "Double What-If Study"),
+                          subtitle = paste("Difference-in-Differences Estimation of the ATT",
+                                     sep = "<br>"))
 ```
 
 

@@ -100,17 +100,40 @@ sim1 <- function(n = 1e4, seed = 555) {
 
 ```{r}
 sim1_df <- sim1()
-sim1.front <- fciR::frontdr_np(sim1_df, outcome.name = "Y", exposure.name = "A", surrogate.name = "S")
+sim1.front <- fciR::frontdr_np(sim1_df, formula = Y ~ A + S)
+# sim1.front <- fciR::frontdr_np(sim1_df, outcome.name = "Y", exposure.name = "A", surrogate.name = "S")
 sim1.front
 ```
 
+and we compare the results to the author's
+
+```{r}
+sim1.EY0 <- sim1.front$estimate[sim1.front$term == "EY0"]
+sim1.EY1 <- sim1.front$estimate[sim1.front$term == "EY1"]
+stopifnot(abs(sim1.EY0 - 0.055847) < 1e-4,
+          abs(sim1.EY1 - 0.18537) < 1e-4)
+```
+
+
 and we can estimates the confidence intervals using the usual bootstrapping.
 
+```{r}
+message("This takes about 1 sec. Load from file.")
+# startTime <- Sys.time()
+# sim1.np <- fciR::boot_est(
+#   sim1_df, fciR::frontdr_np, times = 100, alpha = 0.05, inv = "none", 
+#   formula = Y ~ A + S, exposure.name = "A")
+# endTime <- Sys.time()
+# print(endTime - startTime)
+a_file <- file.path(dir_data, "chap08_sim1_np.rds")
+# saveRDS(sim1.np, file = a_file)
+sim1.np <- readRDS(file = a_file)
+```
+
+
+
 ```{r echo=FALSE, out.width="100%"}
-sim1.df <- fciR::boot_est(
-  sim1_df, fciR::frontdr_np, R = 100, conf = 0.95, inv = "none", outcome.name = "Y",
-  exposure.name = "A", surrogate.name = "S")
-df <- sim1.df
+df <- sim1.np
 tbl <- fciR::gt_measures(df, 
             title = "Chapter 8: Simulated Example", 
             subtitle = paste("Front-Door Method Standardized Estimates"))

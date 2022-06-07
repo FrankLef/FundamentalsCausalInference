@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-22" />
+<meta name="date" content="2022-06-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -404,15 +404,15 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="instrument" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Instrumental Variables<a href="instrument.html#instrument" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb260"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb260-1"><a href="instrument.html#cb260-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
-<span id="cb260-2"><a href="instrument.html#cb260-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb260-3"><a href="instrument.html#cb260-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb260-4"><a href="instrument.html#cb260-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb260-5"><a href="instrument.html#cb260-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb260-6"><a href="instrument.html#cb260-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb260-7"><a href="instrument.html#cb260-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-201"></span>
-<img src="_main_files/figure-html/unnamed-chunk-201-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="instrument.html#cb300-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb300-2"><a href="instrument.html#cb300-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb300-3"><a href="instrument.html#cb300-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb300-4"><a href="instrument.html#cb300-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb300-5"><a href="instrument.html#cb300-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb300-6"><a href="instrument.html#cb300-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb300-7"><a href="instrument.html#cb300-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-205"></span>
+<img src="_main_files/figure-html/unnamed-chunk-205-1.png" alt="Instrumental Variable for the Effect of A on Y" width="60%" />
 <p class="caption">
 Figure 9.1: Instrumental Variable for the Effect of A on Y
 </p>
@@ -508,7 +508,7 @@ and therefore</p>
 <p><span class="math display">\[
 \begin{align*}
 E(Y \mid T=1) - E(Y \mid T=0) &amp;= E(Y \mid T=1, C=1)P(C=1) + E(Y \mid T=1, C=0)(1-P(C=1)) - \left[ E(Y \mid T=0, C=1)P(C=1) + E(Y \mid T=0, C=0)(1-P(C=1)) \right] \\
-\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} &amp;= E(Y \mid T=1, C=1) + \frac{E(Y \mid T=1, C=0)}{P(C=1)} - E(Y \mid T=1, C=0) - \left[ E(Y \mid T=0, C=1) + 
+\frac{E(Y \mid T=1) - E(Y \mid T=0)}{P(C=1)} &amp;= E(Y \mid T=1, C=1) + \frac{E(Y \mid T=1, C=0)}{P(C=1)} - E(Y \mid T=1, C=0) - \left[ E(Y \mid T=0, C=1) +
 \frac{E(Y \mid T=0, C=0)}{P(C=1)} - E(Y \mid T=0, C=0) \right] \\
 \end{align*}
 \]</span>
@@ -592,50 +592,51 @@ be done with the <code>ivreg</code> function from the package <span class="math 
 <h2><span class="header-section-number">9.3</span> Examples<a href="instrument.html#examples-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="what-if-study-4" class="section level3 hasAnchor" number="9.3.1">
 <h3><span class="header-section-number">9.3.1</span> What-If Study<a href="instrument.html#what-if-study-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="instrument.html#cb261-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb261-2"><a href="instrument.html#cb261-2" aria-hidden="true" tabindex="-1"></a>whatif <span class="ot">&lt;-</span> whatifdat</span>
-<span id="cb261-3"><a href="instrument.html#cb261-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">xtabs</span>(<span class="at">data =</span> whatif, <span class="at">formula =</span> <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="instrument.html#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;whatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb301-2"><a href="instrument.html#cb301-2" aria-hidden="true" tabindex="-1"></a>whatif <span class="ot">&lt;-</span> whatifdat</span>
+<span id="cb301-3"><a href="instrument.html#cb301-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">xtabs</span>(<span class="at">data =</span> whatif, <span class="at">formula =</span> <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> A), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>##    A
 ## T      0    1
 ##   0 0.38 0.62
 ##   1 0.35 0.65</code></pre>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="instrument.html#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(whatifdat)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="instrument.html#cb303-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(whatifdat)</span></code></pre></div>
 <p>and the function as found on p. 164 is modified to allow the bootstrapping
 with many iterations by setting IV to <code>NA</code> where the denominator is too small.</p>
-<div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="instrument.html#cb264-1" aria-hidden="true" tabindex="-1"></a>instr_vars <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
-<span id="cb264-2"><a href="instrument.html#cb264-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>) {</span>
-<span id="cb264-3"><a href="instrument.html#cb264-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb264-4"><a href="instrument.html#cb264-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the ITT</span></span>
-<span id="cb264-5"><a href="instrument.html#cb264-5" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">0</span></span>
-<span id="cb264-6"><a href="instrument.html#cb264-6" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">1</span></span>
-<span id="cb264-7"><a href="instrument.html#cb264-7" aria-hidden="true" tabindex="-1"></a>  ITT <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, outcome.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, outcome.name])</span>
-<span id="cb264-8"><a href="instrument.html#cb264-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb264-9"><a href="instrument.html#cb264-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the denominator of the CAE and ATT with equation (9.5)</span></span>
-<span id="cb264-10"><a href="instrument.html#cb264-10" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, exposure.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, exposure.name])</span>
-<span id="cb264-11"><a href="instrument.html#cb264-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator should not be near zero to avoid numerical problems</span></span>
-<span id="cb264-12"><a href="instrument.html#cb264-12" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">abs</span>(denom) <span class="sc">&gt;=</span> tol</span>
-<span id="cb264-13"><a href="instrument.html#cb264-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(check) {</span>
-<span id="cb264-14"><a href="instrument.html#cb264-14" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> ITT <span class="sc">/</span> denom</span>
-<span id="cb264-15"><a href="instrument.html#cb264-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb264-16"><a href="instrument.html#cb264-16" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
-<span id="cb264-17"><a href="instrument.html#cb264-17" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb264-18"><a href="instrument.html#cb264-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ITT&quot;</span> <span class="ot">=</span> ITT, <span class="st">&quot;IV&quot;</span> <span class="ot">=</span> IV)</span>
-<span id="cb264-19"><a href="instrument.html#cb264-19" aria-hidden="true" tabindex="-1"></a>  } </span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="instrument.html#cb304-1" aria-hidden="true" tabindex="-1"></a>func_instr_vars <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb304-2"><a href="instrument.html#cb304-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>) {</span>
+<span id="cb304-3"><a href="instrument.html#cb304-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb304-4"><a href="instrument.html#cb304-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the ITT</span></span>
+<span id="cb304-5"><a href="instrument.html#cb304-5" aria-hidden="true" tabindex="-1"></a>  dat0 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb304-6"><a href="instrument.html#cb304-6" aria-hidden="true" tabindex="-1"></a>  dat1 <span class="ot">&lt;-</span> data[, instrument.name] <span class="sc">==</span> <span class="dv">1</span></span>
+<span id="cb304-7"><a href="instrument.html#cb304-7" aria-hidden="true" tabindex="-1"></a>  ITT <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, outcome.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, outcome.name])</span>
+<span id="cb304-8"><a href="instrument.html#cb304-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb304-9"><a href="instrument.html#cb304-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimate the denominator of the CAE and ATT with equation (9.5)</span></span>
+<span id="cb304-10"><a href="instrument.html#cb304-10" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> <span class="fu">mean</span>(data[dat1, exposure.name]) <span class="sc">-</span> <span class="fu">mean</span>(data[dat0, exposure.name])</span>
+<span id="cb304-11"><a href="instrument.html#cb304-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># denominator should not be near zero to avoid numerical problems</span></span>
+<span id="cb304-12"><a href="instrument.html#cb304-12" aria-hidden="true" tabindex="-1"></a>  check <span class="ot">&lt;-</span> <span class="fu">abs</span>(denom) <span class="sc">&gt;=</span> tol</span>
+<span id="cb304-13"><a href="instrument.html#cb304-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(check) {</span>
+<span id="cb304-14"><a href="instrument.html#cb304-14" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> ITT <span class="sc">/</span> denom</span>
+<span id="cb304-15"><a href="instrument.html#cb304-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb304-16"><a href="instrument.html#cb304-16" aria-hidden="true" tabindex="-1"></a>    IV <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb304-17"><a href="instrument.html#cb304-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb304-18"><a href="instrument.html#cb304-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;ITT&quot;</span> <span class="ot">=</span> ITT, <span class="st">&quot;IV&quot;</span> <span class="ot">=</span> IV)</span>
+<span id="cb304-19"><a href="instrument.html#cb304-19" aria-hidden="true" tabindex="-1"></a>  } </span></code></pre></div>
 <p>with the results</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="instrument.html#cb265-1" aria-hidden="true" tabindex="-1"></a>whatif.est <span class="ot">&lt;-</span> <span class="fu">instr_vars</span>(whatif, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb265-2"><a href="instrument.html#cb265-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(whatif.est <span class="sc">-</span> <span class="fu">c</span>(<span class="fl">0.007352941</span>, <span class="fl">0.27777778</span>))) <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span>
-<span id="cb265-3"><a href="instrument.html#cb265-3" aria-hidden="true" tabindex="-1"></a>whatif.est</span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="instrument.html#cb305-1" aria-hidden="true" tabindex="-1"></a>whatif.est <span class="ot">&lt;-</span> <span class="fu">func_instr_vars</span>(whatif, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb305-2"><a href="instrument.html#cb305-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(<span class="fu">abs</span>(whatif.est <span class="sc">-</span> <span class="fu">c</span>(<span class="fl">0.007352941</span>, <span class="fl">0.27777778</span>))) <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span>
+<span id="cb305-3"><a href="instrument.html#cb305-3" aria-hidden="true" tabindex="-1"></a>whatif.est</span></code></pre></div>
 <pre><code>##         ITT          IV 
 ## 0.007352941 0.277777778</code></pre>
-<p>and using only 100 boots to estimate the CI</p>
-<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="instrument.html#cb267-1" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
-<span id="cb267-2"><a href="instrument.html#cb267-2" aria-hidden="true" tabindex="-1"></a>  whatif, instr_vars, <span class="at">R =</span> <span class="dv">1000</span>, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>,</span>
-<span id="cb267-3"><a href="instrument.html#cb267-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb267-4"><a href="instrument.html#cb267-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="at">.cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">.fns =</span> round, <span class="at">digits =</span> <span class="dv">4</span>))</span>
-<span id="cb267-5"><a href="instrument.html#cb267-5" aria-hidden="true" tabindex="-1"></a>whatif.out</span></code></pre></div>
-<pre><code>##   name    est conf      lci     uci
-## 1  ITT 0.0074 0.95  -0.1365  0.1452
-## 2   IV 0.2778 0.95 -26.3220 27.9195</code></pre>
+<p>and using only 100 boots to estimate the CI we can use <code>instr_vars</code> from <code>fciR</code>
+to</p>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="instrument.html#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fciR::instr_vars(whatif, formula = Y ~ A + `T`, exposure.name = &quot;A&quot;)</span></span>
+<span id="cb307-2"><a href="instrument.html#cb307-2" aria-hidden="true" tabindex="-1"></a>whatif.out <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">boot_est</span>(</span>
+<span id="cb307-3"><a href="instrument.html#cb307-3" aria-hidden="true" tabindex="-1"></a>  whatif, fciR<span class="sc">::</span>instr_vars, <span class="at">times =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">inv =</span> <span class="st">&quot;none&quot;</span>, </span>
+<span id="cb307-4"><a href="instrument.html#cb307-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Y <span class="sc">~</span> A <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">tol =</span> <span class="fl">1e-6</span>)</span>
+<span id="cb307-5"><a href="instrument.html#cb307-5" aria-hidden="true" tabindex="-1"></a>whatif.out</span></code></pre></div>
+<pre><code>##   term      .lower   .estimate     .upper .alpha .method
+## 1  ITT  -0.1444404 0.007352941  0.1679673   0.05    norm
+## 2   IV -43.7967911 0.277777778 38.2362175   0.05    norm</code></pre>
 <p><strong>Note:</strong> Although we used 1000 iterations for bootstraping with <code>NA</code> when the
 denominator is too close to zero. It is more flexible than the code in the
 book but <strong>still with a lot of variability</strong> for the CI of IV. In fact, in very
@@ -644,8 +645,8 @@ of the time the CI was about <code>c(-30, 30)</code>.</p>
 </div>
 <div id="double-what-if-study-2" class="section level3 hasAnchor" number="9.3.2">
 <h3><span class="header-section-number">9.3.2</span> Double What-if Study<a href="instrument.html#double-what-if-study-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="instrument.html#cb269-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb269-2"><a href="instrument.html#cb269-2" aria-hidden="true" tabindex="-1"></a>dwhatif <span class="ot">&lt;-</span> doublewhatifdat</span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="instrument.html#cb309-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doublewhatifdat&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb309-2"><a href="instrument.html#cb309-2" aria-hidden="true" tabindex="-1"></a>dwhatif <span class="ot">&lt;-</span> doublewhatifdat</span></code></pre></div>
 <p>We compute the estimator for the linear, loglinear and logistic SNMM using
 the Double What-If Study. The functions are in the <code>fciR</code> package and can be
 consulted as usual by using <code>F2</code> on the function.</p>
@@ -659,160 +660,160 @@ with R as it is the tidyverse way of coding. In addition, the author of
 recommends using <code>rsample</code>.</p>
 <p>See <a href="http://campus.murraystate.edu/academic/faculty/cmecklin/STA430/_book/the-jackknife-and-the-bootstrap.html">STA 430</a> for an easy to understand explanation on how to compute the
 standard error of a jackknife.</p>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="instrument.html#cb270-1" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">instr_linear</span>(dwhatif, <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>,</span>
-<span id="cb270-2"><a href="instrument.html#cb270-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, </span>
-<span id="cb270-3"><a href="instrument.html#cb270-3" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb270-4"><a href="instrument.html#cb270-4" aria-hidden="true" tabindex="-1"></a>dwhatif.lininstr</span></code></pre></div>
-<pre><code>##        EY0        EY1         RD      logRR     logRR*      logOR 
-##  0.6400410  0.2307692 -0.4092717 -1.0201140 -0.7594008 -1.7795147</code></pre>
-<p>and we use a jackknife as discussed above. Since the jacknife is custom-made,
-we test it with the <code>mtcars</code> data set as follows.</p>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="instrument.html#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the function to compute the standard error and confidence interval</span></span>
-<span id="cb272-2"><a href="instrument.html#cb272-2" aria-hidden="true" tabindex="-1"></a>jack_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">conf =</span> <span class="fl">0.95</span>) {</span>
-<span id="cb272-3"><a href="instrument.html#cb272-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb272-4"><a href="instrument.html#cb272-4" aria-hidden="true" tabindex="-1"></a>  nsample <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb272-5"><a href="instrument.html#cb272-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb272-6"><a href="instrument.html#cb272-6" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> (nsample <span class="sc">/</span> n) <span class="sc">*</span> <span class="fu">sum</span>((x <span class="sc">-</span> m)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb272-7"><a href="instrument.html#cb272-7" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v)</span>
-<span id="cb272-8"><a href="instrument.html#cb272-8" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> <span class="fu">qt</span>(conf, <span class="at">df =</span> nsample)</span>
-<span id="cb272-9"><a href="instrument.html#cb272-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;est&quot;</span> <span class="ot">=</span> m, <span class="st">&quot;se&quot;</span> <span class="ot">=</span> <span class="fu">sqrt</span>(v), <span class="st">&quot;conf&quot;</span> <span class="ot">=</span> conf, </span>
-<span id="cb272-10"><a href="instrument.html#cb272-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;lci&quot;</span> <span class="ot">=</span> m <span class="sc">-</span> ci <span class="sc">*</span> se, <span class="st">&quot;uci&quot;</span> <span class="ot">=</span> m <span class="sc">+</span> ci <span class="sc">*</span> se)</span>
-<span id="cb272-11"><a href="instrument.html#cb272-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb272-12"><a href="instrument.html#cb272-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb272-13"><a href="instrument.html#cb272-13" aria-hidden="true" tabindex="-1"></a>mtcars.jack <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq_along</span>(mtcars<span class="sc">$</span>mpg), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
-<span id="cb272-14"><a href="instrument.html#cb272-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> mtcars<span class="sc">$</span>mpg[<span class="sc">-</span>i]</span>
-<span id="cb272-15"><a href="instrument.html#cb272-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x)</span>
-<span id="cb272-16"><a href="instrument.html#cb272-16" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb272-17"><a href="instrument.html#cb272-17" aria-hidden="true" tabindex="-1"></a>mtcars.out <span class="ot">&lt;-</span> <span class="fu">jack_ci</span>(mtcars.jack)</span>
-<span id="cb272-18"><a href="instrument.html#cb272-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb272-19"><a href="instrument.html#cb272-19" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">==</span> mtcars.out[<span class="st">&quot;est&quot;</span>],</span>
-<span id="cb272-20"><a href="instrument.html#cb272-20" aria-hidden="true" tabindex="-1"></a>          <span class="co"># the standard error</span></span>
-<span id="cb272-21"><a href="instrument.html#cb272-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(<span class="fu">sd</span>(mtcars<span class="sc">$</span>mpg) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">nrow</span>(mtcars)) <span class="sc">-</span> mtcars.out[<span class="st">&quot;se&quot;</span>]) <span class="sc">&lt;</span> </span>
-<span id="cb272-22"><a href="instrument.html#cb272-22" aria-hidden="true" tabindex="-1"></a>            .Machine<span class="sc">$</span>double.eps<span class="sc">^</span><span class="fl">0.5</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="instrument.html#cb273-1" aria-hidden="true" tabindex="-1"></a>jack_run <span class="ot">&lt;-</span> <span class="cf">function</span>(data, func, <span class="at">conf =</span> <span class="fl">0.95</span>, ...) {</span>
-<span id="cb273-2"><a href="instrument.html#cb273-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the leave-one-out samples</span></span>
-<span id="cb273-3"><a href="instrument.html#cb273-3" aria-hidden="true" tabindex="-1"></a>  the_samples <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">loo_cv</span>(data)</span>
-<span id="cb273-4"><a href="instrument.html#cb273-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb273-5"><a href="instrument.html#cb273-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimates the effect measures</span></span>
-<span id="cb273-6"><a href="instrument.html#cb273-6" aria-hidden="true" tabindex="-1"></a>  the_results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_samples<span class="sc">$</span>splits, <span class="at">.f =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb273-7"><a href="instrument.html#cb273-7" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">analysis</span>(x)</span>
-<span id="cb273-8"><a href="instrument.html#cb273-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">func</span>(df, ...)</span>
-<span id="cb273-9"><a href="instrument.html#cb273-9" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb273-10"><a href="instrument.html#cb273-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb273-11"><a href="instrument.html#cb273-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the confidence intervals</span></span>
-<span id="cb273-12"><a href="instrument.html#cb273-12" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_results, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">jack_ci</span>(., <span class="at">conf =</span> conf), </span>
-<span id="cb273-13"><a href="instrument.html#cb273-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.id =</span> <span class="st">&quot;name&quot;</span>)</span>
-<span id="cb273-14"><a href="instrument.html#cb273-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="instrument.html#cb274-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">jack_run</span>(<span class="at">data =</span> dwhatif, <span class="at">conf =</span> <span class="fl">0.95</span>, <span class="at">func =</span> fciR<span class="sc">::</span>instr_linear,</span>
-<span id="cb274-2"><a href="instrument.html#cb274-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">outcome.name =</span> <span class="st">&quot;VL1&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>, <span class="at">instrument.name =</span> <span class="st">&quot;T&quot;</span>)</span>
-<span id="cb274-3"><a href="instrument.html#cb274-3" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   name      est     se  conf    lci    uci
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 EY0     0.640 0.0754  0.95  0.516  0.764
-## 2 EY1     0.231 0.0269  0.95  0.186  0.275
-## 3 RD     -0.409 0.0792  0.95 -0.540 -0.279
-## 4 logRR  -1.02  0.163   0.95 -1.29  -0.751
-## 5 logRR* -0.759 0.211   0.95 -1.11  -0.412
-## 6 logOR  -1.78  0.356   0.95 -2.37  -1.19</code></pre>
-<p>and the function to do the full jackknife in one function is included in the
-<code>fci</code> package and cn be used as follows.</p>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="instrument.html#cb310-1" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.lin <span class="ot">&lt;-</span> fciR<span class="sc">::</span><span class="fu">instr_linear</span>(dwhatif, <span class="at">formula =</span> VL1 <span class="sc">~</span> A <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>,</span>
+<span id="cb310-2"><a href="instrument.html#cb310-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>)</span>
+<span id="cb310-3"><a href="instrument.html#cb310-3" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.lin</span></code></pre></div>
+<pre><code>##     term   estimate std.err
+## 1    EY0  0.6400410      NA
+## 2    EY1  0.2307692      NA
+## 3     RD -0.4092717      NA
+## 4  logRR -1.0201140      NA
+## 5 logRR* -0.7594008      NA
+## 6  logOR -1.7795147      NA</code></pre>
+<p>and we use a jackknife as discussed above. Since the confidence interval for
+the standard error is custom-made, we test it with the <code>mtcars</code> data set
+as follows.</p>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="instrument.html#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the function to compute the standard error and confidence interval</span></span>
+<span id="cb312-2"><a href="instrument.html#cb312-2" aria-hidden="true" tabindex="-1"></a>func_jack_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb312-3"><a href="instrument.html#cb312-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb312-4"><a href="instrument.html#cb312-4" aria-hidden="true" tabindex="-1"></a>  nsample <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb312-5"><a href="instrument.html#cb312-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb312-6"><a href="instrument.html#cb312-6" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> (nsample <span class="sc">/</span> n) <span class="sc">*</span> <span class="fu">sum</span>((x <span class="sc">-</span> m)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb312-7"><a href="instrument.html#cb312-7" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v)</span>
+<span id="cb312-8"><a href="instrument.html#cb312-8" aria-hidden="true" tabindex="-1"></a>  ci <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, <span class="at">df =</span> nsample)</span>
+<span id="cb312-9"><a href="instrument.html#cb312-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;.lower&quot;</span> <span class="ot">=</span> m <span class="sc">-</span> ci <span class="sc">*</span> se, <span class="st">&quot;.estimate&quot;</span> <span class="ot">=</span> m, <span class="st">&quot;.upper&quot;</span> <span class="ot">=</span> m <span class="sc">+</span> ci <span class="sc">*</span> se)</span>
+<span id="cb312-10"><a href="instrument.html#cb312-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb312-11"><a href="instrument.html#cb312-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb312-12"><a href="instrument.html#cb312-12" aria-hidden="true" tabindex="-1"></a>mtcars.jack <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">seq_along</span>(mtcars<span class="sc">$</span>mpg), <span class="at">FUN =</span> <span class="cf">function</span>(i) {</span>
+<span id="cb312-13"><a href="instrument.html#cb312-13" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> mtcars<span class="sc">$</span>mpg[<span class="sc">-</span>i]</span>
+<span id="cb312-14"><a href="instrument.html#cb312-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">func_jack_ci</span>(x)</span>
+<span id="cb312-15"><a href="instrument.html#cb312-15" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p>The functions are found in the <code>fciR</code> package as <code>jack_run</code> and <code>jack_est</code>.
+<code>fciR::jack_run</code> is the workhorse, just like <code>fciR::boot_run</code>. <code>jack_est</code>
+compute the inverse just like <code>boot_est</code> does.</p>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="instrument.html#cb313-1" aria-hidden="true" tabindex="-1"></a>func_jack_run <span class="ot">&lt;-</span> <span class="cf">function</span>(data, func, <span class="at">alpha =</span> <span class="fl">0.05</span>, ...) {</span>
+<span id="cb313-2"><a href="instrument.html#cb313-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb313-3"><a href="instrument.html#cb313-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the leave-one-out samples</span></span>
+<span id="cb313-4"><a href="instrument.html#cb313-4" aria-hidden="true" tabindex="-1"></a>  the_samples <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">loo_cv</span>(data)</span>
+<span id="cb313-5"><a href="instrument.html#cb313-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb313-6"><a href="instrument.html#cb313-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># estimates the effect measures</span></span>
+<span id="cb313-7"><a href="instrument.html#cb313-7" aria-hidden="true" tabindex="-1"></a>  the_results <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_samples<span class="sc">$</span>splits, <span class="at">.f =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb313-8"><a href="instrument.html#cb313-8" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">analysis</span>(x)</span>
+<span id="cb313-9"><a href="instrument.html#cb313-9" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">func</span>(dat, ...)</span>
+<span id="cb313-10"><a href="instrument.html#cb313-10" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">c</span>(df<span class="sc">$</span>estimate)</span>
+<span id="cb313-11"><a href="instrument.html#cb313-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(out) <span class="ot">&lt;-</span> df<span class="sc">$</span>term</span>
+<span id="cb313-12"><a href="instrument.html#cb313-12" aria-hidden="true" tabindex="-1"></a>    out</span>
+<span id="cb313-13"><a href="instrument.html#cb313-13" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb313-14"><a href="instrument.html#cb313-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb313-15"><a href="instrument.html#cb313-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compute the confidence interval for each term</span></span>
+<span id="cb313-16"><a href="instrument.html#cb313-16" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dfr</span>(<span class="at">.x =</span> the_results, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">func_jack_ci</span>(., <span class="at">alpha =</span> alpha), <span class="at">.id =</span> <span class="st">&quot;term&quot;</span>)</span>
+<span id="cb313-17"><a href="instrument.html#cb313-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb313-18"><a href="instrument.html#cb313-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the output dataframe</span></span>
+<span id="cb313-19"><a href="instrument.html#cb313-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb313-20"><a href="instrument.html#cb313-20" aria-hidden="true" tabindex="-1"></a>    out,</span>
+<span id="cb313-21"><a href="instrument.html#cb313-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;.alpha&quot;</span> <span class="ot">=</span> alpha,</span>
+<span id="cb313-22"><a href="instrument.html#cb313-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;.method&quot;</span> <span class="ot">=</span> <span class="st">&quot;qt&quot;</span></span>
+<span id="cb313-23"><a href="instrument.html#cb313-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb313-24"><a href="instrument.html#cb313-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="instrument.html#cb314-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">func_jack_run</span>(<span class="at">data =</span> dwhatif, </span>
+<span id="cb314-2"><a href="instrument.html#cb314-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">func =</span> fciR<span class="sc">::</span>instr_linear, <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb314-3"><a href="instrument.html#cb314-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">formula =</span> VL1 <span class="sc">~</span> A <span class="sc">+</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span>, <span class="at">exposure.name =</span> <span class="st">&quot;A&quot;</span>)</span>
+<span id="cb314-4"><a href="instrument.html#cb314-4" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<pre><code>##     term     .lower  .estimate     .upper .alpha .method
+## 1    EY0  0.5159241  0.6400406  0.7641571   0.05      qt
+## 2    EY1  0.1864754  0.2307692  0.2750631   0.05      qt
+## 3     RD -0.5396419 -0.4092714 -0.2789009   0.05      qt
+## 4  logRR -1.2888462 -1.0201133 -0.7513804   0.05      qt
+## 5 logRR* -1.1071319 -0.7594211 -0.4117104   0.05      qt
+## 6  logOR -2.3659664 -1.7795345 -1.1931025   0.05      qt</code></pre>
+<p>The <code>jack_est</code> function to do the full jackknife in one function is included in the
+<code>fci</code> package and can be used as follows.</p>
 <p>First with the linear model</p>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="instrument.html#cb276-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 25 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="instrument.html#cb316-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 25 sec. Load from file.&quot;</span>)</span></code></pre></div>
 <pre><code>## This takes about 25 sec. Load from file.</code></pre>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="instrument.html#cb278-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb278-2"><a href="instrument.html#cb278-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.lin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, conf = 0.95,</span></span>
-<span id="cb278-3"><a href="instrument.html#cb278-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
-<span id="cb278-4"><a href="instrument.html#cb278-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;, </span></span>
-<span id="cb278-5"><a href="instrument.html#cb278-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
-<span id="cb278-6"><a href="instrument.html#cb278-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb278-7"><a href="instrument.html#cb278-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb278-8"><a href="instrument.html#cb278-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_lin.rds&quot;</span>)</span>
-<span id="cb278-9"><a href="instrument.html#cb278-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.lin, file = a_file)</span></span>
-<span id="cb278-10"><a href="instrument.html#cb278-10" aria-hidden="true" tabindex="-1"></a>dwhatif.lin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb278-11"><a href="instrument.html#cb278-11" aria-hidden="true" tabindex="-1"></a>dwhatif.lin</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   name      est     se  conf    lci    uci
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 EY0     0.640 0.0754  0.95  0.516  0.764
-## 2 EY1     0.231 0.0269  0.95  0.186  0.275
-## 3 RD     -0.409 0.0792  0.95 -0.540 -0.279
-## 4 logRR  -1.02  0.163   0.95 -1.29  -0.751
-## 5 logRR* -0.759 0.211   0.95 -1.11  -0.412
-## 6 logOR  -1.78  0.356   0.95 -2.37  -1.19</code></pre>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="instrument.html#cb318-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb318-2"><a href="instrument.html#cb318-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.instr.lin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_linear, </span></span>
+<span id="cb318-3"><a href="instrument.html#cb318-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                               alpha = 0.05, inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb318-4"><a href="instrument.html#cb318-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                               VL1 ~ A + `T`, exposure.name = &quot;A&quot;)</span></span>
+<span id="cb318-5"><a href="instrument.html#cb318-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb318-6"><a href="instrument.html#cb318-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb318-7"><a href="instrument.html#cb318-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_dwatif_instr_lin.rds&quot;</span>)</span>
+<span id="cb318-8"><a href="instrument.html#cb318-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.instr.lin, file = a_file)</span></span>
+<span id="cb318-9"><a href="instrument.html#cb318-9" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.lin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb318-10"><a href="instrument.html#cb318-10" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.lin</span></code></pre></div>
+<pre><code>##     term     .lower  .estimate     .upper .alpha .method
+## 1    EY0  0.5021697  0.6347227  0.7672756   0.05      qt
+## 2    EY1  0.1864754  0.2307692  0.2750631   0.05      qt
+## 3     RD -0.5421306 -0.4039535 -0.2657763   0.05      qt
+## 4  logRR -1.2905714 -1.0117688 -0.7329661   0.05      qt
+## 5 logRR* -1.1100593 -0.7447579 -0.3794565   0.05      qt
+## 6  logOR -2.3720704 -1.7565267 -1.1409829   0.05      qt</code></pre>
 <p>then the loglinear model</p>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="instrument.html#cb280-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 45 sec. Load from file.&quot;</span>)</span></code></pre></div>
-<pre><code>## This takes about 45 sec. Load from file.</code></pre>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="instrument.html#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb282-2"><a href="instrument.html#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.loglin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear, conf = 0.95,</span></span>
-<span id="cb282-3"><a href="instrument.html#cb282-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
-<span id="cb282-4"><a href="instrument.html#cb282-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;,</span></span>
-<span id="cb282-5"><a href="instrument.html#cb282-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
-<span id="cb282-6"><a href="instrument.html#cb282-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb282-7"><a href="instrument.html#cb282-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb282-8"><a href="instrument.html#cb282-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_loglin.rds&quot;</span>)</span>
-<span id="cb282-9"><a href="instrument.html#cb282-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.loglin, file = a_file)</span></span>
-<span id="cb282-10"><a href="instrument.html#cb282-10" aria-hidden="true" tabindex="-1"></a>dwhatif.loglin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb282-11"><a href="instrument.html#cb282-11" aria-hidden="true" tabindex="-1"></a>dwhatif.loglin</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   name      est     se  conf    lci    uci
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 EY0     0.713 0.131   0.95  0.498  0.928
-## 2 EY1     0.231 0.0269  0.95  0.186  0.275
-## 3 RD     -0.483 0.135   0.95 -0.704 -0.261
-## 4 logRR  -1.13  0.222   0.95 -1.49  -0.762
-## 5 logRR* -0.987 0.453   0.95 -1.73  -0.241
-## 6 logOR  -2.12  0.660   0.95 -3.20  -1.03</code></pre>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="instrument.html#cb320-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 30 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 30 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="instrument.html#cb322-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb322-2"><a href="instrument.html#cb322-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.instr.loglin &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_loglinear,</span></span>
+<span id="cb322-3"><a href="instrument.html#cb322-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                               alpha = 0.05, inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb322-4"><a href="instrument.html#cb322-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                               VL1 ~ A + `T`, exposure.name = &quot;A&quot;)</span></span>
+<span id="cb322-5"><a href="instrument.html#cb322-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb322-6"><a href="instrument.html#cb322-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb322-7"><a href="instrument.html#cb322-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_dwatif_instr_loglin.rds&quot;</span>)</span>
+<span id="cb322-8"><a href="instrument.html#cb322-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.instr.loglin, file = a_file)</span></span>
+<span id="cb322-9"><a href="instrument.html#cb322-9" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.loglin <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb322-10"><a href="instrument.html#cb322-10" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.loglin</span></code></pre></div>
+<pre><code>##     term     .lower  .estimate     .upper .alpha .method
+## 1    EY0  0.5021697  0.6347227  0.7672756   0.05      qt
+## 2    EY1  0.1864754  0.2307692  0.2750631   0.05      qt
+## 3     RD -0.5421306 -0.4039535 -0.2657763   0.05      qt
+## 4  logRR -1.2905714 -1.0117688 -0.7329661   0.05      qt
+## 5 logRR* -1.1100593 -0.7447579 -0.3794565   0.05      qt
+## 6  logOR -2.3720704 -1.7565267 -1.1409829   0.05      qt</code></pre>
 <p>an the logistic model</p>
-<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="instrument.html#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 40 sec. Load from file.&quot;</span>)</span></code></pre></div>
-<pre><code>## This takes about 40 sec. Load from file.</code></pre>
-<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="instrument.html#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb286-2"><a href="instrument.html#cb286-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.logistic &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic, conf = 0.95,</span></span>
-<span id="cb286-3"><a href="instrument.html#cb286-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
-<span id="cb286-4"><a href="instrument.html#cb286-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                      outcome.name = &quot;VL1&quot;, exposure.name = &quot;A&quot;,</span></span>
-<span id="cb286-5"><a href="instrument.html#cb286-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                      instrument.name = &quot;T&quot;)</span></span>
-<span id="cb286-6"><a href="instrument.html#cb286-6" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb286-7"><a href="instrument.html#cb286-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb286-8"><a href="instrument.html#cb286-8" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_logistic.rds&quot;</span>)</span>
-<span id="cb286-9"><a href="instrument.html#cb286-9" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.logistic, file = a_file)</span></span>
-<span id="cb286-10"><a href="instrument.html#cb286-10" aria-hidden="true" tabindex="-1"></a>dwhatif.logistic <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
-<span id="cb286-11"><a href="instrument.html#cb286-11" aria-hidden="true" tabindex="-1"></a>dwhatif.logistic</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   name      est     se  conf    lci    uci
-##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 EY0     0.643 0.0705  0.95  0.527  0.759
-## 2 EY1     0.231 0.0269  0.95  0.186  0.275
-## 3 RD     -0.413 0.0753  0.95 -0.537 -0.289
-## 4 logRR  -1.03  0.160   0.95 -1.29  -0.762
-## 5 logRR* -0.769 0.201   0.95 -1.10  -0.439
-## 6 logOR  -1.79  0.342   0.95 -2.36  -1.23</code></pre>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="instrument.html#cb324-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;This takes about 30 sec. Load from file.&quot;</span>)</span></code></pre></div>
+<pre><code>## This takes about 30 sec. Load from file.</code></pre>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="instrument.html#cb326-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb326-2"><a href="instrument.html#cb326-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dwhatif.instr.logit &lt;- fciR::jack_est(data = dwhatif, func = fciR::instr_logistic,</span></span>
+<span id="cb326-3"><a href="instrument.html#cb326-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                               alpha = 0.05, inv = &quot;none&quot;, evars = &quot;standard&quot;,</span></span>
+<span id="cb326-4"><a href="instrument.html#cb326-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                               VL1 ~ A + `T`, exposure.name = &quot;A&quot;)</span></span>
+<span id="cb326-5"><a href="instrument.html#cb326-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb326-6"><a href="instrument.html#cb326-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb326-7"><a href="instrument.html#cb326-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap09_dwatif_instr_logit.rds&quot;</span>)</span>
+<span id="cb326-8"><a href="instrument.html#cb326-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(dwhatif.instr.logit, file = a_file)</span></span>
+<span id="cb326-9"><a href="instrument.html#cb326-9" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.logit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span>
+<span id="cb326-10"><a href="instrument.html#cb326-10" aria-hidden="true" tabindex="-1"></a>dwhatif.instr.logit</span></code></pre></div>
+<pre><code>##     term     .lower  .estimate     .upper .alpha .method
+## 1    EY0  0.5063775  0.6374997  0.7686219   0.05      qt
+## 2    EY1  0.1864754  0.2307692  0.2750631   0.05      qt
+## 3     RD -0.5433736 -0.4067305 -0.2700873   0.05      qt
+## 4  logRR -1.2920579 -1.0161346 -0.7402113   0.05      qt
+## 5 logRR* -1.1162948 -0.7523892 -0.3884837   0.05      qt
+## 6  logOR -2.3791415 -1.7685238 -1.1579062   0.05      qt</code></pre>
 <p>which gives us the following result,</p>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="instrument.html#cb288-1" aria-hidden="true" tabindex="-1"></a>tbl_9<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb288-2"><a href="instrument.html#cb288-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb288-3"><a href="instrument.html#cb288-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Linear&quot;</span>,</span>
-<span id="cb288-4"><a href="instrument.html#cb288-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.lin),</span>
-<span id="cb288-5"><a href="instrument.html#cb288-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb288-6"><a href="instrument.html#cb288-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
-<span id="cb288-7"><a href="instrument.html#cb288-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.loglin),</span>
-<span id="cb288-8"><a href="instrument.html#cb288-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
-<span id="cb288-9"><a href="instrument.html#cb288-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
-<span id="cb288-10"><a href="instrument.html#cb288-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.logistic)) <span class="sc">|&gt;</span></span>
-<span id="cb288-11"><a href="instrument.html#cb288-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span>, <span class="st">&quot;logRR&quot;</span>, <span class="st">&quot;logOR&quot;</span>))</span>
-<span id="cb288-12"><a href="instrument.html#cb288-12" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(tbl_9<span class="fl">.1</span>,</span>
-<span id="cb288-13"><a href="instrument.html#cb288-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb288-14"><a href="instrument.html#cb288-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb288-15"><a href="instrument.html#cb288-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb288-16"><a href="instrument.html#cb288-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>,</span>
-<span id="cb288-17"><a href="instrument.html#cb288-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
-<span id="cb288-18"><a href="instrument.html#cb288-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
-<span id="cb288-19"><a href="instrument.html#cb288-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>)</span>
-<span id="cb288-20"><a href="instrument.html#cb288-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<div id="slsmzjvsbz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="instrument.html#cb328-1" aria-hidden="true" tabindex="-1"></a>tbl_9<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb328-2"><a href="instrument.html#cb328-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb328-3"><a href="instrument.html#cb328-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">&quot;Linear&quot;</span>,</span>
+<span id="cb328-4"><a href="instrument.html#cb328-4" aria-hidden="true" tabindex="-1"></a>    dwhatif.instr.lin),</span>
+<span id="cb328-5"><a href="instrument.html#cb328-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb328-6"><a href="instrument.html#cb328-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">&quot;Loglinear&quot;</span>,</span>
+<span id="cb328-7"><a href="instrument.html#cb328-7" aria-hidden="true" tabindex="-1"></a>    dwhatif.instr.loglin),</span>
+<span id="cb328-8"><a href="instrument.html#cb328-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb328-9"><a href="instrument.html#cb328-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">&quot;Logistic&quot;</span>,</span>
+<span id="cb328-10"><a href="instrument.html#cb328-10" aria-hidden="true" tabindex="-1"></a>    dwhatif.instr.logit)) <span class="sc">|&gt;</span></span>
+<span id="cb328-11"><a href="instrument.html#cb328-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;RD&quot;</span>, <span class="st">&quot;logRR&quot;</span>, <span class="st">&quot;logOR&quot;</span>))</span>
+<span id="cb328-12"><a href="instrument.html#cb328-12" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(tbl_9<span class="fl">.1</span>,</span>
+<span id="cb328-13"><a href="instrument.html#cb328-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;term&quot;</span>,</span>
+<span id="cb328-14"><a href="instrument.html#cb328-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;model&quot;</span>,</span>
+<span id="cb328-15"><a href="instrument.html#cb328-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">&quot;Table 9.1&lt;em&gt;(by FL)&lt;/em&gt;&quot;</span>, <span class="st">&quot;Double What-If Study&quot;</span>, </span>
+<span id="cb328-16"><a href="instrument.html#cb328-16" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>),</span>
+<span id="cb328-17"><a href="instrument.html#cb328-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
+<span id="cb328-18"><a href="instrument.html#cb328-18" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>)</span>
+<span id="cb328-19"><a href="instrument.html#cb328-19" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div id="nxeeywruwn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#slsmzjvsbz .gt_table {
+#nxeeywruwn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -837,7 +838,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-left-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_heading {
+#nxeeywruwn .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -849,7 +850,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_title {
+#nxeeywruwn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -861,7 +862,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-width: 0;
 }
 
-#slsmzjvsbz .gt_subtitle {
+#nxeeywruwn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -873,13 +874,13 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-top-width: 0;
 }
 
-#slsmzjvsbz .gt_bottom_border {
+#nxeeywruwn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_col_headings {
+#nxeeywruwn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -894,7 +895,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_col_heading {
+#nxeeywruwn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -914,7 +915,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   overflow-x: hidden;
 }
 
-#slsmzjvsbz .gt_column_spanner_outer {
+#nxeeywruwn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -926,15 +927,15 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 4px;
 }
 
-#slsmzjvsbz .gt_column_spanner_outer:first-child {
+#nxeeywruwn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#slsmzjvsbz .gt_column_spanner_outer:last-child {
+#nxeeywruwn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#slsmzjvsbz .gt_column_spanner {
+#nxeeywruwn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -946,7 +947,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   width: 100%;
 }
 
-#slsmzjvsbz .gt_group_heading {
+#nxeeywruwn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -971,7 +972,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: middle;
 }
 
-#slsmzjvsbz .gt_empty_group_heading {
+#nxeeywruwn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -986,15 +987,15 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: middle;
 }
 
-#slsmzjvsbz .gt_from_md > :first-child {
+#nxeeywruwn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#slsmzjvsbz .gt_from_md > :last-child {
+#nxeeywruwn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#slsmzjvsbz .gt_row {
+#nxeeywruwn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1013,7 +1014,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   overflow-x: hidden;
 }
 
-#slsmzjvsbz .gt_stub {
+#nxeeywruwn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1026,7 +1027,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#slsmzjvsbz .gt_stub_row_group {
+#nxeeywruwn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1040,11 +1041,11 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   vertical-align: top;
 }
 
-#slsmzjvsbz .gt_row_group_first td {
+#nxeeywruwn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#slsmzjvsbz .gt_summary_row {
+#nxeeywruwn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1054,16 +1055,16 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#slsmzjvsbz .gt_first_summary_row {
+#nxeeywruwn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_first_summary_row.thick {
+#nxeeywruwn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#slsmzjvsbz .gt_last_summary_row {
+#nxeeywruwn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1073,7 +1074,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_grand_summary_row {
+#nxeeywruwn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1083,7 +1084,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#slsmzjvsbz .gt_first_grand_summary_row {
+#nxeeywruwn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1093,11 +1094,11 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-top-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_striped {
+#nxeeywruwn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#slsmzjvsbz .gt_table_body {
+#nxeeywruwn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1106,7 +1107,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_footnotes {
+#nxeeywruwn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1120,7 +1121,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_footnote {
+#nxeeywruwn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1129,7 +1130,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#slsmzjvsbz .gt_sourcenotes {
+#nxeeywruwn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1143,7 +1144,7 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   border-right-color: #D3D3D3;
 }
 
-#slsmzjvsbz .gt_sourcenote {
+#nxeeywruwn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1151,60 +1152,60 @@ we test it with the <code>mtcars</code> data set as follows.</p>
   padding-right: 5px;
 }
 
-#slsmzjvsbz .gt_left {
+#nxeeywruwn .gt_left {
   text-align: left;
 }
 
-#slsmzjvsbz .gt_center {
+#nxeeywruwn .gt_center {
   text-align: center;
 }
 
-#slsmzjvsbz .gt_right {
+#nxeeywruwn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#slsmzjvsbz .gt_font_normal {
+#nxeeywruwn .gt_font_normal {
   font-weight: normal;
 }
 
-#slsmzjvsbz .gt_font_bold {
+#nxeeywruwn .gt_font_bold {
   font-weight: bold;
 }
 
-#slsmzjvsbz .gt_font_italic {
+#nxeeywruwn .gt_font_italic {
   font-style: italic;
 }
 
-#slsmzjvsbz .gt_super {
+#nxeeywruwn .gt_super {
   font-size: 65%;
 }
 
-#slsmzjvsbz .gt_footnote_marks {
+#nxeeywruwn .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#slsmzjvsbz .gt_asterisk {
+#nxeeywruwn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#slsmzjvsbz .gt_slash_mark {
+#nxeeywruwn .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#slsmzjvsbz .gt_fraction_numerator {
+#nxeeywruwn .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#slsmzjvsbz .gt_fraction_denominator {
+#nxeeywruwn .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1213,100 +1214,89 @@ we test it with the <code>mtcars</code> data set as follows.</p>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1<em>(by FL)</em></strong></th>
+      <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1<em>(by FL)</em><br>Double What-If Study</strong></th>
     </tr>
     <tr>
-      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Double What-If Study<br>Instrumental Variables Analysis</strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Instrumental Variables Analysis</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">se</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">RD</td>
+      <td colspan="3" class="gt_group_heading">RD</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
-<td class="gt_row gt_center">-0.409</td>
-<td class="gt_row gt_center">0.079</td>
-<td class="gt_row gt_center">(-0.54, -0.279)</td></tr>
+<td class="gt_row gt_center">(-0.542, -0.266)</td>
+<td class="gt_row gt_center">-0.404</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
-<td class="gt_row gt_center gt_striped">-0.483</td>
-<td class="gt_row gt_center gt_striped">0.135</td>
-<td class="gt_row gt_center gt_striped">(-0.704, -0.261)</td></tr>
+<td class="gt_row gt_center gt_striped">(-0.542, -0.266)</td>
+<td class="gt_row gt_center gt_striped">-0.404</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
-<td class="gt_row gt_center">-0.413</td>
-<td class="gt_row gt_center">0.075</td>
-<td class="gt_row gt_center">(-0.537, -0.289)</td></tr>
+<td class="gt_row gt_center">(-0.543, -0.27)</td>
+<td class="gt_row gt_center">-0.407</td></tr>
     <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">logRR</td>
+      <td colspan="3" class="gt_group_heading">logRR</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
-<td class="gt_row gt_center gt_striped">-1.020</td>
-<td class="gt_row gt_center gt_striped">0.163</td>
-<td class="gt_row gt_center gt_striped">(-1.289, -0.751)</td></tr>
+<td class="gt_row gt_center gt_striped">(-1.291, -0.733)</td>
+<td class="gt_row gt_center gt_striped">-1.012</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
-<td class="gt_row gt_center">-1.129</td>
-<td class="gt_row gt_center">0.222</td>
-<td class="gt_row gt_center">(-1.495, -0.762)</td></tr>
+<td class="gt_row gt_center">(-1.291, -0.733)</td>
+<td class="gt_row gt_center">-1.012</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
-<td class="gt_row gt_center gt_striped">-1.025</td>
-<td class="gt_row gt_center gt_striped">0.160</td>
-<td class="gt_row gt_center gt_striped">(-1.288, -0.762)</td></tr>
+<td class="gt_row gt_center gt_striped">(-1.292, -0.74)</td>
+<td class="gt_row gt_center gt_striped">-1.016</td></tr>
     <tr class="gt_group_heading_row">
-      <td colspan="4" class="gt_group_heading">logOR</td>
+      <td colspan="3" class="gt_group_heading">logOR</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
-<td class="gt_row gt_center">-1.780</td>
-<td class="gt_row gt_center">0.356</td>
-<td class="gt_row gt_center">(-2.366, -1.193)</td></tr>
+<td class="gt_row gt_center">(-2.372, -1.141)</td>
+<td class="gt_row gt_center">-1.757</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
-<td class="gt_row gt_center gt_striped">-2.116</td>
-<td class="gt_row gt_center gt_striped">0.660</td>
-<td class="gt_row gt_center gt_striped">(-3.202, -1.029)</td></tr>
+<td class="gt_row gt_center gt_striped">(-2.372, -1.141)</td>
+<td class="gt_row gt_center gt_striped">-1.757</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
-<td class="gt_row gt_center">-1.794</td>
-<td class="gt_row gt_center">0.342</td>
-<td class="gt_row gt_center">(-2.357, -1.231)</td></tr>
+<td class="gt_row gt_center">(-2.379, -1.158)</td>
+<td class="gt_row gt_center">-1.769</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
-      <td class="gt_sourcenote" colspan="4">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
+      <td class="gt_sourcenote" colspan="3">Fundamentals of Causal Inference, Babette A. Brumback, 2022</td>
     </tr>
   </tfoot>
   <tfoot class="gt_footnotes">
     <tr>
-      <td class="gt_footnote" colspan="4"><sup class="gt_footnote_marks">1</sup> 95% confidence interval</td>
+      <td class="gt_footnote" colspan="3"><sup class="gt_footnote_marks">1</sup> 95% confidence interval</td>
     </tr>
   </tfoot>
 </table>
 </div>
 <p>The difference in confidence intervals is because the author uses
-<code>1.96 = round(qnorm(0.95), 2)</code> as a
-whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code>.</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="instrument.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_09_01&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb289-2"><a href="instrument.html#cb289-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_09_01</span>
-<span id="cb289-3"><a href="instrument.html#cb289-3" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span>
-<span id="cb289-4"><a href="instrument.html#cb289-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
-<span id="cb289-5"><a href="instrument.html#cb289-5" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
-<span id="cb289-6"><a href="instrument.html#cb289-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;name&quot;</span>,</span>
-<span id="cb289-7"><a href="instrument.html#cb289-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb289-8"><a href="instrument.html#cb289-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">conf =</span> <span class="fl">0.95</span>,</span>
-<span id="cb289-9"><a href="instrument.html#cb289-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Table 9.1&quot;</span>, </span>
-<span id="cb289-10"><a href="instrument.html#cb289-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Double What-If Study&quot;</span>,</span>
-<span id="cb289-11"><a href="instrument.html#cb289-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
-<span id="cb289-12"><a href="instrument.html#cb289-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
-<div id="ptifvmuznc" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<code>1.96 = round(qnorm(0.95), 2)</code>
+whereas <code>fciR::jack_est</code> uses an estimate confidence interval. See <code>jack_ci</code>
+code for details.</p>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="instrument.html#cb329-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;fci_tbl_09_01&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb329-2"><a href="instrument.html#cb329-2" aria-hidden="true" tabindex="-1"></a>bb_dwhatif <span class="ot">&lt;-</span> fci_tbl_09_01</span>
+<span id="cb329-3"><a href="instrument.html#cb329-3" aria-hidden="true" tabindex="-1"></a><span class="co"># bb_dwhatif</span></span>
+<span id="cb329-4"><a href="instrument.html#cb329-4" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures_rowgrp</span>(</span>
+<span id="cb329-5"><a href="instrument.html#cb329-5" aria-hidden="true" tabindex="-1"></a>    bb_dwhatif, </span>
+<span id="cb329-6"><a href="instrument.html#cb329-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowgroup =</span> <span class="st">&quot;term&quot;</span>,</span>
+<span id="cb329-7"><a href="instrument.html#cb329-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rowname =</span> <span class="st">&quot;model&quot;</span>,</span>
+<span id="cb329-8"><a href="instrument.html#cb329-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">&quot;Table 9.1&quot;</span>, <span class="st">&quot;Double What-If Study&quot;</span>, <span class="st">&quot;&lt;br&gt;&quot;</span>), </span>
+<span id="cb329-9"><a href="instrument.html#cb329-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;Instrumental Variables Analysis&quot;</span>,</span>
+<span id="cb329-10"><a href="instrument.html#cb329-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
+<div id="diffkglrrh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ptifvmuznc .gt_table {
+#diffkglrrh .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1331,7 +1321,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-left-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_heading {
+#diffkglrrh .gt_heading {
   background-color: #DCDCDC;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1343,7 +1333,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-right-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_title {
+#diffkglrrh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: bold;
@@ -1355,7 +1345,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-bottom-width: 0;
 }
 
-#ptifvmuznc .gt_subtitle {
+#diffkglrrh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: bold;
@@ -1367,13 +1357,13 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-top-width: 0;
 }
 
-#ptifvmuznc .gt_bottom_border {
+#diffkglrrh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_col_headings {
+#diffkglrrh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1388,7 +1378,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-right-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_col_heading {
+#diffkglrrh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1408,7 +1398,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   overflow-x: hidden;
 }
 
-#ptifvmuznc .gt_column_spanner_outer {
+#diffkglrrh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1420,15 +1410,15 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 4px;
 }
 
-#ptifvmuznc .gt_column_spanner_outer:first-child {
+#diffkglrrh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ptifvmuznc .gt_column_spanner_outer:last-child {
+#diffkglrrh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ptifvmuznc .gt_column_spanner {
+#diffkglrrh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1440,7 +1430,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   width: 100%;
 }
 
-#ptifvmuznc .gt_group_heading {
+#diffkglrrh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1465,7 +1455,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   vertical-align: middle;
 }
 
-#ptifvmuznc .gt_empty_group_heading {
+#diffkglrrh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1480,15 +1470,15 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   vertical-align: middle;
 }
 
-#ptifvmuznc .gt_from_md > :first-child {
+#diffkglrrh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ptifvmuznc .gt_from_md > :last-child {
+#diffkglrrh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ptifvmuznc .gt_row {
+#diffkglrrh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1507,7 +1497,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   overflow-x: hidden;
 }
 
-#ptifvmuznc .gt_stub {
+#diffkglrrh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1520,7 +1510,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 5px;
 }
 
-#ptifvmuznc .gt_stub_row_group {
+#diffkglrrh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1534,11 +1524,11 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   vertical-align: top;
 }
 
-#ptifvmuznc .gt_row_group_first td {
+#diffkglrrh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ptifvmuznc .gt_summary_row {
+#diffkglrrh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1548,16 +1538,16 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 5px;
 }
 
-#ptifvmuznc .gt_first_summary_row {
+#diffkglrrh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_first_summary_row.thick {
+#diffkglrrh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ptifvmuznc .gt_last_summary_row {
+#diffkglrrh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1567,7 +1557,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-bottom-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_grand_summary_row {
+#diffkglrrh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1577,7 +1567,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 5px;
 }
 
-#ptifvmuznc .gt_first_grand_summary_row {
+#diffkglrrh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1587,11 +1577,11 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-top-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_striped {
+#diffkglrrh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ptifvmuznc .gt_table_body {
+#diffkglrrh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1600,7 +1590,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-bottom-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_footnotes {
+#diffkglrrh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1614,7 +1604,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-right-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_footnote {
+#diffkglrrh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1623,7 +1613,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 5px;
 }
 
-#ptifvmuznc .gt_sourcenotes {
+#diffkglrrh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1637,7 +1627,7 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   border-right-color: #D3D3D3;
 }
 
-#ptifvmuznc .gt_sourcenote {
+#diffkglrrh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1645,60 +1635,60 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
   padding-right: 5px;
 }
 
-#ptifvmuznc .gt_left {
+#diffkglrrh .gt_left {
   text-align: left;
 }
 
-#ptifvmuznc .gt_center {
+#diffkglrrh .gt_center {
   text-align: center;
 }
 
-#ptifvmuznc .gt_right {
+#diffkglrrh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ptifvmuznc .gt_font_normal {
+#diffkglrrh .gt_font_normal {
   font-weight: normal;
 }
 
-#ptifvmuznc .gt_font_bold {
+#diffkglrrh .gt_font_bold {
   font-weight: bold;
 }
 
-#ptifvmuznc .gt_font_italic {
+#diffkglrrh .gt_font_italic {
   font-style: italic;
 }
 
-#ptifvmuznc .gt_super {
+#diffkglrrh .gt_super {
   font-size: 65%;
 }
 
-#ptifvmuznc .gt_footnote_marks {
+#diffkglrrh .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ptifvmuznc .gt_asterisk {
+#diffkglrrh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ptifvmuznc .gt_slash_mark {
+#diffkglrrh .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ptifvmuznc .gt_fraction_numerator {
+#diffkglrrh .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ptifvmuznc .gt_fraction_denominator {
+#diffkglrrh .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1707,18 +1697,18 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1</strong></th>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 9.1 Double What-If Study <br></strong></th>
     </tr>
     <tr>
-      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Double What-If Study<br>Instrumental Variables Analysis</strong></th>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>Instrumental Variables Analysis</strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Truth</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
@@ -1727,53 +1717,53 @@ whereas <code>fciR::jack_est</code> uses <code>qt(0.95, df = nrow(data)-1)</code
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">CACE</td>
 <td class="gt_row gt_center">NA</td>
-<td class="gt_row gt_center">-0.409</td>
-<td class="gt_row gt_center">(-0.564, -0.254)</td></tr>
+<td class="gt_row gt_center">(-0.564, -0.254)</td>
+<td class="gt_row gt_center">-0.409</td></tr>
     <tr class="gt_group_heading_row">
       <td colspan="4" class="gt_group_heading">E(Y-Y(0)|A=1)</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
 <td class="gt_row gt_center gt_striped">-0.360</td>
-<td class="gt_row gt_center gt_striped">-0.409</td>
-<td class="gt_row gt_center gt_striped">(-0.564, -0.254)</td></tr>
+<td class="gt_row gt_center gt_striped">(-0.564, -0.254)</td>
+<td class="gt_row gt_center gt_striped">-0.409</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
 <td class="gt_row gt_center">-0.360</td>
-<td class="gt_row gt_center">-0.483</td>
-<td class="gt_row gt_center">(-0.746, -0.219)</td></tr>
+<td class="gt_row gt_center">(-0.746, -0.219)</td>
+<td class="gt_row gt_center">-0.483</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
 <td class="gt_row gt_center gt_striped">-0.360</td>
-<td class="gt_row gt_center gt_striped">-0.413</td>
-<td class="gt_row gt_center gt_striped">(-0.56, -0.265)</td></tr>
+<td class="gt_row gt_center gt_striped">(-0.56, -0.265)</td>
+<td class="gt_row gt_center gt_striped">-0.413</td></tr>
     <tr class="gt_group_heading_row">
       <td colspan="4" class="gt_group_heading">log(E(Y|A=1))-log(E(Y(0)|A=1))</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
 <td class="gt_row gt_center">-1.033</td>
-<td class="gt_row gt_center">-1.020</td>
-<td class="gt_row gt_center">(-1.34, -0.7)</td></tr>
+<td class="gt_row gt_center">(-1.34, -0.7)</td>
+<td class="gt_row gt_center">-1.020</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
 <td class="gt_row gt_center gt_striped">-1.033</td>
-<td class="gt_row gt_center gt_striped">-1.129</td>
-<td class="gt_row gt_center gt_striped">(-1.564, -0.693)</td></tr>
+<td class="gt_row gt_center gt_striped">(-1.564, -0.693)</td>
+<td class="gt_row gt_center gt_striped">-1.129</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
 <td class="gt_row gt_center">-1.033</td>
-<td class="gt_row gt_center">-1.025</td>
-<td class="gt_row gt_center">(-1.339, -0.712)</td></tr>
+<td class="gt_row gt_center">(-1.339, -0.712)</td>
+<td class="gt_row gt_center">-1.025</td></tr>
     <tr class="gt_group_heading_row">
       <td colspan="4" class="gt_group_heading">logit(E(Y|A=1))-logit(E(Y(0)|A=1))</td>
     </tr>
     <tr class="gt_row_group_first"><td class="gt_row gt_right gt_stub">Linear</td>
 <td class="gt_row gt_center gt_striped">-1.630</td>
-<td class="gt_row gt_center gt_striped">-1.780</td>
-<td class="gt_row gt_center gt_striped">(-2.478, -1.081)</td></tr>
+<td class="gt_row gt_center gt_striped">(-2.478, -1.081)</td>
+<td class="gt_row gt_center gt_striped">-1.780</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Loglinear</td>
 <td class="gt_row gt_center">-1.630</td>
-<td class="gt_row gt_center">-2.116</td>
-<td class="gt_row gt_center">(-3.409, -0.822)</td></tr>
+<td class="gt_row gt_center">(-3.409, -0.822)</td>
+<td class="gt_row gt_center">-2.116</td></tr>
     <tr><td class="gt_row gt_right gt_stub">Logistic</td>
 <td class="gt_row gt_center gt_striped">-1.630</td>
-<td class="gt_row gt_center gt_striped">-1.794</td>
-<td class="gt_row gt_center gt_striped">(-2.464, -1.124)</td></tr>
+<td class="gt_row gt_center gt_striped">(-2.464, -1.124)</td>
+<td class="gt_row gt_center gt_striped">-1.794</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>

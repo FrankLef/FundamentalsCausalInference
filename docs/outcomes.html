@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-05-22" />
+<meta name="date" content="2022-06-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -404,44 +404,43 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="outcomes" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Potential Outcomes and the Fundamental Problem of Causal Inference<a href="outcomes.html#outcomes" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="outcomes.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb44-2"><a href="outcomes.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb44-3"><a href="outcomes.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb44-4"><a href="outcomes.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
-<span id="cb44-5"><a href="outcomes.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
-<span id="cb44-6"><a href="outcomes.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="outcomes.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb45-2"><a href="outcomes.html#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb45-3"><a href="outcomes.html#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb45-4"><a href="outcomes.html#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb45-5"><a href="outcomes.html#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fciR)</span>
+<span id="cb45-6"><a href="outcomes.html#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">dplyr.summarise.inform =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>The results from the preliminary report on June 22, 20202
 (RECOVERY Collaborative Group) (2020)) are as follows</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="outcomes.html#cb45-1" aria-hidden="true" tabindex="-1"></a>dataRecovery <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb45-2"><a href="outcomes.html#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb45-3"><a href="outcomes.html#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb45-4"><a href="outcomes.html#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">1065</span>, <span class="dv">3256</span>, <span class="dv">454</span>, <span class="dv">2104</span>)</span>
-<span id="cb45-5"><a href="outcomes.html#cb45-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a>dataRecovery <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb46-2"><a href="outcomes.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb46-3"><a href="outcomes.html#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb46-4"><a href="outcomes.html#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">1065</span>, <span class="dv">3256</span>, <span class="dv">454</span>, <span class="dv">2104</span>)</span>
+<span id="cb46-5"><a href="outcomes.html#cb46-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>and the estimate of survival <span class="math inline">\(Y=1\)</span> with treatment is</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="outcomes.html#cb46-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> dataRecovery <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a href="outcomes.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb46-3"><a href="outcomes.html#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
-<span id="cb46-4"><a href="outcomes.html#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT1 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> p))</span>
-<span id="cb46-5"><a href="outcomes.html#cb46-5" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="outcomes.html#cb47-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> dataRecovery <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="outcomes.html#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-3"><a href="outcomes.html#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
+<span id="cb47-4"><a href="outcomes.html#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT1 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> p))</span>
+<span id="cb47-5"><a href="outcomes.html#cb47-5" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
 <pre><code>##        EYT1
 ## 1 0.8225176</code></pre>
 <p>whereas the estimate of survial with treatment is</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="outcomes.html#cb48-1" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> dataRecovery <span class="sc">|&gt;</span></span>
-<span id="cb48-2"><a href="outcomes.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb48-3"><a href="outcomes.html#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
-<span id="cb48-4"><a href="outcomes.html#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT0 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> p))</span>
-<span id="cb48-5"><a href="outcomes.html#cb48-5" aria-hidden="true" tabindex="-1"></a>p0</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="outcomes.html#cb49-1" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> dataRecovery <span class="sc">|&gt;</span></span>
+<span id="cb49-2"><a href="outcomes.html#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb49-3"><a href="outcomes.html#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span></span>
+<span id="cb49-4"><a href="outcomes.html#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EYT0 =</span> <span class="fu">sum</span>(Y <span class="sc">*</span> p))</span>
+<span id="cb49-5"><a href="outcomes.html#cb49-5" aria-hidden="true" tabindex="-1"></a>p0</span></code></pre></div>
 <pre><code>##        EYT0
 ## 1 0.7535293</code></pre>
 <p>and the chi-square test of difference can be calculated as follows</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="outcomes.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the data table</span></span>
-<span id="cb50-2"><a href="outcomes.html#cb50-2" aria-hidden="true" tabindex="-1"></a>dataRecoveryChi <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb50-3"><a href="outcomes.html#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y0 =</span> <span class="fu">c</span>(<span class="at">T0 =</span> <span class="dv">1065</span>, <span class="at">T1 =</span> <span class="dv">454</span>),</span>
-<span id="cb50-4"><a href="outcomes.html#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y1 =</span> <span class="fu">c</span>(<span class="at">T0 =</span> <span class="dv">3256</span>, <span class="at">T1 =</span> <span class="dv">2104</span>)</span>
-<span id="cb50-5"><a href="outcomes.html#cb50-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-6"><a href="outcomes.html#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co"># perform the chi-square test</span></span>
-<span id="cb50-7"><a href="outcomes.html#cb50-7" aria-hidden="true" tabindex="-1"></a>chisq <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(dataRecoveryChi)</span>
-<span id="cb50-8"><a href="outcomes.html#cb50-8" aria-hidden="true" tabindex="-1"></a>chisq</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="outcomes.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the data table</span></span>
+<span id="cb51-2"><a href="outcomes.html#cb51-2" aria-hidden="true" tabindex="-1"></a>dataRecoveryChi <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb51-3"><a href="outcomes.html#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y0 =</span> <span class="fu">c</span>(<span class="at">T0 =</span> <span class="dv">1065</span>, <span class="at">T1 =</span> <span class="dv">454</span>),</span>
+<span id="cb51-4"><a href="outcomes.html#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y1 =</span> <span class="fu">c</span>(<span class="at">T0 =</span> <span class="dv">3256</span>, <span class="at">T1 =</span> <span class="dv">2104</span>))</span>
+<span id="cb51-5"><a href="outcomes.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co"># perform the chi-square test</span></span>
+<span id="cb51-6"><a href="outcomes.html#cb51-6" aria-hidden="true" tabindex="-1"></a>chisq <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(dataRecoveryChi)</span>
+<span id="cb51-7"><a href="outcomes.html#cb51-7" aria-hidden="true" tabindex="-1"></a>chisq</span></code></pre></div>
 <pre><code>## 
 ##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
 ## 
@@ -452,11 +451,11 @@ the treatment <span class="math inline">\(T\)</span> and the outcome <span class
 <p><em>The author’s chi-square test gives a p-value of 0.032 whereas the chi-square
 above gives 3.207e-11.</em> <strong>Why the difference?</strong></p>
 <p>If we use a <em>t-test</em> to also test the difference in means</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="outcomes.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t have the raw data, so we simulate</span></span>
-<span id="cb52-2"><a href="outcomes.html#cb52-2" aria-hidden="true" tabindex="-1"></a>YT1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">454</span> <span class="sc">+</span> <span class="dv">2104</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.823</span>)</span>
-<span id="cb52-3"><a href="outcomes.html#cb52-3" aria-hidden="true" tabindex="-1"></a>YT0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1065</span> <span class="sc">+</span> <span class="dv">3256</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.754</span>)</span>
-<span id="cb52-4"><a href="outcomes.html#cb52-4" aria-hidden="true" tabindex="-1"></a>ttest <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x =</span> YT1, YT0, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb52-5"><a href="outcomes.html#cb52-5" aria-hidden="true" tabindex="-1"></a>ttest</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="outcomes.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t have the raw data, so we simulate</span></span>
+<span id="cb53-2"><a href="outcomes.html#cb53-2" aria-hidden="true" tabindex="-1"></a>YT1 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">454</span> <span class="sc">+</span> <span class="dv">2104</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.823</span>)</span>
+<span id="cb53-3"><a href="outcomes.html#cb53-3" aria-hidden="true" tabindex="-1"></a>YT0 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1065</span> <span class="sc">+</span> <span class="dv">3256</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.754</span>)</span>
+<span id="cb53-4"><a href="outcomes.html#cb53-4" aria-hidden="true" tabindex="-1"></a>ttest <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x =</span> YT1, YT0, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb53-5"><a href="outcomes.html#cb53-5" aria-hidden="true" tabindex="-1"></a>ttest</span></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -520,25 +519,32 @@ be caused by chance.</li>
 </div>
 <div id="effect-measures" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Effect Measures<a href="outcomes.html#effect-measures" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Run the function to get the association measures</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="outcomes.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
-<span id="cb54-2"><a href="outcomes.html#cb54-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
-<span id="cb54-3"><a href="outcomes.html#cb54-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(gssrcc), ]</span>
-<span id="cb54-4"><a href="outcomes.html#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(gssrcc) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="outcomes.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
-<pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="outcomes.html#cb57-1" aria-hidden="true" tabindex="-1"></a>startTime <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb57-2"><a href="outcomes.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, R = 500, conf = 0.95,</span></span>
-<span id="cb57-3"><a href="outcomes.html#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, input.names = &quot;gthsedu&quot;)</span></span>
-<span id="cb57-4"><a href="outcomes.html#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb57-5"><a href="outcomes.html#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb57-6"><a href="outcomes.html#cb57-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
-<span id="cb57-7"><a href="outcomes.html#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
-<span id="cb57-8"><a href="outcomes.html#cb57-8" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="outcomes.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
-<span id="cb58-2"><a href="outcomes.html#cb58-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
-<span id="cb58-3"><a href="outcomes.html#cb58-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Association Measures Relating&lt;br&gt;&lt;em&gt;More than High School</span></span>
-<span id="cb58-4"><a href="outcomes.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<p>To estimate the association measures we use the parametric method with
+the <code>glm</code> function.</p>
+<blockquote>
+<p>We certainly do not believe that our binary outcomes the distributional
+assumtptions for the gaussian and poisson models, but we are only using the
+<code>glm</code> function to solve estimating equations.</p>
+</blockquote>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="outcomes.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;gss&quot;</span>, <span class="at">package =</span> <span class="st">&quot;fciR&quot;</span>)</span>
+<span id="cb55-2"><a href="outcomes.html#cb55-2" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[, <span class="fu">c</span>(<span class="st">&quot;trump&quot;</span>, <span class="st">&quot;gthsedu&quot;</span>, <span class="st">&quot;magthsedu&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;female&quot;</span>, <span class="st">&quot;gt65&quot;</span>)]</span>
+<span id="cb55-3"><a href="outcomes.html#cb55-3" aria-hidden="true" tabindex="-1"></a>gssrcc <span class="ot">&lt;-</span> gss[<span class="fu">complete.cases</span>(gssrcc), ]</span>
+<span id="cb55-4"><a href="outcomes.html#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(gssrcc) <span class="sc">==</span> <span class="dv">2348</span> <span class="sc">-</span> <span class="dv">180</span>)  <span class="co"># see comment on p. 46</span></span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="outcomes.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 12 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 12 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="outcomes.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb58-2"><a href="outcomes.html#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># uncond &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_uncond, times = 500, </span></span>
+<span id="cb58-3"><a href="outcomes.html#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                          alpha = 0.05, formula = trump ~ gthsedu)</span></span>
+<span id="cb58-4"><a href="outcomes.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb58-5"><a href="outcomes.html#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb58-6"><a href="outcomes.html#cb58-6" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootu.rds&quot;</span>)</span>
+<span id="cb58-7"><a href="outcomes.html#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(uncond, file = a_file)</span></span>
+<span id="cb58-8"><a href="outcomes.html#cb58-8" aria-hidden="true" tabindex="-1"></a>uncond <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="outcomes.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(uncond, </span>
+<span id="cb59-2"><a href="outcomes.html#cb59-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.2&quot;</span>, </span>
+<span id="cb59-3"><a href="outcomes.html#cb59-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;4 Association Measures Relating&quot;</span>, </span>
+<span id="cb59-4"><a href="outcomes.html#cb59-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;&lt;em&gt;More than High School Education&lt;/em&gt; to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>, </span>
+<span id="cb59-5"><a href="outcomes.html#cb59-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
 <div id="kbvpensaab" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -948,36 +954,35 @@ be caused by chance.</li>
       <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 3.2</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Association Measures Relating<br><em>More than High School
-            Education</em> to <em>Voting for Trump</em></strong></th>
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Association Measures Relating<br><em>More than High School Education</em> to <em>Voting for Trump</em></strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Measure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Measure</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">P0</td>
+    <tr><td class="gt_row gt_center">P0</td>
 <td class="gt_row gt_center">0.233</td>
-<td class="gt_row gt_center">(0.208, 0.256)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">P1</td>
+<td class="gt_row gt_center">(0.211, 0.257)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">P1</td>
 <td class="gt_row gt_center gt_striped">0.271</td>
-<td class="gt_row gt_center gt_striped">(0.244, 0.299)</td></tr>
-    <tr><td class="gt_row gt_left">RD</td>
+<td class="gt_row gt_center gt_striped">(0.242, 0.301)</td></tr>
+    <tr><td class="gt_row gt_center">RD</td>
 <td class="gt_row gt_center">0.038</td>
-<td class="gt_row gt_center">(0.003, 0.075)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">RR</td>
+<td class="gt_row gt_center">(0.002, 0.074)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped">1.162</td>
-<td class="gt_row gt_center gt_striped">(1.012, 1.348)</td></tr>
-    <tr><td class="gt_row gt_left">RR*</td>
+<td class="gt_row gt_center gt_striped">(1.008, 1.339)</td></tr>
+    <tr><td class="gt_row gt_center">RR*</td>
 <td class="gt_row gt_center">1.052</td>
-<td class="gt_row gt_center">(1.004, 1.106)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">OR</td>
+<td class="gt_row gt_center">(1.002, 1.104)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped">1.222</td>
-<td class="gt_row gt_center gt_striped">(1.016, 1.491)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.01, 1.478)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -992,27 +997,17 @@ be caused by chance.</li>
 </table>
 </div>
 <p>verify with author’s results, p. 48-49</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="outcomes.html#cb59-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb59-2"><a href="outcomes.html#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
-<span id="cb59-3"><a href="outcomes.html#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.23338</span>, <span class="fl">0.27117</span>, <span class="fl">0.037782</span>, <span class="fl">1.1619</span>, <span class="fl">1.0518</span>, <span class="fl">1.221</span>),</span>
-<span id="cb59-4"><a href="outcomes.html#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
-<span id="cb59-5"><a href="outcomes.html#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
-<span id="cb59-6"><a href="outcomes.html#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb59-7"><a href="outcomes.html#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb59-8"><a href="outcomes.html#cb59-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb59-9"><a href="outcomes.html#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="outcomes.html#cb60-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-2"><a href="outcomes.html#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">term =</span> <span class="fu">c</span>(<span class="st">&quot;P0&quot;</span>, <span class="st">&quot;P1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
+<span id="cb60-3"><a href="outcomes.html#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">.estimate =</span> <span class="fu">c</span>(<span class="fl">0.23338</span>, <span class="fl">0.27117</span>, <span class="fl">0.037782</span>, <span class="fl">1.1619</span>, <span class="fl">1.0518</span>, <span class="fl">1.221</span>),</span>
+<span id="cb60-4"><a href="outcomes.html#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">.lower =</span> <span class="fu">c</span>(<span class="fl">0.21030</span>, <span class="fl">0.24095</span>, <span class="fl">0.00078085</span>, <span class="fl">1.0047</span>, <span class="fl">1.0006</span>, <span class="fl">1.0056</span>),</span>
+<span id="cb60-5"><a href="outcomes.html#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">.upper =</span> <span class="fu">c</span>(<span class="fl">0.25647</span>, <span class="fl">0.30139</span>, <span class="fl">0.07478354</span>, <span class="fl">1.3437</span>, <span class="fl">1.1057</span>, <span class="fl">1.4853</span>))</span>
+<span id="cb60-6"><a href="outcomes.html#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb60-7"><a href="outcomes.html#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>.estimate <span class="sc">-</span> bb<span class="sc">$</span>.estimate) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb60-8"><a href="outcomes.html#cb60-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>.lower <span class="sc">-</span> bb<span class="sc">$</span>.lower) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb60-9"><a href="outcomes.html#cb60-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(uncond<span class="sc">$</span>.upper <span class="sc">-</span> bb<span class="sc">$</span>.upper) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 <p>Now we estimate the four effect measures using <em>conditional</em> association
-measures. We notice that</p>
-<ul>
-<li>The function used in chapter 3 on p. 50-52 is called <code>lmodboot.r()</code>.</li>
-<li>The same name is used in chapter 2 on p.33-34 for a function computing only
-the estimand (sampling distribution) but <em>not the association measures</em></li>
-</ul>
-<p><strong>We therefore rename the <code>lmodboot.r()</code> of chapter 3 as <code>bootc</code></strong> to</p>
-<ul>
-<li>show it relates to <code>bootu</code> with the <code>c</code> meaning <strong>conditional</strong> and</li>
-<li>avoid conflicting function names with <code>lmodboot.r()</code> of chapter 2</li>
-</ul>
+measures.</p>
 <p>To use the function with conditioning on variables, i.e. filtering on variables,
 we note that</p>
 <p><span class="math display">\[
@@ -1034,22 +1029,22 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 \text{trump} &amp;\sim \text{magthsedu} + \text{white} + \text{female} + \text{gt65} \\
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="outcomes.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 20 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
-<pre><code>## this takes 20 sec.: we load a saved file instead</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="outcomes.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
-<span id="cb62-2"><a href="outcomes.html#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, R = 500, conf = 0.95,</span></span>
-<span id="cb62-3"><a href="outcomes.html#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   outcome.name = &quot;trump&quot;, exposure.name = &quot;gthsedu&quot;,</span></span>
-<span id="cb62-4"><a href="outcomes.html#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   confound.names = c(&quot;magthsedu&quot;, &quot;white&quot;, &quot;female&quot;, &quot;gt65&quot;))</span></span>
-<span id="cb62-5"><a href="outcomes.html#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
-<span id="cb62-6"><a href="outcomes.html#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
-<span id="cb62-7"><a href="outcomes.html#cb62-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
-<span id="cb62-8"><a href="outcomes.html#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
-<span id="cb62-9"><a href="outcomes.html#cb62-9" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="outcomes.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
-<span id="cb63-2"><a href="outcomes.html#cb63-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
-<span id="cb63-3"><a href="outcomes.html#cb63-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="st">&quot;4 Conditional Association or Effect Measures&lt;br&gt;</span></span>
-<span id="cb63-4"><a href="outcomes.html#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
-<span id="cb63-5"><a href="outcomes.html#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="outcomes.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">&quot;this takes 6 sec.: we load a saved file instead&quot;</span>)</span></code></pre></div>
+<pre><code>## this takes 6 sec.: we load a saved file instead</code></pre>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="outcomes.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># startTime &lt;- Sys.time()</span></span>
+<span id="cb63-2"><a href="outcomes.html#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="co"># condit &lt;- fciR::boot_est(gssrcc, func = fciR::meas_effect_cond, times = 500, alpha = 0.05,</span></span>
+<span id="cb63-3"><a href="outcomes.html#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65,</span></span>
+<span id="cb63-4"><a href="outcomes.html#cb63-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                   exposure.name = &quot;gthsedu&quot;)</span></span>
+<span id="cb63-5"><a href="outcomes.html#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="co"># endTime &lt;- Sys.time()</span></span>
+<span id="cb63-6"><a href="outcomes.html#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print(endTime - startTime)</span></span>
+<span id="cb63-7"><a href="outcomes.html#cb63-7" aria-hidden="true" tabindex="-1"></a>a_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(dir_data, <span class="st">&quot;chap03_bootc.rds&quot;</span>)</span>
+<span id="cb63-8"><a href="outcomes.html#cb63-8" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(condit, file = a_file)</span></span>
+<span id="cb63-9"><a href="outcomes.html#cb63-9" aria-hidden="true" tabindex="-1"></a>condit <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> a_file)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="outcomes.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_measures</span>(condit, </span>
+<span id="cb64-2"><a href="outcomes.html#cb64-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> <span class="st">&quot;Table 3.3&quot;</span>, </span>
+<span id="cb64-3"><a href="outcomes.html#cb64-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">&quot;4 Conditional Association or Effect Measures&quot;</span>,</span>
+<span id="cb64-4"><a href="outcomes.html#cb64-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Relating &lt;em&gt;More than High School Education&lt;/em&gt; </span></span>
+<span id="cb64-5"><a href="outcomes.html#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="st">            to &lt;em&gt;Voting for Trump&lt;/em&gt;&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&lt;br&gt;&quot;</span>))</span></code></pre></div>
 <div id="fiukizefho" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -1459,37 +1454,36 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
       <th colspan="3" class="gt_heading gt_title gt_font_normal" style="color: #191970;"><strong>Table 3.3</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Conditional Association or Effect Measures<br>
-            Relating <em>More than High School Education</em> 
+      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="color: #191970;"><strong>4 Conditional Association or Effect Measures<br>Relating <em>More than High School Education</em> 
             to <em>Voting for Trump</em></strong></th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Measure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Measure</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Estimate</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">CI<sup class="gt_footnote_marks">1</sup></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_left">P0</td>
+    <tr><td class="gt_row gt_center">P0</td>
 <td class="gt_row gt_center">0.255</td>
-<td class="gt_row gt_center">(0.182, 0.322)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">P1</td>
+<td class="gt_row gt_center">(0.182, 0.325)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">P1</td>
 <td class="gt_row gt_center gt_striped">0.301</td>
-<td class="gt_row gt_center gt_striped">(0.23, 0.369)</td></tr>
-    <tr><td class="gt_row gt_left">RD</td>
+<td class="gt_row gt_center gt_striped">(0.233, 0.37)</td></tr>
+    <tr><td class="gt_row gt_center">RD</td>
 <td class="gt_row gt_center">0.046</td>
-<td class="gt_row gt_center">(0.005, 0.091)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">RR</td>
+<td class="gt_row gt_center">(0.006, 0.09)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">RR</td>
 <td class="gt_row gt_center gt_striped">1.182</td>
-<td class="gt_row gt_center gt_striped">(1.009, 1.394)</td></tr>
-    <tr><td class="gt_row gt_left">RR*</td>
+<td class="gt_row gt_center gt_striped">(1.008, 1.393)</td></tr>
+    <tr><td class="gt_row gt_center">RR*</td>
 <td class="gt_row gt_center">1.066</td>
-<td class="gt_row gt_center">(1.005, 1.134)</td></tr>
-    <tr><td class="gt_row gt_left gt_striped">OR</td>
+<td class="gt_row gt_center">(1.007, 1.133)</td></tr>
+    <tr><td class="gt_row gt_center gt_striped">OR</td>
 <td class="gt_row gt_center gt_striped">1.261</td>
-<td class="gt_row gt_center gt_striped">(1.018, 1.576)</td></tr>
+<td class="gt_row gt_center gt_striped">(1.018, 1.574)</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -1504,15 +1498,15 @@ Y &amp;\sim H_1 + H_2 + H_3 + H_4 \\
 </table>
 </div>
 <p>verify with author’s results, p.52</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="outcomes.html#cb64-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb64-2"><a href="outcomes.html#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&quot;p0&quot;</span>, <span class="st">&quot;p1&quot;</span>, <span class="st">&quot;rd&quot;</span>, <span class="st">&quot;rr&quot;</span>, <span class="st">&quot;rrstar&quot;</span>, <span class="st">&quot;or&quot;</span>),</span>
-<span id="cb64-3"><a href="outcomes.html#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">est =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
-<span id="cb64-4"><a href="outcomes.html#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lci =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
-<span id="cb64-5"><a href="outcomes.html#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">uci =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
-<span id="cb64-6"><a href="outcomes.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
-<span id="cb64-7"><a href="outcomes.html#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>est <span class="sc">-</span> bb<span class="sc">$</span>est) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
-<span id="cb64-8"><a href="outcomes.html#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>lci <span class="sc">-</span> bb<span class="sc">$</span>lci) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
-<span id="cb64-9"><a href="outcomes.html#cb64-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>uci <span class="sc">-</span> bb<span class="sc">$</span>uci) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="outcomes.html#cb65-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb65-2"><a href="outcomes.html#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">term =</span> <span class="fu">c</span>(<span class="st">&quot;P0&quot;</span>, <span class="st">&quot;P1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RR&quot;</span>, <span class="st">&quot;RR*&quot;</span>, <span class="st">&quot;OR&quot;</span>),</span>
+<span id="cb65-3"><a href="outcomes.html#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">.estimate =</span> <span class="fu">c</span>(<span class="fl">0.25458</span>, <span class="fl">0.30101</span>, <span class="fl">0.046438</span>, <span class="fl">1.1824</span>, <span class="fl">1.0664</span>, <span class="fl">1.261</span>),</span>
+<span id="cb65-4"><a href="outcomes.html#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">.lower =</span> <span class="fu">c</span>(<span class="fl">0.18518</span>, <span class="fl">0.22995</span>, <span class="fl">0.0022706</span>, <span class="fl">1.0039</span>, <span class="fl">1.0018</span>, <span class="fl">1.0091</span>),</span>
+<span id="cb65-5"><a href="outcomes.html#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">.upper =</span> <span class="fu">c</span>(<span class="fl">0.32397</span>, <span class="fl">0.37208</span>, <span class="fl">0.0906057</span>, <span class="fl">1.3927</span>, <span class="fl">1.1352</span>, <span class="fl">1.5758</span>))</span>
+<span id="cb65-6"><a href="outcomes.html#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb65-7"><a href="outcomes.html#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>.estimate <span class="sc">-</span> bb<span class="sc">$</span>.estimate) <span class="sc">&lt;</span> <span class="fl">0.01</span>),</span>
+<span id="cb65-8"><a href="outcomes.html#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>.lower <span class="sc">-</span> bb<span class="sc">$</span>.lower) <span class="sc">&lt;</span> <span class="fl">0.015</span>),</span>
+<span id="cb65-9"><a href="outcomes.html#cb65-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all</span>(<span class="fu">abs</span>(condit<span class="sc">$</span>.upper <span class="sc">-</span> bb<span class="sc">$</span>.upper) <span class="sc">&lt;</span> <span class="fl">0.02</span>))</span></code></pre></div>
 </div>
 <div id="exercises-2" class="section level2 hasAnchor" number="3.4">
 <h2><span class="header-section-number">3.4</span> Exercises<a href="outcomes.html#exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
