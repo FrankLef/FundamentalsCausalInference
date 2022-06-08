@@ -44,8 +44,7 @@ run `boot()`, alias `meas_effect_modif()` with the RECOVERY data set
 recovery.out <- boot_est(data = recovery, func = meas_effect_modif,
                          times = 100, alpha = 0.05,
                          inv = "exp", evars = "modifier",
-                         outcome.name = "Y", exposure.name = "T",
-                         modifier.name = "M")
+                         formula = Y ~ `T` + M, exposure.name = "T")
 recovery.out
 ```
 
@@ -157,10 +156,10 @@ Run the bootsrap
 
 ```{r}
 nces.out <- boot_est(data = nces, func = meas_effect_modif,
-                         times = 100, alpha = 0.05,
-                         inv = "exp", evars = "modifier",
-                         outcome.name = "highmathsat", exposure.name = "female",
-                         modifier.name = "selective")
+                     times = 100, alpha = 0.05,
+                     inv = "exp", evars = "modifier",
+                     formula = highmathsat ~ female + selective, 
+                     exposure.name = "female")
 ```
 
 verify the results with the author's on p. 70.
