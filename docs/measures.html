@@ -29,7 +29,7 @@ The exercises are in a separate project.</p>" />
 <meta name="author" content="François Lefebvre" />
 
 
-<meta name="date" content="2022-06-07" />
+<meta name="date" content="2022-06-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -417,9 +417,8 @@ div.csl-indent {
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="measures.html#cb68-1" aria-hidden="true" tabindex="-1"></a>recovery.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> recovery, <span class="at">func =</span> meas_effect_modif,</span>
 <span id="cb68-2"><a href="measures.html#cb68-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">times =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
 <span id="cb68-3"><a href="measures.html#cb68-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
-<span id="cb68-4"><a href="measures.html#cb68-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>,</span>
-<span id="cb68-5"><a href="measures.html#cb68-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;M&quot;</span>)</span>
-<span id="cb68-6"><a href="measures.html#cb68-6" aria-hidden="true" tabindex="-1"></a>recovery.out</span></code></pre></div>
+<span id="cb68-4"><a href="measures.html#cb68-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">formula =</span> Y <span class="sc">~</span> <span class="st">`</span><span class="at">T</span><span class="st">`</span> <span class="sc">+</span> M, <span class="at">exposure.name =</span> <span class="st">&quot;T&quot;</span>)</span>
+<span id="cb68-5"><a href="measures.html#cb68-5" aria-hidden="true" tabindex="-1"></a>recovery.out</span></code></pre></div>
 <pre><code>##         term      .lower   .estimate       .upper .alpha .method
 ## 1    EYT0.M0  0.77176333  0.78367235  0.795652427   0.05    norm
 ## 2    EYT0.M1  0.55927518  0.59297218  0.626845995   0.05    norm
@@ -1039,10 +1038,10 @@ us the 2-sided p-value that is significant</p>
 <p>We process the <code>NCES</code> data the same way we did for the RECOVERY trial.</p>
 <p>Run the bootsrap</p>
 <div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="measures.html#cb87-1" aria-hidden="true" tabindex="-1"></a>nces.out <span class="ot">&lt;-</span> <span class="fu">boot_est</span>(<span class="at">data =</span> nces, <span class="at">func =</span> meas_effect_modif,</span>
-<span id="cb87-2"><a href="measures.html#cb87-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">times =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
-<span id="cb87-3"><a href="measures.html#cb87-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
-<span id="cb87-4"><a href="measures.html#cb87-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">outcome.name =</span> <span class="st">&quot;highmathsat&quot;</span>, <span class="at">exposure.name =</span> <span class="st">&quot;female&quot;</span>,</span>
-<span id="cb87-5"><a href="measures.html#cb87-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">modifier.name =</span> <span class="st">&quot;selective&quot;</span>)</span></code></pre></div>
+<span id="cb87-2"><a href="measures.html#cb87-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">times =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb87-3"><a href="measures.html#cb87-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">inv =</span> <span class="st">&quot;exp&quot;</span>, <span class="at">evars =</span> <span class="st">&quot;modifier&quot;</span>,</span>
+<span id="cb87-4"><a href="measures.html#cb87-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">formula =</span> highmathsat <span class="sc">~</span> female <span class="sc">+</span> selective, </span>
+<span id="cb87-5"><a href="measures.html#cb87-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">exposure.name =</span> <span class="st">&quot;female&quot;</span>)</span></code></pre></div>
 <p>verify the results with the author’s on p. 70.</p>
 <div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="measures.html#cb88-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb88-2"><a href="measures.html#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">term =</span> <span class="fu">c</span>(<span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT0&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;EYT1&quot;</span>, <span class="st">&quot;RD&quot;</span>, <span class="st">&quot;RD&quot;</span>,</span>
