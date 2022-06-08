@@ -220,8 +220,8 @@ and we can see it gives the same results with the `fciR` package with
 message("This takes about 2 min. Load from file.")
 # startTime <- Sys.time()
 # mort.out.np <- fciR::boot_est(
-#   mort, fciR::backdr_out_np, times = 500, alpha = 0.05, formula = Y ~ `T` + H,
-#   exposure.name = "T")
+#   mort, fciR::backdr_out_np, times = 500, alpha = 0.05, transf = "exp", 
+#   formula = Y ~ `T` + H, exposure.name = "T")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_mort_out_np.rds")
@@ -303,7 +303,6 @@ message("This takes about 4 min. Load from file.")
 # startTime <- Sys.time()
 # mort.out.sat <- fciR::boot_est(
 #   mort, func = fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard", 
 #   formula = Y ~ `T` * H, exposure.name = "T")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -319,7 +318,7 @@ df <- mort.out.sat
 tbl <- fciR::gt_measures(df,  digits = 6,
             title = "Mortality", 
             subtitle = paste("Standardized Estimates",
-                              "Non Parametric With Regression",
+                              "Saturated Model With Regression",
                               sep = "<br>"))
 p <- fciR::ggp_measures(df,
                    title = NULL,
@@ -353,7 +352,6 @@ message("This takes about 15 sec. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.sat <- fciR::boot_est(
 #   whatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard",
 #   formula = Y ~ A * H, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -402,7 +400,7 @@ statistically significant.
 message("This takes about 20 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.np <- fciR::boot_est(
-#   whatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05,
+#   whatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05, transf = "exp",
 #   formula = Y ~ A + H, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -446,7 +444,6 @@ message("This takes about 10 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.out.sat <- fciR::boot_est(
 #   doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard",
 #   formula = VL1 ~ A * AD0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -480,7 +477,8 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 message("This takes about 20 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.out.np <- fciR::boot_est(
-#   doublewhatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05,
+#   doublewhatifdat, fciR::backdr_out_np, 
+#   times = 500, alpha = 0.05, transf = "exp",
 #   formula = VL1 ~ A + AD0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -518,7 +516,6 @@ message("This takes about 10 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.vl0.out <- fciR::boot_est(
 #   doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard",
 #   formula = VL1 ~ A * VL0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -563,7 +560,6 @@ message("This takes about 10 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.att.sat <- fciR::boot_est(
 #   whatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard",
 #   formula = Y ~ A * H, exposure.name = "A", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -609,7 +605,8 @@ is following pure probabilities from the data.
 message("This takes about 15 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif.out.att.np <- fciR::boot_est(
-#   whatifdat, fciR::backdr_out_np, times = 250, alpha = 0.05,
+#   whatifdat, fciR::backdr_out_np, 
+#   times = 250, alpha = 0.05, transf = "exp",
 #   formula = Y ~ A + H, exposure.name = "A", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -644,7 +641,6 @@ message("This takes about 10 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.out.att.sat <- fciR::boot_est(
 #   doublewhatifdat, fciR::backdr_out_sat, times = 500, alpha = 0.05,
-#   inv = "none", evars = "standard",
 #   formula = VL1 ~ A * AD0, exposure.name = "A", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -677,7 +673,8 @@ p + tbl + plot_annotation(title = "Double What-If Study",
 message("This takes about 25 sec.. Load from file.")
 # startTime <- Sys.time()
 # doublewhatif.out.att.np <- fciR::boot_est(
-#   doublewhatifdat, fciR::backdr_out_np, times = 500, alpha = 0.05,
+#   doublewhatifdat, fciR::backdr_out_np, 
+#   times = 500, alpha = 0.05, transf = "exp",
 #   formula = VL1 ~ A * VL0, exposure.name = "A", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -716,7 +713,8 @@ data("whatif2dat", package = "fciR")
 message("This takes about 1 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif2.out <- fciR::boot_est(
-#   whatif2dat, fciR::backdr_out, times = 100, alpha = 0.05,
+#   whatif2dat, fciR::backdr_out, 
+#   times = 100, alpha = 0.05, transf = "exp",
 #   formula = vl4 ~ A + lvlcont0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -768,11 +766,11 @@ gssrcc <- gssrcc[complete.cases(gssrcc), ]
 
 ```{r}
 message("This takes about 2 sec.. Load from file.")
-# startTime <- Sys.time()
+startTime <- Sys.time()
+# a_formula <- trump ~ gthsedu + magthsedu + white + female + gt65
 # gssrcc.out <- boot_est(data = gssrcc, func = backdr_out,
-#                   times = 100, alpha = 0.05,
-#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65,
-#                   exposure.name = "gthsedu")
+#                   times = 100, alpha = 0.05, transf = "exp",
+#                   formula = a_formula, exposure.name = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
 a_file <- file.path(dir_data, "chap06_gssrcc_out.rds")
@@ -870,7 +868,7 @@ You can see the code by pressing `F2` on `fciR::backdr_exp_np`.
 message("This takes about 25 sec.. Load from file.")
 # startTime <- Sys.time()
 # mortdat.exp.np <- boot_est(data = mort, func = backdr_exp_np,
-#                   times = 100, alpha = 0.05,
+#                   times = 100, alpha = 0.05, transf = "exp",
 #                   formula = Y ~ `T` + H, exposure.name = "T")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -940,7 +938,7 @@ estimate for ATT as `attsem.r` on p. 116 of section 6.2.1.
 message("This takes about 25 sec.. Load from file.")
 # startTime <- Sys.time()
 # mortdat.exp.np.att <- boot_est(data = mort, func = backdr_exp_np,
-#                   times = 100, alpha = 0.05,
+#                   times = 100, alpha = 0.05, transf = "exp",
 #                   formula = Y ~ `T` + H, exposure.name = "T", att = TRUE)
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -990,7 +988,7 @@ First we do it using the `glm` fit
 message("This takes about 1 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif2.exp <- boot_est(data = whatif2dat, func = backdr_exp,
-#                   times = 250, alpha = 0.05,
+#                   times = 250, alpha = 0.05, transf = "exp",
 #                   formula = vl4 ~ A + lvlcont0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -1039,7 +1037,7 @@ then we use the `geeglm` from the `geepack` package fit for risk difference
 message("This takes about 6 sec.. Load from file.")
 # startTime <- Sys.time()
 # whatif2.exp.gee <- boot_est(data = whatif2dat, func = backdr_exp_gee,
-#                   times = 250, alpha = 0.05,
+#                   times = 250, alpha = 0.05, transf = "exp",
 #                   formula = vl4 ~ A + lvlcont0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -1074,9 +1072,10 @@ to run it as follows
 ```{r}
 message("This takes about 10 sec. Load from file.")
 # startTime <- Sys.time()
+# a_formula <- trump ~ gthsedu + magthsedu + white + female + gt65
 # gssrcc.exp <- boot_est(data = gssrcc, func = backdr_exp,
-#                   times = 250, alpha = 0.05,
-#                   formula = trump ~ gthsedu + magthsedu + white + female + gt65,
+#                   times = 250, alpha = 0.05, transf = "exp",
+#                   formula = a_formula,
 #                   exposure.name = "gthsedu")
 # endTime <- Sys.time()
 # print(endTime - startTime)
@@ -1135,7 +1134,7 @@ and using the What-if Study we obtain
 message("This takes about 1 sec. Load from file.")
 # startTime <- Sys.time()
 # whatif2.bad <- boot_est(data = whatif2dat, func = fciR::backdr_dr_bad,
-#                   times = 100, alpha = 0.05,
+#                   times = 100, alpha = 0.05, transf = "exp",
 #                   formula = vl4 ~ A + lvlcont0, exposure.name = "A")
 # endTime <- Sys.time()
 # print(endTime - startTime)
